@@ -1,0 +1,56 @@
+#if ( HEIGHT == 1080 )
+# define LOGIN_POS_Y 740
+#elif ( HEIGHT == 1024 )
+# define LOGIN_POS_Y 635
+#elif ( HEIGHT == 900 )
+# define LOGIN_POS_Y 615
+#elif ( HEIGHT == 800 )
+# define LOGIN_POS_Y 550
+#elif ( HEIGHT == 768 )
+# define LOGIN_POS_Y 520
+#elif ( HEIGHT == 600 )
+# define LOGIN_POS_Y 400
+#elif ( HEIGHT == 480 )
+# define LOGIN_POS_Y 315
+#endif
+
+! The description of these resources is found in the xdm man page
+xlogin.Login.greeting:
+!xlogin.Login.greeting:		CLIENTHOST
+xlogin.Login.namePrompt:	Username:\040
+xlogin.Login.passwdPrompt:	Password:\040
+xlogin.Login.fail:		incorrect
+xlogin.Login.greetFace:		Terminus-14:style=Bold
+xlogin.Login.promptFace:	Terminus-12:style=Bold
+xlogin.Login.face:		Terminus-10
+xlogin.Login.failFace:		Terminus-14:style=Bold
+xlogin.Login.frameWidth:	0
+xlogin.Login.greetColor:	#5569B9
+xlogin.Login.promptColor:	#5569B9
+xlogin.Login.failColor:		red
+xlogin.Login.width:		400
+xlogin.Login.height:		170
+xlogin.Login.y:			LOGIN_POS_Y
+xlogin.Login.borderWidth:	0
+xlogin.Login.foreground:	#ffe4e4
+xlogin.Login.background:	black
+xlogin.Login.logoFileName:	/etc/X11/xdm/liveslak-xdm/bluepiSW.xpm
+
+.XClock.geometry:		350x28+0-0
+.XClock.Clock.analog:		false
+.XClock.Clock.strftime:		(%A)\040%F\040%T
+.XClock.Clock.update:		1
+.XClock.Clock.render:		false
+.XClock.Clock.font:		-misc-fixed-*-*-*-*-15-*-*-*-*-*-*-*
+.XClock.Clock.background:	black
+.XClock.Clock.foreground:	#9d9d9d
+
+.Xmessage.form.message.scrollVertical:		never
+.Xmessage.form.message.scrollHorizontal:	never
+.Xmessage.form.message.background:		black
+.Xmessage.geometry:				-0-0
+.Xmessage.form.background:			black
+.Xmessage.form.Command.font:			-misc-fixed-*-*-*-*-15-*-*-*-*-*-*-*
+.Xmessage.form.Command.foreground:		#9d9d9d
+.Xmessage.form.Command.background:		black
+.Xmessage.form.Command.shapeStyle:		Rectangle

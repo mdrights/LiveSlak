@@ -1,0 +1,442 @@
+#!/bin/ash
+#
+# Copyright 2004  Slackware Linux, Inc., Concord, CA, USA
+# Copyright 2007, 2008, 2009, 2010, 2012  Patrick J. Volkerding, Sebeka, MN, USA
+# Copyright 2015  Eric Hameleers, Eindhoven, NL
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+##################################################################################
+# Changelog
+# 10-Dec-2012 <mozes@slackware.com>
+#  * Added support for the official Kernel parameters to select root filesystem
+#    type ('rootfstype') and pause before attempting to mount the root filesystem
+#    ('rootdelay').  The original parameters may continue to be used.
+# 23-Oct-2015 <alien@slackware.com>
+#  * Modified for booting as a Live filesystem.
+##################################################################################
+
+# The ISO creation script will create a filesystem with this label.
+# Nevertheless, the user may have copied the ISO content to a different device.
+MEDIALABEL="@MEDIALABEL@"
+
+# By default, let the media determine if we can write persistent changes:
+VIRGIN=0
+
+INITRD=$(cat /initrd-name)
+WAIT=$(cat /wait-for-root)
+KEYMAP=$(cat /keymap)
+INIT=/sbin/init
+
+PATH="/sbin:/bin:/usr/sbin:/usr/bin"
+
+# Mount /proc and /sys:
+mount -n proc /proc -t proc
+mount -n sysfs /sys -t sysfs
+mount -n tmpfs /run -t tmpfs -o mode=0755
+
+if grep devtmpfs /proc/filesystems 1>/dev/null 2>/dev/null ; then
+  DEVTMPFS=1
+  mount -n devtmpfs /dev -t devtmpfs
+fi	
+
+# Parse command line
+for ARG in $(cat /proc/cmdline); do
+  case $ARG in
+    0|1|2|3|4|5|6|S|s|single)
+      RUNLEVEL=$ARG
+    ;;
+    hostname=*)
+      LIVE_HOSTNAME=$(echo $ARG | cut -f2 -d=)
+    ;;
+    init=*)
+      INIT=$(echo $ARG | cut -f2 -d=)
+    ;;
+    kbd=*)
+      KEYMAP=$(echo $ARG | cut -f2 -d=)
+    ;;
+    livepw=*)
+      LIVEPW=$(echo $ARG | cut -f2 -d=)
+    ;;
+    load=*)
+      LOAD=$(echo $ARG | cut -f2 -d=)
+    ;;
+    noload=*)
+      NOLOAD=$(echo $ARG | cut -f2 -d=)
+    ;;
+    locale=*)
+      LOCALE=$(echo $ARG | cut -f2 -d=)
+    ;;
+    nop)
+      VIRGIN=1
+    ;;
+    rescue)
+      RESCUE=1
+    ;;
+    swap)
+      USE_SWAP=1
+    ;;
+    rootpw=*)
+      ROOTPW=$(echo $ARG | cut -f2 -d=)
+    ;;
+    tz=*)
+      TZ=$(echo $ARG | cut -f2 -d=)
+    ;;
+    waitforroot=*|rootdelay=*)
+      WAIT=$(echo $ARG | cut -f2 -d=)
+    ;;
+  esac
+done
+
+# If udevd is available, use it to generate block devices
+# else use mdev to read sysfs and generate the needed devices 
+if [ -x /sbin/udevd -a -x /sbin/udevadm ]; then
+  /sbin/udevd --daemon --resolve-names=never
+  /sbin/udevadm trigger --subsystem-match=block --action=add
+  /sbin/udevadm settle --timeout=10
+else
+  [ "$DEVTMPFS" != "1" ] && mdev -s
+fi
+
+# Load kernel modules (ideally this was already done by udev):
+if [ ! -d /lib/modules/$(uname -r) ]; then
+  echo "No kernel modules found for Linux $(uname -r)."
+elif [ -x ./load_kernel_modules ]; then # use load_kernel_modules script:
+  echo "${INITRD}:  Loading kernel modules from initrd image:"
+  . ./load_kernel_modules 1>/dev/null 2>/dev/null
+else # load modules (if any) in order:
+  if ls /lib/modules/$(uname -r)/*.*o 1> /dev/null 2> /dev/null ; then
+    echo "${INITRD}:  Loading kernel modules from initrd image:"
+    for module in /lib/modules/$(uname -r)/*.*o ; do
+      /sbin/modprobe $module 1>/dev/null 2>/dev/null
+    done
+    unset module
+  fi
+fi
+
+# Sometimes the devices need extra time to be available.
+# A root filesystem on USB is a good example of that.
+sleep $WAIT
+# Fire at least one blkid:
+blkid 1>/dev/null 2>/dev/null
+
+# Load a custom keyboard mapping:
+if [ -n "$KEYMAP" ]; then
+  echo "${INITRD}:  Loading '$KEYMAP' keyboard mapping:"
+  tar xzOf /etc/keymaps.tar.gz ${KEYMAP}.bmap | loadkmap
+fi
+
+if [ "$RESCUE" = "" ]; then 
+  # Initialize RAID:
+  if [ -x /sbin/mdadm ]; then
+    # If /etc/mdadm.conf is present, udev should DTRT on its own;
+    # If not, we'll make one and go from there:
+    if [ ! -r /etc/mdadm.conf ]; then
+      /sbin/mdadm -E -s >/etc/mdadm.conf
+      /sbin/mdadm -S -s
+      /sbin/mdadm -A -s
+      # This seems to make the kernel see partitions more reliably:
+      fdisk -l /dev/md* 1> /dev/null 2> /dev/null
+    fi
+  fi
+
+  # Scan for btrfs multi-device filesystems:
+  if [ -x /sbin/btrfs ]; then
+    /sbin/btrfs device scan
+  fi
+
+  # --------------------------------------------------------------------- #
+  #                     SLACKWARE LIVE - START                            #
+  # --------------------------------------------------------------------- #
+
+  # We need a mounted filesystem here to be able to do a switch_root later,
+  # so we create one in RAM:
+  mount -t tmpfs -o defaults none /mnt
+
+  # Find the Slackware Live media.
+  # We iterate a maximum of 10 times to give USB devices a chance to be seen
+  # by the kernel. Set the WAIT variable to increase the iterations.
+  mkdir /mnt/media
+  for ITER in $(seq 1 ${WAIT:-10}); do
+    # Filter out the block devices, only look at partitions at first:
+    LIVEMEDIA=$(blkid |grep LABEL="\"$MEDIALABEL\"" |cut -d: -f1 |grep "[0-9]$")
+    if [ ! -z "$LIVEMEDIA" ]; then
+      # That was easy... we found the media straight away.
+      # Determine filesystem type ('iso9660' means we found a CDROM/DVD)
+      LIVEFS=$(blkid $LIVEMEDIA |rev |cut -d'"' -f2 |rev)
+      mount -t auto -o ro $LIVEMEDIA /mnt/media
+    else
+      LIVEMEDIA=$(blkid |grep LABEL="\"$MEDIALABEL\"" |cut -d: -f1 |grep -v "[0-9]$")
+      if [ ! -z "$LIVEMEDIA" ]; then
+        # We found a block device with the correct label (non-UEFI media).
+        # Determine filesystem type ('iso9660' means we found a CDROM/DVD)
+        LIVEFS=$(blkid $LIVEMEDIA |rev |cut -d'"' -f2 |rev)
+        mount -t auto -o ro $LIVEMEDIA /mnt/media
+      else
+        # Bummer... label not found; the ISO was extracted to a different device.
+        # Separate partitions from block devices, look at partitions first:
+        for SLDEVICE in $(blkid |cut -d: -f1 |grep "[0-9]$") $(blkid |cut -d: -f1 |grep -v "[0-9]$") ; do
+          mount -t auto -o ro $SLDEVICE /mnt/media
+          if [ -d /mnt/media/liveslak ]; then
+            # Found our media!
+            LIVEMEDIA=$SLDEVICE
+            LIVEFS=$(blkid $LIVEMEDIA |rev |cut -d'"' -f2 |rev)
+            break
+          else
+            umount $SLDEVICE
+            unset SLDEVICE
+          fi
+        done
+      fi
+    fi
+    if [ -n "$LIVEMEDIA" ]; then
+      # Gotcha!
+      break
+    fi
+    sleep 1
+  done
+
+  if [ ! -z "$LIVEMEDIA" ]; then
+    echo "${INITRD}:  Live media found at ${LIVEMEDIA}."
+  else
+    echo "${INITRD}:  No live media found... trouble ahead."
+    echo "${INITRD}:  Try adding \"rootdelay=20\" to the boot command."
+  fi
+
+  # Start assembling our live system components below /mnt/live :
+  mkdir /mnt/live
+
+  # Mount our squashed modules (.sxz extension).
+  mkdir /mnt/live/modules
+  # Modules were created in specific order and will be mounted in that order.
+  # In the lowerdirs parameter for the overlay, the module with the highest
+  # number (i.e. created last) will be leftmost in a colon-separated list:
+  RODIRS=""
+  # First, the base Slackware system components:
+  for MODLOC in $(ls -1 /mnt/media/liveslak/system/*.sxz) ; do
+    MODBASE="$(basename ${MODLOC} .sxz)"
+    mkdir /mnt/live/modules/${MODBASE}
+    mount -t squashfs -o loop ${MODLOC} /mnt/live/modules/${MODBASE}
+    RODIRS=":/mnt/live/modules/${MODBASE}${RODIRS}"
+  done
+
+  # Next, the add-on (3rd party etc) components, if any:
+  # Remember, module name must adhere to convention: "NNNN-modname-*.sxz"
+  # where 'N' is a digit and 'modname' must not contain a dash '-'.
+  if ls /mnt/media/liveslak/addons/*.sxz 1>/dev/null 2>/dev/null ; then
+    for MODLOC in /mnt/media/liveslak/addons/*.sxz ; do
+      MODBASE="$(basename $MODLOC .sxz)"
+      # Skip loading one or more addons by using boot parameter 'noload':
+      # noload=mod1[,mod2[,mod3]]
+      if [ -n "$NOLOAD" -a -n '$(echo ",${NOLOAD}," |grep -i ",$(echo $MODBASE |cut -d- -f2),")' ]; then
+        echo "$MODBASE" >> /mnt/live/modules/skipped
+      else
+        mkdir /mnt/live/modules/${MODBASE}
+        mount -t squashfs -o loop ${MODLOC} /mnt/live/modules/${MODBASE}
+        RODIRS=":/mnt/live/modules/${MODBASE}${RODIRS}"
+      fi
+    done
+  fi
+
+  # And finally any explicitly requested optionals (like nvidia drivers):
+  # Remember, module name must adhere to convention: "NNNN-modname-*.sxz"
+  # where 'N' is a digit and 'modname' must not contain a dash '-'.
+  if ls /mnt/media/liveslak/optional/*.sxz 1>/dev/null 2>/dev/null ; then
+    for MODLOC in /mnt/media/liveslak/optional/*.sxz ; do
+        MODBASE="$(basename $MODLOC .sxz)"
+      if [ -n "$LOAD" -a -n '$(echo ",${LOAD}," |grep -i ",$(echo $MODBASE |cut -d- -f2),")' ]; then
+        mkdir /mnt/live/modules/${MODBASE}
+        mount -t squashfs -o loop ${MODLOC} /mnt/live/modules/${MODBASE}
+        RODIRS=":/mnt/live/modules/${MODBASE}${RODIRS}"
+      fi
+    done
+  fi
+
+  # Get rid of the starting colon:
+  RODIRS=$(echo $RODIRS |cut -c2-)
+
+  # Setup persistency in case our media is writable, *and* the user
+  # has created a directory "persistence" in the root of the media.
+  # otherwise we let the block changes accumulate in RAM only.
+
+  # Create the mount point for the writable upper directory of the overlay:
+  # Assume the default to be a readonly media - we write to RAM:
+  UPPERDIR=/mnt/live/changes
+  OVLWORK=/mnt/live/.ovlwork
+  if [ "$VIRGIN" = "0" ]; then
+    if [ "LIVEFS" != "iso9660" -a -d /mnt/media/persistence ]; then
+      # Looks OK, but we need to remount the media in order to write to it:
+      mount -o remount,rw /mnt/media
+      # Try a write... just to be dead sure:
+      if touch /mnt/media/persistence/.rwtest 2>/dev/null && rm /mnt/media/persistence/.rwtest 2>/dev/null ; then
+        # Writable media and we are allowed to write to it.
+        echo "${INITRD}:  Writing persistent changes to media directory '/persistence'."
+        UPPERDIR=/mnt/media/persistence
+        OVLWORK=/mnt/media/.ovlwork
+      fi
+    fi
+  fi
+  # Create the writable upper directory, plus the workdir which is required
+  # for overlay to function (the two must be in the same POSIX filesystem):
+  mkdir -p ${UPPERDIR}
+  mkdir -p ${OVLWORK}
+
+  # Create the overlay of readonly and writable directories:
+  mkdir -p /mnt/overlay
+  mount -t overlay -o workdir=${OVLWORK},upperdir=${UPPERDIR},lowerdir=${RODIRS} overlay /mnt/overlay
+
+  # Make the underpinning RAM fs accessible in the live system (for fun):
+  mkdir -p /mnt/overlay/mnt/live
+  mount --bind /mnt/live /mnt/overlay/mnt/live
+
+  # Same for the Linux filesystem on the USB stick:
+  mkdir -p /mnt/overlay/mnt/livemedia
+  mount --bind /mnt/media /mnt/overlay/mnt/livemedia
+
+  if [ ! -z "$USE_SWAP" ]; then
+    # Use any available swap device:
+    for SWAPD in $(blkid |grep TYPE="\"swap\"" |cut -d: -f1) ; do
+      echo "${INITRD}:  Enabling swapping to '$SWAPD'"
+      echo "$SWAPD  swap  swap defaults  0  0" >> /mnt/overlay/etc/fstab
+    done
+  fi
+
+  if [ ! -z "$KEYMAP" ]; then
+    # Configure custom keyboard mapping in console and X:
+    echo "${INITRD}:  Switching live desktop to '$KEYMAP' keyboard"
+    cat <<EOT > /mnt/overlay/etc/rc.d/rc.keymap
+#!/bin/sh
+# Load the keyboard map.  More maps are in /usr/share/kbd/keymaps.
+if [ -x /usr/bin/loadkeys ]; then
+ /usr/bin/loadkeys ${KEYMAP}
+fi
+EOT
+    chmod 755 /mnt/overlay/etc/rc.d/rc.keymap
+    # Set a usable keyboard mapping in X.Org, derived from the console map:
+    mkdir -p /mnt/overlay/etc/X11/xorg.conf.d
+    cat <<EOT > /mnt/overlay/etc/X11/xorg.conf.d/30-keyboard.conf
+Section "InputClass"
+  Identifier "keyboard-all"
+  Driver "evdev"
+  Option "XkbLayout" "$(echo $KEYMAP |cut -c1-2)"
+  MatchIsKeyboard "on"
+EndSection
+EOT
+  fi
+
+  if [ ! -z "$LOCALE" ]; then
+    # Configure custom locale:
+    echo "${INITRD}:  Switching to '$LOCALE' locale"
+    sed -i -e "s/^ *export LANG=.*/export LANG=${LOCALE}/" /mnt/overlay/etc/profile.d/lang.sh
+  fi
+
+  if [ ! -z "$TZ" -a -f /mnt/overlay/usr/share/zoneinfo/${TZ} ]; then
+    # Configure custom timezone:
+    echo "${INITRD}:  Configuring timezone '$TZ'"
+    cp /mnt/overlay/usr/share/zoneinfo/${TZ} /mnt/overlay/etc/localtime
+    cp /mnt/overlay/usr/share/zoneinfo/${TZ} /mnt/overlay/etc/localtime
+    rm /mnt/overlay/etc/localtime-copied-from
+    ln -s /usr/share/zoneinfo/${TZ} /mnt/overlay/etc/localtime-copied-from
+    # Configure the hardware clock to be interpreted as localtime and not UTC:
+    cat <<EOT > /mnt/overlay/etc/hardwareclock
+# /etc/hardwareclock
+#
+# Tells how the hardware clock time is stored.
+# You should run timeconfig to edit this file.
+localtime
+EOT
+  fi
+
+  if [ ! -z "$LIVEPW" ]; then
+    # User entered a custom live password on the boot commandline:
+    echo "${INITRD}:  Changing password for user 'live'."
+    chroot /mnt/overlay /usr/sbin/chpasswd <<EOPW
+live:${LIVEPW}
+EOPW
+  fi
+
+  if [ ! -z "$ROOTPW" ]; then
+    # User entered a custom root password on the boot commandline:
+    echo "${INITRD}:  Changing password for user 'root'."
+    chroot /mnt/overlay /usr/sbin/chpasswd <<EOPW
+root:${ROOTPW}
+EOPW
+  fi
+
+  if [ ! -z "$LIVE_HOSTNAME" ]; then
+    # User entered a custom hostname on the boot commandline:
+    echo "${INITRD}:  Changing hostname to '$LIVE_HOSTNAME'."
+    echo "${LIVE_HOSTNAME}.example.net" > /mnt/overlay/etc/HOSTNAME
+    if [ -f /mnt/overlay/etc/NetworkManager/NetworkManager.conf ]; then
+      sed -i -e "s/^hostname=.*/hostname=${LIVE_HOSTNAME}/" \
+        /mnt/overlay/etc/NetworkManager/NetworkManager.conf
+    fi
+    sed -i -e "s/^\(127.0.0.1\t*\)@DARKSTAR@.*/\1${LIVE_HOSTNAME}.example.net ${LIVE_HOSTNAME}/" /mnt/overlay/etc/hosts
+  fi
+
+  # Copy contents of rootcopy directory (may be empty) to overlay:
+  cp -af /mnt/media/liveslak/rootcopy/* /mnt/overlay/ 2>/dev/null
+
+  # --------------------------------------------------------------------- #
+  #                     SLACKWARE LIVE - !END!                            #
+  # --------------------------------------------------------------------- #
+
+  # Minimal changes to the original Slackware init follow:
+
+  # Switch to real root partition:
+  /sbin/udevadm settle --timeout=10
+  echo 0x0100 > /proc/sys/kernel/real-root-dev
+  
+  if [ ! -r /mnt/overlay/${INIT} ]; then
+    echo "ERROR:  No ${INIT} found on rootdev (or not mounted).  Trouble ahead."
+    echo "        You can try to fix it. Type 'exit' when things are done." 
+    echo
+    /bin/sh
+  fi
+else
+  echo
+  echo "RESCUE mode"
+  echo
+  echo "        You can try to fix or rescue your system now. If you want"
+  echo "        to boot into your fixed system, mount your root filesystem"
+  echo "        read-only under /mnt:"
+  echo
+  echo "            # mount -o ro -t filesystem root_device /mnt"
+  echo
+  echo "        Type 'exit' when things are done."
+  echo
+  /bin/sh
+fi
+
+# Need to make sure OPTIONS+="db_persist" exists for all dm devices
+# That should be handled in /sbin/mkinitrd now
+/sbin/udevadm info --cleanup-db
+/sbin/udevadm control --exit
+
+unset ERR
+umount /proc
+umount /sys
+umount /run
+# We disable the filesystem checking code in /etc/rc.d/rc.S,
+# so we need to keep the fs writable here.
+#mount -o ro,remount /mnt/overlay 2>/dev/null
+echo "${INITRD}:  Slackware Live system is ready."
+
+echo "${INITRD}:  exiting"
+exec switch_root /mnt/overlay $INIT $RUNLEVEL

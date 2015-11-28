@@ -1,0 +1,27 @@
+# Slackware deps:
+#PyQt
+#polkit-qt-1
+#qjson
+#sip
+
+# Slackware's KDE4:
+amarok
+bluedevil
+calligra
+k3b
+kaudiocreator
+kdev-python
+kdevelop
+kdevelop-pg-qt
+kdevelop-php
+kdevelop-php-docs
+kdevplatform
+kio-mtp
+kplayer
+ktorrent
+kwebkitpart
+libktorrent
+oxygen-gtk2
+partitionmanager
+skanlite
+

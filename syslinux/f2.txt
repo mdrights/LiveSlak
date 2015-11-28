@@ -1,0 +1,27 @@
+
+
+
+
+
+
+
+
+
+
+                 -+  Customization Help +-
+
+To boot with default values just press ENTER.
+Customizations of the Live environment:
+boot: live lang=nl_NL kbd=nl tz=Europe/Amsterdam
+                       "Specify language, keyboard and/or timezone"
+boot: live nop         "No persistence, i.e. boot the virgin installation"
+boot: live nomodeset   "Boot with kernel mode setting for graphics
+                        -- needed with some machines."
+boot: live load=nvidia "Load and configure binary Nvidia drivers"
+boot: live rootdelay=10
+                       "Add 10 second delay to allow proper USB initialization"
+boot: live swap        "Activate swap partitions if found on the computer"
+
+To check your system memory with memtest86+, use 'memtest':
+boot: memtest
+

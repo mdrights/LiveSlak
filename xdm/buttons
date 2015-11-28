@@ -1,0 +1,15 @@
+#!/bin/sh
+
+if which xmessage >> /dev/null 2>&1; then
+	xmessage -buttons reboot,halt "$@" "";
+
+	case "$?" in
+		101)
+			/sbin/reboot
+			;;
+		102)
+			/sbin/poweroff
+			;;
+	esac
+fi
+

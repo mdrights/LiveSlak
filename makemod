@@ -1,0 +1,48 @@
+#!/bin/sh
+# Create squashfs module from a directory or a Slackware package.
+# Module can then be added to liveslak/addons directory.
+
+if [ "x$1" = "x" ]; then
+   echo "-- Usage:"
+   echo "   $(basename $0) <packagename|directory> modulename.sxz"
+   exit 1
+fi
+
+# .sxz extension uses xz compression:
+COMPR="xz"
+
+if [ -d "$1" ]; then
+  echo "Creating .sxz from directory."
+  PKGDIR="$1"
+else
+  MODEXT=$(echo "$2" |rev |cut -d'.' -f1 |rev)
+  case $MODEXT in
+    sxz) COMPR="xz" ;;
+    sgz) COMPR="gzip" ;;
+    xzm) COMPR="xz" ;;
+      *) echo "-- Unsupported module extension '$MODEXT'" ; exit 1 ;;
+  esac 
+  echo "Creating .${MODEXT} from package."
+  TMPDIR=$(mktemp -t -d makesxz.XXXXXX)
+  PKGDIR="$TMPDIR"
+  if [ ! -d $PKGDIR ]; then
+    echo "-- Failed to create temporary directory for extraction!"
+    exit 1
+  fi
+  # Extract the package:
+  /sbin/installpkg -root $PKGDIR "$1"
+  if [ $? -ne 0 ]; then
+    echo "-- Error installing package!"
+    exit 1
+  fi
+fi
+
+mksquashfs "${PKGDIR}" "$2" -comp ${COMPR} -b 256K $3 $4 $5 $6 $7 $8 $9
+if [ $? -ne 0 ]; then
+  echo "-- Error creating squashfs compressed module"
+  exit 1
+fi
+
+# If we extracted a package, clean up now:
+[ ! -z "$TMPDIR" ] && rm -rf $TMPDIR
+

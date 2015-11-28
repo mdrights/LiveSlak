@@ -1,0 +1,12 @@
+#code,name,kbd,tz,locale
+be,belgisch,be-latin1,Europe/Brussels,nl_BE.utf8
+br,brazil,br-latin1-us,America/Sao_Paulo,pt_BR.utf8
+gb,british,uk,Etc/GMT,en_GB.utf8
+de,deutsch,de-latin1,Europe/Berlin,de_DE.utf8
+es,espanol,es,Europe/Madrid,es_ES.utf8
+fr,francais,fr,Europe/Paris,fr_FR.utf8
+it,italiano,it,Europe/Rome,it_IT.utf8
+ja,japanese,jp106,Asia/Tokyo,ja_JP.utf8
+nl,nederlands,nl,Europe/Amsterdam,nl_NL.utf8
+ru,russian,ru_win,Europe/Moscow,ru_RU.utf8
+us,us american,us,US/Pacific,en_US.utf8
