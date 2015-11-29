@@ -773,6 +773,8 @@ mkdir -p ${LIVE_ROOTDIR}/etc/X11/xdm/liveslak-xdm
 cp -a ${LIVE_TOOLDIR}/xdm/* ${LIVE_ROOTDIR}/etc/X11/xdm/liveslak-xdm/
 # Point xdm to the custom /etc/X11/xdm/liveslak-xdm/xdm-config:
 sed -i ${LIVE_ROOTDIR}/etc/rc.d/rc.4 -e 's,bin/xdm -nodaemon,& -config /etc/X11/xdm/liveslak-xdm/xdm-config,'
+# Adapt xdm configuration to target architecture:
+sed -i "s/@LIBDIR@/lib${DIRSUFFIX}/g" ${LIVE_ROOTDIR}/etc/X11/xdm/liveslak-xdm/xdm-config
 
 if [ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.networkmanager ]; then
   # Enable NetworkManager if present:
