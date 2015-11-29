@@ -617,9 +617,9 @@ mount -t overlay -o lowerdir=${RODIRS},upperdir=${INSTDIR},workdir=${LIVE_OVLDIR
 
 # Configure hostname and network:
 echo "${LIVE_HOSTNAME}.example.net" > ${LIVE_ROOTDIR}/etc/HOSTNAME
-if [ -f ${LIVE_ROOTDIR}etc/NetworkManager/NetworkManager.conf ]; then
+if [ -f ${LIVE_ROOTDIR}/etc/NetworkManager/NetworkManager.conf ]; then
   sed -i -e "s/^hostname=.*/hostname=${LIVE_HOSTNAME}/" \
-    ${LIVE_ROOTDIR}etc/NetworkManager/NetworkManager.conf
+    ${LIVE_ROOTDIR}/etc/NetworkManager/NetworkManager.conf
 fi
 sed -e "s/^\(127.0.0.1\t*\)darkstar.*/\1${LIVE_HOSTNAME}.example.net ${LIVE_HOSTNAME}/" \
   -i ${LIVE_ROOTDIR}/etc/hosts
