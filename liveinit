@@ -35,6 +35,7 @@
 # The ISO creation script will create a filesystem with this label.
 # Nevertheless, the user may have copied the ISO content to a different device.
 MEDIALABEL="@MEDIALABEL@"
+LIVEMAIN="@LIVEMAIN@"
 
 # By default, let the media determine if we can write persistent changes:
 VIRGIN=0
@@ -193,7 +194,7 @@ if [ "$RESCUE" = "" ]; then
         # Separate partitions from block devices, look at partitions first:
         for SLDEVICE in $(blkid |cut -d: -f1 |grep "[0-9]$") $(blkid |cut -d: -f1 |grep -v "[0-9]$") ; do
           mount -t auto -o ro $SLDEVICE /mnt/media
-          if [ -d /mnt/media/liveslak ]; then
+          if [ -d /mnt/media/${LIVEMAIN} ]; then
             # Found our media!
             LIVEMEDIA=$SLDEVICE
             LIVEFS=$(blkid $LIVEMEDIA |rev |cut -d'"' -f2 |rev)
@@ -229,7 +230,7 @@ if [ "$RESCUE" = "" ]; then
   # number (i.e. created last) will be leftmost in a colon-separated list:
   RODIRS=""
   # First, the base Slackware system components:
-  for MODLOC in $(ls -1 /mnt/media/liveslak/system/*.sxz) ; do
+  for MODLOC in $(ls -1 /mnt/media/${LIVEMAIN}/system/*.sxz) ; do
     MODBASE="$(basename ${MODLOC} .sxz)"
     mkdir /mnt/live/modules/${MODBASE}
     mount -t squashfs -o loop ${MODLOC} /mnt/live/modules/${MODBASE}
@@ -239,8 +240,8 @@ if [ "$RESCUE" = "" ]; then
   # Next, the add-on (3rd party etc) components, if any:
   # Remember, module name must adhere to convention: "NNNN-modname-*.sxz"
   # where 'N' is a digit and 'modname' must not contain a dash '-'.
-  if ls /mnt/media/liveslak/addons/*.sxz 1>/dev/null 2>/dev/null ; then
-    for MODLOC in /mnt/media/liveslak/addons/*.sxz ; do
+  if ls /mnt/media/${LIVEMAIN}/addons/*.sxz 1>/dev/null 2>/dev/null ; then
+    for MODLOC in /mnt/media/${LIVEMAIN}/addons/*.sxz ; do
       MODBASE="$(basename $MODLOC .sxz)"
       # Skip loading one or more addons by using boot parameter 'noload':
       # noload=mod1[,mod2[,mod3]]
@@ -257,8 +258,8 @@ if [ "$RESCUE" = "" ]; then
   # And finally any explicitly requested optionals (like nvidia drivers):
   # Remember, module name must adhere to convention: "NNNN-modname-*.sxz"
   # where 'N' is a digit and 'modname' must not contain a dash '-'.
-  if ls /mnt/media/liveslak/optional/*.sxz 1>/dev/null 2>/dev/null ; then
-    for MODLOC in /mnt/media/liveslak/optional/*.sxz ; do
+  if ls /mnt/media/${LIVEMAIN}/optional/*.sxz 1>/dev/null 2>/dev/null ; then
+    for MODLOC in /mnt/media/${LIVEMAIN}/optional/*.sxz ; do
         MODBASE="$(basename $MODLOC .sxz)"
       if [ -n "$LOAD" -a -n '$(echo ",${LOAD}," |grep -i ",$(echo $MODBASE |cut -d- -f2),")' ]; then
         mkdir /mnt/live/modules/${MODBASE}
@@ -391,7 +392,7 @@ EOPW
   fi
 
   # Copy contents of rootcopy directory (may be empty) to overlay:
-  cp -af /mnt/media/liveslak/rootcopy/* /mnt/overlay/ 2>/dev/null
+  cp -af /mnt/media/${LIVEMAIN}/rootcopy/* /mnt/overlay/ 2>/dev/null
 
   # --------------------------------------------------------------------- #
   #                     SLACKWARE LIVE - !END!                            #
