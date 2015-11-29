@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: make_slackware_live.sh,v 1.8 2015/11/27 21:42:37 root Exp root $
+# $Id: make_slackware_live.sh,v 1.9 2015/11/29 15:06:46 root Exp root $
 # Copyright 2014, 2015  Eric Hameleers, Eindhoven, NL 
 # All rights reserved.
 #
@@ -358,7 +358,7 @@ do
   case $Option in
     h ) cat <<-"EOH"
 	-----------------------------------------------------------------
-	$Id: make_slackware_live.sh,v 1.8 2015/11/27 21:42:37 root Exp root $
+	$Id: make_slackware_live.sh,v 1.9 2015/11/29 15:06:46 root Exp root $
 	-----------------------------------------------------------------
 	EOH
         echo "Usage:"

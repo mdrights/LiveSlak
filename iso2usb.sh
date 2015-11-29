@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Id: iso2usb.sh,v 1.5 2015/11/22 22:53:01 root Exp root $
+# $Id: iso2usb.sh,v 1.6 2015/11/29 15:07:35 root Exp root $
 #
 # Copyright 2015  Eric Hameleers, Eindhoven, NL
 # All rights reserved.
@@ -46,9 +46,9 @@ cleanup() {
   # During cleanup, do not abort due to non-zero exit code:
   set +e
   sync
-  [ -n "${EFIMNT}" ] && ( umount -f ${EFIMNT} ; rmdir $EFIMNT )
-  [ -n "${ISOMNT}" ] && ( umount -f ${ISOMNT} ; rmdir $ISOMNT )
-  [ -n "${USBMNT}" ] && ( umount -f ${USBMNT} ; rmdir $USBMNT )
+  [ -n "${EFIMNT}" ] && ( /sbin/umount -f ${EFIMNT} 2>/dev/null; rmdir $EFIMNT )
+  [ -n "${ISOMNT}" ] && ( /sbin/umount -f ${ISOMNT} 2>/dev/null; rmdir $ISOMNT )
+  [ -n "${USBMNT}" ] && ( /sbin/umount -f ${USBMNT} 2>/dev/null; rmdir $USBMNT )
   [ -n "${IMGDIR}" ] && ( rm -rf $IMGDIR )
   set -e
 }
@@ -147,13 +147,13 @@ fi
 
 # Are all the required not-so-common add-on tools present?
 PROG_MISSING=""
-for PROGN in cpio extlinux fdisk mkdosfs sgdisk ; do
-  if ! which $PROGN 1>/dev/null 2>/dev/null ; then
+for PROGN in blkid cpio extlinux fdisk gdisk mkdosfs sgdisk ; do
+  if ! PATH="/sbin:$PATH" which $PROGN 1>/dev/null 2>/dev/null ; then
     PROG_MISSING="${PROG_MISSING}--   $PROGN\n"
   fi
 done
 if [ ! -z "$PROG_MISSING" ] ; then
-  echo "-- Required program(s) not found in PATH!"
+  echo "-- Required program(s) not found in root's PATH!"
   echo -e ${PROG_MISSING}
   echo "-- Exiting."
   exit 1
@@ -169,7 +169,7 @@ cat <<EOT
 #
 # FDISK OUTPUT:
 EOT
-/sbin/fdisk -l $TARGET | while read LINE ; do echo "# $LINE" ; done
+/sbin/gdisk -l $TARGET 2>/dev/null | while read LINE ; do echo "# $LINE" ; done
 
 if [ $UNATTENDED -eq 0 ]; then
   cat <<EOT
@@ -184,7 +184,7 @@ EOT
 fi
 
 # Get the LABEL used for the ISO:
-LIVELABEL=$(blkid -s LABEL -o value ${SLISO})
+LIVELABEL=$(/sbin/blkid -s LABEL -o value ${SLISO})
 
 # Use sgdisk to wipe and then setup the USB device:
 # - 1 MB BIOS boot partition
@@ -192,25 +192,25 @@ LIVELABEL=$(blkid -s LABEL -o value ${SLISO})
 # - Let Slackware have the rest
 # - Make the Linux partition "legacy BIOS bootable"
 # The first sgdisk command is allowed to have non-zero exit code:
-sgdisk -Z $TARGET || true
-sgdisk -og $TARGET || true
-sgdisk \
+/sbin/sgdisk -Z $TARGET || true
+/sbin/sgdisk -og $TARGET || true
+/sbin/sgdisk \
   -n 1:2048:4095 -c 1:"BIOS Boot Partition" -t 1:ef02 \
   -n 2:4096:413695 -c 2:"EFI System Partition" -t 2:ef00 \
   -n 3:413696:0 -c 3:"Slackware Linux" -t 3:8300 \
   $TARGET
-sgdisk -A 3:set:2 $TARGET
+/sbin/sgdisk -A 3:set:2 $TARGET
 # Show what we did to the USB stick:
-sgdisk -p -A 3:show $TARGET
+/sbin/sgdisk -p -A 3:show $TARGET
 
 # Create filesystems:
 # Not enough clusters for a 32 bit FAT:
-mkdosfs -s 2 -n "DOS" ${TARGET}1
-mkdosfs -F32 -s 2 -n "EFI" ${TARGET}2
+/sbin/mkdosfs -s 2 -n "DOS" ${TARGET}1
+/sbin/mkdosfs -F32 -s 2 -n "EFI" ${TARGET}2
 # KDE tends to automount.. so try an umount:
-if mount |grep -qw ${TARGET}3 ; then umount ${TARGET}3 || true ; fi
-mkfs.ext4 -F -F -L "${LIVELABEL}" -m 0 ${TARGET}3
-tune2fs -c 0 -i 0 ${TARGET}3
+if /sbin/mount |grep -qw ${TARGET}3 ; then /sbin/umount ${TARGET}3 || true ; fi
+/sbin/mkfs.ext4 -F -F -L "${LIVELABEL}" -m 0 ${TARGET}3
+/sbin/tune2fs -c 0 -i 0 ${TARGET}3
 
 # Create temporary mount points for the ISO file:
 mkdir -p /mnt
@@ -230,10 +230,10 @@ else
 fi
 
 # Find out if the ISO contains an EFI bootloader and use it:
-EFIOFFSET=$(fdisk -lu ${SLISO} |grep EFI |tr -s ' ' | cut -d' ' -f 2)
+EFIOFFSET=$(/sbin/fdisk -lu ${SLISO} 2>/dev/null |grep EFI |tr -s ' ' | cut -d' ' -f 2)
 if [ -n "$EFIOFFSET" ]; then
   # Mount the EFI partition so we can retrieve the EFI bootloader:
-  mount -o loop,offset=$((512*$EFIOFFSET))  ${SLISO} ${EFIMNT}
+  /sbin/mount -o loop,offset=$((512*$EFIOFFSET))  ${SLISO} ${EFIMNT}
   if [ ! -f ${EFIMNT}/EFI/BOOT/bootx64.efi ]; then
     echo "-- Note: UEFI boot file 'bootx64.efi' not found on ISO."
     echo "-- UEFI boot will not be supported"
@@ -251,17 +251,17 @@ else
 fi
 
 # Mount the EFI partition and copy the EFI boot image to it:
-mount -t vfat -o shortname=mixed ${TARGET}2 ${USBMNT}
+/sbin/mount -t vfat -o shortname=mixed ${TARGET}2 ${USBMNT}
 mkdir -p ${USBMNT}/EFI/BOOT
 cp ${EFIMNT}/EFI/BOOT/bootx64.efi ${USBMNT}/EFI/BOOT
-umount ${USBMNT}
-umount ${EFIMNT}
+/sbin/umount ${USBMNT}
+/sbin/umount ${EFIMNT}
 
 # Mount the Linux partition:
-mount -t auto ${TARGET}3 ${USBMNT}
+/sbin/mount -t auto ${TARGET}3 ${USBMNT}
 
 # Loop-mount the ISO (or 1st partition if this is a hybrid ISO):
-mount -o loop ${SLISO} ${ISOMNT}
+/sbin/mount -o loop ${SLISO} ${ISOMNT}
 
 # Copy the ISO content into the USB Linux partition:
 echo "--- Copying files from ISO to USB... takes some time."
@@ -295,7 +295,7 @@ echo "--- Making the USB drive '$TARGET' bootable using extlinux..."
 mv ${USBMNT}/boot/syslinux ${USBMNT}/boot/extlinux
 mv ${USBMNT}/boot/extlinux/isolinux.cfg ${USBMNT}/boot/extlinux/extlinux.conf
 rm ${USBMNT}/boot/extlinux/isolinux.*
-extlinux --install ${USBMNT}/boot/extlinux
+/sbin/extlinux --install ${USBMNT}/boot/extlinux
 
 # Unmount/remove stuff:
 cleanup
