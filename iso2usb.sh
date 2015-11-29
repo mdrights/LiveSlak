@@ -70,7 +70,7 @@ cat <<EOT
 #   -o|--outdev <filename>     The device name of your USB drive
 #   -u|--unattended            Do not ask any questions
 #   -v|--verbose               Show verbose messages
-#   -w|--wait<number>          Pause boot <number> seconds to ititialize USB
+#   -w|--wait<number>          Pause boot <number> seconds to initialize USB
 
 #
 # Example:
