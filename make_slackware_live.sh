@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: make_slackware_live.sh,v 1.9 2015/11/29 15:06:46 root Exp root $
+# $Id: make_slackware_live.sh,v 1.10 2015/12/01 20:56:40 root Exp root $
 # Copyright 2014, 2015  Eric Hameleers, Eindhoven, NL 
 # All rights reserved.
 #
@@ -61,10 +61,10 @@ LIVEPW=${LIVEPW:-"live"}
 LIVE_HOSTNAME=${LIVE_HOSTNAME:-"darkstar"}
 
 # What type of Live image?
-# Choices are: SLACKWARE, XFCE, KDE4, PLASMA5.
+# Choices are: SLACKWARE, XFCE, KDE4, PLASMA5, MSB.
 LIVEDE=${LIVEDE:-"SLACKWARE"}
 
-# What runlevel to use if adding a DE like: XFCE, KDE4, PLASMA5.
+# What runlevel to use if adding a DE like: XFCE, KDE4, PLASMA5, MSB.
 RUNLEVEL=${RUNLEVEL:-4}
 
 # Use the graphical syslinux menu (YES or NO)?
@@ -115,7 +115,7 @@ SL_PKGROOT=${SL_REPO}/slackware${DIRSUFFIX}-${SL_VERSION}/slackware${DIRSUFFIX}
 SL_PATCHROOT=${SL_REPO}/slackware${DIRSUFFIX}-${SL_VERSION}/patches/packages
 
 # List of Slackware package series - each will become a squashfs module:
-SEQ_SLACKWARE="tagfile:a,ap,d,e,f,k,kde,kdei,l,n,t,tcl,x,xap,xfce,y slackextra"
+SEQ_SLACKWARE="tagfile:a,ap,d,e,f,k,kde,kdei,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra"
 
 # Stripped-down Slackware with XFCE as the Desktop Environment:
 # - each series will become a squashfs module:
@@ -123,11 +123,15 @@ SEQ_XFCEBASE="min,xbase,xapbase,xfcebase"
 
 # Stripped-down Slackware with KDE4 as the Desktop Environment:
 # - each series will become a squashfs module:
-SEQ_KDE4BASE="min,xbase,xapbase,kde4base"
+SEQ_KDE4BASE="pkglist:min,xbase,xapbase,kde4base"
 
 # List of Slackware package series with Plasma5 instead of KDE 4 (full install):
 # - each will become a squashfs module:
-SEQ_PLASMA5="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y slackextra,kde4plasma5,plasma5 local:slackpkg+"
+SEQ_PLASMA5="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,kde4plasma5,plasma5 local:slackpkg+"
+
+# List of Slackware package series with MSB instead of KDE 4 (full install):
+# - each will become a squashfs module:
+SEQ_MSB="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,msb local:slackpkg+"
 
 # List of kernel modules required for a live medium to boot properly:
 KMODS=${KMODS:-"squashfs:overlay:loop:xhci-pci:ehci-pci:uhci_hcd:usb-storage:hid:usbhid:hid_generic:jbd:mbcache:ext3:ext4:isofs:fat:nls_cp437:nls_iso8859-1:msdos:vfat"}
@@ -219,7 +223,7 @@ function install_pkgs() {
     if [ -f ${PKGFILE} ]; then
       echo "-- Loading package list '$PKGFILE'."
     else
-      echo "-- Mandatory package list file is missing! Exiting..."
+      echo "-- Mandatory package list file '$PKGFILE' is missing! Exiting."
       exit 1
     fi
 
@@ -358,7 +362,7 @@ do
   case $Option in
     h ) cat <<-"EOH"
 	-----------------------------------------------------------------
-	$Id: make_slackware_live.sh,v 1.9 2015/11/29 15:06:46 root Exp root $
+	$Id: make_slackware_live.sh,v 1.10 2015/12/01 20:56:40 root Exp root $
 	-----------------------------------------------------------------
 	EOH
         echo "Usage:"
@@ -505,11 +509,12 @@ case "$LIVEDE" in
        XFCE) MSEQ="${SEQ_XFCEBASE}" ;;
        KDE4) MSEQ="${SEQ_KDE4BASE}" ;;
     PLASMA5) MSEQ="${SEQ_PLASMA5}" ;;
+        MSB) MSEQ="${SEQ_MSB}" ;;
           *) echo "** Unsupported configuration '$LIVEDE'"; exit 1 ;;
 esac
 
 # Do we need to create/include additional module(s) defined by a pkglist:
-if [ -n "$SEQ_ADDMOD" -a -f ${LIVE_TOOLDIR}/pkglists/${SEQ_ADDMOD}.lst ]; then
+if [ -n "$SEQ_ADDMOD" ]; then
   MSEQ="${MSEQ} pkglist:${SEQ_ADDMOD}"
 fi
 
@@ -927,6 +932,8 @@ elif [ "$LIVEDE" = "KDE4" ]; then
   ln -sf xinitrc.kde ${LIVE_ROOTDIR}/etc/X11/xinit/xinitrc
 elif [ "$LIVEDE" = "PLASMA5" ]; then
   ln -sf xinitrc.plasma ${LIVE_ROOTDIR}/etc/X11/xinit/xinitrc
+elif [ "$LIVEDE" = "MSB" ]; then
+  ln -sf xinitrc.mate-session ${LIVE_ROOTDIR}/etc/X11/xinit/xinitrc
 else
   ln -sf xinitrc.xfce ${LIVE_ROOTDIR}/etc/X11/xinit/xinitrc
 fi
@@ -1147,7 +1154,7 @@ if [ -f ${LIVE_TOOLDIR}/optional/*.sxz ]; then
 fi
 
 if [ "$LIVEDE" != "XFCE" -a -f ${LIVE_TOOLDIR}/graphics/*.sxz ]; then
-  # KDE/PLASMA will profit; add custom (proprietary) graphics drivers:
+  # KDE/PLASMA/MSB will profit; add custom (proprietary) graphics drivers:
   echo "-- Adding binary GPU drivers."
   cp ${LIVE_TOOLDIR}/graphics/*.sxz ${LIVE_MOD_OPT}/
 fi
