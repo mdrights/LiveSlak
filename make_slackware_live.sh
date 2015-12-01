@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: make_slackware_live.sh,v 1.10 2015/12/01 20:56:40 root Exp root $
+# $Id: make_slackware_live.sh,v 1.11 2015/12/01 21:03:21 root Exp root $
 # Copyright 2014, 2015  Eric Hameleers, Eindhoven, NL 
 # All rights reserved.
 #
@@ -352,6 +352,43 @@ EOL
 
 }
 
+#
+# Create the grub menu file for UEFI boot:
+#
+function gen_uefimenu() {
+
+  GRUBDIR="$1"
+
+  # I expect the directory to exist... but you never know.
+  mkdir -p ${GRUBDIR}
+
+  # Generate grub.cfg header:
+  cat <<EOT > ${GRUBDIR}/grub.cfg
+set default="0"
+set timeout="30"
+set hidden_timeout_quiet=false
+
+menuentry "Detect/boot any installed operating system" {
+  configfile "/EFI/BOOT/osdetect.cfg"
+}
+
+EOT
+
+  for KBD in $(cat ${LIVE_TOOLDIR}/languages |grep -Ev "(^ *#|^$)" |cut -d, -f3)
+  do
+    LANDSC=$(cat ${LIVE_TOOLDIR}/languages |grep ",$KBD," |cut -d, -f2)
+    LANTZ=$(cat ${LIVE_TOOLDIR}/languages |grep ",$KBD," |cut -d, -f4)
+    LANLOC=$(cat ${LIVE_TOOLDIR}/languages |grep ",$KBD," |cut -d, -f5)
+    cat <<EOT >> ${GRUBDIR}/grub.cfg
+menuentry "Slackware${DIRSUFFIX} ${SL_VERSION} Live ($LANDSC)" {
+  linux /boot/generic load_ramdisk=1 prompt_ramdisk=0 rw printk.time=0 tz=${LANTZ} locale=${LANLOC} kbd=${KBD}
+  initrd /boot/initrd.img
+}
+
+EOT
+  done
+
+}
 
 # ---------------------------------------------------------------------------
 # Action!
@@ -362,7 +399,7 @@ do
   case $Option in
     h ) cat <<-"EOH"
 	-----------------------------------------------------------------
-	$Id: make_slackware_live.sh,v 1.10 2015/12/01 20:56:40 root Exp root $
+	$Id: make_slackware_live.sh,v 1.11 2015/12/01 21:03:21 root Exp root $
 	-----------------------------------------------------------------
 	EOH
         echo "Usage:"
@@ -1107,7 +1144,22 @@ cp -a ${LIVE_BOOT}/boot/vmlinuz-generic-$KVER ${LIVE_STAGING}/boot/generic
 cp -a ${LIVE_BOOT}/boot/initrd_${KVER}.gz ${LIVE_STAGING}/boot/initrd.img
 cp -a ${LIVE_TOOLDIR}/syslinux ${LIVE_STAGING}/boot/
 rm -rf ${LIVE_STAGING}/boot/RCS
+
+# Copy the UEFI boot directory structure:
+cp -a ${LIVE_TOOLDIR}/EFI ${LIVE_STAGING}/
+
+# Generate the UEFI grub boot image if needed:
+if [ ! -f ${LIVE_STAGING}/EFI/BOOT/bootx64.efi -o ! -f ${LIVE_STAGING}/boot/syslinux/efiboot.img ]; then
+  ( cd ${LIVE_STAGING}/EFI/BOOT
+    sh make-grub.sh
+  )
+fi
+
+# Generate the grub configuration for UEFI boot:
+gen_uefimenu ${LIVE_STAGING}/EFI/BOOT
+
 if [ "$SYSMENU" = "NO" ]; then
+  # Simple isolinux choices, no UEFI support.
   echo "include syslinux.cfg" > ${LIVE_STAGING}/boot/syslinux/isolinux.cfg
 else
   # NOTE: Convert a PNG image to VESA bitmap before using it with vesamenu:
