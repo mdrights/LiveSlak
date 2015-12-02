@@ -61,10 +61,10 @@ LIVEPW=${LIVEPW:-"live"}
 LIVE_HOSTNAME=${LIVE_HOSTNAME:-"darkstar"}
 
 # What type of Live image?
-# Choices are: SLACKWARE, XFCE, KDE4, PLASMA5, MSB.
+# Choices are: SLACKWARE, XFCE, KDE4, PLASMA5, MATE, CINNAMON
 LIVEDE=${LIVEDE:-"SLACKWARE"}
 
-# What runlevel to use if adding a DE like: XFCE, KDE4, PLASMA5, MSB.
+# What runlevel to use if adding a DE like: XFCE, KDE4, PLASMA5 etc...
 RUNLEVEL=${RUNLEVEL:-4}
 
 # Use the graphical syslinux menu (YES or NO)?
@@ -134,7 +134,11 @@ SEQ_PLASMA5="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,kde4
 
 # List of Slackware package series with MSB instead of KDE 4 (full install):
 # - each will become a squashfs module:
-SEQ_MSB="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,msb local:slackpkg+"
+SEQ_MSB="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,mate local:slackpkg+"
+
+# List of Slackware package series with Cinnamon instead of KDE4 (full install):
+# - each will become a squashfs module:
+SEQ_CIN="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,cinnamon local:slackpkg+"
 
 # List of kernel modules required for a live medium to boot properly:
 KMODS=${KMODS:-"squashfs:overlay:loop:xhci-pci:ehci-pci:uhci_hcd:usb-storage:hid:usbhid:hid_generic:jbd:mbcache:ext3:ext4:isofs:fat:nls_cp437:nls_iso8859-1:msdos:vfat"}
@@ -397,7 +401,7 @@ EOT
 # Action!
 # ---------------------------------------------------------------------------
 
-while getopts "d:efhm:r:s:t:v" Option
+while getopts "d:efhm:r:s:t:vHR" Option
 do
   case $Option in
     h ) cat <<-"EOH"
@@ -428,6 +432,7 @@ do
         echo " -t <doc|mandoc>    Trim the ISO for size (remove man and/or doc)"
         echo " -v                 Show debug/error output."
         echo " -H <hostname>      Hostname of the Live OS (default: $LIVE_HOSTNAME)"
+        echo " -R <runlevel>      Runlevel to start with (default: $RUNLEVEL)"
         exit
         ;;
     d ) LIVEDE="$(echo ${OPTARG} |tr a-z A-Z)"
@@ -447,6 +452,8 @@ do
     v ) DEBUG="YES"
         ;;
     H ) LIVE_HOSTNAME="${OPTARG}"
+        ;;
+    R ) RUNLEVEL="${OPTARG}"
         ;;
     * ) echo "You passed an illegal switch to the program!"
         echo "Run '$0 -h' for more help."
@@ -549,7 +556,8 @@ case "$LIVEDE" in
        XFCE) MSEQ="${SEQ_XFCEBASE}" ;;
        KDE4) MSEQ="${SEQ_KDE4BASE}" ;;
     PLASMA5) MSEQ="${SEQ_PLASMA5}" ;;
-        MSB) MSEQ="${SEQ_MSB}" ;;
+       MATE) MSEQ="${SEQ_MSB}" ;;
+   CINNAMON) MSEQ="${SEQ_CIN}" ;;
           *) echo "** Unsupported configuration '$LIVEDE'"; exit 1 ;;
 esac
 
@@ -972,8 +980,10 @@ elif [ "$LIVEDE" = "KDE4" ]; then
   ln -sf xinitrc.kde ${LIVE_ROOTDIR}/etc/X11/xinit/xinitrc
 elif [ "$LIVEDE" = "PLASMA5" ]; then
   ln -sf xinitrc.plasma ${LIVE_ROOTDIR}/etc/X11/xinit/xinitrc
-elif [ "$LIVEDE" = "MSB" ]; then
+elif [ "$LIVEDE" = "MATE" ]; then
   ln -sf xinitrc.mate-session ${LIVE_ROOTDIR}/etc/X11/xinit/xinitrc
+elif [ "$LIVEDE" = "CINNAMON" ]; then
+  ln -sf xinitrc.cinnamon-session ${LIVE_ROOTDIR}/etc/X11/xinit/xinitrc
 else
   ln -sf xinitrc.xfce ${LIVE_ROOTDIR}/etc/X11/xinit/xinitrc
 fi
@@ -1210,7 +1220,7 @@ if [ -f ${LIVE_TOOLDIR}/optional/*.sxz ]; then
 fi
 
 if [ "$LIVEDE" != "XFCE" -a -f ${LIVE_TOOLDIR}/graphics/*.sxz ]; then
-  # KDE/PLASMA/MSB will profit; add custom (proprietary) graphics drivers:
+  # KDE/PLASMA etc will profit; add custom (proprietary) graphics drivers:
   echo "-- Adding binary GPU drivers."
   cp ${LIVE_TOOLDIR}/graphics/*.sxz ${LIVE_MOD_OPT}/
 fi
