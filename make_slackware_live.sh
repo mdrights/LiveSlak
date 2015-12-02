@@ -401,7 +401,7 @@ EOT
 # Action!
 # ---------------------------------------------------------------------------
 
-while getopts "d:efhm:r:s:t:vHR" Option
+while getopts "d:efhm:r:s:t:vHR:" Option
 do
   case $Option in
     h ) cat <<-"EOH"
@@ -453,7 +453,7 @@ do
         ;;
     H ) LIVE_HOSTNAME="${OPTARG}"
         ;;
-    R ) RUNLEVEL="${OPTARG}"
+    R ) RUNLEVEL=${OPTARG}
         ;;
     * ) echo "You passed an illegal switch to the program!"
         echo "Run '$0 -h' for more help."
@@ -474,8 +474,13 @@ shift $(($OPTIND - 1))
 # -----------------------------------------------------------------------------
 
 if [ -n "$REFRESH" -a "$FORCE" = "YES" ]; then
-  echo "Please use only _one_ of the switches '-f' or '-r'!"
-  echo "Run '$0 -h' for more help."
+  echo ">> Please use only _one_ of the switches '-f' or '-r'!"
+  echo ">> Run '$0 -h' for more help."
+  exit 1
+fi
+
+if [ $RUNLEVEL -ne 3 -a $RUNLEVEL -ne 4 ]; then
+  echo ">> Default runlevel other than 3 or 4 is not supported."
   exit 1
 fi
 
@@ -989,7 +994,7 @@ else
 fi
 
 # Configure the default runlevel:
-sed -i ${LIVE_ROOTDIR}/etc/inittab -e "s/\(id:\)3\(:initdefault:\)/\1${RUNLEVEL}\2/"
+sed -i ${LIVE_ROOTDIR}/etc/inittab -e "s/\(id:\).\(:initdefault:\)/\1${RUNLEVEL}\2/"
 
 # Disable unneeded services:
 [ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.acpid ] && chmod -x ${LIVE_ROOTDIR}/etc/rc.d/rc.acpid
