@@ -26,3 +26,6 @@ DisplayManager*loginmoveInterval:	10
 ! SECURITY: do not listen for XDMCP or Chooser requests
 ! Comment out this line if you want to manage X terminals with xdm
 DisplayManager.requestPort:	0
+
+! Mate and Cinnamon fail without this:
+DisplayManager*authName: MIT-MAGIC-COOKIE-1 
