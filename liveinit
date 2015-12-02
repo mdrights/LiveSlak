@@ -34,8 +34,9 @@
 
 # The ISO creation script will create a filesystem with this label.
 # Nevertheless, the user may have copied the ISO content to a different device.
-MEDIALABEL="@MEDIALABEL@"
 LIVEMAIN="@LIVEMAIN@"
+MEDIALABEL="@MEDIALABEL@"
+PERSISTENCE="@PERSISTENCE@"
 
 # By default, let the media determine if we can write persistent changes:
 VIRGIN=0
@@ -72,20 +73,26 @@ for ARG in $(cat /proc/cmdline); do
     kbd=*)
       KEYMAP=$(echo $ARG | cut -f2 -d=)
     ;;
+    livemain=*)
+      LIVEMAIN=$(echo $ARG | cut -f2 -d=)
+    ;;
     livepw=*)
       LIVEPW=$(echo $ARG | cut -f2 -d=)
     ;;
     load=*)
       LOAD=$(echo $ARG | cut -f2 -d=)
     ;;
-    noload=*)
-      NOLOAD=$(echo $ARG | cut -f2 -d=)
-    ;;
     locale=*)
       LOCALE=$(echo $ARG | cut -f2 -d=)
     ;;
+    noload=*)
+      NOLOAD=$(echo $ARG | cut -f2 -d=)
+    ;;
     nop)
       VIRGIN=1
+    ;;
+    persistence=*)
+      PERSISTENCE=$(echo $ARG | cut -f2 -d=)
     ;;
     rescue)
       RESCUE=1
@@ -272,7 +279,7 @@ if [ "$RESCUE" = "" ]; then
   # Get rid of the starting colon:
   RODIRS=$(echo $RODIRS |cut -c2-)
 
-  # Setup persistency in case our media is writable, *and* the user
+  # Setup persistence in case our media is writable, *and* the user
   # has created a directory "persistence" in the root of the media.
   # otherwise we let the block changes accumulate in RAM only.
 
@@ -281,14 +288,14 @@ if [ "$RESCUE" = "" ]; then
   UPPERDIR=/mnt/live/changes
   OVLWORK=/mnt/live/.ovlwork
   if [ "$VIRGIN" = "0" ]; then
-    if [ "LIVEFS" != "iso9660" -a -d /mnt/media/persistence ]; then
+    if [ "LIVEFS" != "iso9660" -a -d /mnt/media/${PERSISTENCE} ]; then
       # Looks OK, but we need to remount the media in order to write to it:
       mount -o remount,rw /mnt/media
       # Try a write... just to be dead sure:
-      if touch /mnt/media/persistence/.rwtest 2>/dev/null && rm /mnt/media/persistence/.rwtest 2>/dev/null ; then
+      if touch /mnt/media/${PERSISTENCE}/.rwtest 2>/dev/null && rm /mnt/media/${PERSISTENCE}/.rwtest 2>/dev/null ; then
         # Writable media and we are allowed to write to it.
-        echo "${INITRD}:  Writing persistent changes to media directory '/persistence'."
-        UPPERDIR=/mnt/media/persistence
+        echo "${INITRD}:  Writing persistent changes to media directory '/${PERSISTENCE}'."
+        UPPERDIR=/mnt/media/${PERSISTENCE}
         OVLWORK=/mnt/media/.ovlwork
       fi
     fi

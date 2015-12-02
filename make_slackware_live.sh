@@ -91,6 +91,9 @@ LIVEMAIN=${LIVEMAIN:-"liveslak"}
 # The filesystem label we will be giving our ISO:
 MEDIALABEL=${MEDIALABEL:-"LIVESLAK"}
 
+# The name of the directory used for storing persistence data:
+PERSISTENCE=${PERSISTENCE:-"persistence"}
+
 # Slackware version to use (note: this won't work for Slackware <= 14.1):
 SL_VERSION=${SL_VERSION:-"current"}
 
@@ -1121,8 +1124,9 @@ KVER=$(ls ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |head -1 |rev | cut -
 echo "-- Creating initrd for kernel-generic $KVER ..."
 chroot ${LIVE_ROOTDIR} /sbin/mkinitrd -c -l us -o /boot/initrd_${KVER}.gz -k ${KVER} -m ${KMODS} 1>${DBGOUT} 2>${DBGOUT}
 cat $LIVE_TOOLDIR/liveinit | sed \
-  -e "s/@MEDIALABEL@/$MEDIALABEL/g" \
   -e "s/@LIVEMAIN@/$LIVEMAIN/g" \
+  -e "s/@MEDIALABEL@/$MEDIALABEL/g" \
+  -e "s/@PERSISTENCE@/$PERSISTENCE/g" \
   -e "s/@DARKSTAR@/$LIVE_HOSTNAME/g" \
   > ${LIVE_ROOTDIR}/boot/initrd-tree/init
 chroot ${LIVE_ROOTDIR} /sbin/mkinitrd 1>/dev/null 2>${DBGOUT}
