@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: make_slackware_live.sh,v 1.12 2015/12/04 13:19:46 root Exp $
+# $Id: make_slackware_live.sh,v 1.12 2015/12/04 13:19:46 root Exp root $
 # Copyright 2014, 2015  Eric Hameleers, Eindhoven, NL 
 # All rights reserved.
 #
@@ -406,7 +406,7 @@ do
   case $Option in
     h ) cat <<-"EOH"
 	-----------------------------------------------------------------
-	$Id: make_slackware_live.sh,v 1.12 2015/12/04 13:19:46 root Exp $
+	$Id: make_slackware_live.sh,v 1.12 2015/12/04 13:19:46 root Exp root $
 	-----------------------------------------------------------------
 	EOH
         echo "Usage:"
@@ -1262,7 +1262,25 @@ mkisofs -o ${OUTPUT}/slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso \
 # This copy is no longer needed:
 rm -rf ./boot
 cd -
-isohybrid -u ${OUTPUT}/slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso
+SIZEISO=$(stat --printf %s ${OUTPUT}/slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso)
+# We want at most 1024 cylinders for old BIOS; also we want no more than
+# 63 sectors, no more than 255 heads, which leads to a cut-over size:.
+# 64 (heads) *32 (sectors) *1024 (cylinders) *512 (bytes) = 1073741824 bytes.
+# However, for sizes > 8422686720 compatibility will be out the window anyway.
+if [ $SIZEISO -gt 8422686720 ]; then
+  isohybrid -u ${OUTPUT}/slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso
+else
+  if [ $SIZEISO -gt 1073741824 ]; then
+    # No more than 63 sectors, no more than 255 heads.
+    SECTORS=63
+    HEADS=$(( ($SIZEISO/1024/63/512) + 2 ))
+  else
+    #  The default values for isohybrid that give a size of 1073741824 bytes.
+    SECTORS=32
+    HEADS=64
+  fi
+  isohybrid -s $SECTORS -h $HEADS -u ${OUTPUT}/slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso
+fi
 md5sum ${OUTPUT}/slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso \
   > ${OUTPUT}/slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso.md5
 echo "-- Live ISO image created:"
