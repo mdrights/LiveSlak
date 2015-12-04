@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: make_slackware_live.sh,v 1.11 2015/12/01 21:03:21 root Exp root $
+# $Id: make_slackware_live.sh,v 1.12 2015/12/04 13:19:46 root Exp $
 # Copyright 2014, 2015  Eric Hameleers, Eindhoven, NL 
 # All rights reserved.
 #
@@ -406,7 +406,7 @@ do
   case $Option in
     h ) cat <<-"EOH"
 	-----------------------------------------------------------------
-	$Id: make_slackware_live.sh,v 1.11 2015/12/01 21:03:21 root Exp root $
+	$Id: make_slackware_live.sh,v 1.12 2015/12/04 13:19:46 root Exp $
 	-----------------------------------------------------------------
 	EOH
         echo "Usage:"
@@ -734,8 +734,9 @@ rm -f ${LIVE_ROOTDIR}/etc/ssh/*key*
 cat <<EOT > ${LIVE_ROOTDIR}/etc/fstab
 proc      /proc       proc        defaults   0   0
 sysfs     /sys        sysfs       defaults   0   0
-devpts    /dev/pts    devpts      gid=5,mode=620   0   0
+tmpfs     /tmp        tmpfs       defaults,nodev,nosuid,mode=1777  0   0
 tmpfs     /dev/shm    tmpfs       defaults,nodev,nosuid,mode=1777  0   0
+devpts    /dev/pts    devpts      gid=5,mode=620   0   0
 none      /           tmpfs       defaults   1   1
 
 EOT
@@ -945,8 +946,10 @@ Session=/usr/share/xsessions/plasma.desktop
 EOT
 
   # Thanks to Fedora Live: https://git.fedorahosted.org/cgit/spin-kickstarts.git
-  # Set akonadi backend:
   mkdir -p ${LIVE_ROOTDIR}/etc/skel/.config/akonadi
+  mkdir -p ${LIVE_ROOTDIR}/etc/skel/.kde/share/config
+
+  # Set akonadi backend:
   cat <<AKONADI_EOF >${LIVE_ROOTDIR}/etc/skel/.config/akonadi/akonadiserverrc
 [%General]
 Driver=QSQLITE3
