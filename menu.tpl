@@ -3,6 +3,7 @@ timeout 300
 ui vesamenu.c32
 default live
 f2 f2.txt
+font @CONSFONT@
 menu background swlogov.png
 menu title Slackware@DIRSUFFIX@-@SL_VERSION@ Live
 

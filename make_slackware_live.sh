@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: make_slackware_live.sh,v 1.12 2015/12/04 13:19:46 root Exp root $
+# $Id: make_slackware_live.sh,v 1.13 2015/12/04 13:51:41 root Exp root $
 # Copyright 2014, 2015  Eric Hameleers, Eindhoven, NL 
 # All rights reserved.
 #
@@ -69,6 +69,9 @@ RUNLEVEL=${RUNLEVEL:-4}
 
 # Use the graphical syslinux menu (YES or NO)?
 SYSMENU=${SYSMENU:-"YES"}
+
+# Console font to use with syslinux for better language support:
+CONSFONT=${CONSFONT:-"ter-i16v.psf"}
 
 # This variable can be set to a comma-separated list of package series.
 # The squashfs module(s) for these package series will then be re-generated.
@@ -306,6 +309,7 @@ function gen_bootmenu() {
   cat ${LIVE_TOOLDIR}/menu.tpl | sed \
     -e "s/@KBD@/us/g" \
     -e "s/@LANG@/us/g" \
+    -e "s/@CONSFONT@/$CONSFONT/g" \
     -e "s/@DIRSUFFIX@/$DIRSUFFIX/g" \
     -e "s/@KVER@/$KVER/g" \
     -e "s/@LIVEMAIN@/$LIVEMAIN/g" \
@@ -336,6 +340,7 @@ EOL
     cat ${LIVE_TOOLDIR}/menu.tpl | sed \
       -e "s/@KBD@/$KBD/g" \
       -e "s/@LANG@/$LANCOD/g" \
+      -e "s/@CONSFONT@/$CONSFONT/g" \
       -e "s/@DIRSUFFIX@/$DIRSUFFIX/g" \
       -e "s/@KVER@/$KVER/g" \
       -e "s/@LIVEMAIN@/$LIVEMAIN/g" \
@@ -406,7 +411,7 @@ do
   case $Option in
     h ) cat <<-"EOH"
 	-----------------------------------------------------------------
-	$Id: make_slackware_live.sh,v 1.12 2015/12/04 13:19:46 root Exp root $
+	$Id: make_slackware_live.sh,v 1.13 2015/12/04 13:51:41 root Exp root $
 	-----------------------------------------------------------------
 	EOH
         echo "Usage:"
@@ -1165,7 +1170,12 @@ mkdir -p ${LIVE_STAGING}/boot
 cp -a ${LIVE_BOOT}/boot/vmlinuz-generic-$KVER ${LIVE_STAGING}/boot/generic
 cp -a ${LIVE_BOOT}/boot/initrd_${KVER}.gz ${LIVE_STAGING}/boot/initrd.img
 cp -a ${LIVE_TOOLDIR}/syslinux ${LIVE_STAGING}/boot/
-rm -rf ${LIVE_STAGING}/boot/RCS
+# Make use of proper console font if we have it available:
+if [ -f /usr/share/kbd/consolefonts/${CONSFONT}.gz ]; then
+  gunzip -cd /usr/share/kbd/consolefonts/${CONSFONT}.gz > ${LIVE_STAGING}/boot/syslinux/${CONSFONT}
+elif [ ! -f ${LIVE_STAGING}/boot/syslinux/${CONSFONT} ]; then
+  sed -i -e "s/^font .*/#&/" ${LIVE_STAGING}/boot/syslinux/menu/*menu*.cfg
+fi
 
 # Copy the UEFI boot directory structure:
 cp -a ${LIVE_TOOLDIR}/EFI ${LIVE_STAGING}/
