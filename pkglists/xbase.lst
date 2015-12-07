@@ -64,6 +64,7 @@ fslsfonts
 fstobdf
 gamin
 gccmakedep
+gcr
 gd
 gdk-pixbuf2
 gegl
@@ -76,6 +77,7 @@ glibc-i18n
 glproto
 glu
 gmime
+gnome-keyring
 gnome-themes-standard
 gsettings-desktop-schemas
 gst-plugins-base
