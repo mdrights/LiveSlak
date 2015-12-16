@@ -947,7 +947,6 @@ if [ "$LIVEDE" = "PLASMA5" ]; then
   rm ${LIVE_ROOTDIR}/usr/share/xsessions/plasma-mediacenter.desktop || true
   # Set sane SDDM defaults on first boot (root-owned file):
   mkdir -p ${LIVE_ROOTDIR}/var/lib/sddm
-  chroot ${LIVE_ROOTDIR} chown sddm:sddm var/lib/sddm
   cat <<EOT > ${LIVE_ROOTDIR}/var/lib/sddm/state.conf 
 [Last]
 # Name of the last logged-in user. This username will be preselected/shown when the login screen shows up
@@ -957,6 +956,7 @@ User=live
 Session=/usr/share/xsessions/plasma.desktop
 
 EOT
+  chroot ${LIVE_ROOTDIR} chown -R sddm:sddm var/lib/sddm
 
   # Thanks to Fedora Live: https://git.fedorahosted.org/cgit/spin-kickstarts.git
   mkdir -p ${LIVE_ROOTDIR}/etc/skel/.config/akonadi
