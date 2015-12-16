@@ -743,6 +743,7 @@ cat <<EOT > ${LIVE_ROOTDIR}/etc/fstab
 proc      /proc       proc        defaults   0   0
 sysfs     /sys        sysfs       defaults   0   0
 tmpfs     /tmp        tmpfs       defaults,nodev,nosuid,mode=1777  0   0
+tmpfs     /var/tmp    tmpfs       defaults,nodev,nosuid,mode=1777  0   0
 tmpfs     /dev/shm    tmpfs       defaults,nodev,nosuid,mode=1777  0   0
 devpts    /dev/pts    devpts      gid=5,mode=620   0   0
 none      /           tmpfs       defaults   1   1
