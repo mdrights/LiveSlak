@@ -803,7 +803,7 @@ EOT
 # If we added slackpkg+ for easier system management, let's configure it too.
 # Update the cache for slackpkg:
 echo "-- Creating slackpkg cache, takes a few seconds..."
-chroot "${LIVE_ROOTDIR}" <<EOSL 2>${DBGOUT}
+chroot "${LIVE_ROOTDIR}" /bin/bash <<EOSL 2>${DBGOUT}
 
 if [ -f var/log/packages/slackpkg+-* ] ; then
   cat <<EOPL > etc/slackpkg/slackpkgplus.conf
@@ -1028,7 +1028,7 @@ sed -i -e '/systohc/s/^/# /' ${LIVE_ROOTDIR}/etc/rc.d/rc.6
 
 # Run some package setup scripts (usually run by the slackware installer),
 # as well as some of the delaying commands in rc.M and rc.modules:
-chroot ${LIVE_ROOTDIR} <<EOCR
+chroot ${LIVE_ROOTDIR} /bin/bash <<EOCR
 # Rebuild SSL certificate database:
 /usr/sbin/update-ca-certificates --fresh 1>/dev/null 2>${DBGOUT}
 
@@ -1037,7 +1037,7 @@ chroot ${LIVE_ROOTDIR} <<EOCR
 /sbin/ldconfig
 EOCR
 
-chroot "${LIVE_ROOTDIR}" <<EOCR
+chroot "${LIVE_ROOTDIR}" /bin/bash <<EOCR
 # Update the desktop database:
 if [ -x usr/bin/update-desktop-database ]; then
   /usr/bin/update-desktop-database usr/share/applications > /dev/null 2>${DBGOUT}
