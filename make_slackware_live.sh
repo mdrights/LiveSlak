@@ -1108,6 +1108,8 @@ fi
 EOT
 
 # Clean out the unneeded stuff:
+# Note: this will fail when a directory is encountered. This failure points
+# to a packaging issue; find and fix the responsible package.
 rm -f ${LIVE_ROOTDIR}/tmp/[A-Za-z]*
 rm -f ${LIVE_ROOTDIR}/var/mail/*
 rm -f ${LIVE_ROOTDIR}/root/.bash*
