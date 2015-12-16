@@ -91,6 +91,9 @@ BUILDER=${BUILDER:-"Alien BOB"}
 # The ISO main directory:
 LIVEMAIN=${LIVEMAIN:-"liveslak"}
 
+# Marker used for finding the Slackware Live files:
+MARKER=${MARKER:-"SLACKWARELIVE"}
+
 # The filesystem label we will be giving our ISO:
 MEDIALABEL=${MEDIALABEL:-"LIVESLAK"}
 
@@ -206,8 +209,8 @@ function install_pkgs() {
   if [ ! -d "$2" ]; then
     echo "-- function install_pkgs: Target directory '$2' does not exist!"
     exit 1
-  elif [ ! -f "$2/SLACKWARELIVE" ]; then
-    echo "-- function install_pkgs: Target '$2' does not contain 'SLACKWARELIVE' file."
+  elif [ ! -f "$2/${MARKER}" ]; then
+    echo "-- function install_pkgs: Target '$2' does not contain '${MARKER}' file."
     echo "-- Did you choose the right installation directory?"
     exit 1
   fi
@@ -558,7 +561,7 @@ fi
 unset INSTDIR
 RODIRS="${LIVE_BOOT}"
 # Create the verification file for the install_pkgs function:
-echo "${THEDATE} (${BUILDER})" > ${LIVE_BOOT}/SLACKWARELIVE
+echo "${THEDATE} (${BUILDER})" > ${LIVE_BOOT}/${MARKER}
 
 # Determine which module sequence we have to build:
 case "$LIVEDE" in
@@ -608,7 +611,7 @@ for SPS in ${SL_SERIES} ; do
     # - the module does not yet exist.
 
     # Create the verification file for the install_pkgs function:
-    echo "${THEDATE} (${BUILDER})" > ${INSTDIR}/SLACKWARELIVE
+    echo "${THEDATE} (${BUILDER})" > ${INSTDIR}/${MARKER}
 
     echo "-- Installing the '${SPS}' series."
     umount ${LIVE_ROOTDIR} 2>${DBGOUT} || true
@@ -1184,9 +1187,14 @@ fi
 # Copy the UEFI boot directory structure:
 cp -a ${LIVE_TOOLDIR}/EFI ${LIVE_STAGING}/
 
+# The grub-embedded.cfg in the bootx64.efi looks for this file:
+touch ${LIVE_STAGING}/EFI/BOOT/${MARKER}
+touch ${LIVE_STAGING}/${LIVEMAIN}/${MARKER}
+
 # Generate the UEFI grub boot image if needed:
 if [ ! -f ${LIVE_STAGING}/EFI/BOOT/bootx64.efi -o ! -f ${LIVE_STAGING}/boot/syslinux/efiboot.img ]; then
   ( cd ${LIVE_STAGING}/EFI/BOOT
+    sed -i -e "s/SLACKWARELIVE/${MARKER}/g" grub-embedded.cfg
     sh make-grub.sh
   )
 fi
