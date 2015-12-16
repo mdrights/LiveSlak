@@ -874,6 +874,10 @@ DEBUG_ETH_UP="no"
 EOT
 fi
 
+# Add our scripts to the Live OS:
+mkdir -p  ${LIVE_ROOTDIR}/usr/local/sbin
+install -m0755 ${LIVE_TOOLDIR}/makemod ${LIVE_TOOLDIR}/iso2usb.sh  ${LIVE_ROOTDIR}/usr/local/sbin/
+
 echo "-- Configuring XFCE."
 # Prepare some XFCE defaults for the 'live' user and any new users.
 # (don't show icons on the desktop for irrelevant stuff):
