@@ -1312,12 +1312,13 @@ mkisofs -o ${OUTPUT}/slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso \
   -x ./$(basename ${LIVE_WORK}) \
   -x ./${LIVEMAIN}/bootinst \
   -x boot/syslinux/testing \
-  -x rootcopy \
   .
 
 # This copy is no longer needed:
 rm -rf ./boot
-cd -
+
+cd - 1>/dev/null
+
 SIZEISO=$(stat --printf %s ${OUTPUT}/slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso)
 # We want at most 1024 cylinders for old BIOS; also we want no more than
 # 63 sectors, no more than 255 heads, which leads to a cut-over size:.
