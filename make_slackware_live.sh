@@ -992,8 +992,12 @@ KWALLET_EOL
 
 fi # End LIVEDE = PLASMA5
 
+# Give the live user a copy of our skeleton configuration:
+cd ${LIVE_ROOTDIR}/etc/skel/
+  find . -exec cp -a --parents "{}" ${LIVE_ROOTDIR}/home/live/ \;
+cd - 1>/dev/null
+
 # Make sure that user 'live' owns her own files:
-find ${LIVE_ROOTDIR}/etc/skel/ -exec cp -a "{}" ${LIVE_ROOTDIR}/home/live/ \;
 chroot ${LIVE_ROOTDIR} chown -R live:users home/live
 
 echo "-- Tweaking system startup."
