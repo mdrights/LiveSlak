@@ -78,6 +78,11 @@ CONSFONT=${CONSFONT:-"ter-i16v.psf"}
 # Example commandline parameter: "-r l,kde,kdei"
 REFRESH=""
 
+# The amount of seconds we want the init script to wait to give the kernel's
+# USB subsystem time to settle. The default value of mkinitrd is "1" which
+# is too short for use with USB sticks but "1" is fine for CDROM/DVD.
+WAIT=${WAIT:-"5"}
+
 #
 # ---------------------------------------------------------------------------
 #
@@ -1182,7 +1187,7 @@ KVER=$(ls ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |head -1 |rev | cut -
 
 # Create an initrd for the generic kernel, using a modified init script:
 echo "-- Creating initrd for kernel-generic $KVER ..."
-chroot ${LIVE_ROOTDIR} /sbin/mkinitrd -c -l us -o /boot/initrd_${KVER}.gz -k ${KVER} -m ${KMODS} 1>${DBGOUT} 2>${DBGOUT}
+chroot ${LIVE_ROOTDIR} /sbin/mkinitrd -c -w ${WAIT} -l us -o /boot/initrd_${KVER}.gz -k ${KVER} -m ${KMODS} 1>${DBGOUT} 2>${DBGOUT}
 cat $LIVE_TOOLDIR/liveinit | sed \
   -e "s/@LIVEMAIN@/$LIVEMAIN/g" \
   -e "s/@MEDIALABEL@/$MEDIALABEL/g" \
@@ -1219,7 +1224,6 @@ cp -a ${LIVE_TOOLDIR}/EFI ${LIVE_STAGING}/
 
 # The grub-embedded.cfg in the bootx64.efi looks for this file:
 touch ${LIVE_STAGING}/EFI/BOOT/${MARKER}
-touch ${LIVE_STAGING}/${LIVEMAIN}/${MARKER}
 
 # Generate the UEFI grub boot image if needed:
 if [ ! -f ${LIVE_STAGING}/EFI/BOOT/bootx64.efi -o ! -f ${LIVE_STAGING}/boot/syslinux/efiboot.img ]; then
