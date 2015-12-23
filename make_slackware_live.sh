@@ -878,6 +878,10 @@ DEBUG_ETH_UP="no"
 EOT
 fi
 
+# The Xscreensaver should show a blank screen only, to prevent errors about
+# missing modules:
+echo "mode:           blank" > ${LIVE_ROOTDIR}/home/live/.xscreensaver
+
 # Add our scripts to the Live OS:
 mkdir -p  ${LIVE_ROOTDIR}/usr/local/sbin
 install -m0755 ${LIVE_TOOLDIR}/makemod ${LIVE_TOOLDIR}/iso2usb.sh  ${LIVE_ROOTDIR}/usr/local/sbin/
