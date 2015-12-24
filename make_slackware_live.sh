@@ -366,6 +366,11 @@ EOL
       cat <<EOL >> ${MENUROOTDIR}/lang_${LANCOD}.cfg
 label $(cat ${LIVE_TOOLDIR}/languages |grep ",$SUBKBD," |cut -d, -f1)
   menu label $(cat ${LIVE_TOOLDIR}/languages |grep ",$SUBKBD," |cut -d, -f2)
+EOL
+      if [ "$SUBKBD" = "$KBD" ]; then
+        echo "  menu default" >> ${MENUROOTDIR}/lang_${LANCOD}.cfg
+      fi
+      cat <<EOL >> ${MENUROOTDIR}/lang_${LANCOD}.cfg
   kernel /boot/generic
   append initrd=/boot/initrd.img load_ramdisk=1 prompt_ramdisk=0 rw printk.time=0 kbd=$KBD tz=$(cat ${LIVE_TOOLDIR}/languages |grep ",$SUBKBD," |cut -d, -f4) locale=$(cat ${LIVE_TOOLDIR}/languages |grep ",$SUBKBD," |cut -d, -f5)
 
@@ -373,7 +378,6 @@ EOL
     done
 
   done
-
 }
 
 #
@@ -383,35 +387,109 @@ function gen_uefimenu() {
 
   GRUBDIR="$1"
 
+  # Generate the grub menu structure - many files because of the selection tree.
   # I expect the directory to exist... but you never know.
   mkdir -p ${GRUBDIR}
 
-  # Generate grub.cfg header:
-  cat <<EOT > ${GRUBDIR}/grub.cfg
-set default="0"
-set timeout="30"
-set hidden_timeout_quiet=false
+  # Initialize an empty keyboard, language and timezone selection menu:
+  rm -f ${GRUBDIR}/kbd.cfg
+  rm -f ${GRUBDIR}/lang.cfg
+  rm -f ${GRUBDIR}/tz.cfg
 
-menuentry "Detect/boot any installed operating system" {
-  configfile "/EFI/BOOT/osdetect.cfg"
+  # Generate main grub.cfg:
+  cat ${LIVE_TOOLDIR}/grub.tpl | sed \
+    -e "s/@KBD@/us/g" \
+    -e "s/@LANG@/us/g" \
+    -e "s/@CONSFONT@/$CONSFONT/g" \
+    -e "s/@DIRSUFFIX@/$DIRSUFFIX/g" \
+    -e "s/@KVER@/$KVER/g" \
+    -e "s/@LIVEMAIN@/$LIVEMAIN/g" \
+    -e "s/@MEDIALABEL@/$MEDIALABEL/g" \
+    -e "s/@LIVEDE@/$(echo $LIVEDE |sed 's/BASE//')/g" \
+    -e "s/@SL_VERSION@/$SL_VERSION/g" \
+    > ${GRUBDIR}/grub.cfg
+
+  # Set a default keyboard selection:
+  cat <<EOL > ${GRUBDIR}/kbd.cfg
+# Keyboard selection:
+set default = $sl_lang
+
+EOL
+
+  # Set a default language selection:
+  cat <<EOL > ${GRUBDIR}/lang.cfg
+# Language selection:
+set default = $sl_lang
+
+EOL
+
+  # Create the remainder of the selection menus:
+  for KBD in $(cat languages |grep -Ev "(^ *#|^$)" |cut -d, -f3) ; do
+    LANCOD=$(cat languages |grep ",$KBD," |cut -d, -f1)
+    LANDSC=$(cat languages |grep ",$KBD," |cut -d, -f2)
+    LANLOC=$(cat languages |grep ",$KBD," |cut -d, -f5)
+    # Add this entry to the keyboard selection menu:
+    cat <<EOL >> ${GRUBDIR}/kbd.cfg
+menuentry "${LANDSC}" {
+  set sl_kbd="$KBD"
+  set sl_lang="$LANDSC"
+  export sl_kbd
+  export sl_lang
+  configfile \$grubdir/grub.cfg
 }
 
-EOT
+EOL
 
-  for KBD in $(cat ${LIVE_TOOLDIR}/languages |grep -Ev "(^ *#|^$)" |cut -d, -f3)
-  do
-    LANDSC=$(cat ${LIVE_TOOLDIR}/languages |grep ",$KBD," |cut -d, -f2)
-    LANTZ=$(cat ${LIVE_TOOLDIR}/languages |grep ",$KBD," |cut -d, -f4)
-    LANLOC=$(cat ${LIVE_TOOLDIR}/languages |grep ",$KBD," |cut -d, -f5)
-    cat <<EOT >> ${GRUBDIR}/grub.cfg
-menuentry "Slackware${DIRSUFFIX} ${SL_VERSION} Live ($LANDSC)" {
-  linux /boot/generic load_ramdisk=1 prompt_ramdisk=0 rw printk.time=0 tz=${LANTZ} locale=${LANLOC} kbd=${KBD}
-  initrd /boot/initrd.img
+    # Add this entry to the language selection menu:
+    cat <<EOL >> ${GRUBDIR}/lang.cfg
+menuentry "${LANDSC}" {
+  set sl_locale="$LANLOC"
+  set sl_lang="$LANDSC"
+  export sl_locale
+  export sl_lang
+  configfile \$grubdir/grub.cfg
 }
 
-EOT
+EOL
+
   done
 
+  # Create the timezone selection menu:
+  TZDIR="/usr/share/zoneinfo"
+  TZLIST=$(mktemp -t alientz.XXXXXX)
+  if [ ! -f $TZLIST ]; then
+    echo "*** Failed to create a temporary file!"
+    exit 1
+  fi
+  # First, create a list of timezones:
+  # This code taken from Slackware script:
+  # source/a/glibc-zoneinfo/timezone-scripts/output-updated-timeconfig.sh
+  # Author: Patrick Volkerding <volkerdi@slackware.com>
+  # US/ first:
+  ( cd $TZDIR
+    find . -type f | xargs file | grep "timezone data" | cut -f 1 -d : | cut -f 2- -d / | sort | grep "^US/" | while read zone ; do
+      echo "${zone}" >> $TZLIST
+    done
+  )
+  # Don't list right/ and posix/ zones:
+  ( cd $TZDIR
+    find . -type f | xargs file | grep "timezone data" | cut -f 1 -d : | cut -f 2- -d / | sort | grep -v "^US/" | grep -v "^posix/" | grep -v "^right/" | while read zone ; do
+      echo "${zone}" >> $TZLIST
+    done
+  )
+  for TZ in $(cat $TZLIST); do
+    # Add this entry to the keyboard selection menu:
+    cat <<EOL >> ${GRUBDIR}/tz.cfg
+menuentry "${TZ}" {
+  set sl_tz="$TZ"
+  export sl_tz
+  configfile \$grubdir/grub.cfg
+}
+
+EOL
+  rm -f $TZLIST
+
+  done
 }
 
 # ---------------------------------------------------------------------------
@@ -1234,7 +1312,8 @@ elif [ ! -f ${LIVE_STAGING}/boot/syslinux/${CONSFONT} ]; then
 fi
 
 # Copy the UEFI boot directory structure:
-cp -a ${LIVE_TOOLDIR}/EFI ${LIVE_STAGING}/
+mkdir -p ${LIVE_STAGING}/EFI/BOOT
+cp -a ${LIVE_TOOLDIR}/EFI/BOOT/{grub-embedded.cfg,make-grub.sh,osdetect.cfg,theme} ${LIVE_STAGING}/EFI/BOOT/
 
 # The grub-embedded.cfg in the bootx64.efi looks for this file:
 touch ${LIVE_STAGING}/EFI/BOOT/${MARKER}
