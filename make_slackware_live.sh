@@ -825,9 +825,10 @@ GREYLIST=on
 PKGS_PRIORITY=( restricted alienbob ktown_testing )
 REPOPLUS=( slackpkgplus restricted alienbob ktown_testing )
 MIRRORPLUS['slackpkgplus']=http://slakfinder.org/slackpkg+/
-MIRRORPLUS['restricted']=http://taper.alienbase.nl/mirrors/people/alien/restricted_sbrepos/current/x86_64/
-MIRRORPLUS['alienbob']=http://taper.alienbase.nl/mirrors/people/alien/sbrepos/current/x86_64/
-MIRRORPLUS['ktown_testing']=http://taper.alienbase.nl/mirrors/alien-kde/current/testing/x86_64/
+MIRRORPLUS['restricted']=http://taper.alienbase.nl/mirrors/people/alien/restricted_sbrepos/${SL_VERSION}/${SL_ARCH}/
+MIRRORPLUS['alienbob']=http://taper.alienbase.nl/mirrors/people/alien/sbrepos/${SL_VERSION}/${SL_ARCH}/
+MIRRORPLUS['ktown_testing']=http://taper.alienbase.nl/mirrors/alien-kde/${SL_VERSION}/testing/${SL_ARCH}/
+MIRRORPLUS['mate_testing']=http://slackware.uk/msb/testing/1.12/${SL_ARCH}/
 
 EOPL
 fi
