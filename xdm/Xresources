@@ -1,16 +1,16 @@
-#if ( HEIGHT == 1080 )
+#if ( HEIGHT >= 1080 )
 # define LOGIN_POS_Y 740
-#elif ( HEIGHT == 1024 )
+#elif ( HEIGHT >= 1024 )
 # define LOGIN_POS_Y 635
-#elif ( HEIGHT == 900 )
+#elif ( HEIGHT >= 900 )
 # define LOGIN_POS_Y 615
-#elif ( HEIGHT == 800 )
+#elif ( HEIGHT >= 800 )
 # define LOGIN_POS_Y 550
-#elif ( HEIGHT == 768 )
+#elif ( HEIGHT >= 768 )
 # define LOGIN_POS_Y 520
-#elif ( HEIGHT == 600 )
+#elif ( HEIGHT >= 600 )
 # define LOGIN_POS_Y 400
-#elif ( HEIGHT == 480 )
+#elif ( HEIGHT >= 480 )
 # define LOGIN_POS_Y 315
 #endif
 
