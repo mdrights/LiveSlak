@@ -34,9 +34,12 @@
 
 # The ISO creation script will create a filesystem with this label.
 # Nevertheless, the user may have copied the ISO content to a different device.
-LIVEMAIN="@LIVEMAIN@"
 MEDIALABEL="@MEDIALABEL@"
+
+LIVEMAIN="@LIVEMAIN@"
 PERSISTENCE="@PERSISTENCE@"
+
+LIVEMEDIA=""
 
 # By default, let the media determine if we can write persistent changes:
 VIRGIN=0
@@ -70,6 +73,9 @@ for ARG in $(cat /proc/cmdline); do
     debug)
       DEBUG=1
     ;;
+    debug=*)
+      DEBUG=$(echo $ARG | cut -f2 -d=)
+    ;;
     hostname=*)
       LIVE_HOSTNAME=$(echo $ARG | cut -f2 -d=)
     ;;
@@ -81,6 +87,9 @@ for ARG in $(cat /proc/cmdline); do
     ;;
     livemain=*)
       LIVEMAIN=$(echo $ARG | cut -f2 -d=)
+    ;;
+    livemedia=*)
+      LIVEMEDIA=$(echo $ARG | cut -f2 -d=)
     ;;
     livepw=*)
       LIVEPW=$(echo $ARG | cut -f2 -d=)
@@ -117,6 +126,8 @@ for ARG in $(cat /proc/cmdline); do
     ;;
   esac
 done
+
+[ $DEBUG -ge 2 ] && set -x
 
 debugit () {
   [ $DEBUG -eq 0 ] && return
@@ -195,31 +206,35 @@ if [ "$RESCUE" = "" ]; then
   mount -t tmpfs -o defaults none /mnt
 
   # Find the Slackware Live media.
-  # We iterate a maximum of 10 times to give USB devices a chance to be seen
-  # by the kernel. Set the WAIT variable to increase the iterations.
+  # TIP: Increase WAIT to give USB devices a chance to be seen by the kernel.
   mkdir /mnt/media
-  for ITER in $(seq 1 ${WAIT:-10}); do
+  if [ -z "$LIVEMEDIA" ]; then
+    # LIVEMEDIA not spcified on the boot commandline using "livemedia="
     # Filter out the block devices, only look at partitions at first:
-    LIVEMEDIA=$(blkid |grep LABEL="\"$MEDIALABEL\"" |cut -d: -f1 |grep "[0-9]$")
+    LIVEALL=$(blkid |grep LABEL="\"$MEDIALABEL\"" |cut -d: -f1 |grep "[0-9]$")
+    LIVEMEDIA=$(blkid |grep LABEL="\"$MEDIALABEL\"" |cut -d: -f1 |grep "[0-9]$" |head -1)
     if [ ! -z "$LIVEMEDIA" ]; then
       # That was easy... we found the media straight away.
       # Determine filesystem type ('iso9660' means we found a CDROM/DVD)
       LIVEFS=$(blkid $LIVEMEDIA |rev |cut -d'"' -f2 |rev)
-      mount -t auto -o ro $LIVEMEDIA /mnt/media
+      mount -t $LIVEFS -o ro $LIVEMEDIA /mnt/media
     else
-      LIVEMEDIA=$(blkid |grep LABEL="\"$MEDIALABEL\"" |cut -d: -f1 |grep -v "[0-9]$")
+      LIVEALL=$(blkid |grep LABEL="\"$MEDIALABEL\"" |cut -d: -f1 |grep -v "[0-9]$")
+      LIVEMEDIA=$(blkid |grep LABEL="\"$MEDIALABEL\"" |cut -d: -f1 |grep -v "[0-9]$" |head -1)
       if [ ! -z "$LIVEMEDIA" ]; then
         # We found a block device with the correct label (non-UEFI media).
         # Determine filesystem type ('iso9660' means we found a CDROM/DVD)
         LIVEFS=$(blkid $LIVEMEDIA |rev |cut -d'"' -f2 |rev)
-        mount -t auto -o ro $LIVEMEDIA /mnt/media
+        mount -t $LIVEFS -o ro $LIVEMEDIA /mnt/media
       else
         # Bummer... label not found; the ISO was extracted to a different device.
         # Separate partitions from block devices, look at partitions first:
         for SLDEVICE in $(blkid |cut -d: -f1 |grep "[0-9]$") $(blkid |cut -d: -f1 |grep -v "[0-9]$") ; do
-          mount -t auto -o ro $SLDEVICE /mnt/media
+          SLFS=$(blkid $SLDEVICE |rev |cut -d'"' -f2 |rev)
+          mount -t $SLFS -o ro $SLDEVICE /mnt/media
           if [ -d /mnt/media/${LIVEMAIN} ]; then
             # Found our media!
+            LIVEALL=$SLDEVICE
             LIVEMEDIA=$SLDEVICE
             LIVEFS=$(blkid $LIVEMEDIA |rev |cut -d'"' -f2 |rev)
             break
@@ -235,10 +250,23 @@ if [ "$RESCUE" = "" ]; then
       break
     fi
     sleep 1
-  done
+  else
+    # LIVEMEDIA was spcified on the boot commandline using "livemedia="
+    LIVEALL="$LIVEMEDIA"
+    LIVEFS=$(blkid $LIVEMEDIA |rev |cut -d'"' -f2 |rev)
+    mount -t $LIVEFS -o ro $LIVEMEDIA /mnt/media
+  fi
+
+  # Finished determining the media availability, it should be mounted now.
 
   if [ ! -z "$LIVEMEDIA" ]; then
     echo "${INITRD}:  Live media found at ${LIVEMEDIA}."
+    if [ ! -d /mnt/media/${LIVEMAIN} ]; then
+      echo "${INITRD}:  However, live media was not mounted... trouble ahead."
+    fi
+    if [ "$LIVEMEDIA" != "$LIVEALL" ]; then
+      echo "${INITRD}:  NOTE: Multiple partitions with '$MEDIALABEL' label were found ($(echo $LIVEALL))... success not guaranteed."
+    fi
   else
     echo "${INITRD}:  No live media found... trouble ahead."
     echo "${INITRD}:  Try adding \"rootdelay=20\" to the boot command."
