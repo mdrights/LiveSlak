@@ -1,0 +1,44 @@
+# -- Slackware Live Edition --
+# In grub.cfg add:
+# set theme=($root)/EFI/BOOT/theme/liveslak.txt
+# export theme
+#
+# Global Properties:
+#title-text: "GRUB Slackware Live Edition"
+title-text: ""
+#title-font: "Unknown Regular 16"
+title-font: "DejaVu Sans Mono 10"
+title-color: "#5569B9"
+desktop-image: "/EFI/BOOT/theme/swlogog.png"
+desktop-color: "#000000"
+
+# Show the boot menu
++ boot_menu {
+  left = 5%
+  top = 35%
+  width = 70%
+  height = 45%
+  #item_font = "Unknown Regular 16"
+  item_font = "DejaVu Sans Mono 10"
+  item_color = "lightgrey"
+  selected_item_color = "red"
+  item_height = 15
+  item_padding = 5 # Vertical spacing between menuentries.
+  item_spacing = 5
+}
+
+# Show a horizontal progress bar
++ progress_bar {
+  text = ""
+  id = "__timeout__"
+  left = 5%
+  width = 90%
+  top = 85%
+  height = 5
+  #font = "Unknown Regular 16"
+  font = "DejaVu Sans Mono 5"
+  text_color = "red"
+  fg_color = "#5569B9"
+  bg_color = "#000000"
+  border_color = "#333333"
+}
