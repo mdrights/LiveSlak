@@ -152,6 +152,7 @@ libcaca
 libcddb
 libcdio
 libcdio-paranoia
+libcgroup
 libcroco
 libdmx
 libdrm
@@ -200,6 +201,7 @@ libssh
 libssh2
 libtheora
 libtiff
+libtirpc
 libusbmuxd
 libva
 libva-intel-driver
@@ -233,6 +235,7 @@ mtdev
 neon
 nettle
 newt
+nfs-utils
 openexr
 openjpeg
 orc
@@ -254,6 +257,7 @@ rendercheck
 renderproto
 resourceproto
 rgb
+rpcbind
 samba
 sazanami-fonts-ttf
 scrnsaverproto

@@ -1,32 +1,34 @@
-# MSB deps:
+# MSB DEPS:
 atkmm
 cairomm
 docutils
 gksu
-glade
 glibmm
 gssdp
 gtk-engines
-gtkmm3
-gtksourceview3
+gtkmm
+gtksourceview
 gupnp
 libgksu
 libgnomecanvas
 libgtop
+liboobs
 libsigc++
-libunique3
-libwnck3
+libunique
 mm-common
 murrine
 pangomm
 pangox-compat
+perl-net-dbus
+perl-xml-twig
+pygtksourceview
 rarian
-vte3
+system-tools-backends
 yelp-tools
 yelp-xsl
 zenity
 
-# MSB base:
+# MSB BASE:
 caja
 engrampa
 eom
@@ -52,15 +54,17 @@ mate-system-monitor
 mate-terminal
 mate-themes
 
-# MSB extra:
+# MSB EXTRA:
 atril
 caja-dropbox
 caja-extensions
 galculator
+gnome-main-menu
 mate-applets
 mate-icon-theme-faenza
 mate-netspeed
 mate-sensors-applet
+mate-system-tools
 mate-utils
 mozo
 pluma
