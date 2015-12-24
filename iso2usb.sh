@@ -24,6 +24,12 @@
 # Be careful:
 set -e
 
+# Set to '1' if you want to ignore all warnings:
+FORCE=0
+
+# By default, we use 'persistence' as the name of the persistence directory:
+PERSISTENCE="persistence"
+
 # Set to '1' if the script should not ask any questions:
 UNATTENDED=0
 
@@ -38,6 +44,10 @@ IMGDIR=""
 EFIMNT=""
 ISOMNT=""
 USBMNT=""
+
+#
+#  -- function definitions --
+#
 
 # Clean up in case of failure:
 cleanup() {
@@ -65,9 +75,11 @@ cat <<EOT
 # This data will be *erased* !
 #
 # $(basename $0) accepts the following parameters:
+#   -f|--force                 Ignore most warnings (except the back-out)
 #   -h|--help                  This help
 #   -i|--infile <filename>     Full path to the ISO image file
 #   -o|--outdev <filename>     The device name of your USB drive
+#   -p|--persistence <dirname> Custom name of the 'persistence' directory
 #   -u|--unattended            Do not ask any questions
 #   -v|--verbose               Show verbose messages
 #   -w|--wait<number>          Pause boot <number> seconds to initialize USB
@@ -80,6 +92,42 @@ cat <<EOT
 EOT
 }
 
+# Add longer USB WAIT to the initrd:
+update_initrd() {
+  # USB boot medium needs a few seconds boot delay else the overlay will fail.
+
+  # Check if we need to update the wait-for-root file in the initrd:
+  OLDWAIT=$(gunzip -cd ${USBMNT}/boot/initrd.img |cpio -i --to-stdout wait-for-root 2>/dev/null)
+  [ "$OLDWAIT" = "$WAIT" ] && return
+  
+  if [ -z "$IMGDIR" ]; then
+    # Create a temporary extraction directory for the initrd:
+    mkdir -p /mnt
+    IMGDIR=$(mktemp -d -p /mnt -t alienimg.XXXXXX)
+    if [ ! -d $IMGDIR ]; then
+      echo "*** Failed to create a temporary extraction directory for the initrd!"
+      exit 1
+    fi
+  fi
+  chmod 711 $IMGDIR
+
+  echo "--- Extracting Slackware initrd and adding rootdelay for USB..."
+  cd ${IMGDIR}
+    gunzip -cd ${USBMNT}/boot/initrd.img \
+      | cpio -i -d -H newc --no-absolute-filenames
+    echo "--- Updating 'waitforroot' time from '$OLDWAIT' to '$WAIT':"
+    echo ${WAIT} > wait-for-root
+    echo "--- Compressing the initrd image again:"
+    chmod 0755 ${IMGDIR}
+    find . |cpio -o -H newc |gzip > ${USBMNT}/boot/initrd.img
+  cd - 2>/dev/null
+  rm -rf $IMGDIR/*
+} # End of update_initrd()
+
+#
+#  -- end of function definitions --
+#
+
 # Parse the commandline parameters:
 if [ -z "$1" ]; then
   showhelp
@@ -87,6 +135,10 @@ if [ -z "$1" ]; then
 fi
 while [ ! -z "$1" ]; do
   case $1 in
+    -f|--force)
+      FORCE=1
+      shift
+      ;;
     -h|--help)
       showhelp
       exit
@@ -97,6 +149,10 @@ while [ ! -z "$1" ]; do
       ;;
     -o|--outdev)
       TARGET="$2"
+      shift 2
+      ;;
+    -p|--persistence)
+      PERSISTENCE="$2"
       shift 2
       ;;
     -u|--unattended)
@@ -121,7 +177,7 @@ done
 
 # Before we start:
 [ -x /bin/id ] && CMD_ID="/bin/id" || CMD_ID="/usr/bin/id"
-if [ "$($CMD_ID -u)" != "0" ]; then
+if [ "$($CMD_ID -u)" != "0" -a $FORCE -eq 0 ]; then
   echo "*** You need to be root to run $(basename $0)."
   exit 1
 fi
@@ -132,15 +188,15 @@ if [ -z "$TARGET" -o -z "$SLISO" ]; then
   exit 1
 fi
 
-if [ ! -f $SLISO ]; then
+if [ ! -f $SLISO -a $FORCE -eq 0 ]; then
   echo "*** This is not a useable file: '$SLISO' !"
   exit 1
 fi
 
-if [ ! -b $TARGET ]; then
+if [ ! -b $TARGET -a $FORCE -eq 0 ]; then
   echo "*** Not a block device: '$TARGET' !"
   exit 1
-elif [ "$(echo ${TARGET%[0-9]})" != "$TARGET" ]; then
+elif [ "$(echo ${TARGET%[0-9]})" != "$TARGET" -a $FORCE -eq 0 ]; then
   echo "*** You need to point to the USB device, not a partition ($TARGET)!"
   exit 1
 fi
@@ -169,7 +225,7 @@ cat <<EOT
 #
 # FDISK OUTPUT:
 EOT
-/sbin/gdisk -l $TARGET 2>/dev/null | while read LINE ; do echo "# $LINE" ; done
+echo q |/sbin/gdisk -l $TARGET 2>/dev/null | while read LINE ; do echo "# $LINE" ; done
 
 if [ $UNATTENDED -eq 0 ]; then
   cat <<EOT
@@ -188,16 +244,17 @@ LIVELABEL=$(/sbin/blkid -s LABEL -o value ${SLISO})
 
 # Use sgdisk to wipe and then setup the USB device:
 # - 1 MB BIOS boot partition
-# - 200 MB EFI system partition
+# - 100 MB EFI system partition
 # - Let Slackware have the rest
 # - Make the Linux partition "legacy BIOS bootable"
+# Make sure that there is no MBR nor a partition table anymore:
+dd if=/dev/zero of=$TARGET bs=512 count=1 conv=notrunc
 # The first sgdisk command is allowed to have non-zero exit code:
-/sbin/sgdisk -Z $TARGET || true
 /sbin/sgdisk -og $TARGET || true
 /sbin/sgdisk \
   -n 1:2048:4095 -c 1:"BIOS Boot Partition" -t 1:ef02 \
-  -n 2:4096:413695 -c 2:"EFI System Partition" -t 2:ef00 \
-  -n 3:413696:0 -c 3:"Slackware Linux" -t 3:8300 \
+  -n 2:4096:208895 -c 2:"EFI System Partition" -t 2:ef00 \
+  -n 3:208896:0 -c 3:"Slackware Linux" -t 3:8300 \
   $TARGET
 /sbin/sgdisk -A 3:set:2 $TARGET
 # Show what we did to the USB stick:
@@ -230,6 +287,7 @@ else
 fi
 
 # Find out if the ISO contains an EFI bootloader and use it:
+EFIBOOT=0
 EFIOFFSET=$(/sbin/fdisk -lu ${SLISO} 2>/dev/null |grep EFI |tr -s ' ' | cut -d' ' -f 2)
 if [ -n "$EFIOFFSET" ]; then
   # Mount the EFI partition so we can retrieve the EFI bootloader:
@@ -237,6 +295,8 @@ if [ -n "$EFIOFFSET" ]; then
   if [ ! -f ${EFIMNT}/EFI/BOOT/bootx64.efi ]; then
     echo "-- Note: UEFI boot file 'bootx64.efi' not found on ISO."
     echo "-- UEFI boot will not be supported"
+  else
+    EFIBOOT=1
   fi
 fi
 
@@ -250,22 +310,30 @@ else
   chmod 711 $USBMNT
 fi
 
-# Mount the EFI partition and copy the EFI boot image to it:
-/sbin/mount -t vfat -o shortname=mixed ${TARGET}2 ${USBMNT}
-mkdir -p ${USBMNT}/EFI/BOOT
-cp ${EFIMNT}/EFI/BOOT/bootx64.efi ${USBMNT}/EFI/BOOT
+# Loop-mount the ISO (or 1st partition if this is a hybrid ISO):
+/sbin/mount -o loop ${SLISO} ${ISOMNT}
+
+if [ $EFIBOOT -eq 1 ]; then
+  # Mount the EFI partition and copy /EFI as well as /boot directories into it:
+  /sbin/mount -t vfat -o shortname=mixed ${TARGET}2 ${USBMNT}
+  mkdir -p ${USBMNT}/EFI/BOOT
+  rsync -rlptD ${ISOMNT}/EFI/BOOT/* ${USBMNT}/EFI/BOOT/
+  mkdir -p ${USBMNT}/boot
+  rsync -rlptD ${ISOMNT}/boot/* ${USBMNT}/boot/
+  # Add more USB WAIT seconds to the initrd:
+  update_initrd ${USBMNT}/boot/initrd.img
+fi
+
+# No longer needed:
 /sbin/umount ${USBMNT}
 /sbin/umount ${EFIMNT}
 
 # Mount the Linux partition:
 /sbin/mount -t auto ${TARGET}3 ${USBMNT}
 
-# Loop-mount the ISO (or 1st partition if this is a hybrid ISO):
-/sbin/mount -o loop ${SLISO} ${ISOMNT}
-
 # Copy the ISO content into the USB Linux partition:
 echo "--- Copying files from ISO to USB... takes some time."
-rsync -a ${RVERBOSE} ${ISOMNT}/* ${USBMNT}/
+rsync -a ${RVERBOSE} --exclude=EFI ${ISOMNT}/* ${USBMNT}/
 
 # Write down the version of the ISO image:
 VERSION=$(iso-info ${SLISO} |grep Application |cut -d: -f2- 2>/dev/null)
@@ -273,28 +341,11 @@ if [ -n "$VERSION" ]; then
   echo "$VERSION" > ${USBMNT}/.isoversion
 fi
 
-# Create a temporary extraction directory for the initrd:
-mkdir -p /mnt
-IMGDIR=$(mktemp -d -p /mnt -t alienimg.XXXXXX)
-if [ ! -d $IMGDIR ]; then
-  echo "*** Failed to create a temporary extraction directory for the initrd!"
-  exit 1
-else
-  chmod 711 $IMGDIR
-fi
-
-# USB boot medium needs a few seconds boot delay or else the overlay will fail:
-echo "--- Extracting Slackware initrd and adding rootdelay for USB..."
-cd ${IMGDIR}
-gunzip -cd ${USBMNT}/boot/initrd.img |cpio -i -d -H newc --no-absolute-filenames
-echo ${WAIT} > wait-for-root
-echo "--- Compressing the initrd image again:"
-chmod 0755 ${IMGDIR}
-find . |cpio -o -H newc |gzip > ${USBMNT}/boot/initrd.img
-cd - 2>/dev/null
+# Add more USB WAIT seconds to the initrd:
+update_initrd ${USBMNT}/boot/initrd.img
 
 # Create persistence directory:
-mkdir -p ${USBMNT}/persistence
+mkdir -p ${USBMNT}/${PERSISTENCE}
 
 # Use extlinux to make the USB device bootable:
 echo "--- Making the USB drive '$TARGET' bootable using extlinux..."
