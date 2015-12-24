@@ -6,6 +6,7 @@ f2 f2.txt
 font @CONSFONT@
 menu background swlogov.png
 menu title Slackware@DIRSUFFIX@-@SL_VERSION@ Live
+menu clear
 
 menu hshift 1
 menu vshift 9
