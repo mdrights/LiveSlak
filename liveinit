@@ -419,6 +419,9 @@ EOPW
     sed -i -e "s/^\(127.0.0.1\t*\)@DARKSTAR@.*/\1${LIVE_HOSTNAME}.example.net ${LIVE_HOSTNAME}/" /mnt/overlay/etc/hosts
   fi
 
+  # Delete ALSA state file, the Live OS may be booted on different computers:
+  rm -f /mnt/overlay/var/lib/alsa/asound.state
+
   # Copy contents of rootcopy directory (may be empty) to overlay:
   cp -af /mnt/media/${LIVEMAIN}/rootcopy/* /mnt/overlay/ 2>/dev/null
 
