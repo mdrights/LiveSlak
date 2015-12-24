@@ -147,7 +147,7 @@ fi
 
 # Are all the required not-so-common add-on tools present?
 PROG_MISSING=""
-for PROGN in blkid cpio extlinux fdisk gdisk mkdosfs sgdisk ; do
+for PROGN in blkid cpio extlinux fdisk gdisk iso-info mkdosfs sgdisk ; do
   if ! PATH="/sbin:$PATH" which $PROGN 1>/dev/null 2>/dev/null ; then
     PROG_MISSING="${PROG_MISSING}--   $PROGN\n"
   fi
@@ -266,6 +266,12 @@ cp ${EFIMNT}/EFI/BOOT/bootx64.efi ${USBMNT}/EFI/BOOT
 # Copy the ISO content into the USB Linux partition:
 echo "--- Copying files from ISO to USB... takes some time."
 rsync -a ${RVERBOSE} ${ISOMNT}/* ${USBMNT}/
+
+# Write down the version of the ISO image:
+VERSION=$(iso-info ${SLISO} |grep Application |cut -d: -f2- 2>/dev/null)
+if [ -n "$VERSION" ]; then
+  echo "$VERSION" > ${USBMNT}/.isoversion
+fi
 
 # Create a temporary extraction directory for the initrd:
 mkdir -p /mnt

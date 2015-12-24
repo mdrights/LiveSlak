@@ -25,13 +25,17 @@
 #
 # This script creates a live image for a Slackware OS.
 # Features:
-# - boots using isolinux/extlinux
+# - boots using isolinux/extlinux on BIOS, or grub on UEFI.
 # - requires kernel >= 4.0 which supports multiple lower layers in overlay
 # - uses squashfs to create compressed modules out of directory trees
 # - uses overlayfs to bind multiple squashfs modules together
-# - you can add your own modules into ./addons/ subdirectory
+# - you can add your own modules into ./addons/ or ./optional subdirectories.
+# - persistence is enabled when writing the ISO to USB stick using iso2usb.sh.
 #
 # -----------------------------------------------------------------------------
+
+# Version of the Live OS generator:
+VERSION="Beta3"
 
 # Directory where our live tools are stored:
 LIVE_TOOLDIR=${LIVE_TOOLDIR:-"$(cd $(dirname $0); pwd)"}
@@ -141,7 +145,7 @@ SEQ_KDE4BASE="pkglist:min,xbase,xapbase,kde4base"
 
 # List of Slackware package series with Plasma5 instead of KDE 4 (full install):
 # - each will become a squashfs module:
-SEQ_PLASMA5="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,kde4plasma5,plasma5 local:slackpkg+"
+SEQ_PLASMA5="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,kde4plasma5,plasma5,alien local:slackpkg+"
 
 # List of Slackware package series with MSB instead of KDE 4 (full install):
 # - each will become a squashfs module:
@@ -1305,9 +1309,9 @@ mkisofs -o ${OUTPUT}/slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso \
   -c boot/syslinux/isolinux.boot \
   -eltorito-alt-boot -no-emul-boot -eltorito-platform 0xEF \
   -eltorito-boot boot/syslinux/efiboot.img \
-  -preparer "Built for Slackware${DIRSUFFIX}-Live by ${BUILDER}" \
+  -preparer "$(echo $LIVEDE |sed 's/BASE//') Live built by ${BUILDER}" \
   -publisher "The Slackware Linux Project - http://www.slackware.com/" \
-  -A "Slackware Live ${SL_VERSION} for ${ARCH}" \
+  -A "Slackware Live ${SL_VERSION} for ${SL_ARCH} ($VERSION)" \
   -V "${MEDIALABEL}" \
   -x ./$(basename ${LIVE_WORK}) \
   -x ./${LIVEMAIN}/bootinst \
@@ -1338,8 +1342,10 @@ else
   fi
   isohybrid -s $SECTORS -h $HEADS -u ${OUTPUT}/slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso
 fi
-md5sum ${OUTPUT}/slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso \
-  > ${OUTPUT}/slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso.md5
+cd ${OUTPUT}
+  md5sum slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso \
+    > slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso.md5
+cd - 1>/dev/null
 echo "-- Live ISO image created:"
 ls -l ${OUTPUT}/slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso*
 
