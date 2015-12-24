@@ -953,6 +953,15 @@ First Use=true
 Use One Wallet=true
 EOT
 
+# Start Konsole with a login shell:
+mkdir -p ${LIVE_ROOTDIR}/etc/skel/.kde/share/apps/konsole
+cat <<EOT > ${LIVE_ROOTDIR}/etc/skel/.kde/share/apps/konsole/Shell.profile
+[General]
+Command=/bin/bash -l
+Name=Shell
+Parent=FALLBACK/
+EOT
+
 if [ "$LIVEDE" = "PLASMA5" ]; then
 
   echo "-- Configuring PLASMA5."
