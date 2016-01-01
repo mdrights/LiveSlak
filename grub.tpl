@@ -27,7 +27,9 @@ fi
 
 # Determine whether we can show a graphical themed menu:
 insmod font
-if loadfont $grubdir/theme/dejavusansmono.pf2 ; then
+if loadfont $grubdir/theme/dejavusansmono12.pf2 ; then
+  loadfont $grubdir/theme/dejavusansmono10.pf2
+  loadfont $grubdir/theme/dejavusansmono5.pf2
   set gfxmode=auto,640x480
   export gfxmode
   # (U)EFI requirement: must support all_video:

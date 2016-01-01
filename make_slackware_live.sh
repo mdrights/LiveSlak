@@ -587,7 +587,7 @@ fi
 
 # Are all the required add-on tools present?
 PROG_MISSING=""
-for PROGN in mksquashfs unsquashfs syslinux mkisofs installpkg upgradepkg keytab-lilo ; do
+for PROGN in mksquashfs unsquashfs grub-mkfont syslinux mkisofs isohybrid installpkg upgradepkg keytab-lilo ; do
   if ! which $PROGN 1>/dev/null 2>/dev/null ; then
     PROG_MISSING="${PROG_MISSING}--   $PROGN\n"
   fi
@@ -1314,6 +1314,14 @@ fi
 # Copy the UEFI boot directory structure:
 mkdir -p ${LIVE_STAGING}/EFI/BOOT
 cp -a ${LIVE_TOOLDIR}/EFI/BOOT/{grub-embedded.cfg,make-grub.sh,osdetect.cfg,theme} ${LIVE_STAGING}/EFI/BOOT/
+
+# Create the grub fonts used in the theme:
+for FSIZE in 5 10 12; do
+  grub-mkfont -s ${FSIZE} -bav \
+    -o ${LIVE_STAGING}/EFI/BOOT/theme/dejavusansmono${FSIZE}.pf2 \
+    /usr/share/fonts/TTF/DejaVuSansMono.ttf \
+    | grep "^Font name: "
+done
 
 # The grub-embedded.cfg in the bootx64.efi looks for this file:
 touch ${LIVE_STAGING}/EFI/BOOT/${MARKER}

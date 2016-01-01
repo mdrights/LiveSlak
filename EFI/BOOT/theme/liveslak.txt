@@ -7,7 +7,7 @@
 #title-text: "GRUB Slackware Live Edition"
 title-text: ""
 #title-font: "Unknown Regular 16"
-title-font: "DejaVu Sans Mono 10"
+title-font: "DejaVu Sans Mono Bold 12"
 title-color: "#5569B9"
 desktop-image: "/EFI/BOOT/theme/swlogog.png"
 desktop-color: "#000000"
@@ -19,7 +19,7 @@ desktop-color: "#000000"
   width = 70%
   height = 45%
   #item_font = "Unknown Regular 16"
-  item_font = "DejaVu Sans Mono 10"
+  item_font = "DejaVu Sans Mono Bold 12"
   item_color = "lightgrey"
   selected_item_color = "red"
   item_height = 15
@@ -36,7 +36,7 @@ desktop-color: "#000000"
   top = 85%
   height = 5
   #font = "Unknown Regular 16"
-  font = "DejaVu Sans Mono 5"
+  font = "DejaVu Sans Mono Regular 5"
   text_color = "red"
   fg_color = "#5569B9"
   bg_color = "#000000"
