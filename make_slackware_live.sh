@@ -1421,24 +1421,23 @@ rm -rf ./boot
 cd - 1>/dev/null
 
 SIZEISO=$(stat --printf %s ${OUTPUT}/slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso)
-# We want at most 1024 cylinders for old BIOS; also we want no more than
-# 63 sectors, no more than 255 heads, which leads to a cut-over size:.
-# 64 (heads) *32 (sectors) *1024 (cylinders) *512 (bytes) = 1073741824 bytes.
-# However, for sizes > 8422686720 compatibility will be out the window anyway.
-if [ $SIZEISO -gt 8422686720 ]; then
-  isohybrid -u ${OUTPUT}/slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso
+# We want no more than 63 sectors, no more than 255 heads, according to
+# recommendations from Thomas Schmitt, xoriso developer.
+if [ $SIZEISO -gt 1073741824 ]; then
+  # No more than 63 sectors, no more than 255 heads. We will not try to stick
+  # to less than 1024 cylinders though:
+  SECTORS=63
+  HEADS=255
 else
-  if [ $SIZEISO -gt 1073741824 ]; then
-    # No more than 63 sectors, no more than 255 heads.
-    SECTORS=63
-    HEADS=$(( ($SIZEISO/1024/63/512) + 2 ))
-  else
-    #  The default values for isohybrid that give a size of 1073741824 bytes.
-    SECTORS=32
-    HEADS=64
-  fi
-  isohybrid -s $SECTORS -h $HEADS -u ${OUTPUT}/slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso
+  # The default values for isohybrid gives us a max size of 1073741824 bytes:
+  # We want at most 1024 cylinders for old BIOS; also we want no more than
+  # 63 sectors, no more than 255 heads, which leads to a cut-over size:.
+  # 64 (heads) *32 (sectors) *1024 (cylinders) *512 (bytes) = 1073741824 bytes.
+  SECTORS=32
+  HEADS=64
 fi
+isohybrid -s $SECTORS -h $HEADS -u ${OUTPUT}/slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso
+
 cd ${OUTPUT}
   md5sum slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso \
     > slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso.md5
