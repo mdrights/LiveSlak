@@ -59,6 +59,7 @@ kernel-modules
 kmod
 less
 libassuan
+libevent
 libgcrypt
 libgpg-error
 libgudev
