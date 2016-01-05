@@ -124,6 +124,9 @@ for ARG in $(cat /proc/cmdline); do
     waitforroot=*|rootdelay=*)
       WAIT=$(echo $ARG | cut -f2 -d=)
     ;;
+    xkb=*)
+      XKB=$(echo $ARG | cut -f2 -d=)
+    ;;
   esac
 done
 
@@ -376,7 +379,7 @@ if [ "$RESCUE" = "" ]; then
 
   if [ ! -z "$KEYMAP" ]; then
     # Configure custom keyboard mapping in console and X:
-    echo "${INITRD}:  Switching live desktop to '$KEYMAP' keyboard"
+    echo "${INITRD}:  Switching live console to '$KEYMAP' keyboard"
     cat <<EOT > /mnt/overlay/etc/rc.d/rc.keymap
 #!/bin/sh
 # Load the keyboard map.  More maps are in /usr/share/kbd/keymaps.
@@ -385,13 +388,37 @@ if [ -x /usr/bin/loadkeys ]; then
 fi
 EOT
     chmod 755 /mnt/overlay/etc/rc.d/rc.keymap
-    # Set a usable keyboard mapping in X.Org, derived from the console map:
+  fi
+  if [ ! -z "$KEYMAP" -o ! -z "$XKB" ]; then
+    # Set a keyboard mapping in X.Org, derived from the console map if needed:
+    # Variable XKB can be set to "XkbLayout,XkbVariant", like "xkb=ch,fr"
+    # You can set just the XkbVariant by adding something like "kbd=ch xkb=,fr"
+    XKBLAYOUT=$(echo $XKB |cut -d, -f1)
+    XKBVARIANT=$(echo $XKB |cut -d, -f2)
+    XKBOPTIONS="compose:ralt"
+    # Ensure that XKBLAYOUT gets a value; XKBVARIANT is allowed to be empty.
+    if [ -z "$XKBLAYOUT" ]; then
+      if [ -z "$KEYMAP" ]; then
+        XKBLAYOUT="us"
+      else
+        XKBLAYOUT="$(echo $KEYMAP |cut -c1-2)"
+      fi
+    fi
+    echo "${INITRD}:  Switching live X desktop to '$XKBLAYOUT' keyboard"
+    # If the layout is not 'us' then add 'us' as a secondary nevertheless:
+    if [ "$XKBLAYOUT" != "us" ]; then
+      XKBLAYOUT="$XKBLAYOUT,us"
+      XKBVARIANT="$XKBVARIANT,"
+      XKBOPTIONS="grp:alt_shift_toggle,$XKBOPTIONS"
+    fi
     mkdir -p /mnt/overlay/etc/X11/xorg.conf.d
     cat <<EOT > /mnt/overlay/etc/X11/xorg.conf.d/30-keyboard.conf
 Section "InputClass"
   Identifier "keyboard-all"
   Driver "evdev"
-  Option "XkbLayout" "$(echo $KEYMAP |cut -c1-2)"
+  Option "XkbLayout" "$XKBLAYOUT"
+  Option "XkbVariant" "$XKBVARIANT"
+  Option "XkbOptions" "$XKBOPTIONS"
   MatchIsKeyboard "on"
 EndSection
 EOT

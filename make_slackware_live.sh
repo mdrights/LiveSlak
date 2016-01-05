@@ -330,10 +330,10 @@ function gen_bootmenu() {
     -e "s/@SL_VERSION@/$SL_VERSION/g" \
     > ${MENUROOTDIR}/vesamenu.cfg
 
-  for KBD in $(cat ${LIVE_TOOLDIR}/languages |grep -Ev "(^ *#|^$)" |cut -d, -f3)
+  for LANCOD in $(cat ${LIVE_TOOLDIR}/languages |grep -Ev "(^ *#|^$)" |cut -d: -f1)
   do
-    LANCOD=$(cat ${LIVE_TOOLDIR}/languages |grep ",$KBD," |cut -d, -f1)
-    LANDSC=$(cat ${LIVE_TOOLDIR}/languages |grep ",$KBD," |cut -d, -f2)
+    LANDSC=$(cat ${LIVE_TOOLDIR}/languages |grep "^$LANCOD:" |cut -d: -f2)
+    KBD=$(cat ${LIVE_TOOLDIR}/languages |grep "^$LANCOD:" |cut -d: -f3)
     # First, create keytab files if they are missing:
     if [ ! -f ${MENUROOTDIR}/${KBD}.ktl ]; then
       keytab-lilo $(find /usr/share/kbd/keymaps/i386 -name "us.map.gz") $(find /usr/share/kbd/keymaps/i386 -name "${KBD}.map.gz") > ${MENUROOTDIR}/${KBD}.ktl
@@ -362,17 +362,18 @@ EOL
       > ${MENUROOTDIR}/menu_${LANCOD}.cfg
 
     # Generate custom language selection submenu for selected keyboard:
-    for SUBKBD in $(cat ${LIVE_TOOLDIR}/languages |grep -Ev "(^ *#|^$)" |cut -d, -f3) ; do
+    for SUBCOD in $(cat ${LIVE_TOOLDIR}/languages |grep -Ev "(^ *#|^$)" |cut -d: -f1) ; do
+      SUBKBD=$(cat ${LIVE_TOOLDIR}/languages |grep "^$SUBCOD:" |cut -d: -f3)
       cat <<EOL >> ${MENUROOTDIR}/lang_${LANCOD}.cfg
-label $(cat ${LIVE_TOOLDIR}/languages |grep ",$SUBKBD," |cut -d, -f1)
-  menu label $(cat ${LIVE_TOOLDIR}/languages |grep ",$SUBKBD," |cut -d, -f2)
+label $(cat ${LIVE_TOOLDIR}/languages |grep "^$SUBCOD:" |cut -d: -f1)
+  menu label $(cat ${LIVE_TOOLDIR}/languages |grep "^$SUBCOD:" |cut -d: -f2)
 EOL
       if [ "$SUBKBD" = "$KBD" ]; then
         echo "  menu default" >> ${MENUROOTDIR}/lang_${LANCOD}.cfg
       fi
       cat <<EOL >> ${MENUROOTDIR}/lang_${LANCOD}.cfg
   kernel /boot/generic
-  append initrd=/boot/initrd.img load_ramdisk=1 prompt_ramdisk=0 rw printk.time=0 kbd=$KBD tz=$(cat ${LIVE_TOOLDIR}/languages |grep ",$SUBKBD," |cut -d, -f4) locale=$(cat ${LIVE_TOOLDIR}/languages |grep ",$SUBKBD," |cut -d, -f5)
+  append initrd=/boot/initrd.img load_ramdisk=1 prompt_ramdisk=0 rw printk.time=0 kbd=$KBD tz=$(cat ${LIVE_TOOLDIR}/languages |grep "^$SUBCOD:" |cut -d: -f4) locale=$(cat ${LIVE_TOOLDIR}/languages |grep "^$SUBCOD:" |cut -d: -f5)
 
 EOL
     done
@@ -424,10 +425,10 @@ set default = $sl_lang
 EOL
 
   # Create the remainder of the selection menus:
-  for KBD in $(cat languages |grep -Ev "(^ *#|^$)" |cut -d, -f3) ; do
-    LANCOD=$(cat languages |grep ",$KBD," |cut -d, -f1)
-    LANDSC=$(cat languages |grep ",$KBD," |cut -d, -f2)
-    LANLOC=$(cat languages |grep ",$KBD," |cut -d, -f5)
+  for LANCOD in $(cat languages |grep -Ev "(^ *#|^$)" |cut -d: -f1) ; do
+    LANDSC=$(cat languages |grep "^$LANCOD:" |cut -d: -f2)
+    KBD=$(cat languages |grep "^$LANCOD:" |cut -d: -f3)
+    LANLOC=$(cat languages |grep "^$LANCOD:" |cut -d: -f5)
     # Add this entry to the keyboard selection menu:
     cat <<EOL >> ${GRUBDIR}/kbd.cfg
 menuentry "${LANDSC}" {
