@@ -404,15 +404,18 @@ EOT
         XKBLAYOUT="$(echo $KEYMAP |cut -c1-2)"
       fi
     fi
-    echo "${INITRD}:  Switching live X desktop to '$XKBLAYOUT' keyboard"
-    # If the layout is not 'us' then add 'us' as a secondary nevertheless:
-    if [ "$XKBLAYOUT" != "us" ]; then
-      XKBLAYOUT="$XKBLAYOUT,us"
-      XKBVARIANT="$XKBVARIANT,"
-      XKBOPTIONS="grp:alt_shift_toggle,$XKBOPTIONS"
-    fi
-    mkdir -p /mnt/overlay/etc/X11/xorg.conf.d
-    cat <<EOT > /mnt/overlay/etc/X11/xorg.conf.d/30-keyboard.conf
+  else
+    XKBLAYOUT="us"
+  fi
+  echo "${INITRD}:  Switching live X desktop to '$XKBLAYOUT' keyboard"
+  # If the layout is not 'us' then add 'us' as a secondary nevertheless:
+  if [ "$XKBLAYOUT" != "us" ]; then
+    XKBLAYOUT="$XKBLAYOUT,us"
+    XKBVARIANT="$XKBVARIANT,"
+    XKBOPTIONS="grp:alt_shift_toggle,$XKBOPTIONS"
+  fi
+  mkdir -p /mnt/overlay/etc/X11/xorg.conf.d
+  cat <<EOT > /mnt/overlay/etc/X11/xorg.conf.d/30-keyboard.conf
 Section "InputClass"
   Identifier "keyboard-all"
   Driver "evdev"
@@ -422,7 +425,6 @@ Section "InputClass"
   MatchIsKeyboard "on"
 EndSection
 EOT
-  fi
 
   if [ ! -z "$LOCALE" ]; then
     # Configure custom locale:
