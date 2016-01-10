@@ -1406,10 +1406,16 @@ if [ -f ${LIVE_TOOLDIR}/optional/*.sxz ]; then
   cp ${LIVE_TOOLDIR}/optional/*.sxz ${LIVE_MOD_OPT}/
 fi
 
-if [ "$LIVEDE" != "XFCE" -a -f ${LIVE_TOOLDIR}/graphics/*.sxz ]; then
-  # KDE/PLASMA etc will profit; add custom (proprietary) graphics drivers:
-  echo "-- Adding binary GPU drivers."
-  cp ${LIVE_TOOLDIR}/graphics/*.sxz ${LIVE_MOD_OPT}/
+if [ "$LIVEDE" != "XFCE" -a "$LIVEDE" != "SLACKWARE" ]; then
+  # KDE/PLASMA etc will profit from accelerated graphics support;
+  # however the SLACKWARE ISO should not have any non-Slackware content.
+  # You can 'cheat' when building the SLACKWARE ISO by copying the graphics
+  # drivers into the 'optional' directory yourself.
+  if [ -f ${LIVE_TOOLDIR}/graphics/*.sxz ]; then
+    # Add custom (proprietary) graphics drivers:
+    echo "-- Adding binary GPU drivers."
+    cp ${LIVE_TOOLDIR}/graphics/*.sxz ${LIVE_MOD_OPT}/
+  fi
 fi
 
 # Directory for rootcopy files (everything placed here will be copied
