@@ -1091,12 +1091,30 @@ KRES_EOF
 alreadyMigrated=true
 KWALLET_EOL
 
+  # Make sure that Plasma and SDDM work on older GPUs,
+  # by forcing Qt5 to use software GL rendering:
+  cat <<"EOGL" >> ${LIVE_ROOTDIR}/usr/share/sddm/scripts/Xsetup
+
+OPENGL_VERSION=$(LANG=C glxinfo |grep '^OpenGL version string: ' |head -n 1 |sed -e 's/^OpenGL version string: \([0-9]\).*$/\1/g')
+if [ "$OPENGL_VERSION" -lt 2 ]; then
+  QT_XCB_FORCE_SOFTWARE_OPENGL=1
+  export QT_XCB_FORCE_SOFTWARE_OPENGL
+fi
+
+EOGL
+
+  # Workaround a bug where SDDM does not always use the configured keymap:
+  echo "setxkbmap" >> ${LIVE_ROOTDIR}/usr/share/sddm/scripts/Xsetup
+
 fi # End LIVEDE = PLASMA5
 
 # Give the live user a copy of our skeleton configuration:
 cd ${LIVE_ROOTDIR}/etc/skel/
   find . -exec cp -a --parents "{}" ${LIVE_ROOTDIR}/home/live/ \;
 cd - 1>/dev/null
+
+# Workaround a bug where our Xkbconfig is not loaded sometimes:
+echo "setxkbmap" > ${LIVE_ROOTDIR}/home/live/.xprofile
 
 # Make sure that user 'live' owns her own files:
 chroot ${LIVE_ROOTDIR} chown -R live:users home/live
