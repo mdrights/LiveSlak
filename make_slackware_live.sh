@@ -328,6 +328,7 @@ function gen_bootmenu() {
     -e "s/@MEDIALABEL@/$MEDIALABEL/g" \
     -e "s/@LIVEDE@/$(echo $LIVEDE |sed 's/BASE//')/g" \
     -e "s/@SL_VERSION@/$SL_VERSION/g" \
+    -e "s/@VERSION@/$VERSION/g" \
     > ${MENUROOTDIR}/vesamenu.cfg
 
   for LANCOD in $(cat ${LIVE_TOOLDIR}/languages |grep -Ev "(^ *#|^$)" |cut -d: -f1)
@@ -359,6 +360,7 @@ EOL
       -e "s/@MEDIALABEL@/$MEDIALABEL/g" \
       -e "s/@LIVEDE@/$(echo $LIVEDE |sed 's/BASE//')/g" \
       -e "s/@SL_VERSION@/$SL_VERSION/g" \
+      -e "s/@VERSION@/$VERSION/g" \
       > ${MENUROOTDIR}/menu_${LANCOD}.cfg
 
     # Generate custom language selection submenu for selected keyboard:
@@ -408,6 +410,7 @@ function gen_uefimenu() {
     -e "s/@MEDIALABEL@/$MEDIALABEL/g" \
     -e "s/@LIVEDE@/$(echo $LIVEDE |sed 's/BASE//')/g" \
     -e "s/@SL_VERSION@/$SL_VERSION/g" \
+    -e "s/@VERSION@/$VERSION/g" \
     > ${GRUBDIR}/grub.cfg
 
   # Set a default keyboard selection:
@@ -1314,11 +1317,11 @@ fi
 
 # Copy the UEFI boot directory structure:
 mkdir -p ${LIVE_STAGING}/EFI/BOOT
-cp -a ${LIVE_TOOLDIR}/EFI/BOOT/{grub-embedded.cfg,make-grub.sh,osdetect.cfg,theme} ${LIVE_STAGING}/EFI/BOOT/
+cp -a ${LIVE_TOOLDIR}/EFI/BOOT/{grub-embedded.cfg,make-grub.sh,*.txt,theme} ${LIVE_STAGING}/EFI/BOOT/
 
 # Create the grub fonts used in the theme:
 for FSIZE in 5 10 12; do
-  grub-mkfont -s ${FSIZE} -bav \
+  grub-mkfont -s ${FSIZE} -av \
     -o ${LIVE_STAGING}/EFI/BOOT/theme/dejavusansmono${FSIZE}.pf2 \
     /usr/share/fonts/TTF/DejaVuSansMono.ttf \
     | grep "^Font name: "

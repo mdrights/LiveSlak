@@ -4,22 +4,24 @@
 # export theme
 #
 # Global Properties:
-#title-text: "GRUB Slackware Live Edition"
+#title-text: "Slackware Live Edition"
 title-text: ""
 #title-font: "Unknown Regular 16"
-title-font: "DejaVu Sans Mono Bold 12"
+title-font: "DejaVu Sans Mono Regular 12"
 title-color: "#5569B9"
 desktop-image: "/EFI/BOOT/theme/swlogog.png"
 desktop-color: "#000000"
+message-font: "DejaVu Sans Mono Regular 12"
+terminal-font: "DejaVu Sans Mono Regular 10"
 
 # Show the boot menu
 + boot_menu {
   left = 5%
   top = 35%
-  width = 70%
+  width = 75%
   height = 45%
   #item_font = "Unknown Regular 16"
-  item_font = "DejaVu Sans Mono Bold 12"
+  item_font = "DejaVu Sans Mono Regular 12"
   item_color = "lightgrey"
   selected_item_color = "red"
   item_height = 15
@@ -41,4 +43,14 @@ desktop-color: "#000000"
   fg_color = "#5569B9"
   bg_color = "#000000"
   border_color = "#333333"
+}
+
+# Show an informational message.
++ hbox {
+  top = 100%-60
+  left = 31%
+  height = 20
+  + label {
+    text = "Enter: Boot Selection     E: Edit Selection     C: GRUB Commandline" font = "DejaVu Sans Mono Regular 10" color = "#B9556B" align = "center"
+  }
 }

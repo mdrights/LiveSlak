@@ -43,7 +43,7 @@ if loadfont $grubdir/theme/dejavusansmono12.pf2 ; then
   export theme
 fi
 
-menuentry "Start Slackware@DIRSUFFIX@ @LIVEDE@ Live ($sl_lang)" --hotkey b {
+menuentry "Start Slackware@DIRSUFFIX@ @SL_VERSION@ @LIVEDE@ Live @VERSION@ ($sl_lang)" --hotkey b {
   linux ($root)/boot/generic load_ramdisk=1 prompt_ramdisk=0 rw printk.time=0 kbd=$sl_kbd tz=$sl_tz locale=$sl_locale
   initrd ($root)/boot/initrd.img
 }
@@ -60,11 +60,13 @@ submenu "Non-US Timezone selection" --hotkey t {
   configfile $grubdir/tz.cfg
 }
 
-menuentry "Detect/boot any installed operating system" {
-  configfile $grubdir/osdetect.cfg
-}
-
 menuentry "Memory test with memtest86+" {
   linux ($root)/boot/memtest
 }
+
+menuentry "Help on boot parameters" --hotkey h { 
+  set pager=1 
+  cat $grubdir/help.txt 
+  unset pager 
+} 
 

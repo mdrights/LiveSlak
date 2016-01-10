@@ -1,0 +1,22 @@
+==  Tweaks for the boot commandline ==
+
+=== Hardware related ===
+
+nomodeset => Boot without kernel mode setting, needed with
+  some machines.
+
+rootdelay=10 => Add 10 second delay to give the kernel more
+  time to initialize USB. Try this if booting fails.
+
+swap => Allow the Live OS to activate all swap partitions on
+  on the local hardware. By default, none is touched.
+
+=== Troubleshooting ===
+
+debug => During init, pause at specifiuc locations while as-
+  sembling the overlay filesystem and show mount information.
+
+rescue => After initialization, you will be dropped in a
+  rescue shell to perform lowlevel maintenance.
+
+== [F1]: Home [F2]: Desktop setup [F3]: Media tweaks ==

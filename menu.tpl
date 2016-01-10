@@ -2,11 +2,13 @@ prompt 0
 timeout 300
 ui vesamenu.c32
 default live
-f2 f2.txt
 font @CONSFONT@
 menu background swlogov.png
-menu title Slackware@DIRSUFFIX@-@SL_VERSION@ Live
+menu title Slackware@DIRSUFFIX@-@SL_VERSION@ Live @VERSION@
 menu clear
+f2 f2.txt #00000000
+f3 f3.txt #00000000
+f4 f4.txt #00000000
 
 menu hshift 1
 menu vshift 9
