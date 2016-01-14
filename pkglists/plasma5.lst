@@ -323,6 +323,8 @@ syndication
 
 # plasma-extra:
 kdeconnect-framework
+kde-wallpapers
+oxygen-fonts
 polkit-kde-kcmodules-framework
 sddm-qt5
 
@@ -354,6 +356,7 @@ milou
 oxygen
 plasma-desktop
 plasma-mediacenter
+plasma-pa
 plasma-sdk
 plasma-workspace
 plasma-workspace-wallpapers
