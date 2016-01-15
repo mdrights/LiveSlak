@@ -1147,8 +1147,11 @@ sed -i ${LIVE_ROOTDIR}/etc/inittab -e "s/\(id:\).\(:initdefault:\)/\1${RUNLEVEL}
 # But enable NFS client support:
 [ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.rpc ] && chmod +x ${LIVE_ROOTDIR}/etc/rc.d/rc.rpc
 
-# Add a softvol pre-amp to ALSA - some computers have too low volumes:
-cat <<EOAL > ${LIVE_ROOTDIR}/etc/asound.conf
+# Add a softvol pre-amp to ALSA - some computers have too low volumes.
+# If etc/asound.conf exists it's configuring ALSA to use Pulse,
+# so in that case the pre-amp is not needed:
+if [ ! -f ${LIVE_ROOTDIR}/etc/asound.conf ]; then
+  cat <<EOAL > ${LIVE_ROOTDIR}/etc/asound.conf
 pcm.!default {
   type asym
   playback.pcm "plug:softvol"
@@ -1162,6 +1165,7 @@ pcm.softvol {
   max_dB 32.0
 }
 EOAL
+fi
 
 # Skip all filesystem checks at boot:
 touch ${LIVE_ROOTDIR}/etc/fastboot
