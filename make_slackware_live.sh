@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # $Id: make_slackware_live.sh,v 1.13 2015/12/04 13:51:41 root Exp root $
-# Copyright 2014, 2015  Eric Hameleers, Eindhoven, NL 
+# Copyright 2014, 2015, 2016  Eric Hameleers, Eindhoven, NL 
 # All rights reserved.
 #
 #   Permission to use, copy, modify, and distribute this software for

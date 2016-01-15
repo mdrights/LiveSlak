@@ -1,7 +1,7 @@
 #!/bin/bash
 # $Id: iso2usb.sh,v 1.6 2015/11/29 15:07:35 root Exp root $
 #
-# Copyright 2015  Eric Hameleers, Eindhoven, NL
+# Copyright 2015, 2016  Eric Hameleers, Eindhoven, NL
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
