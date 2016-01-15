@@ -715,7 +715,8 @@ for SPS in ${SL_SERIES} ; do
     if [ "$SPS" = "a" -o "$SPS" = "min" ]; then
 
       # We need to take care of a few things first:
-      KVER=$(echo ${INSTDIR}/var/log/packages/kernel-generic-[0-9]* |rev |cut -d- -f3 |rev)
+      KGEN=$(echo ${INSTDIR}/var/log/packages/kernel*modules* |head -1 |rev | cut -d- -f3 |rev)
+      KVER=$(ls --indicator-style=none ${INSTDIR}/lib/modules/ |head -1)
       if [ -z "$KVER" ]; then
         echo "-- Could not find installed kernel in '${INSTDIR}'! Exiting."
         exit 1
@@ -1301,7 +1302,8 @@ mount --bind /sys ${LIVE_ROOTDIR}/sys
 mount --bind /dev ${LIVE_ROOTDIR}/dev
 
 # Determine the installed kernel version:
-KVER=$(ls ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |head -1 |rev | cut -d- -f3 |rev)
+KGEN=$(echo ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |head -1 |rev | cut -d- -f3 |rev)
+KVER=$(ls --indicator-style=none ${LIVE_ROOTDIR}/lib/modules/ |head -1)
 
 # Create an initrd for the generic kernel, using a modified init script:
 echo "-- Creating initrd for kernel-generic $KVER ..."
@@ -1327,7 +1329,7 @@ mksquashfs ${LIVE_BOOT} ${LIVE_MOD_SYS}/0000-slackware_boot-${SL_VERSION}-${SL_A
 # Note to self: syslinux does not 'see' files unless they are DOS 8.3 names?
 rm -rf ${LIVE_STAGING}/boot
 mkdir -p ${LIVE_STAGING}/boot
-cp -a ${LIVE_BOOT}/boot/vmlinuz-generic-$KVER ${LIVE_STAGING}/boot/generic
+cp -a ${LIVE_BOOT}/boot/vmlinuz-generic*-$KGEN ${LIVE_STAGING}/boot/generic
 cp -a ${LIVE_BOOT}/boot/initrd_${KVER}.gz ${LIVE_STAGING}/boot/initrd.img
 cp -a ${LIVE_TOOLDIR}/syslinux ${LIVE_STAGING}/boot/
 # Make use of proper console font if we have it available:
