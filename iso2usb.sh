@@ -39,10 +39,17 @@ VERBOSE=0
 # Seconds to add to the initrd as wait-for-root value:
 WAIT=5
 
+# No LUKS encryption by default:
+DOLUKS=0
+CNTDEV=""
+CNTFILE=""
+LODEV=""
+
 # Define ahead of time, so that cleanup knows about them:
 IMGDIR=""
 EFIMNT=""
 ISOMNT=""
+LKSMNT=""
 USBMNT=""
 
 #
@@ -56,8 +63,16 @@ cleanup() {
   # During cleanup, do not abort due to non-zero exit code:
   set +e
   sync
+  if [ $DOLUKS -eq 1 ]; then
+    if mount |grep -q ${CNTDEV} ; then
+      umount -f ${CNTDEV}
+      cryptsetup luksClose ${CNTBASE}
+      losetup -d ${LODEV}
+    fi
+  fi
   [ -n "${EFIMNT}" ] && ( /sbin/umount -f ${EFIMNT} 2>/dev/null; rmdir $EFIMNT )
   [ -n "${ISOMNT}" ] && ( /sbin/umount -f ${ISOMNT} 2>/dev/null; rmdir $ISOMNT )
+  [ -n "${LKSMNT}" ] && ( /sbin/umount -f ${LKSMNT} 2>/dev/null; rmdir $LKSMNT )
   [ -n "${USBMNT}" ] && ( /sbin/umount -f ${USBMNT} 2>/dev/null; rmdir $USBMNT )
   [ -n "${IMGDIR}" ] && ( rm -rf $IMGDIR )
   set -e
@@ -75,30 +90,38 @@ cat <<EOT
 # This data will be *erased* !
 #
 # $(basename $0) accepts the following parameters:
-#   -f|--force                 Ignore most warnings (except the back-out)
-#   -h|--help                  This help
-#   -i|--infile <filename>     Full path to the ISO image file
-#   -o|--outdev <filename>     The device name of your USB drive
-#   -p|--persistence <dirname> Custom name of the 'persistence' directory
-#   -u|--unattended            Do not ask any questions
-#   -v|--verbose               Show verbose messages
-#   -w|--wait<number>          Pause boot <number> seconds to initialize USB
+#   -c|--crypt size|perc       Add LUKS encrypted /home ; parameter is the
+#                              requested size of the container in kB, MB, GB,
+#                              or as a percentage of free space.
+#                              Examples: '-c 125M', '-c 1.3G', '-c 20%'.
+#   -f|--force                 Ignore most warnings (except the back-out).
+#   -h|--help                  This help.
+#   -i|--infile <filename>     Full path to the ISO image file.
+#   -o|--outdev <filename>     The device name of your USB drive.
+#   -p|--persistence <dirname> Custom name of the 'persistence' directory.
+#   -u|--unattended            Do not ask any questions.
+#   -v|--verbose               Show verbose messages.
+#   -w|--wait<number>          Add <number> seconds wait time to initialize USB.
 
 #
-# Example:
+# Examples:
 #
 # $(basename $0) -i ~/download/slackware64-live-14.2.iso -o /dev/sdX
+# $(basename $0) -i slackware64-live-xfce-current.iso -o /dev/sdX -c 750M -w 15
 #
 EOT
 }
 
 # Add longer USB WAIT to the initrd:
 update_initrd() {
-  # USB boot medium needs a few seconds boot delay else the overlay will fail.
+  IMGFILE="$1"
 
+  # USB boot medium needs a few seconds boot delay else the overlay will fail.
   # Check if we need to update the wait-for-root file in the initrd:
-  OLDWAIT=$(gunzip -cd ${USBMNT}/boot/initrd.img |cpio -i --to-stdout wait-for-root 2>/dev/null)
-  [ "$OLDWAIT" = "$WAIT" ] && return
+  OLDWAIT=$(gunzip -cd ${IMGFILE} |cpio -i --to-stdout wait-for-root 2>/dev/null)
+  if [ "$OLDWAIT" = "$WAIT" -a $DOLUKS -eq 0 ]; then
+    return
+  fi
   
   if [ -z "$IMGDIR" ]; then
     # Create a temporary extraction directory for the initrd:
@@ -113,16 +136,119 @@ update_initrd() {
 
   echo "--- Extracting Slackware initrd and adding rootdelay for USB..."
   cd ${IMGDIR}
-    gunzip -cd ${USBMNT}/boot/initrd.img \
+    gunzip -cd ${IMGFILE} \
       | cpio -i -d -H newc --no-absolute-filenames
     echo "--- Updating 'waitforroot' time from '$OLDWAIT' to '$WAIT':"
     echo ${WAIT} > wait-for-root
+
+    if [ $DOLUKS -eq 1 ]; then
+      if ! grep -q ${CNTFILE} luksdev ; then
+        echo "--- Adding '${CNTFILE}' as LUKS /home:"
+        echo "${CNTFILE}" >> luksdev
+      fi
+    fi
+
     echo "--- Compressing the initrd image again:"
     chmod 0755 ${IMGDIR}
-    find . |cpio -o -H newc |gzip > ${USBMNT}/boot/initrd.img
+    find . |cpio -o -H newc |gzip > ${IMGFILE}
   cd - 2>/dev/null
   rm -rf $IMGDIR/*
 } # End of update_initrd()
+
+# Create a container file in the empty space of the partition
+create_container() {
+  CNTPART=$1
+  CNTSIZE=$2
+  CNTBASE=$3
+
+  # Determine size of the target partition (in MB), and the free space:
+  PARTSIZE=$(df -P -BM ${CNTPART} |tail -1 |tr -s '\t' ' ' |cut -d' ' -f2)
+  PARTSIZE=${PARTSIZE%M}
+  PARTFREE=$(df -P -BM ${CNTPART} |tail -1 |tr -s '\t' ' ' |cut -d' ' -f4)
+  PARTFREE=${PARTFREE%M}
+
+  if [ $PARTFREE -lt 10 ]; then
+    echo "** Free space on USB partition is less than 10 MB;"
+    echo "** Not creating a container file!"
+    exit 1
+  fi
+
+  # Determine requested container size (allow for '%|k|K|m|M|g|G' suffix):
+  case "${CNTSIZE: -1}" in
+     "%") CNTSIZE="$(( $PARTFREE * ${CNTSIZE%\%} / 100 ))" ;;
+     "k") CNTSIZE="$(( ${CNTSIZE%k} / 1024 ))" ;;
+     "K") CNTSIZE="$(( ${CNTSIZE%K} / 1024 ))" ;;
+     "m") CNTSIZE="${CNTSIZE%m}" ;;
+     "M") CNTSIZE="${CNTSIZE%M}" ;;
+     "g") CNTSIZE="$(( ${CNTSIZE%g} * 1024 ))" ;;
+     "G") CNTSIZE="$(( ${CNTSIZE%G} * 1024 ))" ;;
+       *) ;;
+  esac
+
+  if [ $CNTSIZE -le 0 ]; then
+    echo "** Container size must be larger than ZERO!"
+    echo "** Check your '-c' commandline parameter."
+    exit 1
+  elif [ $CNTSIZE -ge $PARTFREE ]; then
+    echo "** Not enough free space for container file!"
+    echo "** Check your '-c' commandline parameter."
+    exit 1
+  fi
+
+  # Create an empty container file (allow for previously created ones):
+  for III in $(seq 1 9); do
+    if [ ! -f $USBMNT/${CNTBASE}0${III} ]; then
+      break
+    fi
+  done
+  if [ $III -eq 9 ]; then
+    echo "*** You already have NINE container files? Please clean up first."
+    exit 1
+  else
+    echo "--- Creating ${CNTSIZE}MB container file using 'dd if=/dev/urandom', patience please..."
+    dd if=/dev/urandom of=$USBMNT/${CNTBASE}0${III}.img bs=1M count=$CNTSIZE
+    CNTFILE="${CNTBASE}0${III}.img"
+  fi
+
+  # Setup a loopback device that we can use with cryptsetup:
+  LODEV=$(losetup -f)
+  losetup $LODEV $USBMNT/${CNTBASE}0${III}.img
+  if [ $DOLUKS -eq 1 ]; then
+    # Format the loop device with LUKS:
+    echo "--- Encrypting the container file with LUKS; enter 'YES' and a passphrase..."
+    cryptsetup -y luksFormat $LODEV
+    # Unlock the LUKS encrypted container:
+    echo "--- Unlocking the LUKS container requires your passphrase again..."
+    cryptsetup luksOpen $LODEV ${CNTBASE}
+    CNTDEV=/dev/mapper/${CNTBASE}
+  else
+    CNTDEV=$LODEV
+  fi
+  # Format the now available block device with a linux fs:
+  mkfs.ext4 ${CNTDEV}
+  # Tune the ext4 filesystem:
+  tune2fs -m 0 -c 0 -i 0 ${CNTDEV}
+  # Create a mount point for the unlocked container:
+  LKSMNT=$(mktemp -d -p /mnt -t alienlks.XXXXXX)
+  if [ ! -d $LKSMNT ]; then
+    echo "*** Failed to create a temporary mount point for the LUKS container!"
+    exit 1
+  else
+    chmod 711 $LKSMNT
+  fi
+  # Copy the original /home content into the container:
+  echo "--- Copying /home from LiveOS to LUKS container..."
+  HOMESRC=$(find ${USBMNT} -name "0099-slackware_zzzconf*" |tail -1)
+  mount ${CNTDEV} ${LKSMNT}
+  unsquashfs -n -d ${LKSMNT}/temp ${HOMESRC} /home
+  mv ${LKSMNT}/temp/home/* ${LKSMNT}/
+  rm -rf ${LKSMNT}/temp
+  # And clean up after ourselves:
+  umount ${CNTDEV}
+  cryptsetup luksClose ${CNTBASE}
+  losetup -d ${LODEV}
+
+} # End of create_container() {
 
 #
 #  -- end of function definitions --
@@ -135,6 +261,11 @@ if [ -z "$1" ]; then
 fi
 while [ ! -z "$1" ]; do
   case $1 in
+    -c|--crypt)
+      LUKSSIZE="$2"
+      DOLUKS=1
+      shift 2
+      ;;
     -f|--force)
       FORCE=1
       shift
@@ -203,7 +334,7 @@ fi
 
 # Are all the required not-so-common add-on tools present?
 PROG_MISSING=""
-for PROGN in blkid cpio extlinux fdisk gdisk iso-info mkdosfs sgdisk ; do
+for PROGN in blkid cpio extlinux fdisk gdisk iso-info mkdosfs sgdisk unsquashfs ; do
   if ! PATH="/sbin:$PATH" which $PROGN 1>/dev/null 2>/dev/null ; then
     PROG_MISSING="${PROG_MISSING}--   $PROGN\n"
   fi
@@ -310,8 +441,42 @@ else
   chmod 711 $USBMNT
 fi
 
+# Mount the Linux partition:
+/sbin/mount -t auto ${TARGET}3 ${USBMNT}
+
 # Loop-mount the ISO (or 1st partition if this is a hybrid ISO):
 /sbin/mount -o loop ${SLISO} ${ISOMNT}
+
+# Copy the ISO content into the USB Linux partition:
+echo "--- Copying files from ISO to USB... takes some time."
+rsync -a ${RVERBOSE} --exclude=EFI ${ISOMNT}/* ${USBMNT}/
+
+# Write down the version of the ISO image:
+VERSION=$(iso-info ${SLISO} |grep Application |cut -d: -f2- 2>/dev/null)
+if [ -n "$VERSION" ]; then
+  echo "$VERSION" > ${USBMNT}/.isoversion
+fi
+
+if [ $DOLUKS -eq 1 ]; then
+  # Create LUKS container file:
+  create_container ${TARGET}3 ${LUKSSIZE} slhome
+fi
+
+# Add more USB WAIT seconds to the initrd:
+update_initrd ${USBMNT}/boot/initrd.img
+
+# Create persistence directory:
+mkdir -p ${USBMNT}/${PERSISTENCE}
+
+# Use extlinux to make the USB device bootable:
+echo "--- Making the USB drive '$TARGET' bootable using extlinux..."
+mv ${USBMNT}/boot/syslinux ${USBMNT}/boot/extlinux
+mv ${USBMNT}/boot/extlinux/isolinux.cfg ${USBMNT}/boot/extlinux/extlinux.conf
+rm ${USBMNT}/boot/extlinux/isolinux.*
+/sbin/extlinux --install ${USBMNT}/boot/extlinux
+
+# No longer needed:
+/sbin/umount ${USBMNT}
 
 if [ $EFIBOOT -eq 1 ]; then
   # Mount the EFI partition and copy /EFI as well as /boot directories into it:
@@ -327,32 +492,6 @@ fi
 # No longer needed:
 /sbin/umount ${USBMNT}
 /sbin/umount ${EFIMNT}
-
-# Mount the Linux partition:
-/sbin/mount -t auto ${TARGET}3 ${USBMNT}
-
-# Copy the ISO content into the USB Linux partition:
-echo "--- Copying files from ISO to USB... takes some time."
-rsync -a ${RVERBOSE} --exclude=EFI ${ISOMNT}/* ${USBMNT}/
-
-# Write down the version of the ISO image:
-VERSION=$(iso-info ${SLISO} |grep Application |cut -d: -f2- 2>/dev/null)
-if [ -n "$VERSION" ]; then
-  echo "$VERSION" > ${USBMNT}/.isoversion
-fi
-
-# Add more USB WAIT seconds to the initrd:
-update_initrd ${USBMNT}/boot/initrd.img
-
-# Create persistence directory:
-mkdir -p ${USBMNT}/${PERSISTENCE}
-
-# Use extlinux to make the USB device bootable:
-echo "--- Making the USB drive '$TARGET' bootable using extlinux..."
-mv ${USBMNT}/boot/syslinux ${USBMNT}/boot/extlinux
-mv ${USBMNT}/boot/extlinux/isolinux.cfg ${USBMNT}/boot/extlinux/extlinux.conf
-rm ${USBMNT}/boot/extlinux/isolinux.*
-/sbin/extlinux --install ${USBMNT}/boot/extlinux
 
 # Unmount/remove stuff:
 cleanup

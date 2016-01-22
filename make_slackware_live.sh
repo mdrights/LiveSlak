@@ -31,6 +31,7 @@
 # - uses overlayfs to bind multiple squashfs modules together
 # - you can add your own modules into ./addons/ or ./optional subdirectories.
 # - persistence is enabled when writing the ISO to USB stick using iso2usb.sh.
+# - LUKS encrypted homedirectory is optional on USB stick using iso2usb.sh.
 #
 # -----------------------------------------------------------------------------
 
@@ -155,8 +156,9 @@ SEQ_MSB="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,mate loc
 # - each will become a squashfs module:
 SEQ_CIN="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,cinnamon local:slackpkg+"
 
-# List of kernel modules required for a live medium to boot properly:
-KMODS=${KMODS:-"squashfs:overlay:loop:xhci-pci:ehci-pci:uhci_hcd:usb-storage:hid:usbhid:hid_generic:jbd:mbcache:ext3:ext4:isofs:fat:nls_cp437:nls_iso8859-1:msdos:vfat"}
+# List of kernel modules required for a live medium to boot properly;
+# Lots of HID modules added to support keyboard input for LUKS password entry:
+KMODS=${KMODS:-"squashfs:overlay:loop:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:usb-storage:hid:usbhid:hid-generic:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:jbd:mbcache:ext3:ext4:isofs:fat:nls_cp437:nls_iso8859-1:msdos:vfat"}
 
 # What compression to use for the squashfs modules?
 # Default is xz, alternatives are gzip, lzma, lzo:
@@ -1330,13 +1332,14 @@ KVER=$(ls --indicator-style=none ${LIVE_ROOTDIR}/lib/modules/ |head -1)
 
 # Create an initrd for the generic kernel, using a modified init script:
 echo "-- Creating initrd for kernel-generic $KVER ..."
-chroot ${LIVE_ROOTDIR} /sbin/mkinitrd -c -w ${WAIT} -l us -o /boot/initrd_${KVER}.gz -k ${KVER} -m ${KMODS} 1>${DBGOUT} 2>${DBGOUT}
+chroot ${LIVE_ROOTDIR} /sbin/mkinitrd -c -w ${WAIT} -l us -o /boot/initrd_${KVER}.gz -k ${KVER} -m ${KMODS} -L -C dummy 1>${DBGOUT} 2>${DBGOUT}
 cat $LIVE_TOOLDIR/liveinit | sed \
   -e "s/@LIVEMAIN@/$LIVEMAIN/g" \
   -e "s/@MEDIALABEL@/$MEDIALABEL/g" \
   -e "s/@PERSISTENCE@/$PERSISTENCE/g" \
   -e "s/@DARKSTAR@/$LIVE_HOSTNAME/g" \
   > ${LIVE_ROOTDIR}/boot/initrd-tree/init
+cat /dev/null > ${LIVE_ROOTDIR}/boot/initrd-tree/luksdev
 chroot ${LIVE_ROOTDIR} /sbin/mkinitrd 1>/dev/null 2>${DBGOUT}
 rm -rf ${LIVE_ROOTDIR}/boot/initrd-tree
 

@@ -50,6 +50,7 @@ DEBUG=0
 INITRD=$(cat /initrd-name)
 WAIT=$(cat /wait-for-root)
 KEYMAP=$(cat /keymap)
+LUKSVOL=$(cat /luksdev)
 INIT=/sbin/init
 
 PATH="/sbin:/bin:/usr/sbin:/usr/bin"
@@ -99,6 +100,10 @@ for ARG in $(cat /proc/cmdline); do
     ;;
     locale=*)
       LOCALE=$(echo $ARG | cut -f2 -d=)
+    ;;
+    luksvol=*)
+      # Format: luksvol=file1[:/mountpoint1][,file1[:/mountpoint2],...]
+      LUKSVOL=$(echo $ARG | cut -f2 -d=)
     ;;
     noload=*)
       NOLOAD=$(echo $ARG | cut -f2 -d=)
@@ -481,6 +486,57 @@ EOPW
 
   # Copy contents of rootcopy directory (may be empty) to overlay:
   cp -af /mnt/media/${LIVEMAIN}/rootcopy/* /mnt/overlay/ 2>/dev/null
+
+  # Bind any LUKS container into the Live filesystem:
+  if [ ! -z "$LUKSVOL" ]; then
+    # Even without persistence, we need to be able to write to the partition:
+    mount -o remount,rw /mnt/media
+    for luksvol in $(echo $LUKSVOL |tr ',' ' '); do
+      luksfil="$(echo $luksvol |cut -d: -f1)"
+      luksmnt="$(echo $luksvol |cut -d: -f2)"
+      luksnam="$(echo $(basename $luksfil) |tr '.' '_')"
+      if [ "$luksmnt" = "$luksfil" ]; then
+        # No optional mount point specified, so we use the default: /home/
+        luksmnt="/home"
+      fi
+
+      # The losetup of busybox is different from the real losetup - watch out!
+      lodev=$(losetup -f)
+      if [ -z "$lodev" ]; then
+        # We exhausted the available loop devices, so create the block device:
+        for NOD in $(seq 0 64); do
+          if [ ! -b /dev/loop${NOD} ]; then
+            mknod -m660 /dev/loop${NOD} b 7 ${NOD}
+            break
+          fi
+        done
+        lodev=/dev/loop${NOD}
+      elif [ ! -b $lodev ]; then
+        # We exhausted the available loop devices, so create the block device:
+        mknod -m660 $lodev b 7 $(echo $lodev |sed %/dev/loop%%)
+      fi
+      losetup $lodev /mnt/media/$luksfil
+      echo "Unlocking LUKS encrypted container '$luksfil' at mount point '$luksmnt'"
+      cryptsetup luksOpen $lodev $luksnam </dev/tty0 >/dev/tty0 2>&1
+      if [ $? -ne 0 ]; then
+        echo "${INITRD}:  Failed to unlock LUKS container '$luksfil'... trouble ahead."
+      fi
+
+      # Create the directory if it does not exist (unlikely):
+      mkdir -p /mnt/overlay/$luksmnt
+
+      # Let Slackware mount the unlocked container:
+      luksfs=$(blkid /dev/mapper/$luksnam |rev |cut -d'"' -f2 |rev)
+      if ! grep -q /dev/mapper/$luksnam /mnt/overlay/etc/fstab ; then
+        echo "/dev/mapper/$luksnam  $luksmnt  $luksfs  defaults  1  1" >> /mnt/overlay/etc/fstab
+      fi
+      # On shutdown, ensure that the container gets locked again:
+      if ! grep -q "$luksnam $luksmnt" /mnt/overlay/etc/crypttab ; then
+        echo "$luksnam $luksmnt" >> /mnt/overlay/etc/crypttab
+      fi
+
+    done
+  fi
 
   # --------------------------------------------------------------------- #
   #                     SLACKWARE LIVE - !END!                            #
