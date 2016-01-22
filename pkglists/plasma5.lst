@@ -199,6 +199,7 @@ zeroconf-ioslave
 # frameworks:
 attica-framework
 baloo5
+bluez-qt
 breeze-icons
 extra-cmake-modules
 frameworkintegration
@@ -331,7 +332,6 @@ sddm-qt5
 
 # plasma:
 bluedevil
-bluez-qt
 breeze
 breeze-gtk
 kde-cli-tools
