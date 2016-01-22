@@ -1,23 +1,16 @@
 # MSB DEPS:
-atkmm
-cairomm
 docutils
 gksu
-glibmm
 gssdp
 gtk-engines
-gtkmm
 gtksourceview
 gupnp
 libgksu
 libgnomecanvas
 libgtop
 liboobs
-libsigc++
 libunique
-mm-common
 murrine
-pangomm
 pangox-compat
 perl-net-dbus
 perl-xml-twig
