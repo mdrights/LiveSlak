@@ -7,7 +7,7 @@ bash
 bin
 binutils
 bison
-#bsd-games
+bsd-games
 bzip2
 ca-certificates
 coreutils
@@ -34,7 +34,7 @@ gawk
 gc
 gcc
 ghostscript
-#ghostscript-fonts-std
+ghostscript-fonts-std
 glibc
 #glibc-solibs
 glibc-zoneinfo
@@ -42,6 +42,7 @@ gnupg
 gnupg2
 gnutls
 gpgme
+gpm
 gptfdisk
 grep
 groff
