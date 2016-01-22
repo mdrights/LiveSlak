@@ -162,16 +162,17 @@ KMODS=${KMODS:-"squashfs:overlay:loop:xhci-pci:ehci-pci:uhci_hcd:usb-storage:hid
 # Default is xz, alternatives are gzip, lzma, lzo:
 SXZ_COMP=${SXZ_COMP:-"xz"}
 
-# Mount point where we will assemble a Slackware filesystem:
+# Mount point where Live filesystem is assembled (no storage requirements):
 LIVE_ROOTDIR=${LIVE_ROOTDIR:-"/mnt/slackwarelive"}
 
-# Toplevel directory of our staging area:
+# Toplevel directory of our staging area (this needs sufficient storage):
 LIVE_STAGING=${LIVE_STAGING:-"/tmp/slackwarelive_staging"}
 
 # Work directory where we will create all the temporary stuff:
 LIVE_WORK=${LIVE_WORK:-"${LIVE_STAGING}/temp"}
 
-# Directory to be used by overlayfs for data manipulation:
+# Directory to be used by overlayfs for data manipulation,
+# needs to be a directory in the same filesystem as ${LIVE_WORK}:
 LIVE_OVLDIR=${LIVE_OVLDIR:-"${LIVE_WORK}/.ovlwork"}
 
 # Directory where we will move the kernel and create the initrd;
@@ -866,10 +867,10 @@ EOT
 # Reduce the number of local consoles, two should be enough:
 sed -i -e '/^c3\|^c4\|^c5\|^c6/s/^/# /' ${LIVE_ROOTDIR}/etc/inittab
 
-# Prevent loop devices (xzm modules) from appearing in filemanagers:
+# Prevent loop devices (sxz modules) from appearing in filemanagers:
 mkdir -p ${LIVE_ROOTDIR}/etc/udev/rules.d
 cat <<EOL > ${LIVE_ROOTDIR}/etc/udev/rules.d/11-local.rules
-# Prevent loop devices (mounted xzm modules) from appearing in
+# Prevent loop devices (mounted sxz modules) from appearing in
 # filemanager panels - http://www.seguridadwireless.net
 
 # Hidden loops for udisks:
@@ -1463,7 +1464,7 @@ mkisofs -o ${OUTPUT}/slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso \
   -eltorito-boot boot/syslinux/efiboot.img \
   -preparer "$(echo $LIVEDE |sed 's/BASE//') Live built by ${BUILDER}" \
   -publisher "The Slackware Linux Project - http://www.slackware.com/" \
-  -A "Slackware Live ${SL_VERSION} for ${SL_ARCH} ($VERSION)" \
+  -A "Slackware-${SL_VERSION} for ${SL_ARCH} ($(echo $LIVEDE |sed 's/BASE//') Live $VERSION)" \
   -V "${MEDIALABEL}" \
   -x ./$(basename ${LIVE_WORK}) \
   -x ./${LIVEMAIN}/bootinst \
