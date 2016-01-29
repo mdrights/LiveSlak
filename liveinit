@@ -354,6 +354,10 @@ if [ "$RESCUE" = "" ]; then
         OVLWORK=/mnt/media/.ovlwork
       fi
     fi
+  elif [ ! -z "$LUKSVOL" ]; then
+    # Even without persistence, we need to be able to write to the partition
+    # if we are using a LUKS container file:
+    mount -o remount,rw /mnt/media
   fi
   # Create the writable upper directory, plus the workdir which is required
   # for overlay to function (the two must be in the same POSIX filesystem):
@@ -489,8 +493,6 @@ EOPW
 
   # Bind any LUKS container into the Live filesystem:
   if [ ! -z "$LUKSVOL" ]; then
-    # Even without persistence, we need to be able to write to the partition:
-    mount -o remount,rw /mnt/media
     for luksvol in $(echo $LUKSVOL |tr ',' ' '); do
       luksfil="$(echo $luksvol |cut -d: -f1)"
       luksmnt="$(echo $luksvol |cut -d: -f2)"
