@@ -1333,6 +1333,7 @@ KVER=$(ls --indicator-style=none ${LIVE_ROOTDIR}/lib/modules/ |head -1)
 # Create an initrd for the generic kernel, using a modified init script:
 echo "-- Creating initrd for kernel-generic $KVER ..."
 chroot ${LIVE_ROOTDIR} /sbin/mkinitrd -c -w ${WAIT} -l us -o /boot/initrd_${KVER}.gz -k ${KVER} -m ${KMODS} -L -C dummy 1>${DBGOUT} 2>${DBGOUT}
+# Modify the initrd content for the Live OS:
 cat $LIVE_TOOLDIR/liveinit | sed \
   -e "s/@LIVEMAIN@/$LIVEMAIN/g" \
   -e "s/@MEDIALABEL@/$MEDIALABEL/g" \
@@ -1340,6 +1341,9 @@ cat $LIVE_TOOLDIR/liveinit | sed \
   -e "s/@DARKSTAR@/$LIVE_HOSTNAME/g" \
   > ${LIVE_ROOTDIR}/boot/initrd-tree/init
 cat /dev/null > ${LIVE_ROOTDIR}/boot/initrd-tree/luksdev
+# We do not add openobex to the initrd and don't want to see irrelevant errors:
+rm ${LIVE_ROOTDIR}/boot/initrd-tree/lib/udev/rules.d/*openobex*rules 2>${DBGOUT}
+# Wrap up the initrd.img again:
 chroot ${LIVE_ROOTDIR} /sbin/mkinitrd 1>/dev/null 2>${DBGOUT}
 rm -rf ${LIVE_ROOTDIR}/boot/initrd-tree
 
