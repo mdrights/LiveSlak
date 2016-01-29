@@ -27,8 +27,12 @@ set -e
 # Set to '1' if you want to ignore all warnings:
 FORCE=0
 
-# By default, we use 'persistence' as the name of the persistence directory:
+# By default, we use 'persistence' as the name of the persistence directory,
+# or 'persistence.img' as the name of the persistence container:
 PERSISTENCE="persistence"
+
+# Default persistence type is a directory:
+PERSISTTYPE="dir"
 
 # Set to '1' if the script should not ask any questions:
 UNATTENDED=0
@@ -49,7 +53,7 @@ LODEV=""
 IMGDIR=""
 EFIMNT=""
 ISOMNT=""
-LKSMNT=""
+CNTMNT=""
 USBMNT=""
 
 #
@@ -72,7 +76,7 @@ cleanup() {
   fi
   [ -n "${EFIMNT}" ] && ( /sbin/umount -f ${EFIMNT} 2>/dev/null; rmdir $EFIMNT )
   [ -n "${ISOMNT}" ] && ( /sbin/umount -f ${ISOMNT} 2>/dev/null; rmdir $ISOMNT )
-  [ -n "${LKSMNT}" ] && ( /sbin/umount -f ${LKSMNT} 2>/dev/null; rmdir $LKSMNT )
+  [ -n "${CNTMNT}" ] && ( /sbin/umount -f ${CNTMNT} 2>/dev/null; rmdir $CNTMNT )
   [ -n "${USBMNT}" ] && ( /sbin/umount -f ${USBMNT} 2>/dev/null; rmdir $USBMNT )
   [ -n "${IMGDIR}" ] && ( rm -rf $IMGDIR )
   set -e
@@ -102,7 +106,8 @@ cat <<EOT
 #   -u|--unattended            Do not ask any questions.
 #   -v|--verbose               Show verbose messages.
 #   -w|--wait<number>          Add <number> seconds wait time to initialize USB.
-
+#   -P|--persistfile           Use a 'persistence' container file instead of
+#                              a directory (for use on FAT filesystem).
 #
 # Examples:
 #
@@ -160,6 +165,8 @@ create_container() {
   CNTPART=$1
   CNTSIZE=$2
   CNTBASE=$3
+  CNTENCR=$4 # 'none' or 'luks'
+  CNTUSED=$5 # '/home' or 'persistence'
 
   # Determine size of the target partition (in MB), and the free space:
   PARTSIZE=$(df -P -BM ${CNTPART} |tail -1 |tr -s '\t' ' ' |cut -d' ' -f2)
@@ -195,25 +202,28 @@ create_container() {
     exit 1
   fi
 
-  # Create an empty container file (allow for previously created ones):
-  for III in $(seq 1 9); do
-    if [ ! -f $USBMNT/${CNTBASE}0${III} ]; then
-      break
+  # Create an empty container file (re-use previously created one):
+  if [ -f $USBMNT/${CNTBASE}.img ]; then
+    CNTFILE="${CNTBASE}.img"
+    CNTSIZE=$(( $(du -sk ${CNTFILE}) / 1024 ))
+    if [ $UNATTENDED -eq 0 ]; then
+      echo "*** File '${CNTFILE}' already exists (size ${CNTSIZE} MB). ***"
+      echo "*** If you do not want to re-use it for '$CNTUSED', ***"
+      echo "*** then press CONTROL-C now and rename that file! ***"
+      read -p "Else press ENTER to continue: " JUNK
+      # OK... the user was sure about the file...
     fi
-  done
-  if [ $III -eq 9 ]; then
-    echo "*** You already have NINE container files? Please clean up first."
-    exit 1
   else
-    echo "--- Creating ${CNTSIZE}MB container file using 'dd if=/dev/urandom', patience please..."
-    dd if=/dev/urandom of=$USBMNT/${CNTBASE}0${III}.img bs=1M count=$CNTSIZE
-    CNTFILE="${CNTBASE}0${III}.img"
+    echo "--- Creating ${CNTSIZE} MB container file using 'dd if=/dev/urandom', patience please..."
+    CNTFILE="${CNTBASE}.img"
+    # Create a sparse file (not allocating any space yet):
+    dd of=$USBMNT/${CNTFILE} bs=1M count=0 seek=$CNTSIZE
   fi
 
   # Setup a loopback device that we can use with cryptsetup:
   LODEV=$(losetup -f)
-  losetup $LODEV $USBMNT/${CNTBASE}0${III}.img
-  if [ $DOLUKS -eq 1 ]; then
+  losetup $LODEV $USBMNT/${CNTFILE}
+  if [ "${CNTENCR}" = "luks" ]; then
     # Format the loop device with LUKS:
     echo "--- Encrypting the container file with LUKS; enter 'YES' and a passphrase..."
     cryptsetup -y luksFormat $LODEV
@@ -221,31 +231,46 @@ create_container() {
     echo "--- Unlocking the LUKS container requires your passphrase again..."
     cryptsetup luksOpen $LODEV ${CNTBASE}
     CNTDEV=/dev/mapper/${CNTBASE}
+    # Now we allocate blocks for the LUKS device. We write encrypted zeroes,
+    # so that the file looks randomly filled from the outside.
+    # Take care not to write more bytes than the internal size of the container:
+    CNTIS=$(( $(lsblk -b -n -o SIZE  $(readlink -f ${CNTDEV})) / 512))
+    dd if=/dev/zero of=${CNTDEV} bs=512 count=${CNTIS} || true
   else
     CNTDEV=$LODEV
+    # Un-encrypted container files remain sparse.
   fi
+
   # Format the now available block device with a linux fs:
   mkfs.ext4 ${CNTDEV}
   # Tune the ext4 filesystem:
   tune2fs -m 0 -c 0 -i 0 ${CNTDEV}
-  # Create a mount point for the unlocked container:
-  LKSMNT=$(mktemp -d -p /mnt -t alienlks.XXXXXX)
-  if [ ! -d $LKSMNT ]; then
-    echo "*** Failed to create a temporary mount point for the LUKS container!"
-    exit 1
-  else
-    chmod 711 $LKSMNT
+
+  if [ "${CNTUSED}" != "persistence" ]; then
+    # Create a mount point for the unlocked container:
+    CNTMNT=$(mktemp -d -p /mnt -t aliencnt.XXXXXX)
+    if [ ! -d $CNTMNT ]; then
+      echo "*** Failed to create temporary mount point for the LUKS container!"
+      cleanup
+      exit 1
+    else
+      chmod 711 $CNTMNT
+    fi
+    # Copy the original /home (or whatever mount) content into the container:
+    echo "--- Copying '${CNTUSED}' from LiveOS to container..."
+    HOMESRC=$(find ${USBMNT} -name "0099-slackware_zzzconf*" |tail -1)
+    mount ${CNTDEV} ${CNTMNT}
+    unsquashfs -n -d ${CNTMNT}/temp ${HOMESRC} ${CNTUSED}
+    mv ${CNTMNT}/temp/${CNTUSED}/* ${CNTMNT}/
+    rm -rf ${CNTMNT}/temp
+    # And clean up after ourselves:
+    umount ${CNTDEV}
+    if [ "${CNTENCR}" = "luks" ]; then
+      cryptsetup luksClose ${CNTBASE}
+    fi
   fi
-  # Copy the original /home content into the container:
-  echo "--- Copying /home from LiveOS to LUKS container..."
-  HOMESRC=$(find ${USBMNT} -name "0099-slackware_zzzconf*" |tail -1)
-  mount ${CNTDEV} ${LKSMNT}
-  unsquashfs -n -d ${LKSMNT}/temp ${HOMESRC} /home
-  mv ${LKSMNT}/temp/home/* ${LKSMNT}/
-  rm -rf ${LKSMNT}/temp
-  # And clean up after ourselves:
-  umount ${CNTDEV}
-  cryptsetup luksClose ${CNTBASE}
+
+  # Don't forget:
   losetup -d ${LODEV}
 
 } # End of create_container() {
@@ -298,6 +323,10 @@ while [ ! -z "$1" ]; do
     -w|--wait)
       WAIT="$2"
       shift 2
+      ;;
+    -P|--persistfile)
+      PERSISTTYPE="file"
+      shift
       ;;
     *)
       echo "*** Unknown parameter '$1'!"
@@ -405,6 +434,7 @@ mkdir -p /mnt
 EFIMNT=$(mktemp -d -p /mnt -t alienefi.XXXXXX)
 if [ ! -d $EFIMNT ]; then
   echo "*** Failed to create a temporary mount point for the ISO!"
+  cleanup
   exit 1
 else
   chmod 711 $EFIMNT
@@ -412,6 +442,7 @@ fi
 ISOMNT=$(mktemp -d -p /mnt -t alieniso.XXXXXX)
 if [ ! -d $ISOMNT ]; then
   echo "*** Failed to create a temporary mount point for the ISO!"
+  cleanup
   exit 1
 else
   chmod 711 $ISOMNT
@@ -436,6 +467,7 @@ mkdir -p /mnt
 USBMNT=$(mktemp -d -p /mnt -t alienusb.XXXXXX)
 if [ ! -d $USBMNT ]; then
   echo "*** Failed to create a temporary mount point for the USB device!"
+  cleanup
   exit 1
 else
   chmod 711 $USBMNT
@@ -459,14 +491,26 @@ fi
 
 if [ $DOLUKS -eq 1 ]; then
   # Create LUKS container file:
-  create_container ${TARGET}3 ${LUKSSIZE} slhome
+  create_container ${TARGET}3 ${LUKSSIZE} slhome luks /home
 fi
 
 # Add more USB WAIT seconds to the initrd:
 update_initrd ${USBMNT}/boot/initrd.img
 
-# Create persistence directory:
-mkdir -p ${USBMNT}/${PERSISTENCE}
+if [ "${PERSISTTYPE}" = "dir" ]; then
+  # Create persistence directory:
+  mkdir -p ${USBMNT}/${PERSISTENCE}
+elif [ "${PERSISTTYPE}" = "file" ]; then
+  # Create container file for persistent storage. We create a sparse file
+  # that will at most eat up 90% of free space. Sparse means, the actual
+  # block allocation will start small and grows as more changes are written.
+  # Note: the word "persistence" below is a keyword for create_container:
+  create_container ${TARGET}3 90% ${PERSISTENCE} none persistence
+else
+  echo "*** Unknown persistence type '${PERSISTTYPE}'!"
+  cleanup
+  exit 1 
+fi
 
 # Use extlinux to make the USB device bootable:
 echo "--- Making the USB drive '$TARGET' bootable using extlinux..."
@@ -501,6 +545,7 @@ if [ -f /usr/share/syslinux/gptmbr.bin ]; then
   cat /usr/share/syslinux/gptmbr.bin > ${TARGET}
 else
   echo "*** Failed to make USB device bootable - 'gptmbr.bin' not found!"
+  cleanup
   exit 1 
 fi
 

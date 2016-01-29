@@ -209,6 +209,29 @@ if [ "$RESCUE" = "" ]; then
   #                     SLACKWARE LIVE - START                            #
   # --------------------------------------------------------------------- #
 
+  ## Support functions ##
+
+  find_loop() {
+    # The losetup of busybox is different from the real losetup - watch out!
+    lodev=$(losetup -f)
+    if [ -z "$lodev" ]; then
+      # We exhausted the available loop devices, so create the block device:
+      for NOD in $(seq 0 64); do
+        if [ ! -b /dev/loop${NOD} ]; then
+          mknod -m660 /dev/loop${NOD} b 7 ${NOD}
+          break
+        fi
+      done
+      lodev=/dev/loop${NOD}
+    elif [ ! -b $lodev ]; then
+      # We exhausted the available loop devices, so create the block device:
+      mknod -m660 $lodev b 7 $(echo $lodev |sed %/dev/loop%%)
+    fi
+    echo "$lodev"
+  }
+
+  ## End support functions ##
+
   # We need a mounted filesystem here to be able to do a switch_root later,
   # so we create one in RAM:
   mount -t tmpfs -o defaults none /mnt
@@ -344,7 +367,8 @@ if [ "$RESCUE" = "" ]; then
   OVLWORK=/mnt/live/.ovlwork
   if [ "$VIRGIN" = "0" ]; then
     if [ "LIVEFS" != "iso9660" -a -d /mnt/media/${PERSISTENCE} ]; then
-      # Looks OK, but we need to remount the media in order to write to it:
+      # Looks OK, but we need to remount the media in order to write
+      # to the persistence directory:
       mount -o remount,rw /mnt/media
       # Try a write... just to be dead sure:
       if touch /mnt/media/${PERSISTENCE}/.rwtest 2>/dev/null && rm /mnt/media/${PERSISTENCE}/.rwtest 2>/dev/null ; then
@@ -353,20 +377,48 @@ if [ "$RESCUE" = "" ]; then
         UPPERDIR=/mnt/media/${PERSISTENCE}
         OVLWORK=/mnt/media/.ovlwork
       fi
+    elif [ "LIVEFS" != "iso9660" -a -f /mnt/media/${PERSISTENCE}.img ]; then
+      # Use a container file; the filesystem needs to be writable:
+      mount -o remount,rw /mnt/media
+      # Find a free loop device to mount the persistence container file:
+      prdev=$(find_loop)
+      prdir=${PERSISTENCE}_$(od -An -N1 -tu1 /dev/urandom |tr -d ' ')
+      mkdir -p /mnt/live/${prdir}
+      losetup $prdev /mnt/media/${PERSISTENCE}.img
+      prfs=$(blkid $prdev |rev |cut -d'"' -f2 |rev)
+      mount -t $prfs $prdev /mnt/live/${prdir}
+      if [ $? -ne 0 ]; then
+        echo "${INITRD}:  Failed to mount persistence file '/${PERSISTENCE}.img'."
+        echo "${INITRD}:  Falling back to RAM."
+      else
+        echo "${INITRD}:  Writing persistent changes to file '/${PERSISTENCE}.img'."
+        UPPERDIR=/mnt/live/${prdir}/${PERSISTENCE}
+        OVLWORK=/mnt/live/${prdir}/.ovlwork
+      fi
     fi
   elif [ ! -z "$LUKSVOL" ]; then
     # Even without persistence, we need to be able to write to the partition
     # if we are using a LUKS container file:
     mount -o remount,rw /mnt/media
   fi
+
   # Create the writable upper directory, plus the workdir which is required
   # for overlay to function (the two must be in the same POSIX filesystem):
-  mkdir -p ${UPPERDIR}
-  mkdir -p ${OVLWORK}
+  [ ! -d ${UPPERDIR} ] && mkdir -p ${UPPERDIR}
+  [ ! -d ${OVLWORK} ] && mkdir -p ${OVLWORK}
 
   # Create the overlay of readonly and writable directories:
   mkdir -p /mnt/overlay
   mount -t overlay -o workdir=${OVLWORK},upperdir=${UPPERDIR},lowerdir=${RODIRS} overlay /mnt/overlay
+  if [ $? -ne 0 -a "$VIRGIN" = "0" ]; then
+    # Failed to create the persistent overlay - try without persistence:
+    echo "${INITRD}:  Failed to create persistent overlay, attempting to continue in RAM."
+    UPPERDIR=/mnt/live/changes
+    OVLWORK=/mnt/live/.ovlwork
+    mkdir -p ${UPPERDIR}
+    mkdir -p ${OVLWORK}
+    mount -t overlay -o workdir=${OVLWORK},upperdir=${UPPERDIR},lowerdir=${RODIRS} overlay /mnt/overlay
+  fi
 
   debugit
 
@@ -502,41 +554,28 @@ EOPW
         luksmnt="/home"
       fi
 
-      # The losetup of busybox is different from the real losetup - watch out!
-      lodev=$(losetup -f)
-      if [ -z "$lodev" ]; then
-        # We exhausted the available loop devices, so create the block device:
-        for NOD in $(seq 0 64); do
-          if [ ! -b /dev/loop${NOD} ]; then
-            mknod -m660 /dev/loop${NOD} b 7 ${NOD}
-            break
-          fi
-        done
-        lodev=/dev/loop${NOD}
-      elif [ ! -b $lodev ]; then
-        # We exhausted the available loop devices, so create the block device:
-        mknod -m660 $lodev b 7 $(echo $lodev |sed %/dev/loop%%)
-      fi
+      # Find a free loop device:
+      lodev=$(find_loop)
+
       losetup $lodev /mnt/media/$luksfil
       echo "Unlocking LUKS encrypted container '$luksfil' at mount point '$luksmnt'"
       cryptsetup luksOpen $lodev $luksnam </dev/tty0 >/dev/tty0 2>&1
       if [ $? -ne 0 ]; then
         echo "${INITRD}:  Failed to unlock LUKS container '$luksfil'... trouble ahead."
-      fi
+      else
+        # Create the mount directory if it does not exist (unlikely):
+        mkdir -p /mnt/overlay/$luksmnt
 
-      # Create the directory if it does not exist (unlikely):
-      mkdir -p /mnt/overlay/$luksmnt
-
-      # Let Slackware mount the unlocked container:
-      luksfs=$(blkid /dev/mapper/$luksnam |rev |cut -d'"' -f2 |rev)
-      if ! grep -q /dev/mapper/$luksnam /mnt/overlay/etc/fstab ; then
-        echo "/dev/mapper/$luksnam  $luksmnt  $luksfs  defaults  1  1" >> /mnt/overlay/etc/fstab
+        # Let Slackware mount the unlocked container:
+        luksfs=$(blkid /dev/mapper/$luksnam |rev |cut -d'"' -f2 |rev)
+        if ! grep -q /dev/mapper/$luksnam /mnt/overlay/etc/fstab ; then
+          echo "/dev/mapper/$luksnam  $luksmnt  $luksfs  defaults  1  1" >> /mnt/overlay/etc/fstab
+        fi
+        # On shutdown, ensure that the container gets locked again:
+        if ! grep -q "$luksnam $luksmnt" /mnt/overlay/etc/crypttab ; then
+          echo "$luksnam $luksmnt" >> /mnt/overlay/etc/crypttab
+        fi
       fi
-      # On shutdown, ensure that the container gets locked again:
-      if ! grep -q "$luksnam $luksmnt" /mnt/overlay/etc/crypttab ; then
-        echo "$luksnam $luksmnt" >> /mnt/overlay/etc/crypttab
-      fi
-
     done
   fi
 
