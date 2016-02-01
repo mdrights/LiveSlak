@@ -240,7 +240,7 @@ if [ "$RESCUE" = "" ]; then
   # TIP: Increase WAIT to give USB devices a chance to be seen by the kernel.
   mkdir /mnt/media
   if [ -z "$LIVEMEDIA" ]; then
-    # LIVEMEDIA not spcified on the boot commandline using "livemedia="
+    # LIVEMEDIA not specified on the boot commandline using "livemedia="
     # Filter out the block devices, only look at partitions at first:
     LIVEALL=$(blkid |grep LABEL="\"$MEDIALABEL\"" |cut -d: -f1 |grep "[0-9]$")
     LIVEMEDIA=$(blkid |grep LABEL="\"$MEDIALABEL\"" |cut -d: -f1 |grep "[0-9]$" |head -1)
