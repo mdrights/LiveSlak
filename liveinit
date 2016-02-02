@@ -251,6 +251,35 @@ if [ "$RESCUE" = "" ]; then
     echo "${MY_LOC}"
   }
 
+  load_modules() {
+    # SUBSYS can be 'system', 'addons', 'optional':
+    SUBSYS="$1"
+
+    if ls /mnt/media/${LIVEMAIN}/${SUBSYS}/*.sxz 1>/dev/null 2>/dev/null ; then
+      for MODULE in /mnt/media/${LIVEMAIN}/${SUBSYS}/*.sxz ; do
+        MODBASE="$(basename ${MODULE} .sxz)"
+        if [ "$SUBSYS" = "optional" ]; then
+          # Load one or more optionals by using boot parameter 'load':
+          # load=mod1[,mod2[,mod3]]
+          if [ -z "$LOAD" -o -z '$(echo ",${LOAD}," |grep -i ",$(echo $MODBASE |cut -d- -f2),")' ]; then
+            continue
+          fi
+        elif [ "$SUBSYS" = "addons" ]; then
+          # Skip loading one or more addons by using boot parameter 'noload':
+          # noload=mod1[,mod2[,mod3]]
+          if [ -n "$NOLOAD" -a -n '$(echo ",${NOLOAD}," |grep -i ",$(echo $MODBASE |cut -d- -f2),")' ]; then
+            echo "$MODBASE" >> /mnt/live/modules/skipped
+            continue
+          fi
+        fi
+        MODLOC=$(find_modloc ${MODULE})
+        mkdir /mnt/live/modules/${MODBASE}
+        mount -t squashfs -o loop ${MODLOC} /mnt/live/modules/${MODBASE}
+        RODIRS=":/mnt/live/modules/${MODBASE}${RODIRS}"
+      done
+    fi
+  }
+
   ## End support functions ##
 
   # We need a mounted filesystem here to be able to do a switch_root later,
@@ -340,48 +369,19 @@ if [ "$RESCUE" = "" ]; then
   # In the lowerdirs parameter for the overlay, the module with the highest
   # number (i.e. created last) will be leftmost in a colon-separated list:
   RODIRS=""
+
   # First, the base Slackware system components:
-  for MODULE in $(ls -1 /mnt/media/${LIVEMAIN}/system/*.sxz) ; do
-    MODBASE="$(basename ${MODULE} .sxz)"
-    MODLOC=$(find_modloc ${MODULE})
-    mkdir /mnt/live/modules/${MODBASE}
-    mount -t squashfs -o loop ${MODLOC} /mnt/live/modules/${MODBASE}
-    RODIRS=":/mnt/live/modules/${MODBASE}${RODIRS}"
-  done
+  load_modules system
 
   # Next, the add-on (3rd party etc) components, if any:
   # Remember, module name must adhere to convention: "NNNN-modname-*.sxz"
   # where 'N' is a digit and 'modname' must not contain a dash '-'.
-  if ls /mnt/media/${LIVEMAIN}/addons/*.sxz 1>/dev/null 2>/dev/null ; then
-    for MODULE in /mnt/media/${LIVEMAIN}/addons/*.sxz ; do
-      MODBASE="$(basename ${MODULE} .sxz)"
-      # Skip loading one or more addons by using boot parameter 'noload':
-      # noload=mod1[,mod2[,mod3]]
-      if [ -n "$NOLOAD" -a -n '$(echo ",${NOLOAD}," |grep -i ",$(echo $MODBASE |cut -d- -f2),")' ]; then
-        echo "$MODBASE" >> /mnt/live/modules/skipped
-      else
-        MODLOC=$(find_modloc ${MODULE})
-        mkdir /mnt/live/modules/${MODBASE}
-        mount -t squashfs -o loop ${MODLOC} /mnt/live/modules/${MODBASE}
-        RODIRS=":/mnt/live/modules/${MODBASE}${RODIRS}"
-      fi
-    done
-  fi
+  load_modules addons
 
   # And finally any explicitly requested optionals (like nvidia drivers):
   # Remember, module name must adhere to convention: "NNNN-modname-*.sxz"
   # where 'N' is a digit and 'modname' must not contain a dash '-'.
-  if ls /mnt/media/${LIVEMAIN}/optional/*.sxz 1>/dev/null 2>/dev/null ; then
-    for MODULE in /mnt/media/${LIVEMAIN}/optional/*.sxz ; do
-        MODBASE="$(basename ${MODULE} .sxz)"
-      if [ -n "$LOAD" -a -n '$(echo ",${LOAD}," |grep -i ",$(echo $MODBASE |cut -d- -f2),")' ]; then
-        MODLOC=$(find_modloc ${MODULE})
-        mkdir /mnt/live/modules/${MODBASE}
-        mount -t squashfs -o loop ${MODLOC} /mnt/live/modules/${MODBASE}
-        RODIRS=":/mnt/live/modules/${MODBASE}${RODIRS}"
-      fi
-    done
-  fi
+  load_modules optional
 
   # Get rid of the starting colon:
   RODIRS=$(echo $RODIRS |cut -c2-)
