@@ -50,6 +50,9 @@ DEBUG=0
 # Masochists can copy the live environment into RAM:
 TORAM=0
 
+# Perhaps we need to blacklist some kernel module(s):
+BLACKLIST=""
+
 INITRD=$(cat /initrd-name)
 WAIT=$(cat /wait-for-root)
 KEYMAP=$(cat /keymap)
@@ -73,6 +76,9 @@ for ARG in $(cat /proc/cmdline); do
   case $ARG in
     0|1|2|3|4|5|6|S|s|single)
       RUNLEVEL=$ARG
+    ;;
+    blacklist=*)
+      BLACKLIST=$(echo $ARG | cut -f2 -d=)
     ;;
     debug)
       DEBUG=1
@@ -571,6 +577,15 @@ EOPW
         /mnt/overlay/etc/NetworkManager/NetworkManager.conf
     fi
     sed -i -e "s/^\(127.0.0.1\t*\)@DARKSTAR@.*/\1${LIVE_HOSTNAME}.example.net ${LIVE_HOSTNAME}/" /mnt/overlay/etc/hosts
+  fi
+
+  # Blacklist kernel modules if requested:
+  if [ ! -z "$BLACKLIST" ]; then
+    mkdir -p /mnt/overlay/etc/modprobe.d
+    echo "#Slackware Live blacklist" > /mnt/overlay/etc/modprobe.d/BLACKLIST-live.conf
+    for kernelmod in $(echo $BLACKLIST |tr ',' ' '); do
+      echo "blacklist $kernelmod" >> /mnt/overlay/etc/modprobe.d/BLACKLIST-live.conf
+    done
   fi
 
   # Delete ALSA state file, the Live OS may be booted on different computers:
