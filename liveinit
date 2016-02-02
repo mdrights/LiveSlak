@@ -388,6 +388,9 @@ if [ "$RESCUE" = "" ]; then
 
   if [ $TORAM -ne 0 ]; then
     echo "${INITRD}:  Live OS copied to RAM, you can remove the Live medium."
+    if [ "LIVEFS" = "iso9660" ]; then
+      eject ${LIVEMEDIA}
+    fi
   fi
 
   # Setup persistence in case our media is writable, *and* the user
