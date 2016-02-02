@@ -47,6 +47,9 @@ VIRGIN=0
 # Used for debugging the init; set to '1' to enable explicit pauses>
 DEBUG=0
 
+# Masochists can copy the live environment into RAM:
+TORAM=0
+
 INITRD=$(cat /initrd-name)
 WAIT=$(cat /wait-for-root)
 KEYMAP=$(cat /keymap)
@@ -122,6 +125,9 @@ for ARG in $(cat /proc/cmdline); do
     ;;
     rootpw=*)
       ROOTPW=$(echo $ARG | cut -f2 -d=)
+    ;;
+    toram)
+      TORAM=1
     ;;
     tz=*)
       TZ=$(echo $ARG | cut -f2 -d=)
@@ -230,6 +236,21 @@ if [ "$RESCUE" = "" ]; then
     echo "$lodev"
   }
 
+  find_modloc() {
+    MY_LOC="$1"
+
+    if [ $TORAM -ne 0 ]; then
+      # If we need to copy the module to RAM, we need a place for that:
+      mkdir -p /mnt/live/toram
+      # Copy the module to RAM before mounting it:
+      MODNAME="$(basename ${MY_LOC})"
+      cp ${MY_LOC} /mnt/live/toram
+      MY_LOC=/mnt/live/toram/${MODNAME}
+    fi
+
+    echo "${MY_LOC}"
+  }
+
   ## End support functions ##
 
   # We need a mounted filesystem here to be able to do a switch_root later,
@@ -310,13 +331,19 @@ if [ "$RESCUE" = "" ]; then
 
   # Mount our squashed modules (.sxz extension).
   mkdir /mnt/live/modules
+
+  if [ $TORAM -ne 0 ]; then
+    echo "${INITRD}:  Copying Live modules to RAM, please be patient."
+  fi
+
   # Modules were created in specific order and will be mounted in that order.
   # In the lowerdirs parameter for the overlay, the module with the highest
   # number (i.e. created last) will be leftmost in a colon-separated list:
   RODIRS=""
   # First, the base Slackware system components:
-  for MODLOC in $(ls -1 /mnt/media/${LIVEMAIN}/system/*.sxz) ; do
-    MODBASE="$(basename ${MODLOC} .sxz)"
+  for MODULE in $(ls -1 /mnt/media/${LIVEMAIN}/system/*.sxz) ; do
+    MODBASE="$(basename ${MODULE} .sxz)"
+    MODLOC=$(find_modloc ${MODULE})
     mkdir /mnt/live/modules/${MODBASE}
     mount -t squashfs -o loop ${MODLOC} /mnt/live/modules/${MODBASE}
     RODIRS=":/mnt/live/modules/${MODBASE}${RODIRS}"
@@ -326,13 +353,14 @@ if [ "$RESCUE" = "" ]; then
   # Remember, module name must adhere to convention: "NNNN-modname-*.sxz"
   # where 'N' is a digit and 'modname' must not contain a dash '-'.
   if ls /mnt/media/${LIVEMAIN}/addons/*.sxz 1>/dev/null 2>/dev/null ; then
-    for MODLOC in /mnt/media/${LIVEMAIN}/addons/*.sxz ; do
-      MODBASE="$(basename $MODLOC .sxz)"
+    for MODULE in /mnt/media/${LIVEMAIN}/addons/*.sxz ; do
+      MODBASE="$(basename ${MODULE} .sxz)"
       # Skip loading one or more addons by using boot parameter 'noload':
       # noload=mod1[,mod2[,mod3]]
       if [ -n "$NOLOAD" -a -n '$(echo ",${NOLOAD}," |grep -i ",$(echo $MODBASE |cut -d- -f2),")' ]; then
         echo "$MODBASE" >> /mnt/live/modules/skipped
       else
+        MODLOC=$(find_modloc ${MODULE})
         mkdir /mnt/live/modules/${MODBASE}
         mount -t squashfs -o loop ${MODLOC} /mnt/live/modules/${MODBASE}
         RODIRS=":/mnt/live/modules/${MODBASE}${RODIRS}"
@@ -344,9 +372,10 @@ if [ "$RESCUE" = "" ]; then
   # Remember, module name must adhere to convention: "NNNN-modname-*.sxz"
   # where 'N' is a digit and 'modname' must not contain a dash '-'.
   if ls /mnt/media/${LIVEMAIN}/optional/*.sxz 1>/dev/null 2>/dev/null ; then
-    for MODLOC in /mnt/media/${LIVEMAIN}/optional/*.sxz ; do
-        MODBASE="$(basename $MODLOC .sxz)"
+    for MODULE in /mnt/media/${LIVEMAIN}/optional/*.sxz ; do
+        MODBASE="$(basename ${MODULE} .sxz)"
       if [ -n "$LOAD" -a -n '$(echo ",${LOAD}," |grep -i ",$(echo $MODBASE |cut -d- -f2),")' ]; then
+        MODLOC=$(find_modloc ${MODULE})
         mkdir /mnt/live/modules/${MODBASE}
         mount -t squashfs -o loop ${MODLOC} /mnt/live/modules/${MODBASE}
         RODIRS=":/mnt/live/modules/${MODBASE}${RODIRS}"
@@ -356,6 +385,10 @@ if [ "$RESCUE" = "" ]; then
 
   # Get rid of the starting colon:
   RODIRS=$(echo $RODIRS |cut -c2-)
+
+  if [ $TORAM -ne 0 ]; then
+    echo "${INITRD}:  Live OS copied to RAM, you can remove the Live medium."
+  fi
 
   # Setup persistence in case our media is writable, *and* the user
   # has created a directory "persistence" in the root of the media.
