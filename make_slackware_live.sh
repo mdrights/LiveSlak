@@ -1342,7 +1342,7 @@ cat $LIVE_TOOLDIR/liveinit | sed \
   > ${LIVE_ROOTDIR}/boot/initrd-tree/init
 cat /dev/null > ${LIVE_ROOTDIR}/boot/initrd-tree/luksdev
 # We do not add openobex to the initrd and don't want to see irrelevant errors:
-rm ${LIVE_ROOTDIR}/boot/initrd-tree/lib/udev/rules.d/*openobex*rules 2>${DBGOUT}
+rm ${LIVE_ROOTDIR}/boot/initrd-tree/lib/udev/rules.d/*openobex*rules 2>${DBGOUT} || true
 # Wrap up the initrd.img again:
 chroot ${LIVE_ROOTDIR} /sbin/mkinitrd 1>/dev/null 2>${DBGOUT}
 rm -rf ${LIVE_ROOTDIR}/boot/initrd-tree
