@@ -772,7 +772,10 @@ done
 INSTDIR=${LIVE_WORK}/zzzconf_$$
 mkdir -p ${INSTDIR}
 
+# -------------------------------------------------------------------------- #
 echo "-- Configuring the base system."
+# -------------------------------------------------------------------------- #
+
 umount ${LIVE_ROOTDIR} 2>${DBGOUT} || true
 mount -t overlay -o lowerdir=${RODIRS},upperdir=${INSTDIR},workdir=${LIVE_OVLDIR} overlay ${LIVE_ROOTDIR}
 
@@ -866,9 +869,6 @@ none      /           tmpfs       defaults   1   1
 
 EOT
 
-# Reduce the number of local consoles, two should be enough:
-sed -i -e '/^c3\|^c4\|^c5\|^c6/s/^/# /' ${LIVE_ROOTDIR}/etc/inittab
-
 # Prevent loop devices (sxz modules) from appearing in filemanagers:
 mkdir -p ${LIVE_ROOTDIR}/etc/udev/rules.d
 cat <<EOL > ${LIVE_ROOTDIR}/etc/udev/rules.d/11-local.rules
@@ -888,6 +888,11 @@ echo "root:${ROOTPW}" | chpasswd --root ${LIVE_ROOTDIR}
 # Create a nonprivileged user account "live":
 chroot ${LIVE_ROOTDIR} /usr/sbin/useradd -c "Slackware Live User" -g users -G wheel,audio,cdrom,floppy,plugdev,video,power,netdev,lp,scanner,kmem -u 1000 -d /home/live -m -s /bin/bash live
 echo "live:${LIVEPW}" | chpasswd --root ${LIVE_ROOTDIR}
+
+# Give the live user a copy of our skeleton configuration:
+cd ${LIVE_ROOTDIR}/etc/skel/
+  find . -exec cp -a --parents "{}" ${LIVE_ROOTDIR}/home/live/ \;
+cd - 1>/dev/null
 
 # Configure suauth:
 cat <<EOT >${LIVE_ROOTDIR}/etc/suauth
@@ -945,22 +950,6 @@ fi
 
 EOSL
 
-echo "-- Configuring the X base system."
-# Give the 'live' user a face:
-cp ${LIVE_TOOLDIR}/blueSW-64px.png ${LIVE_ROOTDIR}/home/live/.face.icon
-chown --reference=${LIVE_ROOTDIR}/home/live ${LIVE_ROOTDIR}/home/live/.face.icon
-( cd ${LIVE_ROOTDIR}/home/live/ ; ln .face.icon .face )
-mkdir -p ${LIVE_ROOTDIR}/usr/share/apps/kdm/pics/users
-cp ${LIVE_TOOLDIR}/blueSW-64px.png ${LIVE_ROOTDIR}/usr/share/apps/kdm/pics/users/blues.icon
-
-# Give XDM a nicer look:
-mkdir -p ${LIVE_ROOTDIR}/etc/X11/xdm/liveslak-xdm
-cp -a ${LIVE_TOOLDIR}/xdm/* ${LIVE_ROOTDIR}/etc/X11/xdm/liveslak-xdm/
-# Point xdm to the custom /etc/X11/xdm/liveslak-xdm/xdm-config:
-sed -i ${LIVE_ROOTDIR}/etc/rc.d/rc.4 -e 's,bin/xdm -nodaemon,& -config /etc/X11/xdm/liveslak-xdm/xdm-config,'
-# Adapt xdm configuration to target architecture:
-sed -i "s/@LIBDIR@/lib${DIRSUFFIX}/g" ${LIVE_ROOTDIR}/etc/X11/xdm/liveslak-xdm/xdm-config
-
 if [ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.networkmanager ]; then
   # Enable NetworkManager if present:
   chmod +x ${LIVE_ROOTDIR}/etc/rc.d/rc.networkmanager
@@ -995,21 +984,49 @@ DEBUG_ETH_UP="no"
 EOT
 fi
 
-# The Xscreensaver should show a blank screen only, to prevent errors about
-# missing modules:
-echo "mode:           blank" > ${LIVE_ROOTDIR}/home/live/.xscreensaver
-
 # Add our scripts to the Live OS:
 mkdir -p  ${LIVE_ROOTDIR}/usr/local/sbin
 install -m0755 ${LIVE_TOOLDIR}/makemod ${LIVE_TOOLDIR}/iso2usb.sh  ${LIVE_ROOTDIR}/usr/local/sbin/
 
+# -------------------------------------------------------------------------- #
+echo "-- Configuring the X base system."
+# -------------------------------------------------------------------------- #
+
+# Reduce the number of local consoles, two should be enough:
+sed -i -e '/^c3\|^c4\|^c5\|^c6/s/^/# /' ${LIVE_ROOTDIR}/etc/inittab
+
+# Give the 'live' user a face:
+cp ${LIVE_TOOLDIR}/blueSW-64px.png ${LIVE_ROOTDIR}/home/live/.face.icon
+chown --reference=${LIVE_ROOTDIR}/home/live ${LIVE_ROOTDIR}/home/live/.face.icon
+( cd ${LIVE_ROOTDIR}/home/live/ ; ln .face.icon .face )
+mkdir -p ${LIVE_ROOTDIR}/usr/share/apps/kdm/pics/users
+cp ${LIVE_TOOLDIR}/blueSW-64px.png ${LIVE_ROOTDIR}/usr/share/apps/kdm/pics/users/blues.icon
+
+# Give XDM a nicer look:
+mkdir -p ${LIVE_ROOTDIR}/etc/X11/xdm/liveslak-xdm
+cp -a ${LIVE_TOOLDIR}/xdm/* ${LIVE_ROOTDIR}/etc/X11/xdm/liveslak-xdm/
+# Point xdm to the custom /etc/X11/xdm/liveslak-xdm/xdm-config:
+sed -i ${LIVE_ROOTDIR}/etc/rc.d/rc.4 -e 's,bin/xdm -nodaemon,& -config /etc/X11/xdm/liveslak-xdm/xdm-config,'
+# Adapt xdm configuration to target architecture:
+sed -i "s/@LIBDIR@/lib${DIRSUFFIX}/g" ${LIVE_ROOTDIR}/etc/X11/xdm/liveslak-xdm/xdm-config
+
+# The Xscreensaver should show a blank screen only, to prevent errors about
+# missing modules:
+echo "mode:           blank" > ${LIVE_ROOTDIR}/home/live/.xscreensaver
+
+# -------------------------------------------------------------------------- #
 echo "-- Configuring XFCE."
+# -------------------------------------------------------------------------- #
+
 # Prepare some XFCE defaults for the 'live' user and any new users.
 # (don't show icons on the desktop for irrelevant stuff):
 mkdir -p ${LIVE_ROOTDIR}/etc/skel/
 tar -xf ${LIVE_TOOLDIR}/skel/skel.txz -C ${LIVE_ROOTDIR}/etc/skel/
 
+# -------------------------------------------------------------------------- #
 echo "-- Configuring KDE4."
+# -------------------------------------------------------------------------- #
+
 # Adjust some usability issues with the default desktop layout:
 if [ -f ${LIVE_ROOTDIR}/usr/share/apps/plasma/layout-templates/org.kde.plasma-desktop.defaultPanel/contents/layout.js ]; then
   sed -i \
@@ -1072,7 +1089,10 @@ EOT
 
 if [ "$LIVEDE" = "PLASMA5" ]; then
 
+  # -------------------------------------------------------------------------- #
   echo "-- Configuring PLASMA5."
+  # -------------------------------------------------------------------------- #
+
   # Remove the buggy mediacenter session:
   rm ${LIVE_ROOTDIR}/usr/share/xsessions/plasma-mediacenter.desktop || true
   # Set sane SDDM defaults on first boot (root-owned file):
@@ -1133,18 +1153,15 @@ EOGL
 
 fi # End LIVEDE = PLASMA5
 
-# Give the live user a copy of our skeleton configuration:
-cd ${LIVE_ROOTDIR}/etc/skel/
-  find . -exec cp -a --parents "{}" ${LIVE_ROOTDIR}/home/live/ \;
-cd - 1>/dev/null
-
 # Workaround a bug where our Xkbconfig is not loaded sometimes:
 echo "setxkbmap" > ${LIVE_ROOTDIR}/home/live/.xprofile
 
 # Make sure that user 'live' owns her own files:
 chroot ${LIVE_ROOTDIR} chown -R live:users home/live
 
+# -------------------------------------------------------------------------- #
 echo "-- Tweaking system startup."
+# -------------------------------------------------------------------------- #
 
 # Configure the default DE when running startx:
 if [ "$LIVEDE" = "SLACKWARE" ]; then
