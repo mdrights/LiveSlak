@@ -1157,7 +1157,7 @@ elif [ "$LIVEDE" = "MATE" ]; then
   ln -sf xinitrc.mate-session ${LIVE_ROOTDIR}/etc/X11/xinit/xinitrc
 elif [ "$LIVEDE" = "CINNAMON" ]; then
   ln -sf xinitrc.cinnamon-session ${LIVE_ROOTDIR}/etc/X11/xinit/xinitrc
-else
+elif [ -f ${LIVE_ROOTDIR}/etc/X11/xinit/xinitrc.xfce ]; then
   ln -sf xinitrc.xfce ${LIVE_ROOTDIR}/etc/X11/xinit/xinitrc
 fi
 
