@@ -45,8 +45,11 @@ WAIT=5
 
 # No LUKS encryption by default:
 DOLUKS=0
+
+# Initialize more variables:
 CNTDEV=""
 CNTFILE=""
+LUKSHOME=""
 LODEV=""
 
 # Define ahead of time, so that cleanup knows about them:
@@ -146,10 +149,10 @@ update_initrd() {
     echo "--- Updating 'waitforroot' time from '$OLDWAIT' to '$WAIT':"
     echo ${WAIT} > wait-for-root
 
-    if [ $DOLUKS -eq 1 ]; then
-      if ! grep -q ${CNTFILE} luksdev ; then
-        echo "--- Adding '${CNTFILE}' as LUKS /home:"
-        echo "${CNTFILE}" >> luksdev
+    if [ $DOLUKS -eq 1 -a -n "${LUKSHOME}" ]; then
+      if ! grep -q ${LUKSHOME} luksdev ; then
+        echo "--- Adding '${LUKSHOME}' as LUKS /home:"
+        echo "${LUKSHOME}" >> luksdev
       fi
     fi
 
@@ -492,6 +495,7 @@ fi
 if [ $DOLUKS -eq 1 ]; then
   # Create LUKS container file:
   create_container ${TARGET}3 ${LUKSSIZE} slhome luks /home
+  LUKSHOME=${CNTFILE}
 fi
 
 # Add more USB WAIT seconds to the initrd:
