@@ -37,6 +37,7 @@
 MEDIALABEL="@MEDIALABEL@"
 
 LIVEMAIN="@LIVEMAIN@"
+MARKER="@MARKER@"
 PERSISTENCE="@PERSISTENCE@"
 
 LIVEMEDIA=""
@@ -174,11 +175,11 @@ fi
 if [ ! -d /lib/modules/$(uname -r) ]; then
   echo "No kernel modules found for Linux $(uname -r)."
 elif [ -x ./load_kernel_modules ]; then # use load_kernel_modules script:
-  echo "${INITRD}:  Loading kernel modules from initrd image:"
+  echo "${MARKER}:  Loading kernel modules from initrd image:"
   . ./load_kernel_modules 1>/dev/null 2>/dev/null
 else # load modules (if any) in order:
   if ls /lib/modules/$(uname -r)/*.*o 1> /dev/null 2> /dev/null ; then
-    echo "${INITRD}:  Loading kernel modules from initrd image:"
+    echo "${MARKER}:  Loading kernel modules from initrd image:"
     for module in /lib/modules/$(uname -r)/*.*o ; do
       /sbin/modprobe $module 1>/dev/null 2>/dev/null
     done
@@ -194,7 +195,7 @@ blkid 1>/dev/null 2>/dev/null
 
 # Load a custom keyboard mapping:
 if [ -n "$KEYMAP" ]; then
-  echo "${INITRD}:  Loading '$KEYMAP' keyboard mapping:"
+  echo "${MARKER}:  Loading '$KEYMAP' keyboard mapping:"
   tar xzOf /etc/keymaps.tar.gz ${KEYMAP}.bmap | loadkmap
 fi
 
@@ -347,16 +348,16 @@ if [ "$RESCUE" = "" ]; then
   # Finished determining the media availability, it should be mounted now.
 
   if [ ! -z "$LIVEMEDIA" ]; then
-    echo "${INITRD}:  Live media found at ${LIVEMEDIA}."
+    echo "${MARKER}:  Live media found at ${LIVEMEDIA}."
     if [ ! -d /mnt/media/${LIVEMAIN} ]; then
-      echo "${INITRD}:  However, live media was not mounted... trouble ahead."
+      echo "${MARKER}:  However, live media was not mounted... trouble ahead."
     fi
     if [ "$LIVEMEDIA" != "$LIVEALL" ]; then
-      echo "${INITRD}:  NOTE: Multiple partitions with '$MEDIALABEL' label were found ($(echo $LIVEALL))... success not guaranteed."
+      echo "${MARKER}:  NOTE: Multiple partitions with '$MEDIALABEL' label were found ($(echo $LIVEALL))... success not guaranteed."
     fi
   else
-    echo "${INITRD}:  No live media found... trouble ahead."
-    echo "${INITRD}:  Try adding \"rootdelay=20\" to the boot command."
+    echo "${MARKER}:  No live media found... trouble ahead."
+    echo "${MARKER}:  Try adding \"rootdelay=20\" to the boot command."
   fi
 
   debugit
@@ -368,7 +369,7 @@ if [ "$RESCUE" = "" ]; then
   mkdir /mnt/live/modules
 
   if [ $TORAM -ne 0 ]; then
-    echo "${INITRD}:  Copying Live modules to RAM, please be patient."
+    echo "${MARKER}:  Copying Live modules to RAM, please be patient."
   fi
 
   # Modules were created in specific order and will be mounted in that order.
@@ -393,7 +394,7 @@ if [ "$RESCUE" = "" ]; then
   RODIRS=$(echo $RODIRS |cut -c2-)
 
   if [ $TORAM -ne 0 ]; then
-    echo "${INITRD}:  Live OS copied to RAM, you can remove the Live medium."
+    echo "${MARKER}:  Live OS copied to RAM, you can remove the Live medium."
     if [ "LIVEFS" = "iso9660" ]; then
       eject ${LIVEMEDIA}
     fi
@@ -415,7 +416,7 @@ if [ "$RESCUE" = "" ]; then
       # Try a write... just to be dead sure:
       if touch /mnt/media/${PERSISTENCE}/.rwtest 2>/dev/null && rm /mnt/media/${PERSISTENCE}/.rwtest 2>/dev/null ; then
         # Writable media and we are allowed to write to it.
-        echo "${INITRD}:  Writing persistent changes to media directory '/${PERSISTENCE}'."
+        echo "${MARKER}:  Writing persistent changes to media directory '/${PERSISTENCE}'."
         UPPERDIR=/mnt/media/${PERSISTENCE}
         OVLWORK=/mnt/media/.ovlwork
       fi
@@ -430,18 +431,21 @@ if [ "$RESCUE" = "" ]; then
       prfs=$(blkid $prdev |rev |cut -d'"' -f2 |rev)
       mount -t $prfs $prdev /mnt/live/${prdir}
       if [ $? -ne 0 ]; then
-        echo "${INITRD}:  Failed to mount persistence file '/${PERSISTENCE}.img'."
-        echo "${INITRD}:  Falling back to RAM."
+        echo "${MARKER}:  Failed to mount persistence file '/${PERSISTENCE}.img'."
+        echo "${MARKER}:  Falling back to RAM."
       else
-        echo "${INITRD}:  Writing persistent changes to file '/${PERSISTENCE}.img'."
+        echo "${MARKER}:  Writing persistent changes to file '/${PERSISTENCE}.img'."
         UPPERDIR=/mnt/live/${prdir}/${PERSISTENCE}
         OVLWORK=/mnt/live/${prdir}/.ovlwork
       fi
     fi
-  elif [ ! -z "$LUKSVOL" ]; then
-    # Even without persistence, we need to be able to write to the partition
-    # if we are using a LUKS container file:
-    mount -o remount,rw /mnt/media
+  else
+    echo "${MARKER}:  Writing changes to RAM - no persistence:"
+    if [ ! -z "$LUKSVOL" ]; then
+      # Even without persistence, we need to be able to write to the partition
+      # if we are using a LUKS container file:
+      mount -o remount,rw /mnt/media
+    fi
   fi
 
   # Create the writable upper directory, plus the workdir which is required
@@ -454,7 +458,7 @@ if [ "$RESCUE" = "" ]; then
   mount -t overlay -o workdir=${OVLWORK},upperdir=${UPPERDIR},lowerdir=${RODIRS} overlay /mnt/overlay
   if [ $? -ne 0 -a "$VIRGIN" = "0" ]; then
     # Failed to create the persistent overlay - try without persistence:
-    echo "${INITRD}:  Failed to create persistent overlay, attempting to continue in RAM."
+    echo "${MARKER}:  Failed to create persistent overlay, attempting to continue in RAM."
     UPPERDIR=/mnt/live/changes
     OVLWORK=/mnt/live/.ovlwork
     mkdir -p ${UPPERDIR}
@@ -475,14 +479,14 @@ if [ "$RESCUE" = "" ]; then
   if [ ! -z "$USE_SWAP" ]; then
     # Use any available swap device:
     for SWAPD in $(blkid |grep TYPE="\"swap\"" |cut -d: -f1) ; do
-      echo "${INITRD}:  Enabling swapping to '$SWAPD'"
+      echo "${MARKER}:  Enabling swapping to '$SWAPD'"
       echo "$SWAPD  swap  swap defaults  0  0" >> /mnt/overlay/etc/fstab
     done
   fi
 
   if [ ! -z "$KEYMAP" ]; then
     # Configure custom keyboard mapping in console and X:
-    echo "${INITRD}:  Switching live console to '$KEYMAP' keyboard"
+    echo "${MARKER}:  Switching live console to '$KEYMAP' keyboard"
     cat <<EOT > /mnt/overlay/etc/rc.d/rc.keymap
 #!/bin/sh
 # Load the keyboard map.  More maps are in /usr/share/kbd/keymaps.
@@ -510,12 +514,12 @@ EOT
   else
     XKBLAYOUT="us"
   fi
-  echo "${INITRD}:  Switching live X desktop to '$XKBLAYOUT' keyboard"
+  echo "${MARKER}:  Switching live X desktop to '$XKBLAYOUT' keyboard"
   # If the layout is not 'us' then add 'us' as a secondary nevertheless:
   if [ "$XKBLAYOUT" != "us" ]; then
     XKBLAYOUT="$XKBLAYOUT,us"
     XKBVARIANT="$XKBVARIANT,"
-    XKBOPTIONS="grp:alt_shift_toggle,$XKBOPTIONS"
+    XKBOPTIONS="grp:alt_shift_toggle,grp_led:scroll,$XKBOPTIONS"
   fi
   mkdir -p /mnt/overlay/etc/X11/xorg.conf.d
   cat <<EOT > /mnt/overlay/etc/X11/xorg.conf.d/30-keyboard.conf
@@ -531,13 +535,13 @@ EOT
 
   if [ ! -z "$LOCALE" ]; then
     # Configure custom locale:
-    echo "${INITRD}:  Switching to '$LOCALE' locale"
+    echo "${MARKER}:  Switching to '$LOCALE' locale"
     sed -i -e "s/^ *export LANG=.*/export LANG=${LOCALE}/" /mnt/overlay/etc/profile.d/lang.sh
   fi
 
   if [ ! -z "$TZ" -a -f /mnt/overlay/usr/share/zoneinfo/${TZ} ]; then
     # Configure custom timezone:
-    echo "${INITRD}:  Configuring timezone '$TZ'"
+    echo "${MARKER}:  Configuring timezone '$TZ'"
     cp /mnt/overlay/usr/share/zoneinfo/${TZ} /mnt/overlay/etc/localtime
     cp /mnt/overlay/usr/share/zoneinfo/${TZ} /mnt/overlay/etc/localtime
     rm /mnt/overlay/etc/localtime-copied-from
@@ -554,7 +558,7 @@ EOT
 
   if [ ! -z "$LIVEPW" ]; then
     # User entered a custom live password on the boot commandline:
-    echo "${INITRD}:  Changing password for user 'live'."
+    echo "${MARKER}:  Changing password for user 'live'."
     chroot /mnt/overlay /usr/sbin/chpasswd <<EOPW
 live:${LIVEPW}
 EOPW
@@ -562,7 +566,7 @@ EOPW
 
   if [ ! -z "$ROOTPW" ]; then
     # User entered a custom root password on the boot commandline:
-    echo "${INITRD}:  Changing password for user 'root'."
+    echo "${MARKER}:  Changing password for user 'root'."
     chroot /mnt/overlay /usr/sbin/chpasswd <<EOPW
 root:${ROOTPW}
 EOPW
@@ -570,7 +574,7 @@ EOPW
 
   if [ ! -z "$LIVE_HOSTNAME" ]; then
     # User entered a custom hostname on the boot commandline:
-    echo "${INITRD}:  Changing hostname to '$LIVE_HOSTNAME'."
+    echo "${MARKER}:  Changing hostname to '$LIVE_HOSTNAME'."
     echo "${LIVE_HOSTNAME}.example.net" > /mnt/overlay/etc/HOSTNAME
     if [ -f /mnt/overlay/etc/NetworkManager/NetworkManager.conf ]; then
       sed -i -e "s/^hostname=.*/hostname=${LIVE_HOSTNAME}/" \
@@ -612,7 +616,7 @@ EOPW
       echo "Unlocking LUKS encrypted container '$luksfil' at mount point '$luksmnt'"
       cryptsetup luksOpen $lodev $luksnam </dev/tty0 >/dev/tty0 2>&1
       if [ $? -ne 0 ]; then
-        echo "${INITRD}:  Failed to unlock LUKS container '$luksfil'... trouble ahead."
+        echo "${MARKER}:  Failed to unlock LUKS container '$luksfil'... trouble ahead."
       else
         # Create the mount directory if it does not exist (unlikely):
         mkdir -p /mnt/overlay/$luksmnt
@@ -673,7 +677,7 @@ umount /run
 # We disable the filesystem checking code in /etc/rc.d/rc.S,
 # so we need to keep the fs writable here.
 #mount -o ro,remount /mnt/overlay 2>/dev/null
-echo "${INITRD}:  Slackware Live system is ready."
+echo "${MARKER}:  Slackware Live system is ready."
 
-echo "${INITRD}:  exiting"
+echo "${MARKER}:  exiting"
 exec switch_root /mnt/overlay $INIT $RUNLEVEL
