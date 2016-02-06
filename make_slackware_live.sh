@@ -1292,49 +1292,36 @@ cat <<EOT >> ${LIVE_ROOTDIR}/etc/rc.d/rc.local
 # Deal with the presence of NVIDIA drivers:
 if [ -x /usr/sbin/nvidia-switch ]; then
   if [ -f /usr/lib${DIRSUFFIX}/xorg/modules/extensions/libglx.so.*-nvidia -a -f /usr/lib${DIRSUFFIX}/xorg/modules/drivers/nvidia_drv.so ]; then
+    echo "-- Installing binary Nvidia drivers:  /usr/sbin/nvidia-switch --install"
     # The nvidia kernel module needs to ne announced to the kernel.
     # This costs a few seconds in additional boot-up time unfortunately:
     /sbin/depmod -a
-    echo "-- Installing binary Nvidia drivers:  /usr/sbin/nvidia-switch --install"
     /usr/sbin/nvidia-switch --install
   fi
   # For CUDA/OpenCL to work after reboot, create missing nvidia device nodes:
   /usr/bin/nvidia-modprobe -c 0 -u
 else
-  # Take care of a sudden reboot when nvidia drivers were activated,
-  # by restoring the original libraries:
-  if [ -L /usr/lib${DIRSUFFIX}/xorg/modules/extensions/libglx.so -a ! -e $(readlink -f /usr/lib${DIRSUFFIX}/xorg/modules/extensions/libglx.so) ]; then
+  # Take care of a reboot where nvidia drivers disappeared
+  # afer being used earlier, by restoring the original libraries:
+  if ls /usr/lib${DIRSUFFIX}/xorg/modules/extensions/libglx.so-xorg 1>/dev/null 2>/dev/null ; then
     mv /usr/lib${DIRSUFFIX}/xorg/modules/extensions/libglx.so{-xorg,} 2>/dev/null
     mv /usr/lib${DIRSUFFIX}/xorg/modules/extensions/libglx.la{-xorg,} 2>/dev/null
   fi
-  if [ -L /usr/lib${DIRSUFFIX}/libGL.so -a ! -e $(readlink -f /usr/lib${DIRSUFFIX}/libGL.so) ]; then
-    LIBGL=$(ls -1 /usr/lib${DIRSUFFIX}/libGL.so.*-xorg |rev |cut -d/ -f1 |cut -d- -f2- |rev)
-    mv /usr/lib${DIRSUFFIX}/${LIBGL}-xorg /usr/lib${DIRSUFFIX}/${LIBGL} 2>/dev/null
-    ln -sf ${LIBGL} /usr/lib${DIRSUFFIX}/libGL.so.1 2>/dev/null
-    ln -sf ${LIBGL} /usr/lib${DIRSUFFIX}/libGL.so 2>/dev/null
+  if ls /usr/lib${DIRSUFFIX}/libGL.so.*-xorg 1>/dev/null 2>/dev/null ; then
+    LIBGL=\$(ls -1 /usr/lib${DIRSUFFIX}/libGL.so.*-xorg |rev |cut -d/ -f1 |cut -d- -f2- |rev)
+    mv /usr/lib${DIRSUFFIX}/\${LIBGL}-xorg /usr/lib${DIRSUFFIX}/\${LIBGL} 2>/dev/null
+    ln -sf \${LIBGL} /usr/lib${DIRSUFFIX}/libGL.so.1 2>/dev/null
+    ln -sf \${LIBGL} /usr/lib${DIRSUFFIX}/libGL.so 2>/dev/null
     mv /usr/lib${DIRSUFFIX}/libGL.la-xorg /usr/lib${DIRSUFFIX}/libGL.la 2>/dev/null
   fi
-  if [ -L /usr/lib${DIRSUFFIX}/libEGL.so -a ! -e $(readlink -f /usr/lib${DIRSUFFIX}/libEGL.so) ]; then
-    LIBEGL=$(ls -1 /usr/lib${DIRSUFFIX}/libEGL.so.*-xorg |rev |cut -d/ -f1 |cut -d- -f2- |rev)
-    mv /usr/lib${DIRSUFFIX}/${LIBEGL}-xorg /usr/lib${DIRSUFFIX}/${LIBEGL} 2>/dev/null
-    ln -sf ${LIBEGL} /usr/lib${DIRSUFFIX}/libEGL.so.1 2>/dev/null
-    ln -sf ${LIBEGL} /usr/lib${DIRSUFFIX}/libEGL.so 2>/dev/null
+  if ls /usr/lib${DIRSUFFIX}/libEGL.so.*-xorg 1>/dev/null 2>/dev/null   ; then
+    LIBEGL=\$(ls -1 /usr/lib${DIRSUFFIX}/libEGL.so.*-xorg |rev |cut -d/ -f1 |cut -d- -f2- |rev)
+    mv /usr/lib${DIRSUFFIX}/\${LIBEGL}-xorg /usr/lib${DIRSUFFIX}/\${LIBEGL} 2>/dev/null
+    ln -sf \${LIBEGL} /usr/lib${DIRSUFFIX}/libEGL.so.1 2>/dev/null
+    ln -sf \${LIBEGL} /usr/lib${DIRSUFFIX}/libEGL.so 2>/dev/null
   fi
 fi
 EOT
-
-# If we detect a NVIDIA driver, we run nvidia un-install on shutdown:
-cat <<EOT >> ${LIVE_ROOTDIR}/etc/rc.d/rc.local_shutdown
-
-if [ -x /usr/sbin/nvidia-switch ]; then
-  if [ -f /usr/lib${DIRSUFFIX}/xorg/modules/extensions/libglx.so-xorg -a -f /usr/lib${DIRSUFFIX}/xorg/modules/drivers/nvidia_drv.so ]; then
-    # At shutdown, revert to the non-nvidia default:
-    echo "-- Removing binary Nvidia drivers:  /usr/sbin/nvidia-switch --remove"
-    /usr/sbin/nvidia-switch --remove
-  fi
-fi
-EOT
-chmod +x ${LIVE_ROOTDIR}/etc/rc.d/rc.local_shutdown
 
 # Clean out the unneeded stuff:
 # Note: this will fail when a directory is encountered. This failure points
