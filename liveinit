@@ -339,8 +339,18 @@ if [ "$RESCUE" = "" ]; then
     fi
     sleep 1
   else
-    # LIVEMEDIA was spcified on the boot commandline using "livemedia="
-    LIVEALL="$LIVEMEDIA"
+    # LIVEMEDIA was specified on the boot commandline using "livemedia="
+    if [ ! -b "$LIVEMEDIA" ]; then
+      # Passed a UUID or LABEL?
+      LIVEALL=$(findfs UUID=$LIVEMEDIA 2>/dev/null) || LIVEALL=$(findfs LABEL=$LIVEMEDIA 2>/dev/null)
+      if [ -z "$LIVEALL" ]; then
+        echo "${MARKER}:  Live media '$LIVEMEDIA' not found... trouble ahead."
+      else
+        LIVEMEDIA="$LIVEALL"
+      fi
+    else
+      LIVEALL="$LIVEMEDIA"
+    fi
     LIVEFS=$(blkid $LIVEMEDIA |rev |cut -d'"' -f2 |rev)
     mount -t $LIVEFS -o ro $LIVEMEDIA /mnt/media
   fi
