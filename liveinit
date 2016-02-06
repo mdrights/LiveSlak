@@ -502,7 +502,12 @@ EOT
     # You can set just the XkbVariant by adding something like "kbd=ch xkb=,fr"
     XKBLAYOUT=$(echo $XKB |cut -d, -f1)
     XKBVARIANT=$(echo $XKB |cut -d, -f2)
-    XKBOPTIONS="compose:ralt"
+    if [ "$XKBLAYOUT" = "de" ]; then
+      # Germans use the AltGr key, so Scroll Lock will be their Compose Key:
+      XKBOPTIONS="compose:sclk"
+    else
+      XKBOPTIONS="compose:ralt"
+    fi
     # Ensure that XKBLAYOUT gets a value; XKBVARIANT is allowed to be empty.
     if [ -z "$XKBLAYOUT" ]; then
       if [ -z "$KEYMAP" ]; then

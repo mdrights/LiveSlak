@@ -2,7 +2,7 @@
 be:belgisch:be-latin1:Europe/Brussels:nl_BE.utf8:
 br:brazil:br-abnt2:America/Sao_Paulo:pt_BR.utf8:
 gb:british:uk:Etc/GMT:en_GB.utf8:
-de:deutsch:de-latin1:Europe/Berlin:de_DE.utf8:
+de:deutsch:de-latin1-nodeadkeys:Europe/Berlin:de_DE@euro:de,nodeadkeys
 de_ch:deutsch (schweiz):de-latin1:Europe/Zurich:de_CH.utf8:ch,
 es:espanol:es:Europe/Madrid:es_ES.utf8:
 fr:francais:fr-latin9:Europe/Paris:fr_FR.utf8:
