@@ -1208,6 +1208,13 @@ pcm.softvol {
   max_dB 32.0
 }
 EOAL
+else
+  if ! grep -q sysdefault ${LIVE_ROOTDIR}/etc/asound.conf ; then
+    # If pulse is used, configure a fallback to use the system default
+    # or else there will not be sound on first boot:
+    sed -i ${LIVE_ROOTDIR}/etc/asound.conf \
+        -e '/type pulse/ a \ \ fallback "sysdefault"'
+  fi
 fi
 
 # Skip all filesystem checks at boot:
