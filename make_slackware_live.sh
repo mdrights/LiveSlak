@@ -889,11 +889,6 @@ echo "root:${ROOTPW}" | chpasswd --root ${LIVE_ROOTDIR}
 chroot ${LIVE_ROOTDIR} /usr/sbin/useradd -c "Slackware Live User" -g users -G wheel,audio,cdrom,floppy,plugdev,video,power,netdev,lp,scanner,kmem -u 1000 -d /home/live -m -s /bin/bash live
 echo "live:${LIVEPW}" | chpasswd --root ${LIVE_ROOTDIR}
 
-# Give the live user a copy of our skeleton configuration:
-cd ${LIVE_ROOTDIR}/etc/skel/
-  find . -exec cp -a --parents "{}" ${LIVE_ROOTDIR}/home/live/ \;
-cd - 1>/dev/null
-
 # Configure suauth:
 cat <<EOT >${LIVE_ROOTDIR}/etc/suauth
 root:live:OWNPASS
@@ -1155,6 +1150,11 @@ fi # End LIVEDE = PLASMA5
 
 # Workaround a bug where our Xkbconfig is not loaded sometimes:
 echo "setxkbmap" > ${LIVE_ROOTDIR}/home/live/.xprofile
+
+# Give the live user a copy of our XFCE (and more) skeleton configuration:
+cd ${LIVE_ROOTDIR}/etc/skel/
+  find . -exec cp -a --parents "{}" ${LIVE_ROOTDIR}/home/live/ \;
+cd - 1>/dev/null
 
 # Make sure that user 'live' owns her own files:
 chroot ${LIVE_ROOTDIR} chown -R live:users home/live
