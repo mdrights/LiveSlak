@@ -378,7 +378,7 @@ EOL
       fi
       cat <<EOL >> ${MENUROOTDIR}/lang_${LANCOD}.cfg
   kernel /boot/generic
-  append initrd=/boot/initrd.img load_ramdisk=1 prompt_ramdisk=0 rw printk.time=0 kbd=$KBD tz=$(cat ${LIVE_TOOLDIR}/languages |grep "^$SUBCOD:" |cut -d: -f4) locale=$(cat ${LIVE_TOOLDIR}/languages |grep "^$SUBCOD:" |cut -d: -f5)
+  append initrd=/boot/initrd.img load_ramdisk=1 prompt_ramdisk=0 rw printk.time=0 kbd=$KBD tz=$(cat ${LIVE_TOOLDIR}/languages |grep "^$SUBCOD:" |cut -d: -f4) locale=$(cat ${LIVE_TOOLDIR}/languages |grep "^$SUBCOD:" |cut -d: -f5) xkb=$(cat ${LIVE_TOOLDIR}/languages |grep "^$SUBCOD:" |cut -d: -f6)
 
 EOL
     done
@@ -434,13 +434,16 @@ EOL
   for LANCOD in $(cat languages |grep -Ev "(^ *#|^$)" |cut -d: -f1) ; do
     LANDSC=$(cat languages |grep "^$LANCOD:" |cut -d: -f2)
     KBD=$(cat languages |grep "^$LANCOD:" |cut -d: -f3)
+    XKB=$(cat languages |grep "^$LANCOD:" |cut -d: -f6)
     LANLOC=$(cat languages |grep "^$LANCOD:" |cut -d: -f5)
     # Add this entry to the keyboard selection menu:
     cat <<EOL >> ${GRUBDIR}/kbd.cfg
 menuentry "${LANDSC}" {
   set sl_kbd="$KBD"
+  set sl_xkb="$XKB"
   set sl_lang="$LANDSC"
   export sl_kbd
+  export sl_xkb
   export sl_lang
   configfile \$grubdir/grub.cfg
 }
