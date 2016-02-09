@@ -43,6 +43,8 @@ PERSISTENCE="@PERSISTENCE@"
 LIVEMEDIA=""
 
 # By default, let the media determine if we can write persistent changes:
+# However, if we define TORAM=1, we will also set VIRGIN=1 since we want
+# to avoid anything that writes to disk after we copy the OS to RAM.
 VIRGIN=0
 
 # Used for debugging the init; set to '1' to enable explicit pauses>
@@ -135,6 +137,7 @@ for ARG in $(cat /proc/cmdline); do
     ;;
     toram)
       TORAM=1
+      VIRGIN=1 # prevent writes to disk since we are supposed to run from RAM
     ;;
     tz=*)
       TZ=$(echo $ARG | cut -f2 -d=)
@@ -291,7 +294,12 @@ if [ "$RESCUE" = "" ]; then
 
   # We need a mounted filesystem here to be able to do a switch_root later,
   # so we create one in RAM:
-  mount -t tmpfs -o defaults none /mnt
+  if [ $TORAM -eq 1 ]; then
+    RAMSIZE=90%  # need to be able to load the entire OS in RAM
+  else
+    RAMSIZE=50%  # the default value.
+  fi
+  mount -t tmpfs -o defaults,size=${RAMSIZE}% none /mnt
 
   # Find the Slackware Live media.
   # TIP: Increase WAIT to give USB devices a chance to be seen by the kernel.
