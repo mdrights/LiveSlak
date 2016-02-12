@@ -299,7 +299,7 @@ if [ "$RESCUE" = "" ]; then
   else
     RAMSIZE=50%  # the default value.
   fi
-  mount -t tmpfs -o defaults,size=${RAMSIZE}% none /mnt
+  mount -t tmpfs -o defaults,size=${RAMSIZE} none /mnt
 
   # Find the Slackware Live media.
   # TIP: Increase WAIT to give USB devices a chance to be seen by the kernel.
