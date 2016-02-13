@@ -1017,9 +1017,12 @@ echo "-- Configuring XFCE."
 # -------------------------------------------------------------------------- #
 
 # Prepare some XFCE defaults for the 'live' user and any new users.
-# (don't show icons on the desktop for irrelevant stuff):
+# (don't show icons on the desktop for irrelevant stuff).
+# Also, allow other people to add their own custom skel*.txz archives:
 mkdir -p ${LIVE_ROOTDIR}/etc/skel/
-tar -xf ${LIVE_TOOLDIR}/skel/skel.txz -C ${LIVE_ROOTDIR}/etc/skel/
+for SKEL in ${LIVE_TOOLDIR}/skel/skel*.txz ; do
+  tar -xf ${SKEL} -C ${LIVE_ROOTDIR}/etc/skel/
+done
 
 # -------------------------------------------------------------------------- #
 echo "-- Configuring KDE4."
