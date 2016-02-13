@@ -1148,6 +1148,9 @@ EOGL
 
   # Workaround a bug where SDDM does not always use the configured keymap:
   echo "setxkbmap" >> ${LIVE_ROOTDIR}/usr/share/sddm/scripts/Xsetup
+ 
+  # Do not show the blueman applet, Plasma5 has its own BlueTooth widget:
+  echo "NotShowIn=KDE;" >> ${LIVE_ROOTDIR}/etc/xdg/autostart/blueman.desktop
 
 fi # End LIVEDE = PLASMA5
 
