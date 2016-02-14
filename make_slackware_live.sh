@@ -127,11 +127,14 @@ fi
 # You can define custom repository location (must be in local filesystem)
 # for any module in the file ./pkglists/<module>.conf:
 SL_REPO=${SL_REPO:-"/mnt/auto/sox/ftp/pub/Linux/Slackware"}
+DEF_SL_REPO=${SL_REPO}
 
 # Package root directory:
 SL_PKGROOT=${SL_REPO}/slackware${DIRSUFFIX}-${SL_VERSION}/slackware${DIRSUFFIX}
+DEF_SL_PKGROOT=${SL_PKGROOT}
 # Patches root directory:
 SL_PATCHROOT=${SL_REPO}/slackware${DIRSUFFIX}-${SL_VERSION}/patches/packages
+DEF_SL_PATCHROOT=${SL_PATCHROOT}
 
 # List of Slackware package series - each will become a squashfs module:
 SEQ_SLACKWARE="tagfile:a,ap,d,e,f,k,kde,kdei,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra"
@@ -227,6 +230,11 @@ function install_pkgs() {
     exit 1
   fi
 
+  # Define the default Slackware repository, can be overridden here:
+  SL_REPO="${DEF_SL_REPO}"
+  SL_PKGROOT="${DEF_SL_PKGROOT}"
+  SL_PATCHROOT="${DEF_SL_PATCHROOT}"
+
   if [ "$3" = "local" -a -d ${LIVE_TOOLDIR}/local${DIRSUFFIX}/$1 ]; then
     echo "-- Installing local packages from subdir 'local${DIRSUFFIX}/$1'."
     installpkg --terse --root "$2" "local${DIRSUFFIX}/$1/*.t?z"
@@ -252,9 +260,22 @@ function install_pkgs() {
       exit 1
     fi
 
-    if [ ! -d ${SL_REPO} ]; then
-      echo "-- Slackware repository root '${SL_REPO}' does not exist! Exiting."
-      exit 1
+    if [ ! -d ${SL_REPO} -o -z "$(find ${SL_REPO} -maxdepth 1 -type f)" ]; then
+      # Oops... empty local repository. Let's see if we can rsync from remote:
+      RRES=1
+      if [ -n "${SL_REPO_URL}" ]; then
+        mkdir -p ${SL_REPO}
+        # Must be a rsync URL!
+        echo "-- Rsync-ing repository content from '${SL_REPO_URL}' to local directory '${SL_REPO}'..."
+        echo "-- This can be time-consuming.  Please wait."
+        rsync -rlptD --no-motd ${SL_REPO_URL}/ ${SL_REPO}/
+        RRES=$?
+        echo "-- Done rsync-ing from '${SL_REPO_URL}'."
+      fi
+      if [ $RRES -ne 0 ]; then
+        echo "** Slackware repository root '${SL_REPO}' does not exist or is empty! Exiting."
+        exit 1
+      fi
     fi
 
     for PKG in $(cat ${PKGFILE} |grep -v -E '^ *#|^$' |cut -d: -f1); do
