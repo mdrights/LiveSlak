@@ -57,7 +57,14 @@ persistence=directoryname => Use this if you want to use
   a different directory than "persistence" for storing
   persistent data.
 
+toram => copy the OS from the media to to RAM before running it.
+  You can remove the boot media after booting.
+
 === Troubleshooting ===
+
+blacklist=mod1[,mod2[...]]  => Add one or more kernel modules
+  to the kernel blacklist to prevent them from loading, in case
+  they cause issues during operation.
 
 debug => During init, pause at specifiuc locations while as-
   sembling the overlay filesystem and show mount information.

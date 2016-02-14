@@ -13,6 +13,10 @@ swap => Allow the Live OS to activate all swap partitions on
 
 === Troubleshooting ===
 
+blacklist=mod1[,mod2[...]]  => Add one or more kernel modules
+  to the kernel blacklist to prevent them from loading, in case
+  they cause issues during operation.
+
 debug => During init, pause at specifiuc locations while as-
   sembling the overlay filesystem and show mount information.
 

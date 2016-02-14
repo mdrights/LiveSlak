@@ -2,12 +2,12 @@
 
 To boot with default values just press ENTER.
 
-=== Media customization ===
+=== Media tweaks ===
 
 livemedia=/dev/sdX => Tell the init script which partition
   contains the Slackware Live OS you want to boot. This can
   become necessary if you have another copy of Slackware Live
-  installed in another partition.
+  installed in another partition.  Also accepted: UUID or LABEL.
 
 livemain=directoryname => Use this if you copied the content
   of the ISO to a different directory than "liveslak".
@@ -18,5 +18,8 @@ nop => No persistence, i.e. boot the virgin installation in
 persistence=directoryname => Use this if you want to use
   a different directory than "persistence" for storing
   persistent data.
+
+toram => copy the OS from the media to to RAM before running it.
+  You can remove the boot media after booting.
 
 == [F1]: Home [F2]: Desktop setup [F4]: Hardware/troubleshooting ==
