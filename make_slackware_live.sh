@@ -689,7 +689,13 @@ case "$LIVEDE" in
     PLASMA5) MSEQ="${SEQ_PLASMA5}" ;;
        MATE) MSEQ="${SEQ_MSB}" ;;
    CINNAMON) MSEQ="${SEQ_CIN}" ;;
-          *) echo "** Unsupported configuration '$LIVEDE'"; exit 1 ;;
+          *) if [ -n "${SEQ_CUSTOM}" ]; then
+               # Custom distribution with a predefined package list:
+               MSEQ="${SEQ_CUSTOM}"              
+             else
+               echo "** Unsupported configuration '$LIVEDE'"; exit 1
+             fi
+             ;;
 esac
 
 # Do we need to create/include additional module(s) defined by a pkglist:
@@ -1172,11 +1178,26 @@ EOGL
 
   # Workaround a bug where SDDM does not always use the configured keymap:
   echo "setxkbmap" >> ${LIVE_ROOTDIR}/usr/share/sddm/scripts/Xsetup
- 
+
   # Do not show the blueman applet, Plasma5 has its own BlueTooth widget:
   echo "NotShowIn=KDE;" >> ${LIVE_ROOTDIR}/etc/xdg/autostart/blueman.desktop
 
 fi # End LIVEDE = PLASMA5
+
+# You can define the function 'custom_config()' by uncommenting it in
+# the configuration file 'make_slackware_live.conf'.
+if type custom_config 1>/dev/null 2>/dev/null ; then
+
+  # -------------------------------------------------------------------------- #
+  echo "-- Configuring ${LIVEDE} by calling 'custom_config()'."
+  # -------------------------------------------------------------------------- #
+
+  # This is particularly useful if you defined a non-standard "LIVEDE"
+  # in 'make_slackware_live.conf', in which case you must specify your custom
+  # package sequence in the variable "SEQ_CUSTOM" in that same .conf file.
+  custom_config
+
+fi
 
 # Workaround a bug where our Xkbconfig is not loaded sometimes:
 echo "setxkbmap" > ${LIVE_ROOTDIR}/home/live/.xprofile
