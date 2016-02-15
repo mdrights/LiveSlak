@@ -1012,6 +1012,9 @@ fi
 # Add our scripts to the Live OS:
 mkdir -p  ${LIVE_ROOTDIR}/usr/local/sbin
 install -m0755 ${LIVE_TOOLDIR}/makemod ${LIVE_TOOLDIR}/iso2usb.sh  ${LIVE_ROOTDIR}/usr/local/sbin/
+# And the documentation:
+mkdir -p  ${LIVE_ROOTDIR}/usr/doc/liveslak-${VERSION}
+install -m0644 ${LIVE_TOOLDIR}/README* ${LIVE_ROOTDIR}/usr/doc/liveslak-${VERSION}/
 
 # -------------------------------------------------------------------------- #
 echo "-- Configuring the X base system."
