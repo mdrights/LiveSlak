@@ -71,6 +71,7 @@ cleanup() {
   set +e
   sync
   if [ $DOLUKS -eq 1 ]; then
+    # In case of failure, only the most recent device should still be open:
     if mount |grep -q ${CNTDEV} ; then
       umount -f ${CNTDEV}
       cryptsetup luksClose ${CNTBASE}
@@ -109,6 +110,9 @@ cat <<EOT
 #   -u|--unattended            Do not ask any questions.
 #   -v|--verbose               Show verbose messages.
 #   -w|--wait<number>          Add <number> seconds wait time to initialize USB.
+#   -C|--cryptpersistfile size|perc
+#                              Use a LUKS-encrypted 'persistence' file instead
+#                              of a directory (for use on FAT filesystem).
 #   -P|--persistfile           Use a 'persistence' container file instead of
 #                              a directory (for use on FAT filesystem).
 #
@@ -266,15 +270,14 @@ create_container() {
     unsquashfs -n -d ${CNTMNT}/temp ${HOMESRC} ${CNTUSED}
     mv ${CNTMNT}/temp/${CNTUSED}/* ${CNTMNT}/
     rm -rf ${CNTMNT}/temp
-    # And clean up after ourselves:
     umount ${CNTDEV}
-    if [ "${CNTENCR}" = "luks" ]; then
-      cryptsetup luksClose ${CNTBASE}
-    fi
   fi
 
-  # Don't forget:
-  losetup -d ${LODEV}
+  # Don't forget to clean up after ourselves:
+  if [ "${CNTENCR}" = "luks" ]; then
+    cryptsetup luksClose ${CNTBASE}
+  fi
+  losetup -d ${LODEV} || true
 
 } # End of create_container() {
 
@@ -290,7 +293,7 @@ fi
 while [ ! -z "$1" ]; do
   case $1 in
     -c|--crypt)
-      LUKSSIZE="$2"
+      HLUKSSIZE="$2"
       DOLUKS=1
       shift 2
       ;;
@@ -325,6 +328,12 @@ while [ ! -z "$1" ]; do
       ;;
     -w|--wait)
       WAIT="$2"
+      shift 2
+      ;;
+    -C|--cryptpersistfile)
+      DOLUKS=1
+      PLUKSSIZE="$2"
+      PERSISTTYPE="file"
       shift 2
       ;;
     -P|--persistfile)
@@ -494,7 +503,7 @@ fi
 
 if [ $DOLUKS -eq 1 ]; then
   # Create LUKS container file:
-  create_container ${TARGET}3 ${LUKSSIZE} slhome luks /home
+  create_container ${TARGET}3 ${HLUKSSIZE} slhome luks /home
   LUKSHOME=${CNTFILE}
 fi
 
@@ -505,11 +514,18 @@ if [ "${PERSISTTYPE}" = "dir" ]; then
   # Create persistence directory:
   mkdir -p ${USBMNT}/${PERSISTENCE}
 elif [ "${PERSISTTYPE}" = "file" ]; then
-  # Create container file for persistent storage. We create a sparse file
+  # Create container file for persistent storage.
+  # If it is not going to be LUKS encrypted, we create a sparse file
   # that will at most eat up 90% of free space. Sparse means, the actual
   # block allocation will start small and grows as more changes are written.
   # Note: the word "persistence" below is a keyword for create_container:
-  create_container ${TARGET}3 90% ${PERSISTENCE} none persistence
+  if [ -z "${PLUKSSIZE}" ]; then
+    # Un-encrypted container:
+    create_container ${TARGET}3 90% ${PERSISTENCE} none persistence
+  else
+    # LUKS-encrypted container:
+    create_container ${TARGET}3 ${PLUKSSIZE} ${PERSISTENCE} luks persistence
+  fi
 else
   echo "*** Unknown persistence type '${PERSISTTYPE}'!"
   cleanup
