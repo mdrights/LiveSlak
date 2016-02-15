@@ -22,11 +22,11 @@ load=nvidia => Load and configure Nvidia drivers if available
   in the ISO. 
  
 load=mod1[,mod2[...]] => Load one or more squashfs modules
-  from the directory: "/liveslack/optional".
+  from the directory: "/liveslak/optional".
   By default none of these modules is loaded on boot.
 
 noload=mod1[,mod2[...]] => Prevent loading of one or more
-  squashfs modules from the directory "/liveslack/addons".
+  squashfs modules from the directory "/liveslak/addons".
   By default all these modules are loaded on boot.
 
 === Hardware related ===
@@ -35,10 +35,10 @@ nomodeset => Boot without kernel mode setting, needed with
   some machines. 
  
 rootdelay=10 => Add 10 second delay to give the kernel more 
-  time to initialize USB. Try this if booting fails.
+  time to initialize USB. Try this if booting fails. Default is 5.
 
 swap => Allow the Live OS to activate all swap partitions on
-  on the local hardware. By default, none is touched.
+  the local hardware. By default, no swap is touched.
 
 === Media tweaks ===
 
@@ -49,6 +49,11 @@ livemedia=/dev/sdX => Tell the init script which partition
 
 livemain=directoryname => Use this if you copied the content
   of the ISO to a different directory than "liveslak".
+
+luksvol=file1[:/mountpoint1][,file1[:/mountpoint2],...] =>
+  Mount LUKS container "file1" at mount point "/mountpoint1".
+  Multiple files should be separated with comma.
+  Specify "luksvol=" to *prevent* mounting any LUKS container.
 
 nop => No persistence, i.e. boot the virgin installation in 
   case your "persistence" directory got corrupted. 
@@ -66,7 +71,7 @@ blacklist=mod1[,mod2[...]]  => Add one or more kernel modules
   to the kernel blacklist to prevent them from loading, in case
   they cause issues during operation.
 
-debug => During init, pause at specifiuc locations while as-
+debug => During init, pause at strategic locations while as-
   sembling the overlay filesystem and show mount information.
 
 rescue => After initialization, you will be dropped in a
