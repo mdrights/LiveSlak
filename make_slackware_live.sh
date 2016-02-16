@@ -260,8 +260,12 @@ function install_pkgs() {
       exit 1
     fi
 
-    if [ ! -d ${SL_REPO} -o -z "$(find ${SL_REPO} -maxdepth 1 -type f)" ]; then
+    if [ "${SL_REPO}" = "${DEF_SL_REPO}" ]; then
+      # We require that the Slackware package mirror is available:
+      true
+    elif [ ! -d ${SL_REPO} -o -z "$(find ${SL_PKGROOT} -type f 2>/dev/null)" ]; then
       # Oops... empty local repository. Let's see if we can rsync from remote:
+      echo "** Slackware package repository root '${SL_REPO}' does not exist or is empty!"
       RRES=1
       if [ -n "${SL_REPO_URL}" ]; then
         mkdir -p ${SL_REPO}
@@ -273,7 +277,7 @@ function install_pkgs() {
         echo "-- Done rsync-ing from '${SL_REPO_URL}'."
       fi
       if [ $RRES -ne 0 ]; then
-        echo "** Slackware repository root '${SL_REPO}' does not exist or is empty! Exiting."
+        echo "** Exiting."
         exit 1
       fi
     fi
