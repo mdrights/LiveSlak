@@ -53,6 +53,9 @@ DEBUG=0
 # Masochists can copy the live environment into RAM:
 TORAM=0
 
+# By default we do not touch local hard disks (raid, lvm, btrfs):
+LOCALHD=0
+
 # Perhaps we need to blacklist some kernel module(s):
 BLACKLIST=""
 
@@ -112,6 +115,9 @@ for ARG in $(cat /proc/cmdline); do
     ;;
     locale=*)
       LOCALE=$(echo $ARG | cut -f2 -d=)
+    ;;
+    localhd=*)
+      LOCALHD=1
     ;;
     luksvol=*)
       # Format: luksvol=file1[:/mountpoint1][,file1[:/mountpoint2],...]
@@ -203,22 +209,32 @@ if [ -n "$KEYMAP" ]; then
 fi
 
 if [ "$RESCUE" = "" ]; then 
-  # Initialize RAID:
-  if [ -x /sbin/mdadm ]; then
-    # If /etc/mdadm.conf is present, udev should DTRT on its own;
-    # If not, we'll make one and go from there:
-    if [ ! -r /etc/mdadm.conf ]; then
-      /sbin/mdadm -E -s >/etc/mdadm.conf
-      /sbin/mdadm -S -s
-      /sbin/mdadm -A -s
-      # This seems to make the kernel see partitions more reliably:
-      fdisk -l /dev/md* 1> /dev/null 2> /dev/null
+  if [ $LOCALHD -eq 1 ]; then
+    # We will initialize RAID/LVM/BTRFS on local harddisks:
+    # Initialize RAID:
+    if [ -x /sbin/mdadm ]; then
+      # If /etc/mdadm.conf is present, udev should DTRT on its own;
+      # If not, we'll make one and go from there:
+      if [ ! -r /etc/mdadm.conf ]; then
+        /sbin/mdadm -E -s >/etc/mdadm.conf
+        /sbin/mdadm -S -s
+        /sbin/mdadm -A -s
+        # This seems to make the kernel see partitions more reliably:
+        fdisk -l /dev/md* 1> /dev/null 2> /dev/null
+      fi
     fi
-  fi
 
-  # Scan for btrfs multi-device filesystems:
-  if [ -x /sbin/btrfs ]; then
-    /sbin/btrfs device scan
+    # Initialize LVM:
+    if [ -x /sbin/vgchange ]; then
+      mkdir -p /var/lock/lvm      # this avoids useless warnings
+      /sbin/vgchange -ay --ignorelockingfailure 2>/dev/null
+      /sbin/udevadm settle --timeout=10
+    fi
+
+    # Scan for btrfs multi-device filesystems:
+    if [ -x /sbin/btrfs ]; then
+      /sbin/btrfs device scan
+    fi
   fi
 
   # --------------------------------------------------------------------- #
@@ -680,7 +696,7 @@ EOPW
   # Switch to real root partition:
   /sbin/udevadm settle --timeout=10
   echo 0x0100 > /proc/sys/kernel/real-root-dev
-  
+
   if [ ! -r /mnt/overlay/${INIT} ]; then
     echo "ERROR:  No ${INIT} found on rootdev (or not mounted).  Trouble ahead."
     echo "        You can try to fix it. Type 'exit' when things are done." 

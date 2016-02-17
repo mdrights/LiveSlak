@@ -2,6 +2,8 @@
 
 === Hardware related ===
 
+localhd => initialize RAID/LVM on local hard drives.
+
 nomodeset => Boot without kernel mode setting, needed with
   some machines.
 
