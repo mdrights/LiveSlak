@@ -72,3 +72,6 @@ label memtest
 menu label Memory test with memtest86+
   kernel /boot/memtest
 
+label localboot
+menu label Boot from local drive
+  localboot -1
