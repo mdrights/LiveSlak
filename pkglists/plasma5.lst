@@ -118,6 +118,7 @@ killbots
 kio-extras
 kiriki
 kiten
+kjots
 kjumpingcube
 klettres
 klickety
@@ -381,6 +382,7 @@ ktp-filetransfer-handler
 ktp-kded-module
 ktp-send-file
 ktp-text-ui
+ktp-call-ui
 signon-kwallet-extension
 
 # Supported languages in the ISO:
