@@ -1297,41 +1297,41 @@ EOCR
 
 chroot "${LIVE_ROOTDIR}" /bin/bash <<EOCR
 # Update the desktop database:
-if [ -x usr/bin/update-desktop-database ]; then
-  /usr/bin/update-desktop-database usr/share/applications > /dev/null 2>${DBGOUT}
+if [ -x /usr/bin/update-desktop-database ]; then
+  /usr/bin/update-desktop-database /usr/share/applications > /dev/null 2>${DBGOUT}
 fi
 
 # Update hicolor theme cache:
-if [ -d usr/share/icons/hicolor ]; then
+if [ -d /usr/share/icons/hicolor ]; then
   if [ -x /usr/bin/gtk-update-icon-cache ]; then
-    /usr/bin/gtk-update-icon-cache -f -t usr/share/icons/hicolor 1>/dev/null 2>${DBGOUT}
+    /usr/bin/gtk-update-icon-cache -f -t /usr/share/icons/hicolor 1>/dev/null 2>${DBGOUT}
   fi
 fi
 
 # Update the mime database:
-if [ -x usr/bin/update-mime-database ]; then
-  /usr/bin/update-mime-database usr/share/mime >/dev/null 2>${DBGOUT}
+if [ -x /usr/bin/update-mime-database ]; then
+  /usr/bin/update-mime-database /usr/share/mime >/dev/null 2>${DBGOUT}
 fi
 
 # Font configuration:
-if [ -x usr/bin/fc-cache ]; then
+if [ -x /usr/bin/fc-cache ]; then
   for fontdir in 100dpi 75dpi OTF Speedo TTF Type1 cyrillic ; do
-    if [ -d usr/share/fonts/$fontdir ]; then
+    if [ -d /usr/share/fonts/$fontdir ]; then
       mkfontscale /usr/share/fonts/$fontdir 1>/dev/null 2>${DBGOUT}
       mkfontdir /usr/share/fonts/$fontdir 1>/dev/null 2>${DBGOUT}
     fi
   done
-  if [ -d usr/share/fonts/misc ]; then
+  if [ -d /usr/share/fonts/misc ]; then
     mkfontscale /usr/share/fonts/misc  1>/dev/null 2>${DBGOUT}
     mkfontdir -e /usr/share/fonts/encodings -e /usr/share/fonts/encodings/large /usr/share/fonts/misc 1>/dev/null 2>${DBGOUT}
   fi
   /usr/bin/fc-cache -f 1>/dev/null 2>${DBGOUT}
 fi
 
-if [ -x usr/bin/update-gtk-immodules ]; then
+if [ -x /usr/bin/update-gtk-immodules ]; then
   /usr/bin/update-gtk-immodules
 fi
-if [ -x usr/bin/update-gdk-pixbuf-loaders ]; then
+if [ -x /usr/bin/update-gdk-pixbuf-loaders ]; then
   /usr/bin/update-gdk-pixbuf-loaders
 fi
 if [ -x /usr/bin/update-pango-querymodules ]; then
