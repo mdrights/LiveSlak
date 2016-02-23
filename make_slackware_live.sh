@@ -1301,7 +1301,7 @@ chroot ${LIVE_ROOTDIR} /bin/bash <<EOCR
 /sbin/ldconfig
 EOCR
 
-chroot "${LIVE_ROOTDIR}" /bin/bash <<EOCR
+chroot ${LIVE_ROOTDIR} /bin/bash <<EOCR
 # Update the desktop database:
 if [ -x /usr/bin/update-desktop-database ]; then
   /usr/bin/update-desktop-database /usr/share/applications > /dev/null 2>${DBGOUT}
@@ -1322,9 +1322,9 @@ fi
 # Font configuration:
 if [ -x /usr/bin/fc-cache ]; then
   for fontdir in 100dpi 75dpi OTF Speedo TTF Type1 cyrillic ; do
-    if [ -d /usr/share/fonts/$fontdir ]; then
-      mkfontscale /usr/share/fonts/$fontdir 1>/dev/null 2>${DBGOUT}
-      mkfontdir /usr/share/fonts/$fontdir 1>/dev/null 2>${DBGOUT}
+    if [ -d /usr/share/fonts/\$fontdir ]; then
+      mkfontscale /usr/share/fonts/\$fontdir 1>/dev/null 2>${DBGOUT}
+      mkfontdir /usr/share/fonts/\$fontdir 1>/dev/null 2>${DBGOUT}
     fi
   done
   if [ -d /usr/share/fonts/misc ]; then
