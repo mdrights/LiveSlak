@@ -238,6 +238,7 @@ Stage two:
    * an initial environment for the accounts is configured,
    * the desktop environment is pre-configured for first use,
    * the liveslak scripts "makemod" and "iso2usb.sh" are copied to "/usr/local/sbin/" in the ISO for your convenience,
+   * if the Live system contains a huge kernel (all ISO variants except XFCE) then the "setup2hd" script and the Slackware installer files are copied to "/usr/local/sbin" and "/usr/share/liveslak" respectively,
    * slackpkg is configured,
    * a locate database is created,
    * etc...
@@ -269,7 +270,27 @@ Done! You can find the ISO file and its MD5 checksum in the /tmp directory.
 
 The second script:
 
-The "iso2usb.sh" script is explained in detail in a previous paragraph "Transfering ISO content to USB stick".
+The "iso2usb.sh" script's runtime usage is explained in detail in a previous paragraph "Transfering ISO content to USB stick".
+
+This section explains how the script modifies the ISO for the enhanced USB functionality.
+
+== Mounting a filesystem in an encrypted container ==
+
+The script will create a file of requested size in the root of the Live partition using the 'dd' command.  The 'cryptsetup luksCreate' command will initialize the encryption, which causes the script to prompt you with "are you sure, type uppercase YES" after which an encryption passphrase must be entered three times (two for intializing, and one for opening the container).
+If the container is used for an encrypted /home, its filename will be "slhome.img".  The script will copy the existing content of the ISO's /home into the container's filesystem which will later be mounted on top of the ISO's /home (thereby masking the existing /home).
+The Live OS is instructed to decrypt the container and mount the filesystem.  This is done by editing the file "/luksdev" in the initrd and adding a line: "/slhome.img".
+The iso2usb.sh script only supports creating and configuring an encrypted /home, but you can create additional encrtypted containers yourself and mount them on other locations in the ISO's filesystem.  In order for this to work, you need to edit the "/luksdev" file and add a line "/your/container.img:/your/mountpoint" i.e. container path and the target mount directory on a single line, separated by a colon.  The Live init script will create the mount point if it is missing.
+
+== Using a container file for storing persistence data ==
+
+A second type of encrypted container exists, which can be used for storing your persistence data.  The Live init script will check if it needs to enable persistence in this order:
+ # is the USB filesystem writable?  If so,
+   # does a directory /persistence exist? If so, use that; if not,
+   # does a file /persistence.img exist?  If so, mount the file and if it is an encrypted container, ask for a passphrase during boot.
+
+== Adding USB wait time ==
+
+For slow USB media, the default 5 seconds wait time during boot are sometimes insufficient to allow the kernel to detect the partitions on your USB device.  The script can optionally add more wait time.  It does this by editing the file "wait-for-root" in the initrd and updating the value which is stored there (by default "5" is written there by the "make_slackware_live.sh" script).
 
 
 === makemod ===
@@ -288,6 +309,14 @@ Usage:
  * The second parameter is the full pathname of the output module which will be created.
 
 You can copy the module you just created (minding the filename conventions for a Slackware Live module, see paragraph "Slackware Live module format") to either the optional/ or to the addon/ directory of your Live OS. If you copy it to the optional/ or addon/ directory of the liveslak sources then "make_slackware_live.sh" will use the module when creating the ISO image.
+
+
+=== setup2hd ===
+
+
+The fourth script:
+
+The "setup2hd" script enables you to install the running Live OS to the computer's local hard disk.  The "setup2hd" is a modified Slackware installer, so you will be comfortable with the process.  There is no 'SOURCE' selection because the script knows where to find the squashfs modules.  After you select the target partition(s), every active module of the Live OS variant (SLACKWARE, PLASMA5, MATE, ...) is extracted to the hard drive.  After extraction has completed, the script summarizes how many modules have been extracted.  It will also show an example command to extract any remaining inactive or disabled modules manually.  The final step in the installation is again the stock Slackware installer which kicks off the Slackware configuration scripts.
 
 
 ==== Creating a Live ISO from scratch ====
