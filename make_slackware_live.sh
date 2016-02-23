@@ -1016,9 +1016,44 @@ fi
 # Add our scripts to the Live OS:
 mkdir -p  ${LIVE_ROOTDIR}/usr/local/sbin
 install -m0755 ${LIVE_TOOLDIR}/makemod ${LIVE_TOOLDIR}/iso2usb.sh  ${LIVE_ROOTDIR}/usr/local/sbin/
-# And the documentation:
+
+# Only when we find a huge kernel, we will add a harddisk installer
+# to the ISO.  The huge kernel does not require an initrd and installation
+# to the hard drive will not be complicated.
+if [ -f ${LIVE_ROOTDIR}/boot/vmlinuz-huge-* ]; then
+  # Extract the 'setup' files we need from the Slackware installer
+  # and move them to a single directory in the ISO:
+  mkdir -p  ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}
+  cd  ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}
+    gunzip -cd ${SL_PKGROOT}/../isolinux/initrd.img | cpio -i -d -H newc --no-absolute-filenames usr/lib/setup/* sbin/probe sbin/fixdate
+    mv -i usr/lib/setup/* sbin/probe .
+    rm -r usr sbin
+  cd -
+  # Fix some occurrences of '/mnt' that should not be used in the Live ISO:
+  sed -i -e 's, /mnt, ${T_PX},g' -e 's,T_PX=/mnt,T_PX=/setup2hd,g' ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}/*
+  # Fix some occurrences of '/usr/lib/setup/' are covered by $PATH:
+  sed -i -e 's,/usr/lib/setup/,,g' -e 's,:/usr/lib/setup,:/usr/share/${LIVEMAIN},g' ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}/*
+  # Add the Slackware Live HD installer:
+  mkdir -p ${LIVE_ROOTDIR}/usr/local/sbin
+  cat ${LIVE_TOOLDIR}/setup2hd | sed \
+    -e "s/@DIRSUFFIX@/$DIRSUFFIX/g" \
+    -e "s/@KVER@/$KVER/g" \
+    -e "s/@LIVEDE@/$LIVEDE/g" \
+    -e "s/@LIVEMAIN@/$LIVEMAIN/g" \
+    -e "s/@SL_VERSION@/$SL_VERSION/g" \
+    -e "s/@VERSION@/$VERSION/g" \
+    > ${LIVE_ROOTDIR}/usr/local/sbin/setup2hd
+  chmod 755 ${LIVE_ROOTDIR}/usr/local/sbin/setup2hd
+fi
+
+# Add the documentation:
 mkdir -p  ${LIVE_ROOTDIR}/usr/doc/liveslak-${VERSION}
 install -m0644 ${LIVE_TOOLDIR}/README* ${LIVE_ROOTDIR}/usr/doc/liveslak-${VERSION}/
+mkdir -p  ${LIVE_ROOTDIR}/usr/doc/slackware${DIRSUFFIX}-${SL_VERSION}
+install -m0644 \
+  ${DEF_SL_REPO}/slackware${DIRSUFFIX}-${SL_VERSION}/{CHANGES_AND_HINTS,COPY,README,RELEASE_NOTES,Slackware-HOWTO}* \
+  ${DEF_SL_REPO}/slackware${DIRSUFFIX}-${SL_VERSION}/usb-and-pxe-installers/README* \
+  ${LIVE_ROOTDIR}/usr/doc/slackware${DIRSUFFIX}-${SL_VERSION}/
 
 # -------------------------------------------------------------------------- #
 echo "-- Configuring the X base system."
