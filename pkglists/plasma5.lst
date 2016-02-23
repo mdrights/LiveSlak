@@ -13,7 +13,6 @@ libappindicator
 libdbusmenu-gtk
 libdbusmenu-qt5
 libindicator
-libproxy
 libxkbcommon
 lmdb
 noto-cjk-font-ttf
