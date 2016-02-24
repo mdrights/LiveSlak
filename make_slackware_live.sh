@@ -813,6 +813,10 @@ echo "-- Configuring the base system."
 umount ${LIVE_ROOTDIR} 2>${DBGOUT} || true
 mount -t overlay -o lowerdir=${RODIRS},upperdir=${INSTDIR},workdir=${LIVE_OVLDIR} overlay ${LIVE_ROOTDIR}
 
+# Determine the kernel version in the Live OS:
+KGEN=$(echo ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |head -1 |rev | cut -d- -f3 |rev)
+KVER=$(ls --indicator-style=none ${LIVE_ROOTDIR}/lib/modules/ |head -1)
+
 # Configure hostname and network:
 echo "${LIVE_HOSTNAME}.example.net" > ${LIVE_ROOTDIR}/etc/HOSTNAME
 if [ -f ${LIVE_ROOTDIR}/etc/NetworkManager/NetworkManager.conf ]; then
