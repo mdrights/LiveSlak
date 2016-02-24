@@ -211,11 +211,16 @@ Press ENTER to return to the main menu." 16 68
   ) | dialog --title "INSTALLING SLACKWARE @LIVEDE@ LIVE TO DISK" --gauge \
        "\nProcessing ${TOT_MODS} Slackware Live modules..." 8 65
 
-  # Short intermezzo:
+  # Re-use some of the custom configuration from 0099-slackware_zzzconf-*.sxz
+  # (some of these may not be present but the command will not fail):
   dialog --title "POST-INSTALL SLACKWARE @LIVEDE@ LIVE DATA" --infobox \
    "\nCopying Live modifications to hard disk ..." 5 65
-  # Pick the goodies from 0099-slackware_zzzconf-*.sxz:
-  unsquashfs -f -dest $T_PX /mnt/livemedia/@LIVEMAIN@/system/0099*zzzconf*.sxz /etc/slackpkg  /etc/X11/xdm/liveslak-xdm
+  unsquashfs -f -dest $T_PX /mnt/livemedia/@LIVEMAIN@/system/0099*zzzconf*.sxz \
+    /etc/profile.d/lang.sh \
+    /etc/rc.d/rc.keymap \
+    /etc/slackpkg \
+    /etc/X11/xorg.conf.d/30-keyboard.conf \
+    /etc/X11/xdm/liveslak-xdm
   # Point xdm to the custom /etc/X11/xdm/liveslak-xdm/xdm-config:
   sed -i ${T_PX}/etc/rc.d/rc.4 -e 's,bin/xdm -nodaemon,& -config /etc/X11/xdm/liveslak-xdm/xdm-config,'
 
@@ -223,13 +228,20 @@ Press ENTER to return to the main menu." 16 68
 
  Slackware @LIVEDE@ Live Edition has been installed to your hard drive!
  We installed the ${ACT_MODS} active modules (out of ${TOT_MODS} available).
+ If present, the following files were copied from the Live OS to your harddisk:
+   /etc/profile.d/lang.sh
+   /etc/rc.d/rc.keymap
+   /etc/slackpkg
+   /etc/X11/xorg.conf.d/30-keyboard.conf
+   /etc/X11/xdm/liveslak-xdm
+
  After finishing system configuration and before rebooting, you can add any further Live modules from /@LIVEMAIN@/addons/ and /@LIVEMAIN@/optional/ to your hard drive, using a command similar to this:
 
  # unsquashfs -f -dest $T_PX /mnt/livemedia/@LIVEMAIN@/addons/some_module.sxz
 
 EOF
   dialog --title "POST INSTALL HINTS AND TIPS" --msgbox "`cat $TMP/tempmsg`" \
- 17 65
+ 20 65
   rm $TMP/tempmsg
 
   # --------------------------------------------- #

@@ -1030,7 +1030,7 @@ if [ -f ${LIVE_ROOTDIR}/boot/vmlinuz-huge-* ]; then
   mkdir -p  ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}
   cd  ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}
     gunzip -cd ${SL_PKGROOT}/../isolinux/initrd.img | cpio -i -d -H newc --no-absolute-filenames usr/lib/setup/* sbin/probe sbin/fixdate
-    mv -i usr/lib/setup/* sbin/probe .
+    mv -i usr/lib/setup/* sbin/probe sbin/fixdate .
     rm -r usr sbin
   cd -
   # Fix some occurrences of '/mnt' that should not be used in the Live ISO:
