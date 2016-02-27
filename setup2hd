@@ -215,9 +215,13 @@ Press ENTER to return to the main menu." 16 68
   # (some of these may not be present but the command will not fail):
   dialog --title "POST-INSTALL SLACKWARE @LIVEDE@ LIVE DATA" --infobox \
    "\nCopying Live modifications to hard disk ..." 5 65
+  # Do not overwrite a custom keymap:
+  if [ ! -f $T_PX/etc/rc.d/rc.keymap ]; then
+    unsquashfs -f -dest $T_PX /mnt/livemedia/@LIVEMAIN@/system/0099*zzzconf*.sxz \
+      /etc/rc.d/rc.keymap
+  fi
   unsquashfs -f -dest $T_PX /mnt/livemedia/@LIVEMAIN@/system/0099*zzzconf*.sxz \
     /etc/profile.d/lang.sh \
-    /etc/rc.d/rc.keymap \
     /etc/slackpkg \
     /etc/X11/xorg.conf.d/30-keyboard.conf \
     /etc/X11/xdm/liveslak-xdm
