@@ -752,7 +752,7 @@ for SPS in ${SL_SERIES} ; do
     if [ "$SPS" = "a" -o "$SPS" = "min" ]; then
 
       # We need to take care of a few things first:
-      KGEN=$(echo ${INSTDIR}/var/log/packages/kernel*modules* |head -1 |rev | cut -d- -f3 |rev)
+      KGEN=$(echo ${INSTDIR}/var/log/packages/kernel*modules* |head -1 |rev | cut -d- -f3 |tr _ - |rev)
       KVER=$(ls --indicator-style=none ${INSTDIR}/lib/modules/ |head -1)
       if [ -z "$KVER" ]; then
         echo "-- Could not find installed kernel in '${INSTDIR}'! Exiting."
@@ -814,7 +814,7 @@ umount ${LIVE_ROOTDIR} 2>${DBGOUT} || true
 mount -t overlay -o lowerdir=${RODIRS},upperdir=${INSTDIR},workdir=${LIVE_OVLDIR} overlay ${LIVE_ROOTDIR}
 
 # Determine the kernel version in the Live OS:
-KGEN=$(echo ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |head -1 |rev | cut -d- -f3 |rev)
+KGEN=$(echo ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |head -1 |rev | cut -d- -f3 |tr _ - |rev)
 KVER=$(ls --indicator-style=none ${LIVE_ROOTDIR}/lib/modules/ |head -1)
 
 # Configure hostname and network:
@@ -1477,7 +1477,7 @@ mount --bind /sys ${LIVE_ROOTDIR}/sys
 mount --bind /dev ${LIVE_ROOTDIR}/dev
 
 # Determine the installed kernel version:
-KGEN=$(echo ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |head -1 |rev | cut -d- -f3 |rev)
+KGEN=$(echo ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |head -1 |rev | cut -d- -f3 |tr _ - |rev)
 KVER=$(ls --indicator-style=none ${LIVE_ROOTDIR}/lib/modules/ |head -1)
 
 # Create an initrd for the generic kernel, using a modified init script:
