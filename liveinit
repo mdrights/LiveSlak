@@ -596,7 +596,6 @@ EOT
     # Configure custom timezone:
     echo "${MARKER}:  Configuring timezone '$TZ'"
     cp /mnt/overlay/usr/share/zoneinfo/${TZ} /mnt/overlay/etc/localtime
-    cp /mnt/overlay/usr/share/zoneinfo/${TZ} /mnt/overlay/etc/localtime
     rm /mnt/overlay/etc/localtime-copied-from
     ln -s /usr/share/zoneinfo/${TZ} /mnt/overlay/etc/localtime-copied-from
     # Configure the hardware clock to be interpreted as localtime and not UTC:
