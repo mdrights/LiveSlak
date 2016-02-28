@@ -212,6 +212,24 @@ cleanup() {
 }
 trap 'echo "*** $0 FAILED at line $LINENO ***"; cleanup; exit 1' ERR INT TERM
 
+#
+# Return the full pathname of first package found below $2 matching exactly $1:
+#
+full_pkgname() {
+  PACK=$1
+  TOPDIR=$2
+  # Perhaps I will use this more readable code in future:
+  #for FL in $(find ${TOPDIR} -name "${PACK}-*.t?z" 2>/dev/null) ; do
+  #  # Weed out package names starting with "$PACK"; we want exactly "$PACK":
+  #  if [ "$(echo $FL |rev |cut -d- -f4- |cut -d/ -f1 |rev)" != "$PACK" ]; then
+  #    continue
+  #  else
+  #    break
+  #  fi
+  #done
+  #echo "$FL"
+  echo "$(find ${TOPDIR} -name "${PACK}-*.t?z" 2>/dev/null |grep -E "\<${PACK//+/\\+}-[^-]+-[^-]+-[^-]+.t?z" |head -1)"
+}
 
 #
 # Find packages and install them into the temporary root:
@@ -286,18 +304,18 @@ function install_pkgs() {
       # Look in ./patches ; then ./slackware$DIRSUFFIX ; then ./extra
       # Need to escape any '+' in package names such a 'gtk+2':
       if [ ! -z "${SL_PATCHROOT}" ]; then
-        FULLPKG=$(find ${SL_PATCHROOT} -name "${PKG}-*.t?z" 2>/dev/null | grep -E "${PKG//+/\\+}-[^-]+-[^-]+-[^-]+.t?z")
+        FULLPKG=$(full_pkgname ${PKG} ${SL_PATCHROOT})
       else
         FULLPKG=""
       fi
       if [ "x${FULLPKG}" = "x" ]; then
-        FULLPKG=$(find ${SL_PKGROOT} -name "${PKG}-*.t?z" 2>/dev/null |grep -E "${PKG//+/\\+}-[^-]+-[^-]+-[^-]+.t?z" |head -1)
+        FULLPKG=$(full_pkgname ${PKG} ${SL_PKGROOT})
       else
         echo "-- $PKG found in patches"
       fi
       if [ "x${FULLPKG}" = "x" ]; then
         # One last attempt: look in ./extra
-        FULLPKG=$(find $(dirname ${SL_PKGROOT})/extra -name "${PKG}-*.t?z" 2>/dev/null |grep -E "${PKG//+/\\+}-[^-]+-[^-]+-[^-]+.t?z" |head -1)
+        FULLPKG=$(full_pkgname ${PKG} $(dirname ${SL_PKGROOT})/extra)
       fi
 
       if [ "x${FULLPKG}" = "x" ]; then
