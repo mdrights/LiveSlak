@@ -1062,6 +1062,7 @@ if [ -f ${LIVE_ROOTDIR}/boot/vmlinuz-huge-* ]; then
     -e "s/@KVER@/$KVER/g" \
     -e "s/@LIVEDE@/$LIVEDE/g" \
     -e "s/@LIVEMAIN@/$LIVEMAIN/g" \
+    -e "s/@MARKER@/$MARKER/g" \
     -e "s/@SL_VERSION@/$SL_VERSION/g" \
     -e "s/@VERSION@/$VERSION/g" \
     > ${LIVE_ROOTDIR}/usr/local/sbin/setup2hd
