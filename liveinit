@@ -59,6 +59,10 @@ LOCALHD=0
 # Perhaps we need to blacklist some kernel module(s):
 BLACKLIST=""
 
+# QEMU X.Org needs glamor acceleration disabled,
+# otherwise don't mess with the defaults:
+GLAMORACCEL=1
+
 INITRD=$(cat /initrd-name)
 WAIT=$(cat /wait-for-root)
 KEYMAP=$(cat /keymap)
@@ -633,6 +637,17 @@ EOPW
         /mnt/overlay/etc/NetworkManager/NetworkManager.conf
     fi
     sed -i -e "s/^\(127.0.0.1\t*\)@DARKSTAR@.*/\1${LIVE_HOSTNAME}.example.net ${LIVE_HOSTNAME}/" /mnt/overlay/etc/hosts
+  fi
+
+  # Disable glamor 2D acceleration (QEMU needs this):
+  if [ $GLAMORACCEL -eq 0 ]; then
+    cat <<EOT > /mnt/overlay/etc/X11/xorg.conf.d/20-noglamor.conf
+Section "Device"
+  Identifier "modesetting"
+  Driver "modesetting"
+  Option "AccelMethod" "none"
+EndSection
+EOT
   fi
 
   # Blacklist kernel modules if requested:
