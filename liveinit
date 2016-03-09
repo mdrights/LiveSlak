@@ -121,7 +121,7 @@ for ARG in $(cat /proc/cmdline); do
     locale=*)
       LOCALE=$(echo $ARG | cut -f2 -d=)
     ;;
-    localhd=*)
+    localhd)
       LOCALHD=1
     ;;
     luksvol=*)
