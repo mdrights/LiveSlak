@@ -41,6 +41,7 @@ MARKER="@MARKER@"
 PERSISTENCE="@PERSISTENCE@"
 
 LIVEMEDIA=""
+LIVEPATH=""
 
 # By default, let the media determine if we can write persistent changes:
 # However, if we define TORAM=1, we will also set VIRGIN=1 since we want
@@ -59,8 +60,8 @@ LOCALHD=0
 # Perhaps we need to blacklist some kernel module(s):
 BLACKLIST=""
 
-# QEMU X.Org needs glamor acceleration disabled,
-# otherwise don't mess with the defaults:
+# QEMU X.Org and some other setups need glamor 2D acceleration disabled,
+# default in X.Org is to enable it:
 GLAMORACCEL=1
 
 INITRD=$(cat /initrd-name)
@@ -126,6 +127,9 @@ for ARG in $(cat /proc/cmdline); do
     luksvol=*)
       # Format: luksvol=file1[:/mountpoint1][,file1[:/mountpoint2],...]
       LUKSVOL=$(echo $ARG | cut -f2 -d=)
+    ;;
+    nga)
+      GLAMORACCEL=0
     ;;
     noload=*)
       NOLOAD=$(echo $ARG | cut -f2 -d=)
