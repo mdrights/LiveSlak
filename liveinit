@@ -110,7 +110,12 @@ for ARG in $(cat /proc/cmdline); do
       LIVEMAIN=$(echo $ARG | cut -f2 -d=)
     ;;
     livemedia=*)
-      LIVEMEDIA=$(echo $ARG | cut -f2 -d=)
+      # generic syntax: livemedia=/dev/sdX
+      # ISO syntax: livemedia=/dev/sdX:/path/to/slackwarelive.iso
+      LM=$(echo $ARG | cut -f2 -d=)
+      LIVEMEDIA=$(echo $LM | cut -f1 -d:)
+      LIVEPATH=$(echo $LM | cut -f2 -d:)
+      unset LM
     ;;
     livepw=*)
       LIVEPW=$(echo $ARG | cut -f2 -d=)
@@ -375,16 +380,31 @@ if [ "$RESCUE" = "" ]; then
     if [ ! -b "$LIVEMEDIA" ]; then
       # Passed a UUID or LABEL?
       LIVEALL=$(findfs UUID=$LIVEMEDIA 2>/dev/null) || LIVEALL=$(findfs LABEL=$LIVEMEDIA 2>/dev/null)
-      if [ -z "$LIVEALL" ]; then
-        echo "${MARKER}:  Live media '$LIVEMEDIA' not found... trouble ahead."
-      else
-        LIVEMEDIA="$LIVEALL"
-      fi
+      LIVEMEDIA="$LIVEALL"
     else
       LIVEALL="$LIVEMEDIA"
     fi
-    LIVEFS=$(blkid $LIVEMEDIA |rev |cut -d'"' -f2 |rev)
-    mount -t $LIVEFS -o ro $LIVEMEDIA /mnt/media
+    if [ -z "$LIVEALL" ]; then
+      echo "${MARKER}:  Live media '$LIVEMEDIA' not found... trouble ahead."
+    else
+      if [ -n "$LIVEPATH" -a "$LIVEPATH" != "$LIVEMEDIA" ]; then
+        # Boot option used: "livemedia=/dev/sdX:/path/to/live.iso",
+        # instead of just "livemedia=/dev/sdX".
+        # First mount the partition and then loopmount the ISO:
+        SUPERMNT=/mnt/super_$(od -An -N1 -tu1 /dev/urandom |tr -d ' ')
+        mkdir -p ${SUPERMNT}
+        SUPERFS=$(blkid $LIVEMEDIA |rev |cut -d'"' -f2 |rev)
+        mount -t $SUPERFS -o ro $LIVEMEDIA ${SUPERMNT}
+        if [ -f "${SUPERMNT}/$LIVEPATH" ]; then
+          LIVEFS=$(blkid "${SUPERMNT}/$LIVEPATH" |rev |cut -d'"' -f2 |rev)
+          LIVEALL="${SUPERMNT}/$LIVEPATH"
+          LIVEMEDIA="$LIVEALL"
+          MOUNTOPTS="loop"
+        fi
+      fi
+      LIVEFS=$(blkid $LIVEMEDIA |rev |cut -d'"' -f2 |rev)
+      mount -t $LIVEFS -o ${MOUNTOPTS:-ro} $LIVEMEDIA /mnt/media
+    fi
   fi
 
   # Finished determining the media availability, it should be mounted now.
