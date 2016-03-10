@@ -54,6 +54,11 @@ DEBUG=0
 # Masochists can copy the live environment into RAM:
 TORAM=0
 
+# The default number of loop devices the Live OS will use (if you have
+# a large number of addon modules, this value may be too low).
+# Can be changed by the 'maxloops=' boot parameter:
+MAXLOOPS=96
+
 # By default we do not touch local hard disks (raid, lvm, btrfs):
 LOCALHD=0
 
@@ -132,6 +137,9 @@ for ARG in $(cat /proc/cmdline); do
     luksvol=*)
       # Format: luksvol=file1[:/mountpoint1][,file1[:/mountpoint2],...]
       LUKSVOL=$(echo $ARG | cut -f2 -d=)
+    ;;
+    maxloops=*)
+      MAXLOOPS=$(echo $ARG | cut -f2 -d=)
     ;;
     nga)
       GLAMORACCEL=0
@@ -261,7 +269,7 @@ if [ "$RESCUE" = "" ]; then
     lodev=$(losetup -f)
     if [ -z "$lodev" ]; then
       # We exhausted the available loop devices, so create the block device:
-      for NOD in $(seq 0 64); do
+      for NOD in $(seq 0 ${MAXLOOPS}); do
         if [ ! -b /dev/loop${NOD} ]; then
           mknod -m660 /dev/loop${NOD} b 7 ${NOD}
           break
