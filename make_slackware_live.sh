@@ -110,6 +110,9 @@ MEDIALABEL=${MEDIALABEL:-"LIVESLAK"}
 # The name of the directory used for storing persistence data:
 PERSISTENCE=${PERSISTENCE:-"persistence"}
 
+# Distribution name:
+DISTRO=${DISTRO:-"slackware"}
+
 # Slackware version to use (note: this won't work for Slackware <= 14.1):
 SL_VERSION=${SL_VERSION:-"current"}
 
@@ -563,20 +566,20 @@ do
         echo "  SL_REPO=/your/repository/dir $0 [OPTION] ..."
         echo ""
         echo "The SL_REPO is the directory that contains the directory"
-        echo "  slackware-<RELEASE> or slackware64-<RELEASE>"
+        echo "  ${DISTRO}-<RELEASE> or ${DISTRO}64-<RELEASE>"
         echo "Current value of SL_REPO : $SL_REPO"
         echo ""
         echo "The script's parameters are:"
         echo " -h                 This help."
         echo " -d desktoptype     SLACKWARE (full Slack), KDE4 (basic KDE4),"
-        echo "                    XFCE (basic XFCE) or PLASMA5 (full Plasma5)"
+        echo "                    XFCE (basic XFCE), PLASMA5, MATE, CINNAMON."
         echo " -e                 Use ISO boot-load-size of 32 for computers"
         echo "                    where the ISO won't boot otherwise."
         echo " -f                 Forced re-generation of all squashfs modules,"
         echo "                    custom configurations and new initrd.img."
         echo " -m pkglst[,pkglst] Add modules defined by pkglists/<pkglst>,..."
         echo " -r series[,series] Refresh only one or a few package series."
-        echo " -s slackrepo_dir   Directory containing Slackware repository."
+        echo " -s slackrepo_dir   Directory containing ${DISTRO^} repository."
         echo " -t <doc|mandoc>    Trim the ISO for size (remove man and/or doc)"
         echo " -v                 Show debug/error output."
         echo " -H <hostname>      Hostname of the Live OS (default: $LIVE_HOSTNAME)"
@@ -749,7 +752,7 @@ for SPS in ${SL_SERIES} ; do
   INSTDIR=${LIVE_WORK}/${SPS}_$$
   mkdir -p ${INSTDIR}
 
-  if [ "$FORCE" = "YES" -o $(echo ${REFRESH} |grep -wq ${SPS} ; echo $?) -eq 0 -o ! -f ${LIVE_MOD_SYS}/${MNUM}-slackware_${SPS}-${SL_VERSION}-${SL_ARCH}.sxz ]; then
+  if [ "$FORCE" = "YES" -o $(echo ${REFRESH} |grep -wq ${SPS} ; echo $?) -eq 0 -o ! -f ${LIVE_MOD_SYS}/${MNUM}-${DISTRO}_${SPS}-${SL_VERSION}-${SL_ARCH}.sxz ]; then
 
     # Following conditions trigger creation of the squashed module:
     # - commandline switch '-f' was used, or;
@@ -781,13 +784,13 @@ for SPS in ${SL_SERIES} ; do
         rm -rf ${LIVE_BOOT}/boot
         mv ${INSTDIR}/boot ${LIVE_BOOT}/
         # Squash the boot files into a module as a safeguard:
-        mksquashfs ${LIVE_BOOT} ${LIVE_MOD_SYS}/0000-slackware_boot-${SL_VERSION}-${SL_ARCH}.sxz -noappend -comp ${SXZ_COMP} -b 1M
+        mksquashfs ${LIVE_BOOT} ${LIVE_MOD_SYS}/0000-${DISTRO}_boot-${SL_VERSION}-${SL_ARCH}.sxz -noappend -comp ${SXZ_COMP} -b 1M
       fi
 
     fi
 
     # Squash the installed package series into a module:
-    mksquashfs ${INSTDIR} ${LIVE_MOD_SYS}/${MNUM}-slackware_${SPS}-${SL_VERSION}-${SL_ARCH}.sxz -noappend -comp ${SXZ_COMP} -b 1M
+    mksquashfs ${INSTDIR} ${LIVE_MOD_SYS}/${MNUM}-${DISTRO}_${SPS}-${SL_VERSION}-${SL_ARCH}.sxz -noappend -comp ${SXZ_COMP} -b 1M
     rm -rf ${INSTDIR}/*
 
     # End result: we have our .sxz file and the INSTDIR is empty again,
@@ -800,7 +803,7 @@ for SPS in ${SL_SERIES} ; do
     # else we don't have a /boot ready when we create the ISO.
     # We can not just loop-mount it because we need to write into /boot later:
     rm -rf ${LIVE_BOOT}/boot
-    unsquashfs -dest ${LIVE_BOOT}/boottemp ${LIVE_MOD_SYS}/0000-slackware_boot-${SL_VERSION}-${SL_ARCH}.sxz
+    unsquashfs -dest ${LIVE_BOOT}/boottemp ${LIVE_MOD_SYS}/0000-${DISTRO}_boot-${SL_VERSION}-${SL_ARCH}.sxz
     mv ${LIVE_BOOT}/boottemp/* ${LIVE_BOOT}/
     rmdir ${LIVE_BOOT}/boottemp
 
@@ -810,7 +813,7 @@ for SPS in ${SL_SERIES} ; do
   RODIRS="${INSTDIR}:${RODIRS}"
 
   # Mount the modules for use in the final assembly of the ISO:
-  mount -t squashfs -o loop ${LIVE_MOD_SYS}/${MNUM}-slackware_${SPS}-${SL_VERSION}-${SL_ARCH}.sxz ${INSTDIR}
+  mount -t squashfs -o loop ${LIVE_MOD_SYS}/${MNUM}-${DISTRO}_${SPS}-${SL_VERSION}-${SL_ARCH}.sxz ${INSTDIR}
 
 done
 done
@@ -1072,11 +1075,11 @@ fi
 # Add the documentation:
 mkdir -p  ${LIVE_ROOTDIR}/usr/doc/liveslak-${VERSION}
 install -m0644 ${LIVE_TOOLDIR}/README* ${LIVE_ROOTDIR}/usr/doc/liveslak-${VERSION}/
-mkdir -p  ${LIVE_ROOTDIR}/usr/doc/slackware${DIRSUFFIX}-${SL_VERSION}
+mkdir -p  ${LIVE_ROOTDIR}/usr/doc/${DISTRO}${DIRSUFFIX}-${SL_VERSION}
 install -m0644 \
-  ${DEF_SL_REPO}/slackware${DIRSUFFIX}-${SL_VERSION}/{CHANGES_AND_HINTS,COPY,README,RELEASE_NOTES,Slackware-HOWTO}* \
-  ${DEF_SL_REPO}/slackware${DIRSUFFIX}-${SL_VERSION}/usb-and-pxe-installers/README* \
-  ${LIVE_ROOTDIR}/usr/doc/slackware${DIRSUFFIX}-${SL_VERSION}/
+  ${SL_PKGROOT}/../{CHANGES_AND_HINTS,COPY,README,RELEASE_NOTES,*HOWTO}* \
+  ${SL_PKGROOT}/../usb-and-pxe-installers/README* \
+  ${LIVE_ROOTDIR}/usr/doc/${DISTRO}${DIRSUFFIX}-${SL_VERSION}/
 
 # -------------------------------------------------------------------------- #
 echo "-- Configuring the X base system."
@@ -1469,7 +1472,7 @@ chroot ${LIVE_ROOTDIR} /etc/cron.daily/slocate 2>${DBGOUT}
 
 # Squash the configuration into its own module:
 umount ${LIVE_ROOTDIR} 2>${DBGOUT} || true
-mksquashfs ${INSTDIR} ${LIVE_MOD_SYS}/0099-slackware_zzzconf-${SL_VERSION}-${SL_ARCH}.sxz -noappend -comp ${SXZ_COMP} -b 1M
+mksquashfs ${INSTDIR} ${LIVE_MOD_SYS}/0099-${DISTRO}_zzzconf-${SL_VERSION}-${SL_ARCH}.sxz -noappend -comp ${SXZ_COMP} -b 1M
 rm -rf ${INSTDIR}/*
 
 # End result: we have our .sxz file and the INSTDIR is empty again,
@@ -1479,7 +1482,7 @@ rm -rf ${INSTDIR}/*
 RODIRS="${INSTDIR}:${RODIRS}"
 
 # Mount the module for use in the final assembly of the ISO:
-mount -t squashfs -o loop ${LIVE_MOD_SYS}/0099-slackware_zzzconf-${SL_VERSION}-${SL_ARCH}.sxz ${INSTDIR}
+mount -t squashfs -o loop ${LIVE_MOD_SYS}/0099-${DISTRO}_zzzconf-${SL_VERSION}-${SL_ARCH}.sxz ${INSTDIR}
 
 unset INSTDIR
 
@@ -1523,7 +1526,7 @@ umount ${LIVE_ROOTDIR} || true
 # Paranoia:
 [ ! -z "${LIVE_BOOT}" ] && rm -rf ${LIVE_BOOT}/{etc,tmp,usr,var} 1>${DBGOUT} 2>${DBGOUT}
 # Squash the boot directory into its own module:
-mksquashfs ${LIVE_BOOT} ${LIVE_MOD_SYS}/0000-slackware_boot-${SL_VERSION}-${SL_ARCH}.sxz -noappend -comp ${SXZ_COMP} -b 1M
+mksquashfs ${LIVE_BOOT} ${LIVE_MOD_SYS}/0000-${DISTRO}_boot-${SL_VERSION}-${SL_ARCH}.sxz -noappend -comp ${SXZ_COMP} -b 1M
 
 # Copy kernel files and tweak the syslinux configuration:
 # Note to self: syslinux does not 'see' files unless they are DOS 8.3 names?
@@ -1630,7 +1633,7 @@ mkdir -p ${LIVE_STAGING}/rootcopy
 
 # Create an ISO file from the directories found below ${LIVE_STAGING}:
 cd ${LIVE_STAGING}
-mkisofs -o ${OUTPUT}/slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso \
+mkisofs -o ${OUTPUT}/${DISTRO}${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso \
   -R -J \
   -hide-rr-moved \
   -v -d -N \
@@ -1642,7 +1645,7 @@ mkisofs -o ${OUTPUT}/slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso \
   -eltorito-boot boot/syslinux/efiboot.img \
   -preparer "$(echo $LIVEDE |sed 's/BASE//') Live built by ${BUILDER}" \
   -publisher "The Slackware Linux Project - http://www.slackware.com/" \
-  -A "Slackware-${SL_VERSION} for ${SL_ARCH} ($(echo $LIVEDE |sed 's/BASE//') Live $VERSION)" \
+  -A "${DISTRO^}-${SL_VERSION} for ${SL_ARCH} ($(echo $LIVEDE |sed 's/BASE//') Live $VERSION)" \
   -V "${MEDIALABEL}" \
   -x ./$(basename ${LIVE_WORK}) \
   -x ./${LIVEMAIN}/bootinst \
@@ -1654,7 +1657,7 @@ rm -rf ./boot
 
 cd - 1>/dev/null
 
-SIZEISO=$(stat --printf %s ${OUTPUT}/slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso)
+SIZEISO=$(stat --printf %s ${OUTPUT}/${DISTRO}${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso)
 # We want no more than 63 sectors, no more than 255 heads, according to
 # recommendations from Thomas Schmitt, xoriso developer.
 if [ $SIZEISO -gt 1073741824 ]; then
@@ -1670,14 +1673,14 @@ else
   SECTORS=32
   HEADS=64
 fi
-isohybrid -s $SECTORS -h $HEADS -u ${OUTPUT}/slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso
+isohybrid -s $SECTORS -h $HEADS -u ${OUTPUT}/${DISTRO}${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso
 
 cd ${OUTPUT}
-  md5sum slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso \
-    > slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso.md5
+  md5sum ${DISTRO}${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso \
+    > ${DISTRO}${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso.md5
 cd - 1>/dev/null
 echo "-- Live ISO image created:"
-ls -l ${OUTPUT}/slackware${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso*
+ls -l ${OUTPUT}/${DISTRO}${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso*
 
 # Clean out the mounts etc:
 cleanup
