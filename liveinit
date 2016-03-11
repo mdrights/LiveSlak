@@ -191,6 +191,24 @@ debugit () {
   return
 }
 
+rescue() {
+  if [ "x$1" != "x" ]; then
+    echo "$1"
+  fi
+  echo
+  echo "RESCUE mode"
+  echo
+  echo "        You can try to fix or rescue your system now. If you want"
+  echo "        to boot into your fixed system, mount your root filesystem"
+  echo "        read-only under /mnt:"
+  echo
+  echo "            # mount -o ro -t filesystem root_device /mnt"
+  echo
+  echo "        Type 'exit' when things are done."
+  echo
+  /bin/sh
+}
+
 # If udevd is available, use it to generate block devices
 # else use mdev to read sysfs and generate the needed devices 
 if [ -x /sbin/udevd -a -x /sbin/udevadm ]; then
@@ -428,6 +446,8 @@ if [ "$RESCUE" = "" ]; then
   else
     echo "${MARKER}:  No live media found... trouble ahead."
     echo "${MARKER}:  Try adding \"rootdelay=20\" to the boot command."
+    debugit
+    rescue
   fi
 
   debugit
@@ -750,18 +770,7 @@ EOT
     /bin/sh
   fi
 else
-  echo
-  echo "RESCUE mode"
-  echo
-  echo "        You can try to fix or rescue your system now. If you want"
-  echo "        to boot into your fixed system, mount your root filesystem"
-  echo "        read-only under /mnt:"
-  echo
-  echo "            # mount -o ro -t filesystem root_device /mnt"
-  echo
-  echo "        Type 'exit' when things are done."
-  echo
-  /bin/sh
+  rescue
 fi
 
 # Need to make sure OPTIONS+="db_persist" exists for all dm devices
