@@ -128,6 +128,11 @@ noload=mod1[,mod2[...]] => Prevent loading of one or more
 
 === Hardware related ===
 
+localhd => initialize RAID/LVM on local hard drives.
+
+nga => no glamor 2D acceleration.  Use when X.Org fails
+  with error "EGL_MESA_drm_image required".
+
 nomodeset => Boot without kernel mode setting, needed with 
   some machines. 
  
@@ -143,6 +148,9 @@ livemedia=/dev/sdX => Tell the init script which partition
   contains the Slackware Live OS you want to boot. This can
   become necessary if you have another copy of Slackware Live
   installed in another partition.  Also accepted: UUID or LABEL.
+
+livemedia=/dev/sdX:/path/to/live.iso => Use this if you want to
+  load the live OS from an ISO file on a local harddisk partition.
 
 livemain=directoryname => Use this if you copied the content
   of the ISO to a different directory than "liveslak".

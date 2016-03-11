@@ -4,6 +4,9 @@
 
 localhd => initialize RAID/LVM on local hard drives.
 
+nga => no glamor 2D acceleration.  Use when X.Org fails
+  with error "EGL_MESA_drm_image required".
+
 nomodeset => Boot without kernel mode setting, needed with
   some machines.
 
