@@ -1077,8 +1077,8 @@ mkdir -p  ${LIVE_ROOTDIR}/usr/doc/liveslak-${VERSION}
 install -m0644 ${LIVE_TOOLDIR}/README* ${LIVE_ROOTDIR}/usr/doc/liveslak-${VERSION}/
 mkdir -p  ${LIVE_ROOTDIR}/usr/doc/${DISTRO}${DIRSUFFIX}-${SL_VERSION}
 install -m0644 \
-  ${SL_PKGROOT}/../{CHANGES_AND_HINTS,COPY,README,RELEASE_NOTES,*HOWTO}* \
-  ${SL_PKGROOT}/../usb-and-pxe-installers/README* \
+  ${DEF_SL_PKGROOT}/../{CHANGES_AND_HINTS,COPY,README,RELEASE_NOTES,*HOWTO}* \
+  ${DEF_SL_PKGROOT}/../usb-and-pxe-installers/README* \
   ${LIVE_ROOTDIR}/usr/doc/${DISTRO}${DIRSUFFIX}-${SL_VERSION}/
 
 # -------------------------------------------------------------------------- #
