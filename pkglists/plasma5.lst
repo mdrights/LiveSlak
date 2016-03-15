@@ -182,7 +182,6 @@ marble
 mplayerthumbs
 okteta
 okular
-oxygen-icons
 palapeli
 parley
 picmi
@@ -329,6 +328,8 @@ kde-wallpapers
 oxygen-fonts
 polkit-kde-kcmodules-framework
 sddm-qt5
+kactivities-workspace
+kactivitymanagerd
 
 # plasma:
 bluedevil
