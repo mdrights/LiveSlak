@@ -4,7 +4,7 @@ ui vesamenu.c32
 default live
 font @CONSFONT@
 menu background swlogov.png
-menu title Slackware@DIRSUFFIX@-@SL_VERSION@ Live @VERSION@
+menu title @CDISTRO@@DIRSUFFIX@-@SL_VERSION@ Live @VERSION@
 menu clear
 f2 f2.txt #00000000
 f3 f3.txt #00000000
@@ -45,7 +45,7 @@ label live
   kernel /boot/generic
   append initrd=/boot/initrd.img load_ramdisk=1 prompt_ramdisk=0 rw printk.time=0 kbd=@KBD@
   text help
-    Slackware@DIRSUFFIX@-@SL_VERSION@, kernel @KVER@.
+    @CDISTRO@@DIRSUFFIX@-@SL_VERSION@, kernel @KVER@.
     Add 'load=nvidia' to the commandline
     if you have a recent NVIDIA card.
   endtext

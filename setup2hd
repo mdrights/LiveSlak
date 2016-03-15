@@ -103,18 +103,18 @@ mkdir /var/log/mount 2> /dev/null
 
 while [ 0 ]; do
 
- dialog --title "Slackware Linux Setup (version current)" \
+ dialog --title "@CDISTRO@ Linux Setup (version @SL_VERSION@)" \
 --menu \
-"Welcome to Slackware Linux Setup (Live Edition).\n\
+"Welcome to @CDISTRO@ Linux Setup (Live Edition).\n\
 Select an option below using the UP/DOWN keys and SPACE or ENTER.\n\
 Alternate keys may also be used: '+', '-', and TAB." 18 72 9 \
-"HELP" "Read the Slackware Setup HELP file" \
+"HELP" "Read the @CDISTRO@ Setup HELP file" \
 "KEYMAP" "Remap your keyboard if you're not using a US one" \
 "ADDSWAP" "Set up your swap partition(s)" \
 "TARGET" "Set up your target partitions" \
-"INSTALL" "Install Slackware Live to disk" \
+"INSTALL" "Install @CDISTRO@ Live to disk" \
 "CONFIGURE" "Reconfigure your Linux system" \
-"EXIT" "Exit Slackware Linux Setup" 2> $TMP/hdset
+"EXIT" "Exit @CDISTRO@ Linux Setup" 2> $TMP/hdset
  if [ ! $? = 0 ]; then
   rm -f $TMP/hdset $TMP/SeT*
   exit
@@ -191,7 +191,7 @@ Press ENTER to return to the main menu." 16 68
 
   # Take all modules mounted in the Live OS, and install them in that order:
   for LIVE_MOD_BASE in $(ls -rt --indicator-style=none /mnt/live/modules/) ; do
-    # Do not install 0099-slackware_zzzconf-*.sxz:
+    # Do not install 0099-@DISTRO@_zzzconf-*.sxz:
     if echo ${LIVE_MOD_BASE} |grep -q "zzzconf" ; then
       continue
     fi
@@ -200,7 +200,7 @@ Press ENTER to return to the main menu." 16 68
      echo "XXX"
      echo "$GAUGE"
      echo ""
-     echo "Processed ${NUM_MOD} of ${TOT_MODS} Slackware Live modules ($(( $SIZ_MOD/1024 )) of $(( $DU_MODS/1024 )) MB)\nProcessing ${LIVE_MOD_BASE} ..."
+     echo "Processed ${NUM_MOD} of ${TOT_MODS} @CDISTRO@ Live modules ($(( $SIZ_MOD/1024 )) of $(( $DU_MODS/1024 )) MB)\nProcessing ${LIVE_MOD_BASE} ..."
      echo "XXX"
      unsquashfs -f -dest $T_PX ${LIVE_MOD} 1>>$TMP/unsquash_output 2>>$TMP/unsquash_error
      let NUM_MOD=NUM_MOD+1
@@ -208,12 +208,12 @@ Press ENTER to return to the main menu." 16 68
      GAUGE=$(( (100 * ${SIZ_MOD})/${DU_MODS} ))
      echo "$GAUGE"
   done
-  ) | dialog --title "INSTALLING SLACKWARE @LIVEDE@ LIVE TO DISK" --gauge \
-       "\nProcessing ${TOT_MODS} Slackware Live modules..." 8 65
+  ) | dialog --title "INSTALLING @UDISTRO@ @LIVEDE@ LIVE TO DISK" --gauge \
+       "\nProcessing ${TOT_MODS} @CDISTRO@ Live modules..." 8 65
 
-  # Re-use some of the custom configuration from 0099-slackware_zzzconf-*.sxz
+  # Re-use some of the custom configuration from 0099-@DISTRO@_zzzconf-*.sxz
   # (some of these may not be present but the command will not fail):
-  dialog --title "POST-INSTALL SLACKWARE @LIVEDE@ LIVE DATA" --infobox \
+  dialog --title "POST-INSTALL @UDISTRO@ @LIVEDE@ LIVE DATA" --infobox \
    "\nCopying Live modifications to hard disk ..." 5 65
   # Do not overwrite a custom keymap:
   if [ ! -f $T_PX/etc/rc.d/rc.keymap ]; then
@@ -232,7 +232,7 @@ Press ENTER to return to the main menu." 16 68
 
   cat << EOF > $TMP/tempmsg
 
- Slackware @LIVEDE@ Live Edition has been installed to your hard drive!
+ @CDISTRO@ @LIVEDE@ Live Edition has been installed to your hard drive!
  We installed the ${ACT_MODS} active modules (out of ${TOT_MODS} available).
  If present, the following files were copied from the Live OS to your harddisk:
    /etc/profile.d/lang.sh
@@ -337,12 +337,12 @@ if [ -f ${T_PX}/etc/fstab ]; then
     # (it should now be ejected):
     dialog \
      --clear \
-     --title "Slackware Linux Setup is complete" "$@" \
+     --title "@CDISTRO@ Linux Setup is complete" "$@" \
      --msgbox "\nPlease remove the installation disc.\n" 7 40
   fi
   # Offer to reboot or drop to shell:
   dialog \
-     --title "Slackware Linux Setup is complete" "$@" \
+     --title "@CDISTRO@ Linux Setup is complete" "$@" \
      --yesno \
      "\nWould you like to reboot your system?\n\n\n\
 If you choose \"No\", you will be dropped to a shell.\n" 11 50

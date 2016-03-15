@@ -133,10 +133,10 @@ SL_REPO=${SL_REPO:-"/mnt/auto/sox/ftp/pub/Linux/Slackware"}
 DEF_SL_REPO=${SL_REPO}
 
 # Package root directory:
-SL_PKGROOT=${SL_REPO}/slackware${DIRSUFFIX}-${SL_VERSION}/slackware${DIRSUFFIX}
+SL_PKGROOT=${SL_REPO}/${DISTRO}${DIRSUFFIX}-${SL_VERSION}/${DISTRO}${DIRSUFFIX}
 DEF_SL_PKGROOT=${SL_PKGROOT}
 # Patches root directory:
-SL_PATCHROOT=${SL_REPO}/slackware${DIRSUFFIX}-${SL_VERSION}/patches/packages
+SL_PATCHROOT=${SL_REPO}/${DISTRO}${DIRSUFFIX}-${SL_VERSION}/patches/packages
 DEF_SL_PATCHROOT=${SL_PATCHROOT}
 
 # List of Slackware package series - each will become a squashfs module:
@@ -304,7 +304,7 @@ function install_pkgs() {
     fi
 
     for PKG in $(cat ${PKGFILE} |grep -v -E '^ *#|^$' |cut -d: -f1); do
-      # Look in ./patches ; then ./slackware$DIRSUFFIX ; then ./extra
+      # Look in ./patches ; then ./${DISTRO}$DIRSUFFIX ; then ./extra
       # Need to escape any '+' in package names such a 'gtk+2':
       if [ ! -z "${SL_PATCHROOT}" ]; then
         FULLPKG=$(full_pkgname ${PKG} ${SL_PATCHROOT})
@@ -372,6 +372,9 @@ function gen_bootmenu() {
     -e "s/@LANG@/us/g" \
     -e "s/@CONSFONT@/$CONSFONT/g" \
     -e "s/@DIRSUFFIX@/$DIRSUFFIX/g" \
+    -e "s/@DISTRO@/$DISTRO/g" \
+    -e "s/@CDISTRO@/${DISTRO^}/g" \
+    -e "s/@UDISTRO@/${DISTRO^^}/g" \
     -e "s/@KVER@/$KVER/g" \
     -e "s/@LIVEMAIN@/$LIVEMAIN/g" \
     -e "s/@MEDIALABEL@/$MEDIALABEL/g" \
@@ -404,6 +407,9 @@ EOL
       -e "s/@LANG@/$LANCOD/g" \
       -e "s/@CONSFONT@/$CONSFONT/g" \
       -e "s/@DIRSUFFIX@/$DIRSUFFIX/g" \
+      -e "s/@DISTRO@/$DISTRO/g" \
+      -e "s/@CDISTRO@/${DISTRO^}/g" \
+      -e "s/@UDISTRO@/${DISTRO^^}/g" \
       -e "s/@KVER@/$KVER/g" \
       -e "s/@LIVEMAIN@/$LIVEMAIN/g" \
       -e "s/@MEDIALABEL@/$MEDIALABEL/g" \
@@ -454,6 +460,9 @@ function gen_uefimenu() {
     -e "s/@LANG@/us/g" \
     -e "s/@CONSFONT@/$CONSFONT/g" \
     -e "s/@DIRSUFFIX@/$DIRSUFFIX/g" \
+    -e "s/@DISTRO@/$DISTRO/g" \
+    -e "s/@CDISTRO@/${DISTRO^}/g" \
+    -e "s/@UDISTRO@/${DISTRO^^}/g" \
     -e "s/@KVER@/$KVER/g" \
     -e "s/@LIVEMAIN@/$LIVEMAIN/g" \
     -e "s/@MEDIALABEL@/$MEDIALABEL/g" \
@@ -1062,6 +1071,9 @@ if [ -f ${LIVE_ROOTDIR}/boot/vmlinuz-huge-* ]; then
   mkdir -p ${LIVE_ROOTDIR}/usr/local/sbin
   cat ${LIVE_TOOLDIR}/setup2hd | sed \
     -e "s/@DIRSUFFIX@/$DIRSUFFIX/g" \
+    -e "s/@DISTRO@/$DISTRO/g" \
+    -e "s/@CDISTRO@/${DISTRO^}/g" \
+    -e "s/@UDISTRO@/${DISTRO^^}/g" \
     -e "s/@KVER@/$KVER/g" \
     -e "s/@LIVEDE@/$LIVEDE/g" \
     -e "s/@LIVEMAIN@/$LIVEMAIN/g" \
@@ -1583,6 +1595,9 @@ for SLFILE in message.txt f2.txt syslinux.cfg lang.cfg ; do
   if [ -f ${LIVE_STAGING}/boot/syslinux/${SLFILE} ]; then
     sed -i ${LIVE_STAGING}/boot/syslinux/${SLFILE} \
       -e "s/@DIRSUFFIX@/$DIRSUFFIX/g" \
+      -e "s/@DISTRO@/$DISTRO/g" \
+      -e "s/@CDISTRO@/${DISTRO^}/g" \
+      -e "s/@UDISTRO@/${DISTRO^^}/g" \
       -e "s/@KVER@/$KVER/g" \
       -e "s/@LIVEMAIN@/$LIVEMAIN/g" \
       -e "s/@MEDIALABEL@/$MEDIALABEL/g" \
