@@ -26,11 +26,20 @@
 # image (efiboot.img) that goes in the /isolinux directory for booting on
 # UEFI systems.
 
-echo
-echo "Building /EFI/BOOT/bootx64.efi and /boot/syslinux/efiboot.img."
+# Preparations:
+eval $1  # EFIFORM=value1
+eval $2  # EFISUFF=value2
 
-# First, build bootx64.efi, which will be installed here in /EFI/BOOT:
-grub-mkimage --format=x86_64-efi --output=bootx64.efi --config=grub-embedded.cfg --compression=xz --prefix=/EFI/BOOT part_gpt part_msdos fat ext2 hfs hfsplus iso9660 udf ufs1 ufs2 zfs chain linux boot appleldr ahci configfile normal regexp minicmd reboot halt search search_fs_file search_fs_uuid search_label gfxterm gfxmenu efi_gop efi_uga all_video loadbios gzio echo true probe loadenv bitmap_scale font cat help ls png jpeg tga test at_keyboard usb_keyboard
+# Defaults in case the script was called without parameters:
+EFIFORM=${EFIFORM:-"x86_64"}
+EFISUFF=${EFISUFF:-"x64"}
+
+echo
+echo "Building /EFI/BOOT/boot${EFISUFF}.efi and /boot/syslinux/efiboot.img."
+
+# First, build bootx64.efi/bootia32.efi,
+# which will be installed here in /EFI/BOOT:
+grub-mkimage --format=${EFIFORM}-efi --output=boot${EFISUFF}.efi --config=grub-embedded.cfg --compression=xz --prefix=/EFI/BOOT part_gpt part_msdos fat ext2 hfs hfsplus iso9660 udf ufs1 ufs2 zfs chain linux boot appleldr ahci configfile normal regexp minicmd reboot halt search search_fs_file search_fs_uuid search_label gfxterm gfxmenu efi_gop efi_uga all_video loadbios gzio echo true probe loadenv bitmap_scale font cat help ls png jpeg tga test at_keyboard usb_keyboard
 
 # Then, create a FAT formatted image that contains bootx64.efi in the
 # /EFI/BOOT directory.  This is used to bootstrap GRUB from the ISO image.
@@ -43,7 +52,7 @@ MOUNTPOINT=$(mktemp -d)
 mount -o loop efiboot.img $MOUNTPOINT
 # Copy the GRUB binary to /EFI/BOOT:
 mkdir -p $MOUNTPOINT/EFI/BOOT
-cp -a bootx64.efi $MOUNTPOINT/EFI/BOOT
+cp -a boot${EFISUFF}.efi $MOUNTPOINT/EFI/BOOT
 # Unmount and clean up:
 umount $MOUNTPOINT
 rmdir $MOUNTPOINT
@@ -51,5 +60,5 @@ rmdir $MOUNTPOINT
 mv efiboot.img ../../boot/syslinux/
 
 echo
-echo "Done building /EFI/BOOT/bootx64.efi and /boot/syslinux/efiboot.img."
+echo "Done building /EFI/BOOT/boot${EFISUFF}.efi and /boot/syslinux/efiboot.img."
 

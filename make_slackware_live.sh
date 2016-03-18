@@ -49,7 +49,7 @@ if [ -f ${CONFFILE} ]; then
 fi
 
 # Set to "YES" to send error output to the console:
-DEBUG=${DEBUG:=NO}
+DEBUG=${DEBUG:-"NO"}
 
 # Set to "YES" in order to delete everything we have,
 # and rebuild any pre-existing .sxz modules from scratch:
@@ -57,6 +57,13 @@ FORCE=${FORCE:-"NO"}
 
 # Set to 32 to be more compatible with the specs. Slackware uses 4 by default:
 BOOTLOADSIZE=${BOOTLOADSIZE:-4}
+
+# If you want to include an EFI boot image for 32bit Slackware then you
+# need a recompiled grub which supports 32bit EFI (Slackware's grub will not).
+# A patch for grub.SlackBuild to enable this feature can be found
+# in the source directory. Works for both the 32bit and the 64bit grub package.
+# Therefore we disable 32bit EFI by default. Enable at your own peril:
+EFI32=${EFI32:-"NO"}
 
 # Timestamp:
 THEDATE=$(date +%Y%m%d)
@@ -648,8 +655,12 @@ fi
 # Directory suffix, arch dependent:
 if [ "$SL_ARCH" = "x86_64" ]; then
   DIRSUFFIX="64"
+  EFIFORM="x86_64"
+  EFISUFF="x64"
 else
   DIRSUFFIX=""
+  EFIFORM="i386"
+  EFISUFF="ia32"
 fi
 
 # Package root directory, arch dependent:
@@ -1570,31 +1581,34 @@ elif [ ! -f ${LIVE_STAGING}/boot/syslinux/${CONSFONT} ]; then
   sed -i -e "s/^font .*/#&/" ${LIVE_STAGING}/boot/syslinux/menu/*menu*.cfg
 fi
 
-# Copy the UEFI boot directory structure:
-mkdir -p ${LIVE_STAGING}/EFI/BOOT
-cp -a ${LIVE_TOOLDIR}/EFI/BOOT/{grub-embedded.cfg,make-grub.sh,*.txt,theme} ${LIVE_STAGING}/EFI/BOOT/
+# EFI support always for 64bit architecture, but conditional for 32bit.
+if [ "$SL_ARCH" = "x86_64" -o "$EFI32" = "YES" ]; then
+  # Copy the UEFI boot directory structure:
+  mkdir -p ${LIVE_STAGING}/EFI/BOOT
+  cp -a ${LIVE_TOOLDIR}/EFI/BOOT/{grub-embedded.cfg,make-grub.sh,*.txt,theme} ${LIVE_STAGING}/EFI/BOOT/
 
-# Create the grub fonts used in the theme:
-for FSIZE in 5 10 12; do
-  grub-mkfont -s ${FSIZE} -av \
-    -o ${LIVE_STAGING}/EFI/BOOT/theme/dejavusansmono${FSIZE}.pf2 \
-    /usr/share/fonts/TTF/DejaVuSansMono.ttf \
-    | grep "^Font name: "
-done
+  # Create the grub fonts used in the theme:
+  for FSIZE in 5 10 12; do
+    grub-mkfont -s ${FSIZE} -av \
+      -o ${LIVE_STAGING}/EFI/BOOT/theme/dejavusansmono${FSIZE}.pf2 \
+      /usr/share/fonts/TTF/DejaVuSansMono.ttf \
+      | grep "^Font name: "
+  done
 
-# The grub-embedded.cfg in the bootx64.efi looks for this file:
-touch ${LIVE_STAGING}/EFI/BOOT/${MARKER}
+  # The grub-embedded.cfg in the bootx64.efi/bootia32.efi looks for this file:
+  touch ${LIVE_STAGING}/EFI/BOOT/${MARKER}
 
-# Generate the UEFI grub boot image if needed:
-if [ ! -f ${LIVE_STAGING}/EFI/BOOT/bootx64.efi -o ! -f ${LIVE_STAGING}/boot/syslinux/efiboot.img ]; then
-  ( cd ${LIVE_STAGING}/EFI/BOOT
-    sed -i -e "s/SLACKWARELIVE/${MARKER}/g" grub-embedded.cfg
-    sh make-grub.sh
-  )
-fi
+  # Generate the UEFI grub boot image if needed:
+  if [ ! -f ${LIVE_STAGING}/EFI/BOOT/boot${EFISUFF}.efi -o ! -f ${LIVE_STAGING}/boot/syslinux/efiboot.img ]; then
+    ( cd ${LIVE_STAGING}/EFI/BOOT
+      sed -i -e "s/SLACKWARELIVE/${MARKER}/g" grub-embedded.cfg
+      sh make-grub.sh EFIFORM=${EFIFORM} EFISUFF=${EFISUFF}
+    )
+  fi
 
-# Generate the grub configuration for UEFI boot:
-gen_uefimenu ${LIVE_STAGING}/EFI/BOOT
+  # Generate the grub configuration for UEFI boot:
+  gen_uefimenu ${LIVE_STAGING}/EFI/BOOT
+fi # End EFI support menu.
 
 if [ "$SYSMENU" = "NO" ]; then
   # Simple isolinux choices, no UEFI support.
@@ -1664,6 +1678,14 @@ mkdir -p ${LIVE_STAGING}/rootcopy
 
 # Create an ISO file from the directories found below ${LIVE_STAGING}:
 cd ${LIVE_STAGING}
+
+# Determine whether we add UEFI boot capabilities to the ISO:
+if [ -f boot/syslinux/efiboot.img ]; then
+  UEFI_OPTS="-eltorito-alt-boot -no-emul-boot -eltorito-platform 0xEF -eltorito-boot boot/syslinux/efiboot.img"
+else
+  UEFI_OPTS=""
+fi
+
 mkisofs -o ${OUTPUT}/${DISTRO}${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso \
   -R -J \
   -hide-rr-moved \
@@ -1672,8 +1694,7 @@ mkisofs -o ${OUTPUT}/${DISTRO}${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso \
   -sort boot/syslinux/iso.sort \
   -b boot/syslinux/isolinux.bin \
   -c boot/syslinux/isolinux.boot \
-  -eltorito-alt-boot -no-emul-boot -eltorito-platform 0xEF \
-  -eltorito-boot boot/syslinux/efiboot.img \
+  ${UEFI_OPTS} \
   -preparer "$(echo $LIVEDE |sed 's/BASE//') Live built by ${BUILDER}" \
   -publisher "The Slackware Linux Project - http://www.slackware.com/" \
   -A "${DISTRO^}-${SL_VERSION} for ${SL_ARCH} ($(echo $LIVEDE |sed 's/BASE//') Live $VERSION)" \
@@ -1688,23 +1709,27 @@ rm -rf ./boot
 
 cd - 1>/dev/null
 
-SIZEISO=$(stat --printf %s ${OUTPUT}/${DISTRO}${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso)
-# We want no more than 63 sectors, no more than 255 heads, according to
-# recommendations from Thomas Schmitt, xoriso developer.
-if [ $SIZEISO -gt 1073741824 ]; then
-  # No more than 63 sectors, no more than 255 heads. We will not try to stick
-  # to less than 1024 cylinders though:
-  SECTORS=63
-  HEADS=255
-else
-  # The default values for isohybrid gives us a max size of 1073741824 bytes:
-  # We want at most 1024 cylinders for old BIOS; also we want no more than
-  # 63 sectors, no more than 255 heads, which leads to a cut-over size:.
-  # 64 (heads) *32 (sectors) *1024 (cylinders) *512 (bytes) = 1073741824 bytes.
-  SECTORS=32
-  HEADS=64
-fi
-isohybrid -s $SECTORS -h $HEADS -u ${OUTPUT}/${DISTRO}${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso
+if [ "$SL_ARCH" = "x86_64" -o "$EFI32" = "YES" ]; then
+  # Make this a hybrid ISO with UEFI boot support on x86_64.
+  # On 32bit, the variable EFI32 must be explicitly enabled.
+  SIZEISO=$(stat --printf %s ${OUTPUT}/${DISTRO}${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso)
+  # We want no more than 63 sectors, no more than 255 heads, according to
+  # recommendations from Thomas Schmitt, xoriso developer.
+  if [ $SIZEISO -gt 1073741824 ]; then
+    # No more than 63 sectors, no more than 255 heads. We will not try to stick
+    # to less than 1024 cylinders though:
+    SECTORS=63
+    HEADS=255
+  else
+    # The default values for isohybrid gives us a max size of 1073741824 bytes:
+    # We want at most 1024 cylinders for old BIOS; also we want no more than
+    # 63 sectors, no more than 255 heads, which leads to a cut-over size:.
+    # 64 (heads) *32 (sectors) *1024 (cylinders) *512 (bytes) = 1073741824 bytes.
+    SECTORS=32
+    HEADS=64
+  fi
+  isohybrid -s $SECTORS -h $HEADS -u ${OUTPUT}/${DISTRO}${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso
+fi # End UEFI hybrid ISO.
 
 cd ${OUTPUT}
   md5sum ${DISTRO}${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso \
