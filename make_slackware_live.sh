@@ -58,9 +58,19 @@ FORCE=${FORCE:-"NO"}
 # Set to 32 to be more compatible with the specs. Slackware uses 4 by default:
 BOOTLOADSIZE=${BOOTLOADSIZE:-4}
 
+# Timestamp:
+THEDATE=$(date +%Y%m%d)
+
+#
+# ---------------------------------------------------------------------------
+#
+
 # The root and live user passwords of the image:
 ROOTPW=${ROOTPW:-"root"}
 LIVEPW=${LIVEPW:-"live"}
+
+# Distribution name:
+DISTRO=${DISTRO:-"slackware"}
 
 # Custom name for the host:
 LIVE_HOSTNAME=${LIVE_HOSTNAME:-"darkstar"}
@@ -74,9 +84,6 @@ RUNLEVEL=${RUNLEVEL:-4}
 
 # Use the graphical syslinux menu (YES or NO)?
 SYSMENU=${SYSMENU:-"YES"}
-
-# Console font to use with syslinux for better language support:
-CONSFONT=${CONSFONT:-"ter-i16v.psf"}
 
 # This variable can be set to a comma-separated list of package series.
 # The squashfs module(s) for these package series will then be re-generated.
@@ -92,11 +99,11 @@ WAIT=${WAIT:-"5"}
 # ---------------------------------------------------------------------------
 #
 
-# Timestamp:
-THEDATE=$(date +%Y%m%d)
-
 # Who built the live image:
 BUILDER=${BUILDER:-"Alien BOB"}
+
+# Console font to use with syslinux for better language support:
+CONSFONT=${CONSFONT:-"ter-i16v.psf"}
 
 # The ISO main directory:
 LIVEMAIN=${LIVEMAIN:-"liveslak"}
@@ -110,34 +117,17 @@ MEDIALABEL=${MEDIALABEL:-"LIVESLAK"}
 # The name of the directory used for storing persistence data:
 PERSISTENCE=${PERSISTENCE:-"persistence"}
 
-# Distribution name:
-DISTRO=${DISTRO:-"slackware"}
-
 # Slackware version to use (note: this won't work for Slackware <= 14.1):
 SL_VERSION=${SL_VERSION:-"current"}
 
 # Slackware architecture to install:
 SL_ARCH=${SL_ARCH:-"x86_64"}
 
-# Directory suffix, arch dependent:
-if [ "$SL_ARCH" = "x86_64" ]; then
-  DIRSUFFIX="64"
-else
-  DIRSUFFIX=""
-fi
-
 # Root directory of a Slackware local mirror tree;
 # You can define custom repository location (must be in local filesystem)
 # for any module in the file ./pkglists/<module>.conf:
 SL_REPO=${SL_REPO:-"/mnt/auto/sox/ftp/pub/Linux/Slackware"}
 DEF_SL_REPO=${SL_REPO}
-
-# Package root directory:
-SL_PKGROOT=${SL_REPO}/${DISTRO}${DIRSUFFIX}-${SL_VERSION}/${DISTRO}${DIRSUFFIX}
-DEF_SL_PKGROOT=${SL_PKGROOT}
-# Patches root directory:
-SL_PATCHROOT=${SL_REPO}/${DISTRO}${DIRSUFFIX}-${SL_VERSION}/patches/packages
-DEF_SL_PATCHROOT=${SL_PATCHROOT}
 
 # List of Slackware package series - each will become a squashfs module:
 SEQ_SLACKWARE="tagfile:a,ap,d,e,f,k,kde,kdei,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra"
@@ -165,6 +155,10 @@ SEQ_CIN="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,cinnamon
 # List of kernel modules required for a live medium to boot properly;
 # Lots of HID modules added to support keyboard input for LUKS password entry:
 KMODS=${KMODS:-"squashfs:overlay:loop:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:usb-storage:hid:usbhid:hid-generic:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:jbd:mbcache:ext3:ext4:isofs:fat:nls_cp437:nls_iso8859-1:msdos:vfat"}
+
+#
+# ---------------------------------------------------------------------------
+#
 
 # What compression to use for the squashfs modules?
 # Default is xz, alternatives are gzip, lzma, lzo:
@@ -561,7 +555,7 @@ EOL
 # Action!
 # ---------------------------------------------------------------------------
 
-while getopts "d:efhm:r:s:t:vHR:" Option
+while getopts "a:d:efhm:r:s:t:vz:HR:" Option
 do
   case $Option in
     h ) cat <<-"EOH"
@@ -580,6 +574,8 @@ do
         echo ""
         echo "The script's parameters are:"
         echo " -h                 This help."
+        echo " -a arch            Machine architecture (default: ${SL_ARCH})."
+        echo "                    Use i586 for a 32bit ISO, x86_64 for 64bit."
         echo " -d desktoptype     SLACKWARE (full Slack), KDE4 (basic KDE4),"
         echo "                    XFCE (basic XFCE), PLASMA5, MATE, CINNAMON."
         echo " -e                 Use ISO boot-load-size of 32 for computers"
@@ -591,9 +587,12 @@ do
         echo " -s slackrepo_dir   Directory containing ${DISTRO^} repository."
         echo " -t <doc|mandoc>    Trim the ISO for size (remove man and/or doc)"
         echo " -v                 Show debug/error output."
-        echo " -H <hostname>      Hostname of the Live OS (default: $LIVE_HOSTNAME)"
-        echo " -R <runlevel>      Runlevel to start with (default: $RUNLEVEL)"
+        echo " -z version         Define your ${DISTRO^} version (default: $SL_VERSION)."
+        echo " -H hostname        Hostname of the Live OS (default: $LIVE_HOSTNAME)"
+        echo " -R runlevel        Runlevel to boot into (default: $RUNLEVEL)"
         exit
+        ;;
+    a ) SL_ARCH="${OPTARG}"
         ;;
     d ) LIVEDE="$(echo ${OPTARG} |tr a-z A-Z)"
         ;;
@@ -610,6 +609,8 @@ do
     t ) TRIM="${OPTARG}"
         ;;
     v ) DEBUG="YES"
+        ;;
+    z ) SL_VERSION="${OPTARG}"
         ;;
     H ) LIVE_HOSTNAME="${OPTARG}"
         ;;
@@ -643,6 +644,21 @@ if [ $RUNLEVEL -ne 3 -a $RUNLEVEL -ne 4 ]; then
   echo ">> Default runlevel other than 3 or 4 is not supported."
   exit 1
 fi
+
+# Directory suffix, arch dependent:
+if [ "$SL_ARCH" = "x86_64" ]; then
+  DIRSUFFIX="64"
+else
+  DIRSUFFIX=""
+fi
+
+# Package root directory, arch dependent:
+SL_PKGROOT=${SL_REPO}/${DISTRO}${DIRSUFFIX}-${SL_VERSION}/${DISTRO}${DIRSUFFIX}
+DEF_SL_PKGROOT=${SL_PKGROOT}
+
+# Patches root directory, arch dependent:
+SL_PATCHROOT=${SL_REPO}/${DISTRO}${DIRSUFFIX}-${SL_VERSION}/patches/packages
+DEF_SL_PATCHROOT=${SL_PATCHROOT}
 
 # Do we have a local Slackware repository?
 if [ ! -d ${SL_REPO} ]; then
