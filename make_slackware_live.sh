@@ -1574,12 +1574,6 @@ mkdir -p ${LIVE_STAGING}/boot
 cp -a ${LIVE_BOOT}/boot/vmlinuz-generic*-$KGEN ${LIVE_STAGING}/boot/generic
 cp -a ${LIVE_BOOT}/boot/initrd_${KVER}.gz ${LIVE_STAGING}/boot/initrd.img
 cp -a ${LIVE_TOOLDIR}/syslinux ${LIVE_STAGING}/boot/
-# Make use of proper console font if we have it available:
-if [ -f /usr/share/kbd/consolefonts/${CONSFONT}.gz ]; then
-  gunzip -cd /usr/share/kbd/consolefonts/${CONSFONT}.gz > ${LIVE_STAGING}/boot/syslinux/${CONSFONT}
-elif [ ! -f ${LIVE_STAGING}/boot/syslinux/${CONSFONT} ]; then
-  sed -i -e "s/^font .*/#&/" ${LIVE_STAGING}/boot/syslinux/menu/*menu*.cfg
-fi
 
 # EFI support always for 64bit architecture, but conditional for 32bit.
 if [ "$SL_ARCH" = "x86_64" -o "$EFI32" = "YES" ]; then
@@ -1636,6 +1630,13 @@ for SLFILE in message.txt f2.txt syslinux.cfg lang.cfg ; do
   fi
 done
 mv ${LIVE_STAGING}/boot/syslinux/memtest ${LIVE_STAGING}/boot/
+
+# Make use of proper console font if we have it available:
+if [ -f /usr/share/kbd/consolefonts/${CONSFONT}.gz ]; then
+  gunzip -cd /usr/share/kbd/consolefonts/${CONSFONT}.gz > ${LIVE_STAGING}/boot/syslinux/${CONSFONT}
+elif [ ! -f ${LIVE_STAGING}/boot/syslinux/${CONSFONT} ]; then
+  sed -i -e "s/^font .*/#&/" ${LIVE_STAGING}/boot/syslinux/menu/*menu*.cfg
+fi
 
 # -----------------------------------------------------------------------------
 # Assemble the ISO
