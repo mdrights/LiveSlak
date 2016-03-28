@@ -26,6 +26,13 @@
 #
 # Modifications 2016 by Eric Hameleers <alien@slackware.com>
 #
+
+# The Slackware setup depends on english language settings because it
+# parses program output like that of "fdisk -l". So, we need to override
+# the Live user's local language settings here:
+export LANG=C
+export LC_ALL=C
+
 if [ ! -d /mnt/livemedia/@LIVEMAIN@/system ]; then
  dialog --title "LIVE MEDIA NOT ACCESSIBLE" --msgbox "\
 \n\
@@ -178,42 +185,41 @@ Press ENTER to return to the main menu." 16 68
   #   Slackware Live Edition - install to disk:   #
   # --------------------------------------------- #
 
+  # Buy us some time while we are calculating disk usage:
+  dialog --title "WELCOME TO @UDISTRO@ LIVE (@LIVEDE@)" --infobox \
+   "\nCalculating disk usage, please be patient ..." 5 65
+
   ACT_MODS=$(ls -rt --indicator-style=none /mnt/live/modules/ |wc -l)
   TOT_MODS=$(find /mnt/livemedia/@LIVEMAIN@/ -type f -name "*.sxz" |wc -l)
-  DU_MODS=0
-  let DU_MODS=DU_MODS+$(du -s /mnt/livemedia/@LIVEMAIN@/system/ |tr -s '\t' ' ' |cut -f1 -d' ')
-  let DU_MODS=DU_MODS+$(du -s /mnt/livemedia/@LIVEMAIN@/addons/ |tr -s '\t' ' ' |cut -f1 -d' ')
-  let DU_MODS=DU_MODS+$(du -s /mnt/livemedia/@LIVEMAIN@/optional/ |tr -s '\t' ' ' |cut -f1 -d' ')
-  (
-  GAUGE=0
-  NUM_MOD=0
-  SIZ_MOD=0
+  DU_LIVE=$(du -s /mnt/@LIVEMAIN@fs/ |tr -s '\t' ' ' |cut -f1 -d' ')
+  PARTFREE=$(df -P -BM $T_PX |tail -1 |tr -s '\t' ' ' |cut -d' ' -f4)
+  PARTFREE=${PARTFREE%M}
 
-  # Take all modules mounted in the Live OS, and install them in that order:
-  for LIVE_MOD_BASE in $(ls -rt --indicator-style=none /mnt/live/modules/) ; do
-    # Do not install 0099-@DISTRO@_zzzconf-*.sxz:
-    if echo ${LIVE_MOD_BASE} |grep -q "zzzconf" ; then
-      continue
+  # Warn when it looks we have insufficient room:
+  if [ $PARTFREE -lt $(($DU_LIVE/1024)) ]; then
++    dialog --title "WELCOME TO @UDISTRO@ LIVE (@LIVEDE@)" --yesno \
+   "\nAvailable space: $PARTFREE MB\nRequired space: $(($DU_LIVE/1024))\nIt looks like your hard drive partition is too small.\nDo you want to continue?" 10 65
+    retval=$?
+    if [ $retval = 1 ]; then
+      umount $T_PX
+      exit 1
     fi
-    # Could be system, addons or optional:
-    LIVE_MOD=$(find /mnt/livemedia/@LIVEMAIN@/ -type f -name ${LIVE_MOD_BASE}.sxz)
-     echo "XXX"
-     echo "$GAUGE"
-     echo ""
-     echo "Processed ${NUM_MOD} of ${TOT_MODS} @CDISTRO@ Live modules ($(( $SIZ_MOD/1024 )) of $(( $DU_MODS/1024 )) MB)\nProcessing ${LIVE_MOD_BASE} ..."
-     echo "XXX"
-     unsquashfs -f -dest $T_PX ${LIVE_MOD} 1>>$TMP/unsquash_output 2>>$TMP/unsquash_error
-     let NUM_MOD=NUM_MOD+1
-     let SIZ_MOD=SIZ_MOD+$(du -s $LIVE_MOD |tr -s '\t' ' ' |cut -f1 -d' ')
-     GAUGE=$(( (100 * ${SIZ_MOD})/${DU_MODS} ))
-     echo "$GAUGE"
-  done
-  ) | dialog --title "INSTALLING @UDISTRO@ @LIVEDE@ LIVE TO DISK" --gauge \
-       "\nProcessing ${TOT_MODS} @CDISTRO@ Live modules..." 8 65
+  else
+    dialog --title "WELCOME TO @UDISTRO@ LIVE (@LIVEDE@)" --msgbox \
+   "\nAvailable space: $PARTFREE MB\nRequired space: $(($DU_LIVE/1024)) MB\nIt looks like you're good to go!" 10 65
+  fi
+
+  (
+    # Install the Live OS by rsyncing the readonly overlay to the harddisk:
+    rsync -Hav --progress --no-inc-recursive /mnt/@LIVEMAIN@fs/ $T_PX/ \
+      | awk '{ if (index($0, "to-chk=") > 0) { split($0, pieces, "to-chk="); split(pieces[2], term, ")"); split(term[1], division, "/"); print (1-(division[1]/division[2]))*100 };  fflush(); }' \
+      | sed --unbuffered 's/^\([0-9]*\).*/\1/'
+  ) | dialog --title "INSTALLING @UDISTRO@ LIVE (@LIVEDE@) TO DISK" --gauge \
+       "\nProcessing ${TOT_MODS} @CDISTRO@ Live modules ($(( $DU_LIVE/1024 )) MB)" 8 65
 
   # Re-use some of the custom configuration from 0099-@DISTRO@_zzzconf-*.sxz
   # (some of these may not be present but the command will not fail):
-  dialog --title "POST-INSTALL @UDISTRO@ @LIVEDE@ LIVE DATA" --infobox \
+  dialog --title "POST-INSTALL @UDISTRO@ LIVE (@LIVEDE@) DATA" --infobox \
    "\nCopying Live modifications to hard disk ..." 5 65
   # Do not overwrite a custom keymap:
   if [ ! -f $T_PX/etc/rc.d/rc.keymap ]; then
@@ -232,18 +238,16 @@ Press ENTER to return to the main menu." 16 68
 
   cat << EOF > $TMP/tempmsg
 
- @CDISTRO@ @LIVEDE@ Live Edition has been installed to your hard drive!
+ @CDISTRO@ Live Edition (@LIVEDE@) has been installed to your hard drive!
  We installed the ${ACT_MODS} active modules (out of ${TOT_MODS} available).
  If present, the following files were copied from the Live OS to your harddisk:
-   /etc/profile.d/lang.sh
-   /etc/rc.d/rc.keymap
-   /etc/slackpkg
-   /etc/X11/xorg.conf.d/30-keyboard.conf
-   /etc/X11/xdm/liveslak-xdm
-
+    /etc/profile.d/lang.sh
+    /etc/rc.d/rc.keymap
+    /etc/slackpkg
+    /etc/X11/xorg.conf.d/30-keyboard.conf
+    /etc/X11/xdm/liveslak-xdm
  After finishing system configuration and before rebooting, you can add any further Live modules from /@LIVEMAIN@/addons/ and /@LIVEMAIN@/optional/ to your hard drive, using a command similar to this:
-
- # unsquashfs -f -dest $T_PX /mnt/livemedia/@LIVEMAIN@/addons/some_module.sxz
+    # unsquashfs -f -dest $T_PX /mnt/livemedia/@LIVEMAIN@/addons/mymodule.sxz
 
 EOF
   dialog --title "POST INSTALL HINTS AND TIPS" --msgbox "`cat $TMP/tempmsg`" \

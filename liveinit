@@ -555,9 +555,13 @@ if [ "$RESCUE" = "" ]; then
   [ ! -d ${UPPERDIR} ] && mkdir -p ${UPPERDIR}
   [ ! -d ${OVLWORK} ] && mkdir -p ${OVLWORK}
 
-  # Create the overlay of readonly and writable directories:
+  # Create the overlays of readonly and writable directories:
+  mkdir -p /mnt/${LIVEMAIN}fs
   mkdir -p /mnt/overlay
-  mount -t overlay -o workdir=${OVLWORK},upperdir=${UPPERDIR},lowerdir=${RODIRS} overlay /mnt/overlay
+  # We are going to use the readonly overlay as source for 'setup2hd':
+  mount -t overlay -o lowerdir=${RODIRS} overlay /mnt/${LIVEMAIN}fs
+  # Now add the writable upper layer:
+  mount -t overlay -o workdir=${OVLWORK},upperdir=${UPPERDIR},lowerdir=/mnt/${LIVEMAIN}fs overlay /mnt/overlay
   if [ $? -ne 0 -a "$VIRGIN" = "0" ]; then
     # Failed to create the persistent overlay - try without persistence:
     echo "${MARKER}:  Failed to create persistent overlay, attempting to continue in RAM."
@@ -565,7 +569,7 @@ if [ "$RESCUE" = "" ]; then
     OVLWORK=/mnt/live/.ovlwork
     mkdir -p ${UPPERDIR}
     mkdir -p ${OVLWORK}
-    mount -t overlay -o workdir=${OVLWORK},upperdir=${UPPERDIR},lowerdir=${RODIRS} overlay /mnt/overlay
+    mount -t overlay -o workdir=${OVLWORK},upperdir=${UPPERDIR},lowerdir=/mnt/${LIVEMAIN}fs overlay /mnt/overlay
   fi
 
   debugit
@@ -573,6 +577,8 @@ if [ "$RESCUE" = "" ]; then
   # Make the underpinning RAM fs accessible in the live system (for fun):
   mkdir -p /mnt/overlay/mnt/live
   mount --bind /mnt/live /mnt/overlay/mnt/live
+  mkdir -p /mnt/overlay/mnt/${LIVEMAIN}fs
+  mount --bind /mnt/${LIVEMAIN}fs /mnt/overlay/mnt/${LIVEMAIN}fs
 
   if [ $TORAM -eq 0 ]; then
     # Same for the Linux filesystem on the USB stick:
