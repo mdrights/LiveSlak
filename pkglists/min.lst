@@ -102,6 +102,7 @@ shadow
 sharutils
 slackpkg
 slocate
+squashfs-tools
 strace
 sudo
 sysklogd
