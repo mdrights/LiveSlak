@@ -341,6 +341,10 @@ if [ "$RESCUE" = "" ]; then
         mkdir /mnt/live/modules/${MODBASE}
         mount -t squashfs -o loop ${MODLOC} /mnt/live/modules/${MODBASE}
         RODIRS=":/mnt/live/modules/${MODBASE}${RODIRS}"
+        # 0099-* are the Live customizations, exclude those for setup2hd:
+        if ! echo ${MODBASE} | grep -q ^0099 ; then
+          FS2HD=":/mnt/live/modules/${MODBASE}${FS2HD}"
+        fi
       done
     fi
   }
@@ -466,6 +470,7 @@ if [ "$RESCUE" = "" ]; then
   # In the lowerdirs parameter for the overlay, the module with the highest
   # number (i.e. created last) will be leftmost in a colon-separated list:
   RODIRS=""
+  FS2HD=""
 
   # First, the base Slackware system components:
   load_modules system
@@ -482,6 +487,7 @@ if [ "$RESCUE" = "" ]; then
 
   # Get rid of the starting colon:
   RODIRS=$(echo $RODIRS |cut -c2-)
+  FS2HD=$(echo $FS2HD |cut -c2-)
 
   if [ $TORAM -ne 0 ]; then
     echo "${MARKER}:  Live OS copied to RAM, you can remove the Live medium."
@@ -558,10 +564,11 @@ if [ "$RESCUE" = "" ]; then
   # Create the overlays of readonly and writable directories:
   mkdir -p /mnt/${LIVEMAIN}fs
   mkdir -p /mnt/overlay
-  # We are going to use the readonly overlay as source for 'setup2hd':
-  mount -t overlay -o lowerdir=${RODIRS} overlay /mnt/${LIVEMAIN}fs
-  # Now add the writable upper layer:
-  mount -t overlay -o workdir=${OVLWORK},upperdir=${UPPERDIR},lowerdir=/mnt/${LIVEMAIN}fs overlay /mnt/overlay
+  # We are going to use a readonly overlay of the unmodified filesystem
+  # as source for 'setup2hd':
+  mount -t overlay -o lowerdir=${FS2HD} overlay /mnt/${LIVEMAIN}fs
+  # And this is the actual Live overlay:
+  mount -t overlay -o workdir=${OVLWORK},upperdir=${UPPERDIR},lowerdir=${RODIRS} overlay /mnt/overlay
   if [ $? -ne 0 -a "$VIRGIN" = "0" ]; then
     # Failed to create the persistent overlay - try without persistence:
     echo "${MARKER}:  Failed to create persistent overlay, attempting to continue in RAM."
@@ -569,7 +576,7 @@ if [ "$RESCUE" = "" ]; then
     OVLWORK=/mnt/live/.ovlwork
     mkdir -p ${UPPERDIR}
     mkdir -p ${OVLWORK}
-    mount -t overlay -o workdir=${OVLWORK},upperdir=${UPPERDIR},lowerdir=/mnt/${LIVEMAIN}fs overlay /mnt/overlay
+    mount -t overlay -o workdir=${OVLWORK},upperdir=${UPPERDIR},lowerdir=${RODIRS} overlay /mnt/overlay
   fi
 
   debugit
