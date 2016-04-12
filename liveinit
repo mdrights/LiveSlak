@@ -69,6 +69,10 @@ BLACKLIST=""
 # default in X.Org is to enable it:
 GLAMORACCEL=1
 
+# NFS root support:
+INTERFACE=""
+NFSHOST=""
+
 INITRD=$(cat /initrd-name)
 WAIT=$(cat /wait-for-root)
 KEYMAP=$(cat /keymap)
@@ -141,8 +145,17 @@ for ARG in $(cat /proc/cmdline); do
     maxloops=*)
       MAXLOOPS=$(echo $ARG | cut -f2 -d=)
     ;;
+    nfsroot=*)
+      # nfsroot=192.168.0.1:/path/to/liveslak
+      NFSHOST=$(echo $ARG | cut -f2 -d= |cut -f1 -d:)
+      NFSPATH=$(echo $ARG | cut -f2 -d= |cut -f2 -d:)
+    ;;
     nga)
       GLAMORACCEL=0
+    ;;
+    nic=*)
+      # nic=<driver>:<interface>:<dhcp|static>[:ipaddr:netmask[:gateway]]
+      ENET=$(echo $ARG | cut -f2 -d=)
     ;;
     noload=*)
       NOLOAD=$(echo $ARG | cut -f2 -d=)
@@ -214,6 +227,10 @@ rescue() {
 if [ -x /sbin/udevd -a -x /sbin/udevadm ]; then
   /sbin/udevd --daemon --resolve-names=never
   /sbin/udevadm trigger --subsystem-match=block --action=add
+  if [ -n "$NFSHOST" ]; then
+    # We also need network devices if NFS root is requested:
+    /sbin/udevadm trigger --type=devices --action=add
+  fi
   /sbin/udevadm settle --timeout=10
 else
   [ "$DEVTMPFS" != "1" ] && mdev -s
@@ -281,6 +298,108 @@ if [ "$RESCUE" = "" ]; then
   # --------------------------------------------------------------------- #
 
   ## Support functions ##
+
+  cidr_cvt() {
+    # Function to convert the netmask from CIDR format to dot notation.
+    # Number of args to shift, 255..255, first non-255 byte, zeroes
+    set -- $(( 5 - ($1 / 8) )) 255 255 255 255 $(( (255 << (8 - ($1 % 8))) & 255 )) 0 0 0
+    [ $1 -gt 1 ] && shift $1 || shift
+    echo ${1-0}.${2-0}.${3-0}.${4-0}
+  }
+
+  setnet() {
+    # Find and configure the network interface for NFS root support.
+    # Assume nothing about the method of network configuration:
+    ENET_MODE="ask"
+    # Max wait time for DHCP client to configure an interface:
+    MAXDHCP=10
+
+    echo "${MARKER}:  Configuring network interface for NFS mount."
+
+    # Does the commandline have NIC information for us?
+    # Format is 'nic=driver:interface:<dhcp|static>:ip:mask:gw'
+    if [ -n "$ENET" ]; then
+      DRIVER=$(echo $ENET |cut -f1 -d:)
+      INTERFACE=$(echo $ENET |cut -f2 -d:)
+      ENET_MODE=$(echo $ENET |cut -f3 -d:)
+      if [ "$ENET_MODE" = "static" ]; then
+        IPADDR=$(echo $ENET |cut -f4 -d:)
+        NETMASK=$(echo $ENET |cut -f5 -d:)
+        # We allow for CIDR notation of the netmask (0 < NETMASK < 25):
+        if [ "$(echo $NETMASK |tr -cd '\.')" != "..." ]; then
+          NETMASK=$(cidr_cvt $NETMASK)
+        fi
+        # Determine BROADCAST:
+        eval $(ipcalc -b $IPADDR $NETMASK)
+        # Not mandatory:
+        GATEWAY=$(echo $ENET | cut -f6 -d:)
+      fi
+    fi
+
+    # If no interface is present the cmdline should have provided a driver:
+    if [ $(cat /proc/net/dev |grep ':' |sed -e "s/^ *//" |cut -f1 -d: |grep -v lo |wc -l) -eq 0 ]; then
+      if [ "x${DRIVER}" != "x" ]; then
+        # This takes silent care of 'DRIVER=auto' as well...
+        modprobe ${DRIVER} 1>/dev/null 2>/dev/null
+      fi
+    fi
+
+    # Let's determine the interface:
+    if [ "x$INTERFACE" = "x" -o "$INTERFACE" = "auto" ]; then
+      # Cmdline did not provide a nic or it's "auto" to let dhcpcd find out:
+      for EDEV in $(cat /proc/net/dev |grep ':' |sed -e "s/^ *//" |cut -f1 -d: |grep -v lo) ; do
+        if grep -q $(echo ${EDEV}: |cut -f 1 -d :): /proc/net/wireless ; then
+          continue # skip wireless interfaces
+        fi
+        # If this configures an interface, we're done with dhcpcd afterwards:
+        /sbin/dhcpcd -L -p -t $MAXDHCP $EDEV &
+      done
+      unset EDEV
+      # Wait at most MAXDHCP seconds for a DHCP-configured interface to appear:
+      for ITER in $(seq 0 $MAXDHCP); do
+        if $(ip -f inet -o addr show | grep -v " lo " 1>/dev/null 2>/dev/null)
+        then
+          # Found one!
+          break
+        fi
+        sleep 1
+      done
+      # What interface did dhcpcd configure?
+      INTERFACE=""
+      for EDEV in $(cat /proc/net/dev |grep ':' |sed -e "s/^ *//" |cut -f1 -d: |grep -v lo); do
+        if [ -s /run/dhcpcd/dhcpcd-${EDEV}.pid ]; then
+          INTERFACE="${EDEV}"
+          break
+        fi
+      done
+      unset EDEV
+    fi
+
+    if [ "x$INTERFACE" = "x" ]; then
+      # Failed to find a configured interface... desperate measure:
+      echo "${MARKER}:  Failed to find network interface... trouble ahead."
+      INTERFACE="eth0"
+    fi
+
+    # We know our INTERFACE, so let's configure it:
+    if [ "$ENET_MODE" = "ask" -o "$ENET_MODE" = "dhcp" ]; then
+      # Invoke dhcpcd only if it was not called yet:
+      if [ ! -s /run/dhcpcd/dhcpcd-${INTERFACE}.pid ]; then
+        /sbin/dhcpcd -L -p -t $MAXDHCP $INTERFACE
+      fi
+    else
+      # Kill dhcpcd if we used it to find a statically configured interface:
+      if [ -s /run/dhcpcd/dhcpcd-${INTERFACE}.pid ]; then
+        /sbin/dhcpcd -k $INTERFACE
+      fi
+      # Static IP address requires IPADDRESS, NETMASK, NETMASK at a minimum:
+      ifconfig $INTERFACE $IPADDR netmask $NETMASK broadcast $BROADCAST
+      if [ -n "$GATEWAY" ]; then
+        route add default gw $GATEWAY metric 1
+      fi
+    fi
+
+  } # End setnet()
 
   find_loop() {
     # The losetup of busybox is different from the real losetup - watch out!
@@ -363,7 +482,16 @@ if [ "$RESCUE" = "" ]; then
   # Find the Slackware Live media.
   # TIP: Increase WAIT to give USB devices a chance to be seen by the kernel.
   mkdir /mnt/media
-  if [ -z "$LIVEMEDIA" ]; then
+  if [ -n "$NFSHOST" ]; then
+    # NFS root.  First configure our network interface:
+    setnet
+    # Mount the NFS share and hope for the best:
+    mount -t nfs -o nolock,vers=3 $NFSHOST:$NFSPATH /mnt/media
+    LIVEALL="$NFSHOST:$NFSPATH"
+    LIVEMEDIA="$LIVEALL"
+    # No writing on NFS exports, overlayfs does not support it:
+    VIRGIN=1
+  elif [ -z "$LIVEMEDIA" ]; then
     # LIVEMEDIA not specified on the boot commandline using "livemedia="
     # Filter out the block devices, only look at partitions at first:
     LIVEALL=$(blkid |grep LABEL="\"$MEDIALABEL\"" |cut -d: -f1 |grep "[0-9]$")
@@ -702,6 +830,27 @@ EOPW
         /mnt/overlay/etc/NetworkManager/NetworkManager.conf
     fi
     sed -i -e "s/^\(127.0.0.1\t*\)@DARKSTAR@.*/\1${LIVE_HOSTNAME}.example.net ${LIVE_HOSTNAME}/" /mnt/overlay/etc/hosts
+  fi
+
+  if [ -n "$NFSHOST" -a -s /run/dhcpcd/dhcpcd-${INTERFACE}.pid ]; then
+    # Ensure that dhcpcd will find its configuration:
+    mount --bind /var/lib/dhcpcd /mnt/overlay/var/lib/dhcpcd
+    mkdir -p /mnt/overlay/run/dhcpcd
+    mount --bind /run/dhcpcd /mnt/overlay/run/dhcpcd
+
+    # Disable NetworkManager:
+    chmod -x /mnt/overlay/etc/rc.d/rc.networkmanager
+
+    # De-configure rc.inet1:
+    cat <<EOT > /mnt/overlay/etc/rc.d/rc.inet1.conf
+IFNAME[0]="$INTERFACE"
+IPADDR[0]=""
+NETMASK[0]=""
+USE_DHCP[0]=""
+DHCP_HOSTNAME[0]=""
+GATEWAY=""
+DEBUG_ETH_UP="no"
+EOT
   fi
 
   # Disable glamor 2D acceleration (QEMU needs this):

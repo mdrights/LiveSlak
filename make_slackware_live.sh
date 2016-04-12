@@ -36,7 +36,7 @@
 # -----------------------------------------------------------------------------
 
 # Version of the Live OS generator:
-VERSION="0.7.2"
+VERSION="0.7.3"
 
 # Directory where our live tools are stored:
 LIVE_TOOLDIR=${LIVE_TOOLDIR:-"$(cd $(dirname $0); pwd)"}
@@ -64,6 +64,9 @@ BOOTLOADSIZE=${BOOTLOADSIZE:-4}
 # in the source directory. Works for both the 32bit and the 64bit grub package.
 # Therefore we disable 32bit EFI by default. Enable at your own peril:
 EFI32=${EFI32:-"NO"}
+
+# Include support for NFS root (PXE boot), will increase size of the initrd:
+NFSROOTSUP=${NFSROOTSUP:-"YES"}
 
 # Timestamp:
 THEDATE=$(date +%Y%m%d)
@@ -162,6 +165,15 @@ SEQ_CIN="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,cinnamon
 # List of kernel modules required for a live medium to boot properly;
 # Lots of HID modules added to support keyboard input for LUKS password entry:
 KMODS=${KMODS:-"squashfs:overlay:loop:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:usb-storage:hid:usbhid:hid-generic:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:jbd:mbcache:ext3:ext4:isofs:fat:nls_cp437:nls_iso8859-1:msdos:vfat"}
+
+# Firmware for wired network cards required for NFS root support:
+NETFIRMWARE="3com acenic adaptec bnx tigon e100 sun kaweth tr_smctr cxgb3"
+
+# Network kernel modules to include for NFS root support:
+NETMODS="kernel/drivers/net"
+
+# Network kernel modules to exclude from above list:
+NETEXCL="appletalk arcnet bonding can dummy.ko hamradio hippi ifb.ko irda macvlan.ko macvtap.ko pcmcia sb1000.ko team tokenring tun.ko usb veth.ko wan wimax wireless xen-netback.ko"
 
 #
 # ---------------------------------------------------------------------------
@@ -1558,6 +1570,29 @@ cat $LIVE_TOOLDIR/liveinit | sed \
 cat /dev/null > ${LIVE_ROOTDIR}/boot/initrd-tree/luksdev
 # We do not add openobex to the initrd and don't want to see irrelevant errors:
 rm ${LIVE_ROOTDIR}/boot/initrd-tree/lib/udev/rules.d/*openobex*rules 2>${DBGOUT} || true
+if [ "$NFSROOTSUP" = "YES" ]; then
+  # Add dhcpcd for NFS root support:
+  DHCPD_PKG=$(find ${DEF_SL_PKGROOT}/../ -name "dhcpcd-*.t?z" |head -1)
+  tar -C ${LIVE_ROOTDIR}/boot/initrd-tree/ -xf ${DHCPD_PKG} \
+    var/lib/dhcpcd lib/dhcpcd sbin/dhcpcd usr/lib${DIRSUFFIX}/dhcpcd \
+    etc/dhcpcd.conf.new
+  mv ${LIVE_ROOTDIR}/boot/initrd-tree/etc/dhcpcd.conf{.new,}
+  # Add just the right kernel network modules by pruning unneeded stuff:
+  KMODS_PKG=$(find ${DEF_SL_PKGROOT}/../ -name "kernel-modules-*$(echo $KVER |tr - _)*.t?z" |head -1)
+  tar -C ${LIVE_ROOTDIR}/boot/initrd-tree/ -xf ${KMODS_PKG} \
+    lib/modules/${KVER}/${NETMODS}
+  for KNETRM in ${NETEXCL} ; do
+    find ${LIVE_ROOTDIR}/boot/initrd-tree/lib/modules/${KVER}/${NETMODS} \
+      -name $KNETRM -depth -exec rm -rf {} \;
+  done
+  # We added extra modules to the initrd, so we run depmod again:
+  chroot ${LIVE_ROOTDIR}/boot/initrd-tree /sbin/depmod $KVER
+  # Add the firmware for network cards that need them:
+  KFW_PKG=$(find ${DEF_SL_PKGROOT}/../ -name "kernel-firmware-*.t?z" |head -1)
+  tar tf ${KFW_PKG} |grep -E "($(echo $NETFIRMWARE |tr ' ' '|'))" \
+    |xargs tar -C ${LIVE_ROOTDIR}/boot/initrd-tree/ -xf ${KFW_PKG} \
+    2>/dev/null || true
+fi
 # Wrap up the initrd.img again:
 chroot ${LIVE_ROOTDIR} /sbin/mkinitrd 1>/dev/null 2>${DBGOUT}
 rm -rf ${LIVE_ROOTDIR}/boot/initrd-tree
