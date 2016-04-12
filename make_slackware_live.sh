@@ -205,6 +205,9 @@ cleanup() {
   # Clean up by unmounting our loopmounts, deleting tempfiles:
   echo "--- Cleaning up the staging area..."
   sync
+  umount ${LIVE_ROOTDIR}/sys 2>${DBGOUT} || true
+  umount ${LIVE_ROOTDIR}/proc 2>${DBGOUT} || true
+  umount ${LIVE_ROOTDIR}/dev 2>${DBGOUT} || true
   umount ${LIVE_ROOTDIR} 2>${DBGOUT} || true
   # Need to umount the squashfs modules too:
   umount ${LIVE_WORK}/*_$$ 2>${DBGOUT} || true
