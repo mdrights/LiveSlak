@@ -59,6 +59,10 @@ ISOMNT=""
 CNTMNT=""
 USBMNT=""
 
+# Compressor used on the initrd ("gzip" or "xz --check=crc32");
+# Note that the kernel's XZ decompressor does not understand CRC64:
+COMPR="xz --check=crc32"
+
 #
 #  -- function definitions --
 #
@@ -124,13 +128,22 @@ cat <<EOT
 EOT
 }
 
+# Uncompress the initrd based on the compression algorithm used:
+uncompressfs () {
+  if $(file "${1}" | grep -qi ": gzip"); then
+    gzip -cd "${1}"
+  elif $(file "${1}" | grep -qi ": XZ"); then
+    xz -cd "${1}"
+  fi
+}
+
 # Add longer USB WAIT to the initrd:
 update_initrd() {
   IMGFILE="$1"
 
   # USB boot medium needs a few seconds boot delay else the overlay will fail.
   # Check if we need to update the wait-for-root file in the initrd:
-  OLDWAIT=$(gunzip -cd ${IMGFILE} |cpio -i --to-stdout wait-for-root 2>/dev/null)
+  OLDWAIT=$(uncompressfs ${IMGFILE} |cpio -i --to-stdout wait-for-root 2>/dev/null)
   if [ "$OLDWAIT" = "$WAIT" -a $DOLUKS -eq 0 ]; then
     return
   fi
@@ -148,7 +161,7 @@ update_initrd() {
 
   echo "--- Extracting Slackware initrd and adding rootdelay for USB..."
   cd ${IMGDIR}
-    gunzip -cd ${IMGFILE} \
+    uncompressfs ${IMGFILE} \
       | cpio -i -d -H newc --no-absolute-filenames
     echo "--- Updating 'waitforroot' time from '$OLDWAIT' to '$WAIT':"
     echo ${WAIT} > wait-for-root
@@ -162,7 +175,7 @@ update_initrd() {
 
     echo "--- Compressing the initrd image again:"
     chmod 0755 ${IMGDIR}
-    find . |cpio -o -H newc |gzip > ${IMGFILE}
+    find . |cpio -o -H newc |$COMPR > ${IMGFILE}
   cd - 2>/dev/null
   rm -rf $IMGDIR/*
 } # End of update_initrd()
