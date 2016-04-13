@@ -103,6 +103,33 @@ Examples:
 You might have noticed that the "-P" parameter does not accept a size parameter.  This is because the unencrypted container file is created as a 'sparse' file that starts at zero size and is allowed to grow dynmically to a maximum of 90% of the initial free space on the Linux partition of the USB stick.
 
 
+==== PXE booting the Live OS ====
+
+
+Slackware Live Edition can do a network boot boot using PXE protocol off a NFS export.  Extract the content of the ISO to (for instance) a new directory called ''slackware-live'' below your TFTP server's ''/tftproot'' directory and export that directory via NFS.  Then add lines like this to your ''pxelinux.cfg/default'' file (assuming your NFS server has IP address ''192.168.0.1''): <code>
+label liveslak
+kernel slackware-live/boot/generic
+append initrd=slackware-live/boot/initrd.img load_ramdisk=1 prompt_ramdisk=0 rw printk.time=0 kbd=us tz=Europe/Amsterdam locale=us_EN.utf8 nfsroot=192.168.0.1:/tftpboot/slackware-live hostname=pxelive
+</code>
+As shown in the example above, a boot parameter ''nfsroot'' is used for network boot. The parameter value defines the IP address of your NFS server and the path of the NFS export where you extracted the Slackware Live ISO.  Hint: to get a listing of the exported shares of your NFS server, run ''showmount -e localhost'' on the NFS server.
+
+Actually, two boot parameters are available to properly support network boot.  A second boot parameter ''nic'' can be used to define the characteristics of your Live environment's network configuration, like the name of the network interface, static IP adress and such.  If you are on a network where a DHCP server configures your clients, then the ''nic'' parameter will not be needed as Slackware Live Edition will figure out all the details by itself.
+
+Syntax of these two parameters:
+  nfsroot=ip.ad.dr.ess:/path/to/liveslak
+  nic=<driver>:<interface>:<dhcp|static>[:ipaddr:netmask[:gateway]]
+    
+Example uses of the two network boot parameters:
+  nfsroot=192.168.1.1:/tftproot/slackware-live
+  nic=auto:eth0:dhcp
+  nic=auto:eth0:static:10.0.0.21:24:
+  nic=:eth1:static:192.168.1.6:255.255.255.248:192.168.1.1
+
+After you have setup your PXE environment (DHCP, TFTP and NFS servers) properly using the above information, boot one of your PXE-capable computers, interrupt the boot and select "network boot" and type or select the appropriate label (in the above example, that would be ''liveslak'').  You will see the kernel and initrd being downloaded and booted, and then the Live OS will start just as if it was running from a local medium.
+
+Persistence is not supported in this configuration; currently the overlayfs does not support NFS as a writable layer in the live filesystem.
+
+
 ==== Boot parameters explained ====
 
 
@@ -140,6 +167,20 @@ load=mod1[,mod2[...]] => Load one or more squashfs modules
 noload=mod1[,mod2[...]] => Prevent loading of one or more
   squashfs modules from the directory "/liveslak/addons".
   By default all these "addon" modules are loaded on boot.
+
+=== Network boot ===
+
+nfsroot=ip.ad.dr.ess:/path/to/liveslak =>defines the IP address
+  of the NFS server, and the path to the extracted content
+  of Slackware Live Edition.
+
+nic=<driver>:<interface>:<dhcp|static>[:ipaddr:netmask[:gateway]]
+  => network device customization, usually this parameter is
+  not needed when your network runs a DHCP server.
+  Specify a driver if UDEV does not detect the device. Specify the
+  interface if Slackware Live can not figure it out. If you specify
+  'static' you need to also specify ipaddr and netmask. The gateway
+  is optional but needed to access the internet for instance.
 
 === Hardware related ===
 
