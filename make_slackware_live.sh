@@ -179,6 +179,11 @@ NETEXCL="appletalk arcnet bonding can dummy.ko hamradio hippi ifb.ko irda macvla
 # ---------------------------------------------------------------------------
 #
 
+# What compression to use for the initrd?
+# Default is xz with CRC32 (the kernel's XZ decoder does not support CRC64),
+# the alternative is gzip (which adds  ~30% to the initrd size).
+COMPR=${COMPR:-"xz --check=crc32"}
+
 # What compression to use for the squashfs modules?
 # Default is xz, alternatives are gzip, lzma, lzo:
 SXZ_COMP=${SXZ_COMP:-"xz"}
@@ -230,6 +235,15 @@ cleanup() {
   rm ${LIVE_MOD_ADD}/* 2>${DBGOUT} || true
 }
 trap 'echo "*** $0 FAILED at line $LINENO ***"; cleanup; exit 1' ERR INT TERM
+
+# Uncompress the initrd based on the compression algorithm used:
+uncompressfs () {
+  if $(file "${1}" | grep -qi ": gzip"); then
+    gzip -cd "${1}"
+  elif $(file "${1}" | grep -qi ": XZ"); then
+    xz -cd "${1}"
+  fi
+}
 
 #
 # Return the full pathname of first package found below $2 matching exactly $1:
@@ -1101,7 +1115,7 @@ if [ -f ${LIVE_ROOTDIR}/boot/vmlinuz-huge-* ]; then
   # and move them to a single directory in the ISO:
   mkdir -p  ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}
   cd  ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}
-    gunzip -cd ${DEF_SL_PKGROOT}/../isolinux/initrd.img | cpio -i -d -H newc --no-absolute-filenames usr/lib/setup/* sbin/probe sbin/fixdate
+    uncompressfs ${DEF_SL_PKGROOT}/../isolinux/initrd.img | cpio -i -d -H newc --no-absolute-filenames usr/lib/setup/* sbin/probe sbin/fixdate
     mv -i usr/lib/setup/* sbin/probe sbin/fixdate .
     rm -r usr sbin
   cd -
@@ -1558,7 +1572,7 @@ KVER=$(ls --indicator-style=none ${LIVE_ROOTDIR}/lib/modules/ |head -1)
 
 # Create an initrd for the generic kernel, using a modified init script:
 echo "-- Creating initrd for kernel-generic $KVER ..."
-chroot ${LIVE_ROOTDIR} /sbin/mkinitrd -c -w ${WAIT} -l us -o /boot/initrd_${KVER}.gz -k ${KVER} -m ${KMODS} -L -C dummy 1>${DBGOUT} 2>${DBGOUT}
+chroot ${LIVE_ROOTDIR} /sbin/mkinitrd -c -w ${WAIT} -l us -o /boot/initrd_${KVER}.img -k ${KVER} -m ${KMODS} -L -C dummy 1>${DBGOUT} 2>${DBGOUT}
 # Modify the initrd content for the Live OS:
 cat $LIVE_TOOLDIR/liveinit | sed \
   -e "s/@LIVEMAIN@/$LIVEMAIN/g" \
@@ -1594,7 +1608,9 @@ if [ "$NFSROOTSUP" = "YES" ]; then
     2>/dev/null || true
 fi
 # Wrap up the initrd.img again:
-chroot ${LIVE_ROOTDIR} /sbin/mkinitrd 1>/dev/null 2>${DBGOUT}
+( cd ${LIVE_ROOTDIR}/boot/initrd-tree
+  find . | cpio -o -H newc | $COMPR >${LIVE_ROOTDIR}/boot/initrd_${KVER}.img 2>${DBGOUT}
+)
 rm -rf ${LIVE_ROOTDIR}/boot/initrd-tree
 
 # ... and cleanup these mounts again:
@@ -1602,15 +1618,19 @@ umount ${LIVE_ROOTDIR}/{proc,sys,dev} || true
 umount ${LIVE_ROOTDIR} || true
 # Paranoia:
 [ ! -z "${LIVE_BOOT}" ] && rm -rf ${LIVE_BOOT}/{etc,tmp,usr,var} 1>${DBGOUT} 2>${DBGOUT}
-# Squash the boot directory into its own module:
-mksquashfs ${LIVE_BOOT} ${LIVE_MOD_SYS}/0000-${DISTRO}_boot-${SL_VERSION}-${SL_ARCH}.sxz -noappend -comp ${SXZ_COMP} -b 1M
 
-# Copy kernel files and tweak the syslinux configuration:
+# Copy kernel and move the modified initrd (we do not need it in the Live OS).
 # Note to self: syslinux does not 'see' files unless they are DOS 8.3 names?
 rm -rf ${LIVE_STAGING}/boot
 mkdir -p ${LIVE_STAGING}/boot
 cp -a ${LIVE_BOOT}/boot/vmlinuz-generic*-$KGEN ${LIVE_STAGING}/boot/generic
-cp -a ${LIVE_BOOT}/boot/initrd_${KVER}.gz ${LIVE_STAGING}/boot/initrd.img
+mv ${LIVE_BOOT}/boot/initrd_${KVER}.img ${LIVE_STAGING}/boot/initrd.img
+
+# Squash the boot directory into its own module:
+mksquashfs ${LIVE_BOOT} ${LIVE_MOD_SYS}/0000-${DISTRO}_boot-${SL_VERSION}-${SL_ARCH}.sxz -noappend -comp ${SXZ_COMP} -b 1M
+
+# Copy the syslinux configuration.
+# The next block checks here for a possible UEFI grub boot image:
 cp -a ${LIVE_TOOLDIR}/syslinux ${LIVE_STAGING}/boot/
 
 # EFI support always for 64bit architecture, but conditional for 32bit.
