@@ -556,7 +556,7 @@ rm ${USBMNT}/boot/extlinux/isolinux.*
 /sbin/extlinux --install ${USBMNT}/boot/extlinux
 
 # No longer needed:
-/sbin/umount ${USBMNT}
+if /sbin/mount |grep -qw ${USBMNT} ; then /sbin/umount ${USBMNT} ; fi
 
 if [ $EFIBOOT -eq 1 ]; then
   # Mount the EFI partition and copy /EFI as well as /boot directories into it:
@@ -570,8 +570,8 @@ if [ $EFIBOOT -eq 1 ]; then
 fi
 
 # No longer needed:
-/sbin/umount ${USBMNT}
-/sbin/umount ${EFIMNT}
+if /sbin/mount |grep -qw ${USBMNT} ; then /sbin/umount ${USBMNT} ; fi
+if /sbin/mount |grep -qw ${EFIMNT} ; then /sbin/umount ${EFIMNT} ; fi
 
 # Unmount/remove stuff:
 cleanup
