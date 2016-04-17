@@ -1138,6 +1138,29 @@ if [ -f ${LIVE_ROOTDIR}/boot/vmlinuz-huge-* ]; then
     -e "s/@VERSION@/$VERSION/g" \
     > ${LIVE_ROOTDIR}/usr/local/sbin/setup2hd
   chmod 755 ${LIVE_ROOTDIR}/usr/local/sbin/setup2hd
+  # Slackware Live HD post-install customization hook:
+  if [ -f ${LIVE_TOOLDIR}/setup2hd.local ]; then
+    # The '.local' suffix means: install it as a sample file only:
+    HOOK_SRC="${LIVE_TOOLDIR}/setup2hd.local"
+    HOOK_DST="${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}/setup2hd.$DISTRO.sample"
+  elif [ -f ${LIVE_TOOLDIR}/setup2hd.$DISTRO ]; then
+    # Install the hook; the file will be sourced by "setup2hd".
+    HOOK_SRC="${LIVE_TOOLDIR}/setup2hd.$DISTRO"
+    HOOK_DST="${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}/setup2hd.$DISTRO"
+  fi
+  cat ${HOOK_SRC} | sed \
+    -e "s/@DIRSUFFIX@/$DIRSUFFIX/g" \
+    -e "s/@DISTRO@/$DISTRO/g" \
+    -e "s/@CDISTRO@/${DISTRO^}/g" \
+    -e "s/@UDISTRO@/${DISTRO^^}/g" \
+    -e "s/@KVER@/$KVER/g" \
+    -e "s/@LIVEDE@/$LIVEDE/g" \
+    -e "s/@LIVEMAIN@/$LIVEMAIN/g" \
+    -e "s/@MARKER@/$MARKER/g" \
+    -e "s/@SL_VERSION@/$SL_VERSION/g" \
+    -e "s/@VERSION@/$VERSION/g" \
+    > ${HOOK_DST}
+  chmod 644 ${HOOK_DST}
 fi
 
 # Add the documentation:

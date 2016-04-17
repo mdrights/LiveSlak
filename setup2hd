@@ -217,48 +217,71 @@ Press ENTER to return to the main menu." 16 68
   ) | dialog --title "INSTALLING @UDISTRO@ LIVE (@LIVEDE@) TO DISK" --gauge \
        "\nProcessing ${TOT_MODS} @CDISTRO@ Live modules ($(( $DU_LIVE/1024 )) MB)" 8 65
 
-  # Re-use some of the custom configuration from 0099-@DISTRO@_zzzconf-*.sxz
-  # (some of these may not be present but the command will not fail):
-  dialog --title "POST-INSTALL @UDISTRO@ LIVE (@LIVEDE@) DATA" --infobox \
-   "\nCopying Live modifications to hard disk ..." 5 65
-  # Do not overwrite a custom keymap:
-  if [ ! -f $T_PX/etc/rc.d/rc.keymap ]; then
-    unsquashfs -f -dest $T_PX /mnt/livemedia/@LIVEMAIN@/system/0099*zzzconf*.sxz \
-      /etc/rc.d/rc.keymap
-  fi
-  unsquashfs -f -dest $T_PX /mnt/livemedia/@LIVEMAIN@/system/0099*zzzconf*.sxz \
-    /etc/profile.d/lang.sh \
-    /etc/slackpkg \
-    /etc/X11/xorg.conf.d/30-keyboard.conf \
-    /etc/X11/xdm/liveslak-xdm
-  # Point xdm to the custom /etc/X11/xdm/liveslak-xdm/xdm-config:
-  sed -i ${T_PX}/etc/rc.d/rc.4 -e 's,bin/xdm -nodaemon,& -config /etc/X11/xdm/liveslak-xdm/xdm-config,'
-  # Remove the marker file from the filesystem root:
-  rm -f ${T_PX}/@MARKER@
+  #
+  # Live OS Post Install routine. If you want, you can override this routine
+  # by (re-)defining this function "live_post_install()" in a file called
+  # "/usr/share/@LIVEMAIN@/setup2hd.@DISTRO@".
+  #
 
-  cat << EOF > $TMP/tempmsg
+  live_post_install () {
+    # Re-use some of the custom configuration from 0099-@DISTRO@_zzzconf-*.sxz
+    # (some of these may not be present but the command will not fail):
+    dialog --title "POST-INSTALL @UDISTRO@ LIVE (@LIVEDE@) DATA" --infobox \
+     "\nCopying Live modifications to hard disk ..." 5 65
+    # Do not overwrite a custom keymap:
+    if [ ! -f $T_PX/etc/rc.d/rc.keymap ]; then
+      unsquashfs -f -dest $T_PX \
+        /mnt/livemedia/@LIVEMAIN@/system/0099*zzzconf*.sxz \
+        /etc/rc.d/rc.keymap
+    fi
+    unsquashfs -f -dest $T_PX \
+      /mnt/livemedia/@LIVEMAIN@/system/0099*zzzconf*.sxz \
+      /etc/X11/xdm/liveslak-xdm \
+      /etc/X11/xorg.conf.d/30-keyboard.conf \
+      /etc/inittab \
+      /etc/profile.d/lang.sh \
+      /etc/rc.d/rc.font \
+      /etc/rc.d/rc.gpm \
+      /etc/slackpkg
+    # Point xdm to the custom /etc/X11/xdm/liveslak-xdm/xdm-config:
+    sed -i ${T_PX}/etc/rc.d/rc.4 -e 's,bin/xdm -nodaemon,& -config /etc/X11/xdm/liveslak-xdm/xdm-config,'
+    # Remove the marker file from the filesystem root:
+    rm -f ${T_PX}/@MARKER@
+
+    cat << EOF > $TMP/tempmsg
 
  @CDISTRO@ Live Edition (@LIVEDE@) has been installed to your hard drive!
  We installed the ${ACT_MODS} active modules (out of ${TOT_MODS} available).
- If present, the following files were copied from the Live OS to your harddisk:
-    /etc/profile.d/lang.sh
-    /etc/rc.d/rc.keymap
-    /etc/slackpkg
-    /etc/X11/xorg.conf.d/30-keyboard.conf
-    /etc/X11/xdm/liveslak-xdm
+ The following configuration was copied from the Live OS to your harddisk:
+  - console font
+  - default runlevel
+  - keyboard layout
+  - language setting
  After finishing system configuration and before rebooting, you can add any further Live modules from /@LIVEMAIN@/addons/ and /@LIVEMAIN@/optional/ to your hard drive, using a command similar to this:
     # unsquashfs -f -dest $T_PX /mnt/livemedia/@LIVEMAIN@/addons/mymodule.sxz
 
 EOF
-  dialog --title "POST INSTALL HINTS AND TIPS" --msgbox "`cat $TMP/tempmsg`" \
- 20 65
-  rm $TMP/tempmsg
+    dialog --title "POST INSTALL HINTS AND TIPS" --msgbox "`cat $TMP/tempmsg`" \
+      20 65
+    rm $TMP/tempmsg
+
+    MAINSELECT="CONFIGURE"
+  }
+
+  if [ -f /usr/share/@LIVEMAIN@/setup2hd.@DISTRO@ ]; then
+    # If the setup2hd post-configuration file exists, source it.
+    # The file should re-define the live_post_install() function.
+    . /usr/share/@LIVEMAIN@/setup2hd.@DISTRO@
+  fi
+
+  # Now, execute the function - either our own built-in version
+  # or the re-defined function from the custom setup2hd.@DISTRO@ file.
+  live_post_install
 
   # --------------------------------------------- #
   # Slackware Live Edition - end install to disk: #
   # --------------------------------------------- #
 
-  MAINSELECT="CONFIGURE"
  fi
 
  if [ "$MAINSELECT" = "CONFIGURE" ]; then
