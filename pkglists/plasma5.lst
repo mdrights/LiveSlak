@@ -5,7 +5,6 @@
 OpenAL
 PyQt5
 cfitsio
-extra-cmake-modules
 grantlee
 grantlee-qt4
 json-glib
@@ -15,6 +14,7 @@ libdbusmenu-qt5
 libindicator
 libxkbcommon
 lmdb
+ninja
 noto-cjk-font-ttf
 noto-font-ttf-2015-09
 phonon
@@ -24,6 +24,7 @@ polkit-qt5-1
 qca-qt5
 qt-gstreamer
 qt5
+qt5-webkit
 sip
 sni-qt
 wayland
@@ -90,7 +91,6 @@ kde-baseapps
 kde-dev-scripts
 kde-dev-utils
 kde-runtime
-kde-workspace
 kdebugsettings
 kdeedu-data
 kdegraphics-mobipocket
@@ -203,6 +203,7 @@ breeze-icons
 extra-cmake-modules
 frameworkintegration
 kactivities-framework
+kactivities-stats
 kapidox
 karchive
 kauth
@@ -301,35 +302,51 @@ smokeqt
 akonadi
 akonadi-calendar
 akonadi-search
+calendarsupport
+eventviews
 gpgmepp
+grantleetheme
+incidenceeditor
 kalarmcal
 kblog
 kcalcore
 kcalutils
 kcontacts
 kdepim
+kdepim-addons
+kdepim-apps-libs
 kdepim-runtime
 kdepimlibs
+kdgantt2
 kholidays
 kidentitymanagement
 kimap
 kldap
+kleopatra
 kmailtransport
 kmbox
 kmime
 kontactinterface
 kpimtextedit
 ktnef
+libgravatar
+libkdepim
+libkleo
+libksieve
+mailcommon
+mailimporter
+messagelib
+pimcommon
 syndication
 
 # plasma-extra:
-kdeconnect-framework
+kactivities-workspace
+kactivitymanagerd
 kde-wallpapers
+kdeconnect-framework
 oxygen-fonts
 polkit-kde-kcmodules-framework
 sddm-qt5
-kactivities-workspace
-kactivitymanagerd
 
 # plasma:
 bluedevil
@@ -357,6 +374,7 @@ libksysguard
 milou
 oxygen
 plasma-desktop
+plasma-integration
 plasma-mediacenter
 plasma-pa
 plasma-sdk
@@ -367,6 +385,10 @@ polkit-kde-framework
 powerdevil
 sddm-kcm
 systemsettings
+
+# applications extra:
+ktorrent
+libktorrent
 
 # telepathy:
 kaccounts-integration
