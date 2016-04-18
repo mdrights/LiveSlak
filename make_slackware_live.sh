@@ -36,7 +36,7 @@
 # -----------------------------------------------------------------------------
 
 # Version of the Live OS generator:
-VERSION="0.7.3"
+VERSION="0.8.0"
 
 # Directory where our live tools are stored:
 LIVE_TOOLDIR=${LIVE_TOOLDIR:-"$(cd $(dirname $0); pwd)"}
