@@ -48,8 +48,10 @@ LIVEPATH=""
 # to avoid anything that writes to disk after we copy the OS to RAM.
 VIRGIN=0
 
-# Used for debugging the init; set to '1' to enable explicit pauses>
+# Used for debugging the init;
+# Set DEBUG to '1' to enable explicit pauses; '2' enables verbose script exec:
 DEBUG=0
+DEBUGV=" "
 
 # Masochists can copy the live environment into RAM:
 TORAM=0
@@ -105,6 +107,7 @@ for ARG in $(cat /proc/cmdline); do
     ;;
     debug=*)
       DEBUG=$(echo $ARG | cut -f2 -d=)
+      DEBUGV="-v"
     ;;
     hostname=*)
       LIVE_HOSTNAME=$(echo $ARG | cut -f2 -d=)
@@ -205,17 +208,18 @@ debugit () {
 }
 
 rescue() {
+  echo
   if [ "x$1" != "x" ]; then
     echo "$1"
+  else
+    echo "RESCUE mode"
+    echo
+    echo "        You can try to fix or rescue your system now. If you want"
+    echo "        to boot into your fixed system, mount your root filesystem"
+    echo "        read-only under /mnt:"
+    echo
+    echo "            # mount -o ro -t filesystem root_device /mnt"
   fi
-  echo
-  echo "RESCUE mode"
-  echo
-  echo "        You can try to fix or rescue your system now. If you want"
-  echo "        to boot into your fixed system, mount your root filesystem"
-  echo "        read-only under /mnt:"
-  echo
-  echo "            # mount -o ro -t filesystem root_device /mnt"
   echo
   echo "        Type 'exit' when things are done."
   echo
@@ -229,7 +233,11 @@ if [ -x /sbin/udevd -a -x /sbin/udevadm ]; then
   /sbin/udevadm trigger --subsystem-match=block --action=add
   if [ -n "$NFSHOST" ]; then
     # We also need network devices if NFS root is requested:
-    /sbin/udevadm trigger --type=devices --action=add
+    if [ -z "$(/sbin/udevadm trigger --subsystem-match=net --action=add -v -n |rev |cut -d/ -f1 |rev |grep -v lo)" ]; then
+      /sbin/udevadm trigger $DEBUGV
+    else
+      /sbin/udevadm trigger --subsystem-match=net --action=add $DEBUGV
+    fi
   fi
   /sbin/udevadm settle --timeout=10
 else
@@ -837,6 +845,7 @@ EOPW
     mount --bind /var/lib/dhcpcd /mnt/overlay/var/lib/dhcpcd
     mkdir -p /mnt/overlay/run/dhcpcd
     mount --bind /run/dhcpcd /mnt/overlay/run/dhcpcd
+    cat /etc/resolv.conf > /mnt/overlay/etc/resolv.conf
 
     # Disable NetworkManager:
     chmod -x /mnt/overlay/etc/rc.d/rc.networkmanager
@@ -914,6 +923,8 @@ EOT
       fi
     done
   fi
+
+  [ $DEBUG -gt 3 ] && rescue "DEBUG SHELL"
 
   # --------------------------------------------------------------------- #
   #                     SLACKWARE LIVE - !END!                            #
