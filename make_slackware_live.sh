@@ -1616,12 +1616,37 @@ if [ "$NFSROOTSUP" = "YES" ]; then
   mv ${LIVE_ROOTDIR}/boot/initrd-tree/etc/dhcpcd.conf{.new,}
   # Add just the right kernel network modules by pruning unneeded stuff:
   KMODS_PKG=$(find ${DEF_SL_PKGROOT}/../ -name "kernel-modules-*$(echo $KVER |tr - _)*.t?z" |head -1)
-  tar -C ${LIVE_ROOTDIR}/boot/initrd-tree/ -xf ${KMODS_PKG} \
-    lib/modules/${KVER}/${NETMODS}
+  KMODS_TEMP=$(mktemp -d -p /mnt -t liveslak.XXXXXX)
+  if [ ! -d $KMODS_TEMP ]; then
+    echo "*** Failed to create a temporary extraction directory for the initrd!"
+    exit 1
+  fi
+  # We need to extract the full kernel-modules package for deps resolving:
+  tar -C ${KMODS_TEMP} -xf ${KMODS_PKG}
+  # Get the kernel modules:
+  cd ${KMODS_TEMP}
+    cp -a --parents lib/modules/${KVER}/${NETMODS} \
+      ${LIVE_ROOTDIR}/boot/initrd-tree/
+  cd - 1>/dev/null
+  # Prune the ones we do not need:
   for KNETRM in ${NETEXCL} ; do
     find ${LIVE_ROOTDIR}/boot/initrd-tree/lib/modules/${KVER}/${NETMODS} \
       -name $KNETRM -depth -exec rm -rf {} \;
   done
+  # Add any dependency modules:
+  for MODULE in $(find ${LIVE_ROOTDIR}/boot/initrd-tree/lib/modules/${KVER}/${NETMODS} -type f -exec basename {} .ko \;) ; do
+    /sbin/modprobe --dirname ${KMODS_TEMP} --set-version $KVER --show-depends --ignore-install $MODULE 2>/dev/null |grep "^insmod " |cut -f 2 -d ' ' |while read SRCMOD; do
+      if [ "$(basename $SRCMOD .ko)" != "$MODULE" ]; then
+        cd ${KMODS_TEMP}
+          # Need to strip ${KMODS_TEMP} from the start of ${SRCMOD}:
+          cp -a --parents $(echo $SRCMOD |sed 's|'${KMODS_TEMP}'/|./|' ) \
+            ${LIVE_ROOTDIR}/boot/initrd-tree/
+        cd - 1>/dev/null
+      fi
+    done
+  done
+  # Remove the temporary tree:
+  rm -rf ${KMODS_TEMP}
   # We added extra modules to the initrd, so we run depmod again:
   chroot ${LIVE_ROOTDIR}/boot/initrd-tree /sbin/depmod $KVER
   # Add the firmware for network cards that need them:
