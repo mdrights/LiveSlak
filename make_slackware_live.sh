@@ -65,6 +65,9 @@ BOOTLOADSIZE=${BOOTLOADSIZE:-4}
 # Therefore we disable 32bit EFI by default. Enable at your own peril:
 EFI32=${EFI32:-"NO"}
 
+# Set to NO if you want to use the non-SMP kernel on 32bit Slackware:
+SMP32=${SMP32:-"YES"}
+
 # Include support for NFS root (PXE boot), will increase size of the initrd:
 NFSROOTSUP=${NFSROOTSUP:-"YES"}
 
@@ -838,8 +841,13 @@ for SPS in ${SL_SERIES} ; do
     if [ "$SPS" = "a" -o "$SPS" = "min" ]; then
 
       # We need to take care of a few things first:
-      KGEN=$(echo ${INSTDIR}/var/log/packages/kernel*modules* |head -1 |rev | cut -d- -f3 |tr _ - |rev)
-      KVER=$(ls --indicator-style=none ${INSTDIR}/lib/modules/ |head -1)
+      if [ "$SL_ARCH" = "x86_64" -o "$SMP32" = "NO" ]; then
+        KGEN=$(echo ${INSTDIR}/var/log/packages/kernel*modules* |grep -v smp |head -1 |rev | cut -d- -f3 |tr _ - |rev)
+        KVER=$(ls --indicator-style=none ${INSTDIR}/lib/modules/ |grep -v smp |head -1)
+      else
+        KGEN=$(echo ${INSTDIR}/var/log/packages/kernel*modules* |grep smp |head -1 |rev | cut -d- -f3 |tr _ - |rev)
+        KVER=$(ls --indicator-style=none ${INSTDIR}/lib/modules/ |grep smp |head -1)
+      fi
       if [ -z "$KVER" ]; then
         echo "-- Could not find installed kernel in '${INSTDIR}'! Exiting."
         exit 1
@@ -900,8 +908,13 @@ umount ${LIVE_ROOTDIR} 2>${DBGOUT} || true
 mount -t overlay -o lowerdir=${RODIRS},upperdir=${INSTDIR},workdir=${LIVE_OVLDIR} overlay ${LIVE_ROOTDIR}
 
 # Determine the kernel version in the Live OS:
-KGEN=$(echo ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |head -1 |rev | cut -d- -f3 |tr _ - |rev)
-KVER=$(ls --indicator-style=none ${LIVE_ROOTDIR}/lib/modules/ |head -1)
+if [ "$SL_ARCH" = "x86_64" -o "$SMP32" = "NO" ]; then
+  KGEN=$(echo ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |grep -v smp |head -1 |rev | cut -d- -f3 |tr _ - |rev)
+  KVER=$(ls --indicator-style=none ${LIVE_ROOTDIR}/lib/modules/ |grep -v smp |head -1)
+else
+  KGEN=$(echo ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |grep smp |head -1 |rev | cut -d- -f3 |tr _ - |rev)
+  KVER=$(ls --indicator-style=none ${LIVE_ROOTDIR}/lib/modules/ |grep smp |head -1)
+fi
 
 # Configure hostname and network:
 echo "${LIVE_HOSTNAME}.example.net" > ${LIVE_ROOTDIR}/etc/HOSTNAME
@@ -1110,7 +1123,7 @@ install -m0755 ${LIVE_TOOLDIR}/makemod ${LIVE_TOOLDIR}/iso2usb.sh  ${LIVE_ROOTDI
 # Only when we find a huge kernel, we will add a harddisk installer
 # to the ISO.  The huge kernel does not require an initrd and installation
 # to the hard drive will not be complicated.
-if [ -f ${LIVE_ROOTDIR}/boot/vmlinuz-huge-* ]; then
+if ls ${LIVE_ROOTDIR}/boot/vmlinuz-huge-* 1>/dev/null 2>/dev/null; then
   # Extract the 'setup' files we need from the Slackware installer
   # and move them to a single directory in the ISO:
   mkdir -p  ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}
@@ -1590,8 +1603,13 @@ mount --bind /sys ${LIVE_ROOTDIR}/sys
 mount --bind /dev ${LIVE_ROOTDIR}/dev
 
 # Determine the installed kernel version:
-KGEN=$(echo ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |head -1 |rev | cut -d- -f3 |tr _ - |rev)
-KVER=$(ls --indicator-style=none ${LIVE_ROOTDIR}/lib/modules/ |head -1)
+if [ "$SL_ARCH" = "x86_64" -o "$SMP32" = "NO" ]; then
+  KGEN=$(echo ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |grep -v smp |head -1 |rev | cut -d- -f3 |tr _ - |rev)
+  KVER=$(ls --indicator-style=none ${LIVE_ROOTDIR}/lib/modules/ |grep -v smp |head -1)
+else
+  KGEN=$(echo ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |grep smp |head -1 |rev | cut -d- -f3 |tr _ - |rev)
+  KVER=$(ls --indicator-style=none ${LIVE_ROOTDIR}/lib/modules/ |grep smp |head -1)
+fi
 
 # Create an initrd for the generic kernel, using a modified init script:
 echo "-- Creating initrd for kernel-generic $KVER ..."
@@ -1615,7 +1633,7 @@ if [ "$NFSROOTSUP" = "YES" ]; then
     etc/dhcpcd.conf.new
   mv ${LIVE_ROOTDIR}/boot/initrd-tree/etc/dhcpcd.conf{.new,}
   # Add just the right kernel network modules by pruning unneeded stuff:
-  KMODS_PKG=$(find ${DEF_SL_PKGROOT}/../ -name "kernel-modules-*$(echo $KVER |tr - _)*.t?z" |head -1)
+  KMODS_PKG=$(find ${DEF_SL_PKGROOT}/../ -name "kernel-modules-*$(echo $KGEN |tr - _)*.t?z" |head -1)
   KMODS_TEMP=$(mktemp -d -p /mnt -t liveslak.XXXXXX)
   if [ ! -d $KMODS_TEMP ]; then
     echo "*** Failed to create a temporary extraction directory for the initrd!"
