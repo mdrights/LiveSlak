@@ -42,7 +42,7 @@ VERSION="0.8.0"
 LIVE_TOOLDIR=${LIVE_TOOLDIR:-"$(cd $(dirname $0); pwd)"}
 
 # Load the optional configuration file:
-CONFFILE=${LIVE_TOOLDIR}/$(basename $0 .sh).conf
+CONFFILE=${CONFFILE:-"${LIVE_TOOLDIR}/$(basename $0 .sh).conf"}
 if [ -f ${CONFFILE} ]; then
   echo "-- Loading configuration file."
   . ${CONFFILE}
