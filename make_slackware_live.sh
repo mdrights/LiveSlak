@@ -1518,7 +1518,9 @@ if [ -x /usr/bin/glib-compile-schemas ]; then
 fi
 
 # Delete unwanted cache files:
-find usr/share/icons -name icon-theme.cache -exec rm "{}" \;
+if [ -d usr/share/icons ]; then
+  find usr/share/icons -name icon-theme.cache -exec rm "{}" \;
+fi
 EOCR
 
 # Disable above commands in rc.M and rc.modules:
