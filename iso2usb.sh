@@ -479,12 +479,9 @@ EFIOFFSET=$(/sbin/fdisk -lu ${SLISO} 2>/dev/null |grep EFI |tr -s ' ' | cut -d' 
 if [ -n "$EFIOFFSET" ]; then
   # Mount the EFI partition so we can retrieve the EFI bootloader:
   /sbin/mount -o loop,offset=$((512*$EFIOFFSET))  ${SLISO} ${EFIMNT}
-  if [ ! -f ${EFIMNT}/EFI/BOOT/bootx64.efi ]; then
-    echo "-- Note: UEFI boot file 'bootx64.efi' not found on ISO."
+  if [ ! -f ${EFIMNT}/EFI/BOOT/boot*.efi ]; then
+    echo "-- Note: UEFI boot file 'bootx64.efi' or 'bootia32.efi' not found on ISO."
     echo "-- UEFI boot will not be supported"
-  elif [ ! -f ${EFIMNT}/EFI/BOOT/bootia32.efi ]; then
-    echo "-- Note: UEFI boot file 'bootia32.efi' not found on ISO."
-    echo "-- 32-bit UEFI boot will not be supported"
   else
     EFIBOOT=1
   fi
