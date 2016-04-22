@@ -594,7 +594,7 @@ EOL
 # Action!
 # ---------------------------------------------------------------------------
 
-while getopts "a:d:efhm:r:s:t:vz:HR:" Option
+while getopts "a:d:efhm:r:s:t:vz:HO:R:" Option
 do
   case $Option in
     h ) cat <<-"EOH"
@@ -628,6 +628,7 @@ do
         echo " -v                 Show debug/error output."
         echo " -z version         Define your ${DISTRO^} version (default: $SL_VERSION)."
         echo " -H hostname        Hostname of the Live OS (default: $LIVE_HOSTNAME)"
+        echo " -O outfile         Full path to a custom filename for the ISO."
         echo " -R runlevel        Runlevel to boot into (default: $RUNLEVEL)"
         exit
         ;;
@@ -652,6 +653,9 @@ do
     z ) SL_VERSION="${OPTARG}"
         ;;
     H ) LIVE_HOSTNAME="${OPTARG}"
+        ;;
+    O ) OUTFILE="${OPTARG}"
+        OUTPUT="$(dirname "${OUTFILE}")"
         ;;
     R ) RUNLEVEL=${OPTARG}
         ;;
@@ -734,7 +738,7 @@ if [ "$FORCE" = "YES" ]; then
 fi
 
 # Create output directory for image file:
-mkdir -p ${OUTPUT}
+mkdir -p "${OUTPUT}"
 if [ $? -ne 0 ]; then
   echo "-- Creation of output directory '${OUTPUT}' failed! Exiting."
   exit 1
@@ -1811,7 +1815,10 @@ else
   UEFI_OPTS=""
 fi
 
-mkisofs -o ${OUTPUT}/${DISTRO}${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso \
+# Time to determine the output filename, now that we know all the variables
+# and ensured that the OUTPUT directory exists:
+OUTFILE=${OUTFILE:-"${OUTPUT}/${DISTRO}${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso"}
+mkisofs -o "${OUTFILE}" \
   -R -J \
   -hide-rr-moved \
   -v -d -N \
@@ -1837,7 +1844,7 @@ cd - 1>/dev/null
 if [ "$SL_ARCH" = "x86_64" -o "$EFI32" = "YES" ]; then
   # Make this a hybrid ISO with UEFI boot support on x86_64.
   # On 32bit, the variable EFI32 must be explicitly enabled.
-  SIZEISO=$(stat --printf %s ${OUTPUT}/${DISTRO}${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso)
+  SIZEISO=$(stat --printf %s "${OUTFILE}")
   # We want no more than 63 sectors, no more than 255 heads, according to
   # recommendations from Thomas Schmitt, xoriso developer.
   if [ $SIZEISO -gt 1073741824 ]; then
@@ -1853,15 +1860,15 @@ if [ "$SL_ARCH" = "x86_64" -o "$EFI32" = "YES" ]; then
     SECTORS=32
     HEADS=64
   fi
-  isohybrid -s $SECTORS -h $HEADS -u ${OUTPUT}/${DISTRO}${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso
+  isohybrid -s $SECTORS -h $HEADS -u "${OUTFILE}"
 fi # End UEFI hybrid ISO.
 
-cd ${OUTPUT}
-  md5sum ${DISTRO}${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso \
-    > ${DISTRO}${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso.md5
+cd "${OUTPUT}"
+  md5sum "$(basename "${OUTFILE}")" \
+    > "$(basename "${OUTFILE}")".md5
 cd - 1>/dev/null
 echo "-- Live ISO image created:"
-ls -l ${OUTPUT}/${DISTRO}${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso*
+ls -l "${OUTFILE}"*
 
 # Clean out the mounts etc:
 cleanup
