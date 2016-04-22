@@ -170,7 +170,10 @@ noload=mod1[,mod2[...]] => Prevent loading of one or more
 
 === Network boot ===
 
-nfsroot=ip.ad.dr.ess:/path/to/liveslak =>defines the IP address
+dhcpwait=<numseconds> => Maximum wait time for the DHCP client to
+  configure a network interface (default: 20 seconds).
+
+nfsroot=ip.ad.dr.ess:/path/to/liveslak => defines the IP address
   of the NFS server, and the path to the extracted content
   of Slackware Live Edition.
 

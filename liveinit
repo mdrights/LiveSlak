@@ -75,6 +75,9 @@ GLAMORACCEL=1
 INTERFACE=""
 NFSHOST=""
 
+# Max wait time for DHCP client to configure an interface:
+DHCPWAIT=20
+
 INITRD=$(cat /initrd-name)
 WAIT=$(cat /wait-for-root)
 KEYMAP=$(cat /keymap)
@@ -108,6 +111,9 @@ for ARG in $(cat /proc/cmdline); do
     debug=*)
       DEBUG=$(echo $ARG | cut -f2 -d=)
       DEBUGV="-v"
+    ;;
+    dhcpwait=*)
+      DHCPWAIT=$(echo $ARG | cut -f2 -d=)
     ;;
     hostname=*)
       LIVE_HOSTNAME=$(echo $ARG | cut -f2 -d=)
@@ -319,8 +325,6 @@ if [ "$RESCUE" = "" ]; then
     # Find and configure the network interface for NFS root support.
     # Assume nothing about the method of network configuration:
     ENET_MODE="ask"
-    # Max wait time for DHCP client to configure an interface:
-    MAXDHCP=10
 
     echo "${MARKER}:  Configuring network interface for NFS mount."
 
@@ -360,11 +364,11 @@ if [ "$RESCUE" = "" ]; then
           continue # skip wireless interfaces
         fi
         # If this configures an interface, we're done with dhcpcd afterwards:
-        /sbin/dhcpcd -L -p -t $MAXDHCP $EDEV &
+        /sbin/dhcpcd -L -p -t $DHCPWAIT $EDEV &
       done
       unset EDEV
-      # Wait at most MAXDHCP seconds for a DHCP-configured interface to appear:
-      for ITER in $(seq 0 $MAXDHCP); do
+      # Wait at most DHCPWAIT seconds for a DHCP-configured interface to appear:
+      for ITER in $(seq 0 $DHCPWAIT); do
         if $(ip -f inet -o addr show | grep -v " lo " 1>/dev/null 2>/dev/null)
         then
           # Found one!
@@ -393,7 +397,7 @@ if [ "$RESCUE" = "" ]; then
     if [ "$ENET_MODE" = "ask" -o "$ENET_MODE" = "dhcp" ]; then
       # Invoke dhcpcd only if it was not called yet:
       if [ ! -s /run/dhcpcd/dhcpcd-${INTERFACE}.pid ]; then
-        /sbin/dhcpcd -L -p -t $MAXDHCP $INTERFACE
+        /sbin/dhcpcd -L -p -t $DHCPWAIT $INTERFACE
       fi
     else
       # Kill dhcpcd if we used it to find a statically configured interface:
