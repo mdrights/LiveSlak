@@ -27,5 +27,5 @@ noload=mod1[,mod2[...]] => Prevent loading of one or more
   squashfs modules from the directory "/liveslack/addons".
   By default all these modules are loaded on boot.
 
-== [F1]: Home [F3]: Media tweaks [F4]: Hardware/troubleshooting ==
+== [F1]: Home [F3]: Media tweaks [F4]: HW/debug [F5]: Network boot ==
 

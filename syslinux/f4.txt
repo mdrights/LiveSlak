@@ -28,4 +28,4 @@ debug => During init, pause at strategic locations while
 rescue => After initialization, you will be dropped in a
   rescue shell to perform lowlevel maintenance.
 
-== [F1]: Home [F2]: Desktop setup [F3]: Media tweaks ==
+== [F1]: Home [F2]: Desktop setup [F3]: Media tweaks [F5]: Network boot ==
