@@ -36,7 +36,7 @@
 # -----------------------------------------------------------------------------
 
 # Version of the Live OS generator:
-VERSION="0.8.0"
+VERSION="0.8.1"
 
 # Directory where our live tools are stored:
 LIVE_TOOLDIR=${LIVE_TOOLDIR:-"$(cd $(dirname $0); pwd)"}
@@ -628,7 +628,7 @@ do
         echo " -v                 Show debug/error output."
         echo " -z version         Define your ${DISTRO^} version (default: $SL_VERSION)."
         echo " -H hostname        Hostname of the Live OS (default: $LIVE_HOSTNAME)"
-        echo " -O outfile         Full path to a custom filename for the ISO."
+        echo " -O outfile         Custom filename for the ISO."
         echo " -R runlevel        Runlevel to boot into (default: $RUNLEVEL)"
         exit
         ;;
@@ -655,7 +655,7 @@ do
     H ) LIVE_HOSTNAME="${OPTARG}"
         ;;
     O ) OUTFILE="${OPTARG}"
-        OUTPUT="$(dirname "${OUTFILE}")"
+        OUTPUT="$(cd $(dirname "${OUTFILE}"); pwd)"
         ;;
     R ) RUNLEVEL=${OPTARG}
         ;;
