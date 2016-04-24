@@ -340,8 +340,6 @@ pimcommon
 syndication
 
 # plasma-extra:
-kactivities-workspace
-kactivitymanagerd
 kde-wallpapers
 kdeconnect-framework
 oxygen-fonts
@@ -352,6 +350,7 @@ sddm-qt5
 bluedevil
 breeze
 breeze-gtk
+kactivitymanagerd
 kde-cli-tools
 kde-gtk-config
 kdecoration
