@@ -815,6 +815,17 @@ EOT
 # You should run timeconfig to edit this file.
 localtime
 EOT
+    # QT5 expects "/etc/localtime" to be a symlink. Slackware's file is a real
+    # file so QT5 fails to determine the timezone and falls back to UTC. Fix:
+    echo ${TZ} > /mnt/overlay/etc/timezone
+    sed -i -n "p;s/^\( *\)rm -f localtime$/\1echo \$TZ > timezone/p" \
+      /mnt/overlay//usr/sbin/timeconfig
+
+    # KDE4 and PLASMA5 user timezone re-configuration:
+    sed -i -e "s%^LocalZone=.*%LocalZone=${TZ}%" \
+      /mnt/overlay/home/live/.kde/share/config/ktimezonedrc
+    sed -i -e "s%^LocalZone=.*%LocalZone=${TZ}%" \
+      /mnt/overlay/home/live/.config/ktimezonedrc
   fi
 
   if [ ! -z "$LIVEPW" ]; then

@@ -1297,6 +1297,16 @@ DefaultProfile=Shell.profile
 
 EOT
 
+# Configure (default) UTC timezone so we can change it during boot:
+mkdir -p ${LIVE_ROOTDIR}/etc/skel/.kde/share/config
+cat <<EOT > ${LIVE_ROOTDIR}/etc/skel/.kde/share/config/ktimezonedrc
+[TimeZones]
+LocalZone=UTC
+ZoneinfoDir=/usr/share/zoneinfo
+Zonetab=/usr/share/zoneinfo/zone.tab
+ZonetabCache=
+EOT
+
 if [ "$LIVEDE" = "PLASMA5" ]; then
 
   # -------------------------------------------------------------------------- #
@@ -1345,6 +1355,15 @@ KRES_EOF
 [Migration]
 alreadyMigrated=true
 KWALLET_EOL
+
+  # Configure (default) UTC timezone so we can change it during boot:
+  mkdir -p ${LIVE_ROOTDIR}/etc/skel/.config
+  cat <<EOTZ > ${LIVE_ROOTDIR}/etc/skel/.config/ktimezonedrc
+[TimeZones]
+LocalZone=UTC
+ZoneinfoDir=/usr/share/zoneinfo
+Zonetab=/usr/share/zoneinfo/zone.tab
+EOTZ
 
   # Make sure that Plasma and SDDM work on older GPUs,
   # by forcing Qt5 to use software GL rendering:
