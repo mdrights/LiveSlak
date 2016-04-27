@@ -1865,23 +1865,7 @@ cd - 1>/dev/null
 if [ "$SL_ARCH" = "x86_64" -o "$EFI32" = "YES" ]; then
   # Make this a hybrid ISO with UEFI boot support on x86_64.
   # On 32bit, the variable EFI32 must be explicitly enabled.
-  SIZEISO=$(stat --printf %s "${OUTFILE}")
-  # We want no more than 63 sectors, no more than 255 heads, according to
-  # recommendations from Thomas Schmitt, xoriso developer.
-  if [ $SIZEISO -gt 1073741824 ]; then
-    # No more than 63 sectors, no more than 255 heads. We will not try to stick
-    # to less than 1024 cylinders though:
-    SECTORS=63
-    HEADS=255
-  else
-    # The default values for isohybrid gives us a max size of 1073741824 bytes:
-    # We want at most 1024 cylinders for old BIOS; also we want no more than
-    # 63 sectors, no more than 255 heads, which leads to a cut-over size:.
-    # 64 (heads) *32 (sectors) *1024 (cylinders) *512 (bytes) = 1073741824 bytes.
-    SECTORS=32
-    HEADS=64
-  fi
-  isohybrid -s $SECTORS -h $HEADS -u "${OUTFILE}"
+  isohybrid -u "${OUTFILE}"
 fi # End UEFI hybrid ISO.
 
 cd "${OUTPUT}"
