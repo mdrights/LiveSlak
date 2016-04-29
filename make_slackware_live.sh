@@ -948,6 +948,15 @@ cp -a ${LIVE_ROOTDIR}/usr/share/zoneinfo/UTC ${LIVE_ROOTDIR}/etc/localtime
 rm ${LIVE_ROOTDIR}/etc/localtime-copied-from
 ln -s /usr/share/zoneinfo/UTC ${LIVE_ROOTDIR}/etc/localtime-copied-from
 
+# Qt5 expects '/etc/localtime' to be a symlink, but in Slackware this is a
+# real file.  This causes Qt5 timezone detection to fail so that "UTC"
+# will be returned always.  However if a file '/etc/timezone' exists, Qt5
+# will use that.  Until this is fixed (either in Slackware or in Qt5) we
+# add the file and update the 'timeconfig' script accordingly:
+echo "UTC" > ${LIVE_ROOTDIR}/etc/timezone
+sed -i -n "p;s/^\( *\)rm -f localtime$/\1echo \$TZ > timezone/p" \
+  ${LIVE_ROOTDIR}/usr/sbin/timeconfig
+
 # Configure the hardware clock to be interpreted as UTC as well:
 cat <<EOT > ${LIVE_ROOTDIR}/etc/hardwareclock 
 # /etc/hardwareclock
