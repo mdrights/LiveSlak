@@ -102,7 +102,7 @@ TMP=/var/log/setup/tmp
 if [ ! -d $TMP ]; then
   mkdir -p $TMP
 fi
-rm -f $TMP/SeT*
+rm -f $TMP/SeT* $TMP/pxe*
 echo "on" > $TMP/SeTcolor # turn on color menus
 PATH="$PATH:/usr/share/@LIVEMAIN@"
 export PATH;
@@ -403,7 +403,7 @@ Slackware's PXE server starting on ${INTERFACE} needs a working DHCP server.\n\
 Do you want this computer to start its own DHCP server on ${INTERFACE} \
 (you can control what IP addresses are used by the DHCP server)?\n\
 Say 'YES' if you are certain your network interface ${INTERFACE} is
-not in reach of any DHCP server." 9 68
+not in reach of any DHCP server." 13 68
     if [ $? = 0 ]; then
       OWNDHCP="yes" 
     else
