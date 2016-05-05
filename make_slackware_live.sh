@@ -1144,7 +1144,7 @@ if ls ${LIVE_ROOTDIR}/boot/vmlinuz-huge-* 1>/dev/null 2>/dev/null; then
     uncompressfs ${DEF_SL_PKGROOT}/../isolinux/initrd.img | cpio -i -d -H newc --no-absolute-filenames usr/lib/setup/* sbin/probe sbin/fixdate
     mv -i usr/lib/setup/* sbin/probe sbin/fixdate .
     rm -r usr sbin
-  cd -
+  cd - 1>/dev/null
   # Fix some occurrences of '/mnt' that should not be used in the Live ISO:
   sed -i -e 's, /mnt, ${T_PX},g' -e 's,T_PX=/mnt,T_PX=/setup2hd,g' ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}/*
   # Fix some occurrences of '/usr/lib/setup/' are covered by $PATH:
