@@ -336,7 +336,6 @@ while [ ! -z "$1" ]; do
       ;;
     -v|--verbose)
       VERBOSE=1
-      RVERBOSE=" -v --progress "
       shift
       ;;
     -w|--wait)
@@ -506,7 +505,13 @@ fi
 
 # Copy the ISO content into the USB Linux partition:
 echo "--- Copying files from ISO to USB... takes some time."
-rsync -a ${RVERBOSE} --exclude=EFI ${ISOMNT}/* ${USBMNT}/
+if [ $VERBOSE -eq 1 ]; then
+  rsync -av --progress --exclude=EFI ${ISOMNT}/* ${USBMNT}/
+else
+  # Display some progress because this can take a _long_ time:
+  rsync -a --no-inc-recursive --info=progress2 --exclude=EFI \
+    ${ISOMNT}/* ${USBMNT}/
+fi
 
 # Write down the version of the ISO image:
 VERSION=$(iso-info ${SLISO} |grep Application |cut -d: -f2- 2>/dev/null)
