@@ -1133,6 +1133,25 @@ fi
 mkdir -p  ${LIVE_ROOTDIR}/usr/local/sbin
 install -m0755 ${LIVE_TOOLDIR}/makemod ${LIVE_TOOLDIR}/iso2usb.sh  ${LIVE_ROOTDIR}/usr/local/sbin/
 
+# Add PXE Server infrastructure:
+mkdir -p ${LIVE_ROOTDIR}/var/lib/tftpboot/pxelinux.cfg
+cp -ia /usr/share/syslinux/pxelinux.0 ${LIVE_ROOTDIR}/var/lib/tftpboot/
+ln -s /mnt/livemedia/boot/generic ${LIVE_ROOTDIR}/var/lib/tftpboot/
+ln -s /mnt/livemedia/boot/initrd.img ${LIVE_ROOTDIR}/var/lib/tftpboot/
+cat ${LIVE_TOOLDIR}/pxeserver | sed \
+  -e "s/@DIRSUFFIX@/$DIRSUFFIX/g" \
+  -e "s/@DISTRO@/$DISTRO/g" \
+  -e "s/@CDISTRO@/${DISTRO^}/g" \
+  -e "s/@UDISTRO@/${DISTRO^^}/g" \
+  -e "s/@KVER@/$KVER/g" \
+  -e "s/@LIVEDE@/$LIVEDE/g" \
+  -e "s/@LIVEMAIN@/$LIVEMAIN/g" \
+  -e "s/@MARKER@/$MARKER/g" \
+  -e "s/@SL_VERSION@/$SL_VERSION/g" \
+  -e "s/@VERSION@/$VERSION/g" \
+  > ${LIVE_ROOTDIR}/usr/local/sbin/pxeserver
+chmod 755 ${LIVE_ROOTDIR}/usr/local/sbin/pxeserver
+
 # Only when we find a huge kernel, we will add a harddisk installer
 # to the ISO.  The huge kernel does not require an initrd and installation
 # to the hard drive will not be complicated.
