@@ -149,6 +149,8 @@ If you have multiple network interfaces, it is important to know that dnsmasq wi
 
 Once the PXE server is running, the script will show you the dnsmasq's activity log in a dialog window so that you can monitor the PXE clients that are connecting.
 
+If your PXE server computer has sufficient RAM, it is strongly advised to boot the server's Live OS from the USB stick with the '''toram''' parameter.  When more than a few PXE clients start reading OS files from the PXE server, the USB stick will become a bottleneck.  Running the server OS from RAM will get rid of that bottleneck.
+
 
 ==== Boot parameters explained ====
 
