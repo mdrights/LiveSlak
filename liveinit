@@ -444,14 +444,17 @@ if [ "$RESCUE" = "" ]; then
 
   find_modloc() {
     MY_LOC="$1"
+    MY_BASE="$2"
 
     if [ $TORAM -ne 0 ]; then
       # If we need to copy the module to RAM, we need a place for that:
       mkdir -p /mnt/live/toram
-      # Copy the module to RAM before mounting it:
+      # Copy the module to RAM before mounting it, preserving relative path:
       MODNAME="$(basename ${MY_LOC})"
-      cp ${MY_LOC} /mnt/live/toram
-      MY_LOC=/mnt/live/toram/${MODNAME}
+      MODRELPATH="$(dirname ${MY_LOC} |sed "s,$MY_BASE,,")"
+      mkdir -p /mnt/live/toram/${MODRELPATH}
+      cp "${MY_LOC}" "/mnt/live/toram/${MODRELPATH}"
+      MY_LOC="/mnt/live/toram/${MODRELPATH}/${MODNAME}"
     fi
 
     echo "${MY_LOC}"
@@ -478,7 +481,7 @@ if [ "$RESCUE" = "" ]; then
             continue
           fi
         fi
-        MODLOC=$(find_modloc ${MODULE})
+        MODLOC=$(find_modloc ${MODULE} /mnt/media)
         mkdir /mnt/live/modules/${MODBASE}
         mount -t squashfs -o loop ${MODLOC} /mnt/live/modules/${MODBASE}
         RODIRS=":/mnt/live/modules/${MODBASE}${RODIRS}"
@@ -737,10 +740,15 @@ if [ "$RESCUE" = "" ]; then
   mkdir -p /mnt/overlay/mnt/${LIVEMAIN}fs
   mount --bind /mnt/${LIVEMAIN}fs /mnt/overlay/mnt/${LIVEMAIN}fs
 
+  # Same for the Linux filesystem on the USB stick:
+  mkdir -p /mnt/overlay/mnt/livemedia
   if [ $TORAM -eq 0 ]; then
-    # Same for the Linux filesystem on the USB stick:
-    mkdir -p /mnt/overlay/mnt/livemedia
     mount --bind /mnt/media /mnt/overlay/mnt/livemedia
+  else
+    # For PXE server we need to provide kernel and initrd too,
+    # not just the modules:
+    cp -af /mnt/media/boot /mnt/live/toram/
+    mount --bind /mnt/live/toram /mnt/overlay/mnt/livemedia
   fi
 
   if [ ! -z "$USE_SWAP" ]; then
