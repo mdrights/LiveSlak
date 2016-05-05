@@ -6,6 +6,7 @@ attr
 bash
 bin
 binutils
+bind
 bison
 bsd-games
 bzip2
@@ -22,6 +23,7 @@ dhcpcd
 dialog
 diffutils
 dmidecode
+dnsmasq
 e2fsprogs
 elvis
 etc
@@ -48,6 +50,7 @@ grep
 groff
 guile
 gzip
+idnkit
 infozip
 iproute2
 iptables
@@ -111,6 +114,7 @@ sysvinit
 sysvinit-scripts
 tar
 terminus-font
+traceroute
 usbutils
 utempter
 util-linux
