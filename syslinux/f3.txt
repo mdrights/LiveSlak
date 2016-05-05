@@ -4,6 +4,10 @@ To boot with default values just press ENTER.
 
 === Media tweaks ===
 
+hostname=your_custom_hostname[,qualifier] =>
+  Specify a custom hostname.  A qualifier 'fixed' can be appended
+  to prohibit hostname modification in  case of network boot.
+
 livemedia=/dev/sdX => Tell the init script which partition
   contains the Slackware Live OS you want to boot. This can
   become necessary if you have another copy of Slackware Live

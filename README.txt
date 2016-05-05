@@ -130,6 +130,26 @@ After you have setup your PXE environment (DHCP, TFTP and NFS servers) properly 
 Persistence is not supported in this configuration; currently the overlayfs does not support NFS as a writable layer in the live filesystem.
 
 
+=== PXE server ===
+
+
+Slackware Live Edition is not just capable of booting as a PXE client; it is able to run a PXE server all by itself.
+
+What does that mean?
+
+A practical example would be that your bring a USB stick with Slackware Live Edition to a LAN party, use it to boot one of the computers and then all the other computers in the (wired) LAN will be able to do a network boot and run the same Slackware Live Edition a couple of minutes later.  The computer with the USB stick will act as the PXE server and all the other computers will be its PXE clients, reading the Slackware data off that USB stick.  The clients will inherit the server's timezone,language and keyboard settings by default but those can be overridden.  The PXE clients will not have 'persistence'.  If the server has access to the Internet, the clients will have access as well.
+
+How to start the PXE server?
+
+When you boot the Live OS you can then start a script "pxeserver" from the console in runlevel 3 or from an X terminal in runlevel 4.  The script will gather all required information and if it is unable to figure something out by itself it will ask you.  If it is unable to figure out the wired network interface that it should use, you can add the name of your interface (for instance, eth1) as a single parameter to the script when you start it.
+
+The PXE server uses dnsmasq to offer DNS to the PXE clients. The dnsmasq program will enable its internal DHCP server capabilities if your LAN does not have its own DHCP server. Dnsmasq will also start a TFTP server which the PXE clients will connect to in order to retrieve the boot files (kernel and initrd).  The ''pxeserver'' script also starts a NFS server which will be used by the Live initrd to obtain the squashfs modules and boot the Live OS.  If your PXE server has multiple network interfaces, for instance a wireless interface which is connected to the outside world and a wired interface connected to another computer which will become a PXE client (or indeed connected to a switch with a whole bunch of prospective PXE clients behind that) then the PXE server will setup packet forwarding so that the PXE clients will be able to access the outside world through the wired interface and out to that other interface.
+
+If you have multiple network interfaces, it is important to know that dnsmasq will only bind to the interface where you want PXE clients to connect to.  In a multi-NIC situation where a second NIC is connected to the outside world (your local network), this means that the DHCP/DNS server started by dnsmasq will not interfere with an existing DHCP server in your local network.
+
+Once the PXE server is running, the script will show you the dnsmasq's activity log in a dialog window so that you can monitor the PXE clients that are connecting.
+
+
 ==== Boot parameters explained ====
 
 
@@ -202,6 +222,10 @@ swap => Allow the Live OS to activate all swap partitions on
   the local hardware. By default, no swap is touched.
 
 === Media tweaks ===
+
+hostname=your_custom_hostname[,qualifier] =>
+  Specify a custom hostname.  A qualifier 'fixed' can be appended
+  to prohibit hostname modification in  case of network boot.
 
 livemedia=/dev/sdX => Tell the init script which partition
   contains the Slackware Live OS you want to boot. This can
@@ -387,6 +411,34 @@ You can copy the module you just created (minding the filename conventions for a
 The fourth script:
 
 The "setup2hd" script enables you to install the running Live OS to the computer's local hard disk.  The "setup2hd" is a modified Slackware installer, so you will be comfortable with the process.  There is no 'SOURCE' selection because the script knows where to find the squashfs modules.  After you select the target partition(s), every active module of the Live OS variant (SLACKWARE, PLASMA5, MATE, ...) is extracted to the hard drive.  After extraction has completed, the script summarizes how many modules have been extracted.  It will also show an example command to extract any remaining inactive or disabled modules manually.  The final step in the installation is again the stock Slackware installer which kicks off the Slackware configuration scripts.
+
+
+=== pxeserver ===
+
+
+The fifth script:
+
+The ''pxeserver'' script works as follows:
+  * It requires a wired network; wireless PXE boot is impossible.
+  * The pxeserver script tries to find a wired interface; you can pass an explicit interfacename as parameter to the script (optional).
+  * If multiple wired interfaces are detected, a dialog asks the user to select the right one.
+  * A check is done for DHCP configuration of this wired interface;
+    * If DHCP configuration is found then pxeserver will not start its own DHCP server and instead will rely on your LAN's DHCP server.
+    * If no DHCP config is found, the script will ask permission to start its own internal DHCP server.  Additionally the user will be prompted to configure an IP address for the network interface and IP range properties for the internal DHCP server.
+  * The script will then start the PXE server, comprising of:
+    * dnsmasq providing DNS, DHCP and BOOTP;
+    * NFS and RPC daemons;
+  * The script will detect if you have an outside network connection on another interface and will enable IP forwarding if needed, so that the PXE clients will also have network access.
+  * The Live OS booted via pxelinux is configured with additional boot parameters: <code>
+nfsroot=<server_ip_address>:/mnt/livemedia
+luksvol=
+nop
+hostname=<distroname>
+tz=<server_timezone>
+locale=<server_locale>
+kbd=<server_kbd_layout>
+</code> Which shows that the configuration of the Live OS where the PXE server runs is largely determining the configuration of the PXE clients.
+  * Note that when networkbooting, the hostname of the Live OS will be suffixed with the machine's MAC address to make the hostname of every network-booted computer unique.
 
 
 ==== Creating a Live ISO from scratch ====
