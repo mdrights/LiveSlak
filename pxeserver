@@ -670,8 +670,10 @@ Press ENTER to start." 14 68
     echo > /var/log/pxe_dnsmasq.log
     dnsmasq -C ${TMP}/pxe_dnsmasq.conf -z -i ${INTERFACE}
     if ! grep -q "^/mnt/livemedia" /etc/exports ; then
+      # Without 'fsid' nfsd refuses to export the filesystem if it RAM based;
+      # the number '14' could be any unique low-range number:
       cat <<EOT >> /etc/exports
-/mnt/livemedia  ${LOCAL_NETWORK}/${LOCAL_NETMASK}(ro,sync,insecure,no_subtree_check,root_squash)
+/mnt/livemedia  ${LOCAL_NETWORK}/${LOCAL_NETMASK}(ro,sync,insecure,no_subtree_check,root_squash,fsid=14)
 EOT
     fi
     sh /etc/rc.d/rc.nfsd restart
