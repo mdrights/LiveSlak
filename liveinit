@@ -72,6 +72,8 @@ BLACKLIST=""
 GLAMORACCEL=1
 
 # NFS root support:
+HNMAC=""
+HNMAC_ALLOWED="YES"
 INTERFACE=""
 NFSHOST=""
 
@@ -116,7 +118,12 @@ for ARG in $(cat /proc/cmdline); do
       DHCPWAIT=$(echo $ARG | cut -f2 -d=)
     ;;
     hostname=*)
-      LIVE_HOSTNAME=$(echo $ARG | cut -f2 -d=)
+      # generic syntax: hostname=newname[,qualifier]
+      LIVE_HOSTNAME=$(echo $ARG | cut -f2 -d= | cut -f1 -d,)
+      if [ "$(echo $ARG | cut -f2 -d= | cut -f2 -d,)" = "fixed" ]; then
+        Keep hostname fixed i.e. never add a MAC address suffix:
+        HNMAC_ALLOWED="NO"
+      fi
     ;;
     init=*)
       INIT=$(echo $ARG | cut -f2 -d=)
@@ -410,6 +417,9 @@ if [ "$RESCUE" = "" ]; then
         route add default gw $GATEWAY metric 1
       fi
     fi
+
+    # Store the interface MAC address so we may modify the hostname with it:
+    HNMAC=$(ip link show ${INTERFACE} |grep link/ether |tr -s ' ' |cut -d ' ' -f3 |tr -d ':')
 
   } # End setnet()
 
@@ -840,6 +850,15 @@ EOPW
     chroot /mnt/overlay /usr/sbin/chpasswd <<EOPW
 root:${ROOTPW}
 EOPW
+  fi
+
+  if [ ! -z "$HNMAC" -a "$HNMAC_ALLOWED" = "YES" ]; then
+    # We are booting from the network, give it a unique hostname:
+    if [ -z "$LIVE_HOSTNAME" ]; then
+      LIVE_HOSTNAME="@DARKSTAR@-${HNMAC}"
+    else
+      LIVE_HOSTNAME="${LIVE_HOSTNAME}-${HNMAC}"
+    fi
   fi
 
   if [ ! -z "$LIVE_HOSTNAME" ]; then
