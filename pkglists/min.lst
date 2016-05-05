@@ -85,6 +85,8 @@ mtr
 nano
 ncurses
 net-tools
+netkit-ftp
+netkit-routed
 network-scripts
 openldap-client
 openssh
