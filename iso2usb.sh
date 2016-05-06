@@ -506,11 +506,15 @@ fi
 # Copy the ISO content into the USB Linux partition:
 echo "--- Copying files from ISO to USB... takes some time."
 if [ $VERBOSE -eq 1 ]; then
+  # Show verbose progress:
   rsync -av --progress --exclude=EFI ${ISOMNT}/* ${USBMNT}/
-else
-  # Display some progress because this can take a _long_ time:
+elif [ -z "$(rsync  --info=progress2 2>&1 |grep "unknown option")" ]; then
+  # Use recent rsync to display some progress because this can take _long_ :
   rsync -a --no-inc-recursive --info=progress2 --exclude=EFI \
     ${ISOMNT}/* ${USBMNT}/
+else
+  # Remain silent if we have an older rsync:
+  rsync -a --exclude=EFI ${ISOMNT}/* ${USBMNT}/
 fi
 
 # Write down the version of the ISO image:
