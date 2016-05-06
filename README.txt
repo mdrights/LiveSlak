@@ -5,7 +5,7 @@
 ===== Preface =====
 
 
-Welcome to the Slackware Live Edition!  This is a version of Slackware-current (soon to become 14.2), 64-bit only for now, that can be run from a DVD or a USB stick.  It is an ISO image meant to be a showcase of what Slackware is about.  You get the default install, no custom packages or kernel, but with all the power.  The ISO is created from scratch using a Slackware package mirror, by the "liveslak" scripts.
+Welcome to the Slackware Live Edition!  This is a version of Slackware-current (soon to become 14.2), that can be run from a DVD or a USB stick.  It is an ISO image meant to be a showcase of what Slackware is about.  You get the default install, no custom packages or kernel, but with all the power.  The ISO is created from scratch using a Slackware package mirror, by the "liveslak" scripts.
 
 Slackware Live Edition does not have to be installed to a computer hard drive.  You can carry the USB stick version with you in your pocket.  You'll have a pre-configured Slackware OS up & running in a minute wherever you can get your hands on a computer with a USB port.
 
@@ -285,7 +285,7 @@ The USB variant with persistence may have an additional directory in the root:
   * The EFI/ directory contains the Grub configuration used when you boot the Live OS on a computer with UEFI.
   * The boot/ directory contains the syslinux configuration used when the Live OS boots on a computer with a BIOS.  This directory also contains the kernel and initrd files which are used to actually boot the OS.
   * The liveslak/ directory contains all the squashfs modules which are used to assemble the filesystem of the Live OS.  It contains three subdirectories:
-    * addons/ - modules which are stored in this directory will always be added t the Live filesystem unless you prevent that with a "noload=" boot parameter;
+    * addons/ - modules which are stored in this directory will always be added to the Live filesystem unless you prevent that with a "noload=" boot parameter;
     * optional/ - modules in this directory will not be added to the filesystem of the Live OS unless you force this with a "load=" boot parameter;
     * system/ - this directory contains all the modules which were created by the "make_slackware_live.sh" script.  All these modules are numbered and the Live init script will use that to re-assemble the Live filesystem in the exact same order as they were created initially.
     * rootcopy/ - this directory is empty by default.  Anything you (the user of the ISO) add to this directory will be copied verbatim into the filesystem by the init script when the Live OS boots.  You can use this feature for instance if you do not want to create a separate squashfs module file for your application configuration files.
@@ -319,7 +319,7 @@ Stage one:
   * These module files are subsequently loop-mounted and then combined together into a single read-only directory structure using an "overlay mount".  The overlayfs is relatively new; earlier Live distros have been using aufs and unionfs to achieve similar functionality, but those were not part of any stock kernel source and therefore custom kernels had to be compiled for such a Live distro.
   * This "overlay assembly" is the filesystem that will be booted as the filesystem of the Live OS.
   * On 'top' of this series of overlayed read-only filesystems, a writable filesystem is added by the "make_slackware_live.sh" script.  This writable filesystem is used to store all the customizations to our distro that we want to be applied when Slackware Live boots up.  See the next section for more detail.
-  * Note that when you boot the Live OS later on, another writable overlay will be used so capture any write operations performed by the OS.  You will perceive the Live OS as a real OS that can write and remove files.  That writable filesystem will be:
+  * Note that when you boot the Live OS later on, another writable overlay will be used to capture any write operations performed by the OS.  You will perceive the Live OS as a real OS that can write and remove files.  That writable filesystem will be:
     * a RAM-based filesystem when the Live OS runs without persistence.
     * a directory or a loop-mounted container file on your USB stick, if you use a USB stick with persistence.
 
@@ -375,7 +375,7 @@ This section explains how the script modifies the ISO for the enhanced USB funct
 The script will create a file of requested size in the root of the Live partition using the 'dd' command.  The 'cryptsetup luksCreate' command will initialize the encryption, which causes the script to prompt you with "are you sure, type uppercase YES" after which an encryption passphrase must be entered three times (two for intializing, and one for opening the container).
 If the container is used for an encrypted /home, its filename will be "slhome.img".  The script will copy the existing content of the ISO's /home into the container's filesystem which will later be mounted on top of the ISO's /home (thereby masking the existing /home).
 The Live OS is instructed to decrypt the container and mount the filesystem.  This is done by editing the file "/luksdev" in the initrd and adding a line: "/slhome.img".
-The iso2usb.sh script only supports creating and configuring an encrypted /home, but you can create additional encrtypted containers yourself and mount them on other locations in the ISO's filesystem.  In order for this to work, you need to edit the "/luksdev" file and add a line "/your/container.img:/your/mountpoint" i.e. container path and the target mount directory on a single line, separated by a colon.  The Live init script will create the mount point if it is missing.
+The iso2usb.sh script only supports creating and configuring an encrypted /home, but you can create additional encrypted containers yourself and mount them on other locations in the ISO's filesystem.  In order for this to work, you need to edit the "/luksdev" file and add a line "/your/container.img:/your/mountpoint" i.e. container path and the target mount directory on a single line, separated by a colon.  The Live init script will create the mount point if it is missing.
 
 == Using a container file for storing persistence data ==
 
@@ -450,7 +450,7 @@ Creating an ISO image of Slackware Live Edition requires that you are running Sl
 
 You also need the "liveslak" script collection which can be downloaded from any of the links at the bottom of this page.
 
-Liveslak is a directory tree containing scripts, bitmaps and configuration files.  Only 3 scripts are meant to be run by you, the user.  These scripts ("make_slackware_live.sh", "iso2usb.sh" and "makemod") are explained in more detail in the section "Scripts and tools" higher up.  When creating a Live ISO from scratch, you only need to run the "make_slackware_live.sh" script.
+Liveslak is a directory tree containing scripts, bitmaps and configuration files.  Only 5 scripts are meant to be run by you, the user.  These scripts ("make_slackware_live.sh", "iso2usb.sh", "makemod", "setup2hd" and "pxeserver") are explained in more detail in the section "Scripts and tools" higher up.  When creating a Live ISO from scratch, you only need to run the "make_slackware_live.sh" script.
 
 
 === Liveslak sources layout ===
@@ -458,6 +458,7 @@ Liveslak is a directory tree containing scripts, bitmaps and configuration files
 
 The toplevel 'liveslak' directory contains the following subdirectories:
   * EFI/ - contains the skeleton for boot support on UEFI computers.  Some of the UEFI configuration files are dynamically generated by the "make_slackware_live.sh" script.
+  * README.txt - this documentation.
   * addons/ - squashfs modules placed in this directory will be loaded into the Live filesystem when the OS boots.
   * graphics/ - squashfs modules for proprietary GPU support (Nvidia) can be placed here. The module(s) will be copied to addons/ by the "make_slackware_live.sh" script for any Live Desktop Environment (except pure Slackware) that might profit from proprietary driver support.
   * local64/ , local/ - these directories can contain Slackware packages considered 'local' i.e. not belonging to any repository.  The package(s) will be converted to squashfs module(s) by the "make_slackware_live.sh" script, copied to the "addons/" subdirectory in the ISO and loaded into the Live filesystem when the OS boots.
@@ -483,28 +484,34 @@ The toplevel 'liveslak' directory contains the following files:
   * make_slackware_live.sh - the script that generates the Live ISO.
   * makemod - this script creates a squashfs module out of a Slackware package (or out of a directory tree).
   * menu.tpl - template which is used to generate the syslinux boot menu for BIOS computers.
+  * pxeserver - the script that starts a PXE server allowing other computers to boot Slackware Live over the network.
+  * setup2hd - the script you use to install your Slackware Live to a harddisk.
+  * setup2hd.local - here a developer of a custom Live OS can override the default post-installation routine by (re-)defining the function "live_post_install()" in the ''setup2hd'' script.
 
 
 === Generate the ISO ===
 
 
 The liveslak's "make_slackware_live.sh" script accepts optional parameters to tweak the process of Live OS generation: <code>
+The script's parameters are:
  -h                 This help.
+ -a arch            Machine architecture (default: x86_64).
+                    Use i586 for a 32bit ISO, x86_64 for 64bit.
  -d desktoptype     SLACKWARE (full Slack), KDE4 (basic KDE4),
-                    XFCE (basic XFCE), PLASMA5 (full Plasma5 replaces KDE4),
-                    MATE (Gnome2 fork replaces KDE4), CINNAMON (fork of Gnome3
-                    Shell replaces KDE4).
+                    XFCE (basic XFCE), PLASMA5, MATE, CINNAMON.
  -e                 Use ISO boot-load-size of 32 for computers
-                    where the ISO won't boot otherwise (default: 4).
+                    where the ISO won't boot otherwise.
  -f                 Forced re-generation of all squashfs modules,
                     custom configurations and new initrd.img.
  -m pkglst[,pkglst] Add modules defined by pkglists/<pkglst>,...
  -r series[,series] Refresh only one or a few package series.
  -s slackrepo_dir   Directory containing Slackware repository.
- -t <doc|mandoc>    Trim the ISO for size (remove man and/or doc).
+ -t <doc|mandoc>    Trim the ISO for size (remove man and/or doc)
  -v                 Show debug/error output.
- -H <hostname>      Hostname of the Live OS (default: darkstar).
- -R <runlevel>      Runlevel to start with (default: 4).
+ -z version         Define your Slackware version (default: current).
+ -H hostname        Hostname of the Live OS (default: darkstar)
+ -O outfile         Custom filename for the ISO.
+ -R runlevel        Runlevel to boot into (default: 4)
 </code>
 
 The script uses package repositories to create a Live ISO.  The packages will be installed into a temporary directory.
