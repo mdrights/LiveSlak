@@ -470,13 +470,13 @@ if [ "$RESCUE" = "" ]; then
         if [ "$SUBSYS" = "optional" ]; then
           # Load one or more optionals by using boot parameter 'load':
           # load=mod1[,mod2[,mod3]]
-          if [ -z "$LOAD" -o -z '$(echo ",${LOAD}," |grep -i ",$(echo $MODBASE |cut -d- -f2),")' ]; then
+          if [ -z "$LOAD" -o -z "$(echo ",${LOAD}," |grep -i ",$(echo $MODBASE |cut -d- -f2),")" ]; then
             continue
           fi
         elif [ "$SUBSYS" = "addons" ]; then
           # Skip loading one or more addons by using boot parameter 'noload':
           # noload=mod1[,mod2[,mod3]]
-          if [ -n "$NOLOAD" -a -n '$(echo ",${NOLOAD}," |grep -i ",$(echo $MODBASE |cut -d- -f2),")' ]; then
+          if [ -n "$NOLOAD" -a -n "$(echo ",${NOLOAD}," |grep -i ",$(echo $MODBASE |cut -d- -f2),")" ]; then
             echo "$MODBASE" >> /mnt/live/modules/skipped
             continue
           fi

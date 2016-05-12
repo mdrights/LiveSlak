@@ -1852,7 +1852,7 @@ fi
 
 # Directory for rootcopy files (everything placed here will be copied
 # verbatim into the overlay root):
-mkdir -p ${LIVE_STAGING}/rootcopy
+mkdir -p ${LIVE_STAGING}/${LIVEMAIN}/rootcopy
 
 # Create an ISO file from the directories found below ${LIVE_STAGING}:
 cd ${LIVE_STAGING}

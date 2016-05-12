@@ -273,18 +273,17 @@ rescue => After initialization, you will be dropped in a
 ==== Layout of the ISO ====
 
 
-The Live ISO contains four directories in the root of its filesystem:
+The Live ISO contains three directories in the root of its filesystem:
   * EFI/
   * boot/
   * liveslak/
-  * rootcopy/
 
 The USB variant with persistence may have an additional directory in the root:
   * persistence/
 
   * The EFI/ directory contains the Grub configuration used when you boot the Live OS on a computer with UEFI.
   * The boot/ directory contains the syslinux configuration used when the Live OS boots on a computer with a BIOS.  This directory also contains the kernel and initrd files which are used to actually boot the OS.
-  * The liveslak/ directory contains all the squashfs modules which are used to assemble the filesystem of the Live OS.  It contains three subdirectories:
+  * The liveslak/ directory contains all the squashfs modules which are used to assemble the filesystem of the Live OS, as well as files that are copied directly into the root of the Live filesystem.  It contains four subdirectories:
     * addons/ - modules which are stored in this directory will always be added to the Live filesystem unless you prevent that with a "noload=" boot parameter;
     * optional/ - modules in this directory will not be added to the filesystem of the Live OS unless you force this with a "load=" boot parameter;
     * system/ - this directory contains all the modules which were created by the "make_slackware_live.sh" script.  All these modules are numbered and the Live init script will use that to re-assemble the Live filesystem in the exact same order as they were created initially.
@@ -619,7 +618,7 @@ What does the 'liveslak' init script do?
     * The "hostname" boot parameter can be used to change the Live OS' hostname from its default "darkstar".  Configuration is written to "/etc/HOSTNAME" and "/etc/NetworkManager/NetworkManager.conf".
     * If the "blacklist" boot parameter was specified, then the kernel modules mentioned as argument(s) will be added to a modprobe blacklist file "/etc/modprobe.d/BLACKLIST-live.conf".
     * The "/var/lib/alsa/asound.state" file in the Live OS is removed to allow correct sound configuration on any computer where the Live media is booted.
-    * The complete content of the /rootcopy directory on the Live partition (may be empty) is copied to the filesystem root of the Live OS, potentially 'overwriting' files in the Live OS.  Use the /rootcopy to add customization to your Live OS when you run it off a USB stick.
+    * The complete content of the /liveslak/rootcopy directory on the Live partition (may be empty) is copied to the filesystem root of the Live OS, potentially 'overwriting' files in the Live OS.  Use the /liveslak/rootcopy to add customization to your Live OS when you run it off a USB stick.
     * And lastly but very importantly, any LUKS-encrypted container files are unlocked (init will ask you for the passphrase) and the filesystem(s) contained therein will be mounted in the Live OS. Currently, a LUKS-encrypted /home is supported.  The files "/etc/fstab" and "/etc/crypttab" will be updated so that the Live OS will do the mounting and unmounting.
     * The init script will end by telling the kernel to swith to our new root filesystem (the overlay) and start the Slackware init program (PID 1, /sbin/init).
   * From this moment onward, you are booting a 'normal' Slackware system and the fact that this is actually running in RAM and not from your local harddisk is not noticeable.
