@@ -64,12 +64,11 @@ MAXLOOPS=96
 # By default we do not touch local hard disks (raid, lvm, btrfs):
 LOCALHD=0
 
+# Usability tweaks:
+TWEAKS=""
+
 # Perhaps we need to blacklist some kernel module(s):
 BLACKLIST=""
-
-# QEMU X.Org and some other setups need glamor 2D acceleration disabled,
-# default in X.Org is to enable it:
-GLAMORACCEL=1
 
 # NFS root support:
 HNMAC=""
@@ -166,9 +165,6 @@ for ARG in $(cat /proc/cmdline); do
       NFSHOST=$(echo $ARG | cut -f2 -d= |cut -f1 -d:)
       NFSPATH=$(echo $ARG | cut -f2 -d= |cut -f2 -d:)
     ;;
-    nga)
-      GLAMORACCEL=0
-    ;;
     nic=*)
       # nic=<driver>:<interface>:<dhcp|static>[:ipaddr:netmask[:gateway]]
       ENET=$(echo $ARG | cut -f2 -d=)
@@ -194,6 +190,13 @@ for ARG in $(cat /proc/cmdline); do
     toram)
       TORAM=1
       VIRGIN=1 # prevent writes to disk since we are supposed to run from RAM
+    ;;
+    tweaks=*)
+      # Comma-separated set of usability tweaks.
+      # nga: no glamor 2d acceleration.
+      # tpb: trackpoint scrolling while pressing middle mouse button.
+      # syn: start synaptics daemon and extend X.Org capabilities.
+      TWEAKS=$(echo $ARG | cut -f2 -d=)
     ;;
     tz=*)
       TZ=$(echo $ARG | cut -f2 -d=)
@@ -902,16 +905,70 @@ DEBUG_ETH_UP="no"
 EOT
   fi
 
-  # Disable glamor 2D acceleration (QEMU needs this):
-  if [ $GLAMORACCEL -eq 0 ]; then
-    cat <<EOT > /mnt/overlay/etc/X11/xorg.conf.d/20-noglamor.conf
+  # Tweaks:
+  for TWEAK in $(echo $TWEAKS |tr ',' ' '); do 
+    if [ "$TWEAK" = "nga" ]; then
+      # Disable glamor 2D acceleration (QEMU needs this):
+      cat <<EOT > /mnt/overlay/etc/X11/xorg.conf.d/20-noglamor.conf
 Section "Device"
   Identifier "modesetting"
   Driver "modesetting"
   Option "AccelMethod" "none"
 EndSection
 EOT
-  fi
+    elif [ "$TWEAK" = "tpb" ]; then
+      # Enable scrolling with TrackPoint while pressing the middle mouse button.
+      # Note: if this does not work for your TrackPoint,
+      # replace "TPPS/2 IBM TrackPoint" with the name found in "xinput --list"
+      cat <<EOT > /mnt/overlay/etc/X11/xorg.conf.d/20-trackpoint.conf
+Section "InputClass"
+        Identifier      "Trackpoint Wheel Emulation"
+        MatchProduct    "TPPS/2 IBM TrackPoint|DualPoint Stick|Synaptics Inc. Composite TouchPad / TrackPoint|ThinkPad USB Keyboard with TrackPoint|USB Trackpoint pointing device|Composite TouchPad / TrackPoint"
+        MatchDevicePath "/dev/input/event*"
+        Option          "Emulate3Buttons"       "true"
+        Option          "EmulateWheel"          "true"
+        Option          "EmulateWheelTimeout"   "200"
+        Option          "EmulateWheelButton"    "2"
+        Option          "XAxisMapping"          "6 7"
+        Option          "YAxisMapping"          "4 5"
+EndSection
+EOT
+    elif [ "$TWEAK" = "syn" ]; then
+      # Enable syndaemon for better management of Synaptics touchpad.
+      mkdir -p /mnt/overlay/etc/xdg/autostart
+      cat <<EOT > /mnt/overlay/etc/xdg/autostart/syndaemon.desktop 
+[Desktop Entry]
+Version=1.0
+Name=Synaptics deamon
+Comment=Enable proper communication with Synaptics touchpad
+Exec=syndaemon -d -t -k -i 1
+Terminal=false
+Type=Application
+Categories=
+GenericName=
+X-GNOME-Autostart-Phase=Initialization
+X-KDE-autostart-phase=1
+X-MATE-Autostart-Phase=Initialization
+EOT
+      # Extend what's in /usr/share/X11/xorg.conf.d/50-synaptics.conf
+      cat <<EOT > /mnt/overlay/etc/X11/xorg.conf.d/50-synaptics.conf
+# Use "synclient -l" to see all available options
+# Use "man synaptics" for details about what the options do
+Section "InputClass"
+        Identifier "touchpad"
+        Driver "synaptics"
+        MatchDevicePath "/dev/input/event*"
+        MatchIsTouchpad "on"
+        Option "TapButton1" "1"
+        Option "TapButton2" "2"
+        Option "TapButton3" "3"
+        Option "VertTwoFingerScroll"   "1"
+        Option "HorizTwoFingerScroll"  "1"
+        Option "VertEdgeScroll"        "1"
+EndSection
+EOT
+    fi
+  done # End Tweaks.
 
   # Blacklist kernel modules if requested:
   if [ ! -z "$BLACKLIST" ]; then
