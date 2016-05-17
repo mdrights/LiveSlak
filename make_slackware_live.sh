@@ -1830,12 +1830,12 @@ else
 fi
 
 # Copy our stockpile of add-on modules into place:
-if [ -f ${LIVE_TOOLDIR}/addons/*.sxz ]; then
+if ls ${LIVE_TOOLDIR}/addons/*.sxz 1>/dev/null 2>&1 ; then
   cp ${LIVE_TOOLDIR}/addons/*.sxz ${LIVE_MOD_ADD}/
 fi
 
 # If we have optionals, copy those too:
-if [ -f ${LIVE_TOOLDIR}/optional/*.sxz ]; then
+if ls ${LIVE_TOOLDIR}/optional/*.sxz 1>/dev/null 2>&1 ; then
   cp ${LIVE_TOOLDIR}/optional/*.sxz ${LIVE_MOD_OPT}/
 fi
 
@@ -1844,7 +1844,7 @@ if [ "$LIVEDE" != "XFCE" -a "$LIVEDE" != "SLACKWARE" ]; then
   # however the SLACKWARE ISO should not have any non-Slackware content.
   # You can 'cheat' when building the SLACKWARE ISO by copying the graphics
   # drivers into the 'optional' directory yourself.
-  if [ -f ${LIVE_TOOLDIR}/graphics/*${KVER}-*.sxz ]; then
+  if ls ${LIVE_TOOLDIR}/graphics/*${KVER}-*.sxz 1>/dev/null 2>&1 ; then
     # Add custom (proprietary) graphics drivers:
     echo "-- Adding binary GPU drivers supporting kernel ${KVER}."
     cp ${LIVE_TOOLDIR}/graphics/*${KVER}-*.sxz ${LIVE_MOD_OPT}/
