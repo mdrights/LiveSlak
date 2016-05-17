@@ -1579,13 +1579,27 @@ sed -e "s% /sbin/depmod -%#&%" -i ${LIVE_ROOTDIR}/etc/rc.d/rc.modules
 # If we detect a NVIDIA driver, then run the nvidia install routine:
 cat <<EOT >> ${LIVE_ROOTDIR}/etc/rc.d/rc.local
 
+# Find out if the user enabled any optional/addon kernel modules:
+RUN_DEPMOD=0
+for MOD in \$(losetup -l |grep -E "optional|addons" |tr -s '  ' |cut -d' ' -f6)
+do
+  if [ -d /mnt/live/modules/\$(basename \$MOD .sxz)/lib/modules/\$(uname -r)/ ]
+  then
+    # Found kernel modules directory; we need to make a 'depmod' call.
+    RUN_DEPMOD=1
+  fi
+done
+if [ \$RUN_DEPMOD -eq 1 ]; then
+  # This costs a few seconds in additional boot-up time unfortunately:
+  echo "A bit of patience while we register your new kernel module(s)..."
+  /sbin/depmod -a
+fi
+unset RUN_DEPMOD
+
 # Deal with the presence of NVIDIA drivers:
 if [ -x /usr/sbin/nvidia-switch ]; then
   if [ -f /usr/lib${DIRSUFFIX}/xorg/modules/extensions/libglx.so.*-nvidia -a -f /usr/lib${DIRSUFFIX}/xorg/modules/drivers/nvidia_drv.so ]; then
     echo "-- Installing binary Nvidia drivers:  /usr/sbin/nvidia-switch --install"
-    # The nvidia kernel module needs to ne announced to the kernel.
-    # This costs a few seconds in additional boot-up time unfortunately:
-    /sbin/depmod -a
     /usr/sbin/nvidia-switch --install
   fi
   # For CUDA/OpenCL to work after reboot, create missing nvidia device nodes:

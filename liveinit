@@ -740,7 +740,7 @@ if [ "$RESCUE" = "" ]; then
 
   # Make the underpinning RAM fs accessible in the live system (for fun):
   mkdir -p /mnt/overlay/mnt/live
-  mount --bind /mnt/live /mnt/overlay/mnt/live
+  mount --rbind /mnt/live /mnt/overlay/mnt/live
   mkdir -p /mnt/overlay/mnt/${LIVEMAIN}fs
   mount --bind /mnt/${LIVEMAIN}fs /mnt/overlay/mnt/${LIVEMAIN}fs
 
