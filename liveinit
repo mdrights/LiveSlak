@@ -196,6 +196,7 @@ for ARG in $(cat /proc/cmdline); do
       # nga: no glamor 2d acceleration.
       # tpb: trackpoint scrolling while pressing middle mouse button.
       # syn: start synaptics daemon and extend X.Org capabilities.
+      # ssh: start SSH daemon (disabled by default).
       TWEAKS=$(echo $ARG | cut -f2 -d=)
     ;;
     tz=*)
@@ -967,6 +968,9 @@ Section "InputClass"
         Option "VertEdgeScroll"        "1"
 EndSection
 EOT
+    elif [ "$TWEAK" = "ssh" ]; then
+      # Enable SSH daemon (disabled by default for security reasons):
+      chmod +x /mnt/overlay/etc/rc.d/rc.sshd
     fi
   done # End Tweaks.
 
