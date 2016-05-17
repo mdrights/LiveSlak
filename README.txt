@@ -215,6 +215,7 @@ tweaks=tweak1[,tweak2,[,...]] => Implemented tweaks:
   nga - no glamor 2D acceleration, avoids error "EGL_MESA_drm_image required".
   tpb - enable TrackPoint scrolling while holding down middle mouse button.
   syn - start the syndaemon for better support of Synaptics touchpads.
+  ssh - start the SSH server (disabled by default)
 
 nomodeset => Boot without kernel mode setting, needed with 
   some machines. 
