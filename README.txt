@@ -43,7 +43,7 @@ The "liveslak" scripts can generate a variety of Slackware flavors:
 
 
 Common download locations are:
-  * AlienBOB's's http://bear.alienbase.nl/mirrors/slackware-live/ (%%rsync://bear.alienbase.nl/mirrors/slackware-live/%%)
+  * Primary site: http://bear.alienbase.nl/mirrors/slackware-live/ (%%rsync://bear.alienbase.nl/mirrors/slackware-live/%%)
   * Darren's http://slackware.uk/people/alien-slacklive/ (%%rsync://slackware.uk/people/alien-slacklive/%%)
   * Willy's http://repo.ukdw.ac.id/slackware-live/
   * Ryan's https://seattleslack.ryanpcmcquen.org/mirrors/slackware-live/
@@ -126,6 +126,8 @@ Example uses of the two network boot parameters:
   nic=:eth1:static:192.168.1.6:255.255.255.248:192.168.1.1
 
 After you have setup your PXE environment (DHCP, TFTP and NFS servers) properly using the above information, boot one of your PXE-capable computers, interrupt the boot and select "network boot" and type or select the appropriate label (in the above example, that would be ''liveslak'').  You will see the kernel and initrd being downloaded and booted, and then the Live OS will start just as if it was running from a local medium.
+
+If your DHCP server takes too long in acknowledging the client's request, the DHCP client times out and the boot of your Live OS will fail because the NFS-mounted Live filesystem will not become available. In that case you can try increasing the wait time before the DHCP client decides that it is not going to get an IP address from the server. Add the boot parameter ''dhcpwait=30'' (example value) where the number ''30'' is the number of seconds the DHCP client should wait for a server response. You should of course pick a value that is sufficiently large for your network setup. \\ The default DHCP wait time of the Live OS is 20 seconds.
 
 Persistence is not supported in this configuration; currently the overlayfs does not support NFS as a writable layer in the live filesystem.
 
@@ -508,12 +510,12 @@ The script's parameters are:
  -m pkglst[,pkglst] Add modules defined by pkglists/<pkglst>,...
  -r series[,series] Refresh only one or a few package series.
  -s slackrepo_dir   Directory containing Slackware repository.
- -t <doc|mandoc>    Trim the ISO for size (remove man and/or doc)
+ -t <doc|mandoc>    Trim the ISO for size (remove man and/or doc).
  -v                 Show debug/error output.
  -z version         Define your Slackware version (default: current).
- -H hostname        Hostname of the Live OS (default: darkstar)
+ -H hostname        Hostname of the Live OS (default: darkstar).
  -O outfile         Custom filename for the ISO.
- -R runlevel        Runlevel to boot into (default: 4)
+ -R runlevel        Runlevel to boot into (default: 4).
 </code>
 
 The script uses package repositories to create a Live ISO.  The packages will be installed into a temporary directory.
@@ -677,7 +679,7 @@ On UEFI computers, Grub2 handles the boot and it will show a menu similar (and s
 
 Editing a Grub menu before booting it is possible by pressing the "e" key.  After making your changes to the boot commandline, press <F10> to boot.  To discard your changes, press <ESC>.
 
-Another difference between Syslinux and Grub2 menus: in Grub2 you can select a non-US keyboard, language and/or timezone and you will return to the main menu every time.  You still have to select "Start SLACKWARE Live" to boot the computer.  In the Syslinux menu, only the keyboard selection menu will return you to the main menu.  Any non-US *language* selection on the other hand will boot you into Slackware Live immediately; without returning to the main menu.  This is a limitation of syslinux which would require exponentially more menu files to construc  a menu with more choices.  Grub2 supports variables which make it easy to modify a menu entry's characteristics.
+Another difference between Syslinux and Grub2 menus: in Grub2 you can select a non-US keyboard, language and/or timezone and you will return to the main menu every time.  You still have to select "Start SLACKWARE Live" to boot the computer.  In the Syslinux menu, only the keyboard selection menu will return you to the main menu.  Any non-US *language* selection on the other hand will boot you into Slackware Live immediately; without returning to the main menu.  This is a limitation of syslinux which would require exponentially more menu files to construct a menu with more choices.  Grub2 supports variables which make it easy to modify a menu entry's characteristics.
 
 
 ===== Other Slackware based Live distros =====
