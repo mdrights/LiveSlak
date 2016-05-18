@@ -842,10 +842,14 @@ EOT
     echo ${TZ} > /mnt/overlay/etc/timezone
 
     # KDE4 and PLASMA5 user timezone re-configuration:
-    sed -i -e "s%^LocalZone=.*%LocalZone=${TZ}%" \
-      /mnt/overlay/home/live/.kde/share/config/ktimezonedrc
-    sed -i -e "s%^LocalZone=.*%LocalZone=${TZ}%" \
-      /mnt/overlay/home/live/.config/ktimezonedrc
+    if [ -f /mnt/overlay/home/live/.kde/share/config/ktimezonedrc ]; then
+      sed -i -e "s%^LocalZone=.*%LocalZone=${TZ}%" \
+        /mnt/overlay/home/live/.kde/share/config/ktimezonedrc
+    fi
+    if [ -f /mnt/overlay/home/live/.config/ktimezonedrc ]; then
+      sed -i -e "s%^LocalZone=.*%LocalZone=${TZ}%" \
+        /mnt/overlay/home/live/.config/ktimezonedrc
+    fi
   fi
 
   if [ ! -z "$LIVEPW" ]; then
