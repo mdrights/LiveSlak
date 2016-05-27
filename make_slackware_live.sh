@@ -1701,7 +1701,11 @@ if [ "$NFSROOTSUP" = "YES" ]; then
     etc/dhcpcd.conf.new
   mv ${LIVE_ROOTDIR}/boot/initrd-tree/etc/dhcpcd.conf{.new,}
   # Add just the right kernel network modules by pruning unneeded stuff:
-  KMODS_PKG=$(find ${DEF_SL_PKGROOT}/../ -name "kernel-modules-*$(echo $KGEN |tr - _)*.t?z" |head -1)
+  if [ "$SL_ARCH" = "x86_64" -o "$SMP32" = "NO" ]; then
+    KMODS_PKG=$(find ${DEF_SL_PKGROOT}/../ -name "kernel-modules-*$(echo $KGEN |tr - _)*.t?z" |grep -v smp |head -1)
+  else
+    KMODS_PKG=$(find ${DEF_SL_PKGROOT}/../ -name "kernel-modules-*$(echo $KGEN |tr - _)*.t?z" |grep smp |head -1)
+  fi
   KMODS_TEMP=$(mktemp -d -p /mnt -t liveslak.XXXXXX)
   if [ ! -d $KMODS_TEMP ]; then
     echo "*** Failed to create a temporary extraction directory for the initrd!"
