@@ -990,6 +990,16 @@ EOT
   # Delete ALSA state file, the Live OS may be booted on different computers:
   rm -f /mnt/overlay/var/lib/alsa/asound.state
 
+  # In case of network boot, do not kill the network, umount NFS prematurely
+  #  or stop udevd on shutdown:
+  if [ -n "$NFSHOST" ]; then
+    sed -i /mnt/overlay/etc/rc.d/rc.0 \
+      -e "/on \/ type nfs/s%grep -q 'on / type nfs'%egrep -q 'on / type (nfs|tmpfs)'%" \
+      -e '/umount.*nfs/s/nfs,//' \
+      -e 's/rc.udev force-stop/rc.udev stop/' \
+      -e 's/$(pgrep mdmon)/& $(pgrep udevd)/'
+  fi
+
   # Copy contents of rootcopy directory (may be empty) to overlay:
   cp -af /mnt/media/${LIVEMAIN}/rootcopy/* /mnt/overlay/ 2>/dev/null
 
