@@ -1069,7 +1069,7 @@ fi
 unset ERR
 umount /proc
 umount /sys
-umount /run
+umount /run 2>/dev/null
 # We disable the filesystem checking code in /etc/rc.d/rc.S,
 # so we need to keep the fs writable here.
 #mount -o ro,remount /mnt/overlay 2>/dev/null
