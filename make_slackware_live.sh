@@ -1853,14 +1853,17 @@ else
   ISOTAG="-$(echo $LIVEDE |tr A-Z a-z)"
 fi
 
-# Copy our stockpile of add-on modules into place:
-if ls ${LIVE_TOOLDIR}/addons/*.sxz 1>/dev/null 2>&1 ; then
-  cp ${LIVE_TOOLDIR}/addons/*.sxz ${LIVE_MOD_ADD}/
-fi
-
-# If we have optionals, copy those too:
-if ls ${LIVE_TOOLDIR}/optional/*.sxz 1>/dev/null 2>&1 ; then
-  cp ${LIVE_TOOLDIR}/optional/*.sxz ${LIVE_MOD_OPT}/
+# We keep strict size requirements for the XFCE ISO:
+# addons/optional modules will not be added.
+if [ "$LIVEDE" != "XFCE"  ]; then
+  # Copy our stockpile of add-on modules into place:
+  if ls ${LIVE_TOOLDIR}/addons/*.sxz 1>/dev/null 2>&1 ; then
+    cp ${LIVE_TOOLDIR}/addons/*.sxz ${LIVE_MOD_ADD}/
+  fi
+  # If we have optionals, copy those too:
+  if ls ${LIVE_TOOLDIR}/optional/*.sxz 1>/dev/null 2>&1 ; then
+    cp ${LIVE_TOOLDIR}/optional/*.sxz ${LIVE_MOD_OPT}/
+  fi
 fi
 
 if [ "$LIVEDE" != "XFCE" -a "$LIVEDE" != "SLACKWARE" ]; then
