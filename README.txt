@@ -516,6 +516,7 @@ The script's parameters are:
  -H hostname        Hostname of the Live OS (default: darkstar).
  -O outfile         Custom filename for the ISO.
  -R runlevel        Runlevel to boot into (default: 4).
+ -X                 Use xorriso instead of mkisofs/isohybrid.
 </code>
 
 The script uses package repositories to create a Live ISO.  The packages will be installed into a temporary directory.

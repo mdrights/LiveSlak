@@ -71,6 +71,9 @@ SMP32=${SMP32:-"YES"}
 # Include support for NFS root (PXE boot), will increase size of the initrd:
 NFSROOTSUP=${NFSROOTSUP:-"YES"}
 
+# Use xorriso instead of mkisofs/isohybrid to create the ISO:
+USEXORR=${USEXORR:-"NO"}
+
 # Timestamp:
 THEDATE=$(date +%Y%m%d)
 
@@ -594,7 +597,7 @@ EOL
 # Action!
 # ---------------------------------------------------------------------------
 
-while getopts "a:d:efhm:r:s:t:vz:HO:R:" Option
+while getopts "a:d:efhm:r:s:t:vz:HO:R:X" Option
 do
   case $Option in
     h ) cat <<-"EOH"
@@ -630,6 +633,7 @@ do
         echo " -H hostname        Hostname of the Live OS (default: $LIVE_HOSTNAME)"
         echo " -O outfile         Custom filename for the ISO."
         echo " -R runlevel        Runlevel to boot into (default: $RUNLEVEL)"
+        echo " -X                 Use xorriso instead of mkisofs/isohybrid."
         exit
         ;;
     a ) SL_ARCH="${OPTARG}"
@@ -658,6 +662,8 @@ do
         OUTPUT="$(cd $(dirname "${OUTFILE}"); pwd)"
         ;;
     R ) RUNLEVEL=${OPTARG}
+        ;;
+    X ) USEXORR="YES"
         ;;
     * ) echo "You passed an illegal switch to the program!"
         echo "Run '$0 -h' for more help."
@@ -714,8 +720,9 @@ if [ ! -d ${SL_REPO} ]; then
 fi
 
 # Are all the required add-on tools present?
+[ "$USEXORR" = "NO" ] && ISOGEN="mkisofs isohybrid" || ISOGEN="xorriso"
 PROG_MISSING=""
-for PROGN in mksquashfs unsquashfs grub-mkfont syslinux mkisofs isohybrid installpkg upgradepkg keytab-lilo ; do
+for PROGN in mksquashfs unsquashfs grub-mkfont syslinux $ISOGEN installpkg upgradepkg keytab-lilo ; do
   if ! which $PROGN 1>/dev/null 2>/dev/null ; then
     PROG_MISSING="${PROG_MISSING}--   $PROGN\n"
   fi
@@ -1877,8 +1884,10 @@ mkdir -p ${LIVE_STAGING}/${LIVEMAIN}/rootcopy
 cd ${LIVE_STAGING}
 
 # Determine whether we add UEFI boot capabilities to the ISO:
-if [ -f boot/syslinux/efiboot.img ]; then
+if [ -f boot/syslinux/efiboot.img -a "$USEXORR" = "NO" ]; then
   UEFI_OPTS="-eltorito-alt-boot -no-emul-boot -eltorito-platform 0xEF -eltorito-boot boot/syslinux/efiboot.img"
+elif [ -f boot/syslinux/efiboot.img -a "$USEXORR" = "YES" ]; then
+  UEFI_OPTS="-eltorito-alt-boot -e boot/syslinux/efiboot.img -isohybrid-gpt-basdat -no-emul-boot"
 else
   UEFI_OPTS=""
 fi
@@ -1886,34 +1895,57 @@ fi
 # Time to determine the output filename, now that we know all the variables
 # and ensured that the OUTPUT directory exists:
 OUTFILE=${OUTFILE:-"${OUTPUT}/${DISTRO}${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso"}
-mkisofs -o "${OUTFILE}" \
-  -R -J \
-  -hide-rr-moved \
-  -v -d -N \
-  -no-emul-boot -boot-load-size ${BOOTLOADSIZE} -boot-info-table \
-  -sort boot/syslinux/iso.sort \
-  -b boot/syslinux/isolinux.bin \
-  -c boot/syslinux/isolinux.boot \
-  ${UEFI_OPTS} \
-  -preparer "$(echo $LIVEDE |sed 's/BASE//') Live built by ${BUILDER}" \
-  -publisher "The Slackware Linux Project - http://www.slackware.com/" \
-  -A "${DISTRO^}-${SL_VERSION} for ${SL_ARCH} ($(echo $LIVEDE |sed 's/BASE//') Live $VERSION)" \
-  -V "${MEDIALABEL}" \
-  -x ./$(basename ${LIVE_WORK}) \
-  -x ./${LIVEMAIN}/bootinst \
-  -x boot/syslinux/testing \
-  .
+if [ "$USEXORR" = "NO" ]; then
+  mkisofs -o "${OUTFILE}" \
+    -V "${MEDIALABEL}" \
+    -R -J \
+    -hide-rr-moved \
+    -v -d -N \
+    -no-emul-boot -boot-load-size ${BOOTLOADSIZE} -boot-info-table \
+    -sort boot/syslinux/iso.sort \
+    -b boot/syslinux/isolinux.bin \
+    -c boot/syslinux/isolinux.boot \
+    ${UEFI_OPTS} \
+    -preparer "$(echo $LIVEDE |sed 's/BASE//') Live built by ${BUILDER}" \
+    -publisher "The Slackware Linux Project - http://www.slackware.com/" \
+    -A "${DISTRO^}-${SL_VERSION} for ${SL_ARCH} ($(echo $LIVEDE |sed 's/BASE//') Live $VERSION)" \
+    -x ./$(basename ${LIVE_WORK}) \
+    -x ./${LIVEMAIN}/bootinst \
+    -x boot/syslinux/testing \
+    .
+
+  if [ "$SL_ARCH" = "x86_64" -o "$EFI32" = "YES" ]; then
+    # Make this a hybrid ISO with UEFI boot support on x86_64.
+    # On 32bit, the variable EFI32 must be explicitly enabled.
+    isohybrid -u "${OUTFILE}"
+  else
+    isohybrid "${OUTFILE}"
+  fi # End UEFI hybrid ISO.
+else
+  echo "-- Using xorriso to generate the ISO and make it hybrid."
+  xorriso -as mkisofs -o "${OUTFILE}" \
+    -V "${MEDIALABEL}" \
+    -J -joliet-long -r \
+    -hide-rr-moved \
+    -v -d -N \
+    -b boot/syslinux/isolinux.bin \
+    -c boot/syslinux/isolinux.boot \
+    -boot-load-size ${BOOTLOADSIZE} -boot-info-table -no-emul-boot \
+    ${UEFI_OPTS} \
+    -preparer "$(echo $LIVEDE |sed 's/BASE//') Live built by ${BUILDER}" \
+    -publisher "The Slackware Linux Project - http://www.slackware.com/" \
+    -A "${DISTRO^}-${SL_VERSION} for ${SL_ARCH} ($(echo $LIVEDE |sed 's/BASE//') Live $VERSION)" \
+    -x ./$(basename ${LIVE_WORK}) \
+    -x ./${LIVEMAIN}/bootinst \
+    -x boot/syslinux/testing \
+    .
+fi
 
 # This copy is no longer needed:
 rm -rf ./boot
 
+# Return to original directory:
 cd - 1>/dev/null
-
-if [ "$SL_ARCH" = "x86_64" -o "$EFI32" = "YES" ]; then
-  # Make this a hybrid ISO with UEFI boot support on x86_64.
-  # On 32bit, the variable EFI32 must be explicitly enabled.
-  isohybrid -u "${OUTFILE}"
-fi # End UEFI hybrid ISO.
 
 cd "${OUTPUT}"
   md5sum "$(basename "${OUTFILE}")" \
