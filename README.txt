@@ -510,7 +510,7 @@ The script's parameters are:
  -m pkglst[,pkglst] Add modules defined by pkglists/<pkglst>,...
  -r series[,series] Refresh only one or a few package series.
  -s slackrepo_dir   Directory containing Slackware repository.
- -t <doc|mandoc>    Trim the ISO for size (remove man and/or doc).
+ -t <doc|mandoc>    Trim the ISO (remove man and/or doc).
  -v                 Show debug/error output.
  -z version         Define your Slackware version (default: current).
  -H hostname        Hostname of the Live OS (default: darkstar).

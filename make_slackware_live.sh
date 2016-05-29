@@ -600,11 +600,10 @@ EOL
 while getopts "a:d:efhm:r:s:t:vz:HO:R:X" Option
 do
   case $Option in
-    h ) cat <<-"EOH"
-	-----------------------------------------------------------------
-	$Id: make_slackware_live.sh,v 1.13 2015/12/04 13:51:41 root Exp root $
-	-----------------------------------------------------------------
-	EOH
+    h )
+	echo "----------------------------------------------------------------"
+	echo "make_slackware_live.sh $VERSION"
+	echo "----------------------------------------------------------------"
         echo "Usage:"
         echo "  $0 [OPTION] ..."
         echo "or:"
@@ -620,19 +619,19 @@ do
         echo "                    Use i586 for a 32bit ISO, x86_64 for 64bit."
         echo " -d desktoptype     SLACKWARE (full Slack), KDE4 (basic KDE4),"
         echo "                    XFCE (basic XFCE), PLASMA5, MATE, CINNAMON."
-        echo " -e                 Use ISO boot-load-size of 32 for computers"
+        echo " -e                 Use ISO boot-load-size of 32 for computers."
         echo "                    where the ISO won't boot otherwise."
         echo " -f                 Forced re-generation of all squashfs modules,"
         echo "                    custom configurations and new initrd.img."
         echo " -m pkglst[,pkglst] Add modules defined by pkglists/<pkglst>,..."
         echo " -r series[,series] Refresh only one or a few package series."
         echo " -s slackrepo_dir   Directory containing ${DISTRO^} repository."
-        echo " -t <doc|mandoc>    Trim the ISO for size (remove man and/or doc)"
+        echo " -t <doc|mandoc>    Trim the ISO (remove man and/or doc)."
         echo " -v                 Show debug/error output."
         echo " -z version         Define your ${DISTRO^} version (default: $SL_VERSION)."
-        echo " -H hostname        Hostname of the Live OS (default: $LIVE_HOSTNAME)"
+        echo " -H hostname        Hostname of the Live OS (default: $LIVE_HOSTNAME)."
         echo " -O outfile         Custom filename for the ISO."
-        echo " -R runlevel        Runlevel to boot into (default: $RUNLEVEL)"
+        echo " -R runlevel        Runlevel to boot into (default: $RUNLEVEL)."
         echo " -X                 Use xorriso instead of mkisofs/isohybrid."
         exit
         ;;
