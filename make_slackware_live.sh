@@ -1042,7 +1042,7 @@ EOL
 echo "root:${ROOTPW}" | chpasswd --root ${LIVE_ROOTDIR}
 
 # Create a nonprivileged user account "live":
-chroot ${LIVE_ROOTDIR} /usr/sbin/useradd -c "Slackware Live User" -g users -G wheel,audio,cdrom,floppy,plugdev,video,power,netdev,lp,scanner,kmem -u 1000 -d /home/live -m -s /bin/bash live
+chroot ${LIVE_ROOTDIR} /usr/sbin/useradd -c "Slackware Live User" -g users -G wheel,audio,cdrom,floppy,plugdev,video,power,netdev,lp,scanner,kmem,dialout,games,disk -u 1000 -d /home/live -m -s /bin/bash live
 echo "live:${LIVEPW}" | chpasswd --root ${LIVE_ROOTDIR}
 
 # Configure suauth:
