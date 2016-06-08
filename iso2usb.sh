@@ -1,5 +1,4 @@
 #!/bin/bash
-# $Id: iso2usb.sh,v 1.6 2015/11/29 15:07:35 root Exp root $
 #
 # Copyright 2015, 2016  Eric Hameleers, Eindhoven, NL
 # All rights reserved.
@@ -387,7 +386,7 @@ fi
 
 # Are all the required not-so-common add-on tools present?
 PROG_MISSING=""
-for PROGN in blkid cpio extlinux fdisk gdisk iso-info mkdosfs sgdisk unsquashfs ; do
+for PROGN in blkid cpio extlinux fdisk gdisk isoinfo mkdosfs sgdisk unsquashfs ; do
   if ! PATH="/sbin:$PATH" which $PROGN 1>/dev/null 2>/dev/null ; then
     PROG_MISSING="${PROG_MISSING}--   $PROGN\n"
   fi
@@ -518,7 +517,7 @@ else
 fi
 
 # Write down the version of the ISO image:
-VERSION=$(iso-info ${SLISO} |grep Application |cut -d: -f2- 2>/dev/null)
+VERSION=$(isoinfo -d -i ${SLISO} 2>/dev/null |grep Application |cut -d: -f2-)
 if [ -n "$VERSION" ]; then
   echo "$VERSION" > ${USBMNT}/.isoversion
 fi
