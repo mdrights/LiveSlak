@@ -65,8 +65,8 @@ BOOTLOADSIZE=${BOOTLOADSIZE:-4}
 # Therefore we disable 32bit EFI by default. Enable at your own peril:
 EFI32=${EFI32:-"NO"}
 
-# Set to NO if you want to use the non-SMP kernel on 32bit Slackware:
-SMP32=${SMP32:-"YES"}
+# Set to YES if you want to use the SMP kernel on 32bit Slackware:
+SMP32=${SMP32:-"NO"}
 
 # Include support for NFS root (PXE boot), will increase size of the initrd:
 NFSROOTSUP=${NFSROOTSUP:-"YES"}
