@@ -1095,8 +1095,8 @@ MIRRORPLUS['mate_testing']=http://slackware.uk/msb/testing/1.12/${SL_ARCH}/
 EOPL
 fi
 
-/usr/sbin/slackpkg -batch=on update gpg
-/usr/sbin/slackpkg -batch=on update
+ARCH=${SL_ARCH} /usr/sbin/slackpkg -batch=on update gpg
+ARCH=${SL_ARCH} /usr/sbin/slackpkg -batch=on update
 
 EOSL
 
