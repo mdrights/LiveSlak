@@ -48,6 +48,9 @@ LIVEPATH=""
 # to avoid anything that writes to disk after we copy the OS to RAM.
 VIRGIN=0
 
+# If set to '1', existing persistent data will be wiped:
+WIPE_PERSISTENCE=0
+
 # Used for debugging the init;
 # Set DEBUG to '1' to enable explicit pauses; '2' enables verbose script exec;
 # and '4' dumps you into a debug shell right before the switch_root:
@@ -175,6 +178,11 @@ for ARG in $(cat /proc/cmdline); do
     ;;
     nop)
       VIRGIN=1
+    ;;
+    nop=*)
+      if [ "$(echo $ARG | cut -f2 -d=)" = "wipe" ]; then
+        WIPE_PERSISTENCE=1
+      fi
     ;;
     persistence=*)
       PERSISTENCE=$(echo $ARG | cut -f2 -d=)
@@ -670,6 +678,10 @@ if [ "$RESCUE" = "" ]; then
       # Try a write... just to be dead sure:
       if touch /mnt/media/${PERSISTENCE}/.rwtest 2>/dev/null && rm /mnt/media/${PERSISTENCE}/.rwtest 2>/dev/null ; then
         # Writable media and we are allowed to write to it.
+        if [ "$WIPE_PERSISTENCE" = "1" ]; then
+          echo "${MARKER}:  Wiping existing persistent data in '/${PERSISTENCE}'."
+          find /mnt/media/${PERSISTENCE}/ -mindepth 1 -exec rm -rf {} \; 2>/dev/null
+        fi
         echo "${MARKER}:  Writing persistent changes to media directory '/${PERSISTENCE}'."
         UPPERDIR=/mnt/media/${PERSISTENCE}
         OVLWORK=/mnt/media/.ovlwork
@@ -700,6 +712,10 @@ if [ "$RESCUE" = "" ]; then
         echo "${MARKER}:  Failed to mount persistence file '/${PERSISTENCE}.img'."
         echo "${MARKER}:  Falling back to RAM."
       else
+        if [ "$WIPE_PERSISTENCE" = "1" ]; then
+          echo "${MARKER}:  Wiping existing persistent data in '/${PERSISTENCE}.img'."
+          find /mnt/live/${prdir}/${PERSISTENCE}/ -mindepth 1 -exec rm -rf {} \; 2>/dev/null
+        fi
         echo "${MARKER}:  Writing persistent changes to file '/${PERSISTENCE}.img'."
         UPPERDIR=/mnt/live/${prdir}/${PERSISTENCE}
         OVLWORK=/mnt/live/${prdir}/.ovlwork
