@@ -49,7 +49,8 @@ LIVEPATH=""
 VIRGIN=0
 
 # Used for debugging the init;
-# Set DEBUG to '1' to enable explicit pauses; '2' enables verbose script exec:
+# Set DEBUG to '1' to enable explicit pauses; '2' enables verbose script exec;
+# and '4' dumps you into a debug shell right before the switch_root:
 DEBUG=0
 DEBUGV=" "
 
@@ -214,7 +215,7 @@ done
 [ $DEBUG -ge 2 ] && set -x
 
 debugit () {
-  [ $DEBUG -eq 0 ] && return
+  [ $DEBUG -eq 0 -o $DEBUG -gt 3 ] && return
   echo "DEBUG>> -- blkid info -- :"
   blkid | while read LINE ; do echo "DEBUG>> $LINE" ; done
   echo "DEBUG>> -- mount info -- :"
