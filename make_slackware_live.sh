@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# $Id: make_slackware_live.sh,v 1.13 2015/12/04 13:51:41 root Exp root $
 # Copyright 2014, 2015, 2016  Eric Hameleers, Eindhoven, NL 
 # All rights reserved.
 #
@@ -36,7 +35,7 @@
 # -----------------------------------------------------------------------------
 
 # Version of the Live OS generator:
-VERSION="1.0.2"
+VERSION="1.1.0"
 
 # Directory where our live tools are stored:
 LIVE_TOOLDIR=${LIVE_TOOLDIR:-"$(cd $(dirname $0); pwd)"}
