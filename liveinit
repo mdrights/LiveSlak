@@ -1004,6 +1004,23 @@ EOT
     done
   fi
 
+  # Find out if the user enabled any optional/addon kernel modules:
+  RUN_DEPMOD=0
+  for MOD in $(cat /sys/block/loop*/loop/backing_file |grep -E "optional|addons")
+  do
+    if [ -d /mnt/live/modules/$(basename $MOD .sxz)/lib/modules/$(uname -r)/ ]
+    then
+      # Found kernel modules directory; we need to make a 'depmod' call.
+      RUN_DEPMOD=1
+    fi
+  done
+  if [ $RUN_DEPMOD -eq 1 ]; then
+    # This costs a few seconds in additional boot-up time unfortunately:
+    echo "${MARKER}: Additional kernel module(s) found... need a bit"
+    chroot /mnt/overlay /sbin/depmod -a
+  fi
+  unset RUN_DEPMOD
+
   # Delete ALSA state file, the Live OS may be booted on different computers:
   rm -f /mnt/overlay/var/lib/alsa/asound.state
 
