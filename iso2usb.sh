@@ -39,13 +39,21 @@ UNATTENDED=0
 # By default do not show file operations in detail:
 VERBOSE=0
 
+# Variables to store content from an initrd we are going to refresh:
+OLDWAIT=""
+OLDLUKS=""
+
 # Seconds to add to the initrd as wait-for-root value:
 WAIT=5
 
 # No LUKS encryption by default:
 DOLUKS=0
 
+# We are NOT refreshing existing Live content by default:
+REFRESH=0
+
 # Initialize more variables:
+CNTBASE=""
 CNTDEV=""
 CNTFILE=""
 LUKSHOME=""
@@ -53,7 +61,6 @@ LODEV=""
 
 # Define ahead of time, so that cleanup knows about them:
 IMGDIR=""
-EFIMNT=""
 ISOMNT=""
 CNTMNT=""
 USBMNT=""
@@ -73,7 +80,7 @@ cleanup() {
   # During cleanup, do not abort due to non-zero exit code:
   set +e
   sync
-  if [ $DOLUKS -eq 1 ]; then
+  if [ $DOLUKS -eq 1 -a -n "$CNTDEV" ]; then
     # In case of failure, only the most recent device should still be open:
     if mount |grep -q ${CNTDEV} ; then
       umount -f ${CNTDEV}
@@ -81,7 +88,6 @@ cleanup() {
       losetup -d ${LODEV}
     fi
   fi
-  [ -n "${EFIMNT}" ] && ( /sbin/umount -f ${EFIMNT} 2>/dev/null; rmdir $EFIMNT )
   [ -n "${ISOMNT}" ] && ( /sbin/umount -f ${ISOMNT} 2>/dev/null; rmdir $ISOMNT )
   [ -n "${CNTMNT}" ] && ( /sbin/umount -f ${CNTMNT} 2>/dev/null; rmdir $CNTMNT )
   [ -n "${USBMNT}" ] && ( /sbin/umount -f ${USBMNT} 2>/dev/null; rmdir $USBMNT )
@@ -110,6 +116,8 @@ cat <<EOT
 #   -i|--infile <filename>     Full path to the ISO image file.
 #   -o|--outdev <filename>     The device name of your USB drive.
 #   -p|--persistence <dirname> Custom name of the 'persistence' directory.
+#   -r|--refresh               Refresh the USB stick with the ISO content.
+#                              No formatting, do not touch user content.
 #   -u|--unattended            Do not ask any questions.
 #   -v|--verbose               Show verbose messages.
 #   -w|--wait<number>          Add <number> seconds wait time to initialize USB.
@@ -136,14 +144,21 @@ uncompressfs () {
   fi
 }
 
+# Read configuration data from old initrd:
+read_initrd() {
+  IMGFILE="$1"
+
+  OLDWAIT=$(uncompressfs ${IMGFILE} |cpio -i --to-stdout wait-for-root 2>/dev/null)
+  OLDLUKS=$(uncompressfs ${IMGFILE} |cpio -i --to-stdout luksdev 2>/dev/null)
+}
+
 # Add longer USB WAIT to the initrd:
 update_initrd() {
   IMGFILE="$1"
 
   # USB boot medium needs a few seconds boot delay else the overlay will fail.
   # Check if we need to update the wait-for-root file in the initrd:
-  OLDWAIT=$(uncompressfs ${IMGFILE} |cpio -i --to-stdout wait-for-root 2>/dev/null)
-  if [ "$OLDWAIT" = "$WAIT" -a $DOLUKS -eq 0 ]; then
+  if [ "$OLDWAIT" = "$WAIT" -a $DOLUKS -eq 0 -a $REFRESH -eq 0 ]; then
     return
   fi
   
@@ -162,7 +177,15 @@ update_initrd() {
   cd ${IMGDIR}
     uncompressfs ${IMGFILE} \
       | cpio -i -d -H newc --no-absolute-filenames
-    echo "--- Updating 'waitforroot' time from '$OLDWAIT' to '$WAIT':"
+    
+    if [ $REFRESH -eq 1 ]; then
+      echo "--- Refreshing Slackware initrd..."
+      WAIT="$OLDWAIT"
+      echo "$OLDLUKS" >> luksdev
+    else
+      echo "--- Updating 'waitforroot' time from '$OLDWAIT' to '$WAIT':"
+    fi
+
     echo ${WAIT} > wait-for-root
 
     if [ $DOLUKS -eq 1 -a -n "${LUKSHOME}" ]; then
@@ -186,6 +209,14 @@ create_container() {
   CNTBASE=$3
   CNTENCR=$4 # 'none' or 'luks'
   CNTUSED=$5 # '/home' or 'persistence'
+
+  # Create a container file or re-use previously created one:
+  if [ -f $USBMNT/${CNTBASE}.img ]; then
+    CNTFILE="${CNTBASE}.img"
+    CNTSIZE=$(( $(du -sk ${CNTFILE}) / 1024 ))
+    echo "--- Keeping existing '${CNTFILE}' (size ${CNTSIZE} MB)."
+    return
+  fi
 
   # Determine size of the target partition (in MB), and the free space:
   PARTSIZE=$(df -P -BM ${CNTPART} |tail -1 |tr -s '\t' ' ' |cut -d' ' -f2)
@@ -221,23 +252,10 @@ create_container() {
     exit 1
   fi
 
-  # Create an empty container file (re-use previously created one):
-  if [ -f $USBMNT/${CNTBASE}.img ]; then
-    CNTFILE="${CNTBASE}.img"
-    CNTSIZE=$(( $(du -sk ${CNTFILE}) / 1024 ))
-    if [ $UNATTENDED -eq 0 ]; then
-      echo "*** File '${CNTFILE}' already exists (size ${CNTSIZE} MB). ***"
-      echo "*** If you do not want to re-use it for '$CNTUSED', ***"
-      echo "*** then press CONTROL-C now and rename that file! ***"
-      read -p "Else press ENTER to continue: " JUNK
-      # OK... the user was sure about the file...
-    fi
-  else
-    echo "--- Creating ${CNTSIZE} MB container file using 'dd if=/dev/urandom', patience please..."
-    CNTFILE="${CNTBASE}.img"
-    # Create a sparse file (not allocating any space yet):
-    dd of=$USBMNT/${CNTFILE} bs=1M count=0 seek=$CNTSIZE
-  fi
+  echo "--- Creating ${CNTSIZE} MB container file using 'dd if=/dev/urandom', patience please..."
+  CNTFILE="${CNTBASE}.img"
+  # Create a sparse file (not allocating any space yet):
+  dd of=$USBMNT/${CNTFILE} bs=1M count=0 seek=$CNTSIZE
 
   # Setup a loopback device that we can use with cryptsetup:
   LODEV=$(losetup -f)
@@ -329,6 +347,10 @@ while [ ! -z "$1" ]; do
       PERSISTENCE="$2"
       shift 2
       ;;
+    -r|--refresh)
+      REFRESH=1
+      shift
+      ;;
     -u|--unattended)
       UNATTENDED=1
       shift
@@ -371,7 +393,7 @@ if [ -z "$TARGET" -o -z "$SLISO" ]; then
   exit 1
 fi
 
-if [ ! -f $SLISO -a $FORCE -eq 0 ]; then
+if [ $FORCE -eq 0 -a ! -f $SLISO ]; then
   echo "*** This is not a useable file: '$SLISO' !"
   exit 1
 fi
@@ -398,70 +420,86 @@ if [ ! -z "$PROG_MISSING" ] ; then
   exit 1
 fi
 
-# Confirm wipe:
-cat <<EOT
+if [ $REFRESH -eq 0 ]; then
+  # We are creating a USB stick from scratch,
+  # i.e. not refreshing the Live content.
+  # Confirm wipe:
+  cat <<EOT
 #
 # We are going to format this device (erase all data) - '$TARGET':
+EOT
+else
+  # We are refreshing the Live content.
+  # Confirm refresh:
+  cat <<EOT
+#
+# We are going to refresh the Live OS on this device - '$TARGET':
+EOT
+fi
+  # Continue with the common text message:
+  cat <<EOT
 # Vendor : $(cat /sys/block/$(basename $TARGET)/device/vendor)
 # Model  : $(cat /sys/block/$(basename $TARGET)/device/model)
 # Size   : $(( $(cat /sys/block/$(basename $TARGET)/size) / 2048)) MB
 #
 # FDISK OUTPUT:
 EOT
-echo q |/sbin/gdisk -l $TARGET 2>/dev/null | while read LINE ; do echo "# $LINE" ; done
 
-if [ $UNATTENDED -eq 0 ]; then
-  cat <<EOT
+  echo q |/sbin/gdisk -l $TARGET 2>/dev/null | \
+    while read LINE ; do echo "# $LINE" ; done
+
+  if [ $UNATTENDED -eq 0 ]; then
+    cat <<EOT
 
 ***                                                       ***
 *** If this is the wrong drive, then press CONTROL-C now! ***
 ***                                                       ***
 
 EOT
-  read -p "Or press ENTER to continue: " JUNK
-  # OK... the user was sure about the drive...
-fi
+    read -p "Or press ENTER to continue: " JUNK
+    # OK... the user was sure about the drive...
+  fi
 
-# Get the LABEL used for the ISO:
-LIVELABEL=$(/sbin/blkid -s LABEL -o value ${SLISO})
+if [ $REFRESH -eq 0 ]; then
+  # Continue with the wipe/partitioning/formatting.
 
-# Use sgdisk to wipe and then setup the USB device:
-# - 1 MB BIOS boot partition
-# - 100 MB EFI system partition
-# - Let Slackware have the rest
-# - Make the Linux partition "legacy BIOS bootable"
-# Make sure that there is no MBR nor a partition table anymore:
-dd if=/dev/zero of=$TARGET bs=512 count=1 conv=notrunc
-# The first sgdisk command is allowed to have non-zero exit code:
-/sbin/sgdisk -og $TARGET || true
-/sbin/sgdisk \
-  -n 1:2048:4095 -c 1:"BIOS Boot Partition" -t 1:ef02 \
-  -n 2:4096:208895 -c 2:"EFI System Partition" -t 2:ef00 \
-  -n 3:208896:0 -c 3:"Slackware Linux" -t 3:8300 \
-  $TARGET
-/sbin/sgdisk -A 3:set:2 $TARGET
-# Show what we did to the USB stick:
-/sbin/sgdisk -p -A 3:show $TARGET
+  # Get the LABEL used for the ISO:
+  LIVELABEL=$(/sbin/blkid -s LABEL -o value ${SLISO})
 
-# Create filesystems:
-# Not enough clusters for a 32 bit FAT:
-/sbin/mkdosfs -s 2 -n "DOS" ${TARGET}1
-/sbin/mkdosfs -F32 -s 2 -n "EFI" ${TARGET}2
-# KDE tends to automount.. so try an umount:
-if /sbin/mount |grep -qw ${TARGET}3 ; then /sbin/umount ${TARGET}3 || true ; fi
-/sbin/mkfs.ext4 -F -F -L "${LIVELABEL}" -m 0 ${TARGET}3
-/sbin/tune2fs -c 0 -i 0 ${TARGET}3
+  # Use sgdisk to wipe and then setup the USB device:
+  # - 1 MB BIOS boot partition
+  # - 100 MB EFI system partition
+  # - Let Slackware have the rest
+  # - Make the Linux partition "legacy BIOS bootable"
+  # Make sure that there is no MBR nor a partition table anymore:
+  dd if=/dev/zero of=$TARGET bs=512 count=1 conv=notrunc
+  # The first sgdisk command is allowed to have non-zero exit code:
+  /sbin/sgdisk -og $TARGET || true
+  /sbin/sgdisk \
+    -n 1:2048:4095 -c 1:"BIOS Boot Partition" -t 1:ef02 \
+    -n 2:4096:208895 -c 2:"EFI System Partition" -t 2:ef00 \
+    -n 3:208896:0 -c 3:"Slackware Linux" -t 3:8300 \
+    $TARGET
+  /sbin/sgdisk -A 3:set:2 $TARGET
+  # Show what we did to the USB stick:
+  /sbin/sgdisk -p -A 3:show $TARGET
 
-# Create temporary mount points for the ISO file:
+  # Create filesystems:
+  # Not enough clusters for a 32 bit FAT:
+  /sbin/mkdosfs -s 2 -n "DOS" ${TARGET}1
+  /sbin/mkdosfs -F32 -s 2 -n "EFI" ${TARGET}2
+  # KDE tends to automount.. so try an umount:
+  if /sbin/mount |grep -qw ${TARGET}3 ; then
+    /sbin/umount ${TARGET}3 || true
+  fi
+  /sbin/mkfs.ext4 -F -F -L "${LIVELABEL}" -m 0 ${TARGET}3
+  /sbin/tune2fs -c 0 -i 0 ${TARGET}3
+
+fi # End [ $REFRESH -eq 0 ]
+
+# Create temporary mount points for the ISO file and USB device:
 mkdir -p /mnt
-EFIMNT=$(mktemp -d -p /mnt -t alienefi.XXXXXX)
-if [ ! -d $EFIMNT ]; then
-  echo "*** Failed to create a temporary mount point for the ISO!"
-  cleanup
-  exit 1
-else
-  chmod 711 $EFIMNT
-fi
+# ISO mount:
 ISOMNT=$(mktemp -d -p /mnt -t alieniso.XXXXXX)
 if [ ! -d $ISOMNT ]; then
   echo "*** Failed to create a temporary mount point for the ISO!"
@@ -470,23 +508,7 @@ if [ ! -d $ISOMNT ]; then
 else
   chmod 711 $ISOMNT
 fi
-
-# Find out if the ISO contains an EFI bootloader and use it:
-EFIBOOT=0
-EFIOFFSET=$(/sbin/fdisk -lu ${SLISO} 2>/dev/null |grep EFI |tr -s ' ' | cut -d' ' -f 2)
-if [ -n "$EFIOFFSET" ]; then
-  # Mount the EFI partition so we can retrieve the EFI bootloader:
-  /sbin/mount -o loop,offset=$((512*$EFIOFFSET))  ${SLISO} ${EFIMNT}
-  if [ ! -f ${EFIMNT}/EFI/BOOT/boot*.efi ]; then
-    echo "-- Note: UEFI boot file 'bootx64.efi' or 'bootia32.efi' not found on ISO."
-    echo "-- UEFI boot will not be supported"
-  else
-    EFIBOOT=1
-  fi
-fi
-
-# Create a temporary mount point for the USB device:
-mkdir -p /mnt
+# USB mount:
 USBMNT=$(mktemp -d -p /mnt -t alienusb.XXXXXX)
 if [ ! -d $USBMNT ]; then
   echo "*** Failed to create a temporary mount point for the USB device!"
@@ -502,18 +524,46 @@ fi
 # Loop-mount the ISO (or 1st partition if this is a hybrid ISO):
 /sbin/mount -o loop ${SLISO} ${ISOMNT}
 
+# Find out if the ISO contains an EFI bootloader and use it:
+if [ ! -f ${ISOMNT}/EFI/BOOT/boot*.efi ]; then
+  EFIBOOT=0
+  echo "-- Note: UEFI boot file 'bootx64.efi' or 'bootia32.efi' not found on ISO."
+  echo "-- UEFI boot will not be supported"
+else
+  EFIBOOT=1
+fi
+
+if [ $REFRESH -eq 0 ]; then
+  # Collect data from the ISO initrd:
+  read_initrd ${ISOMNT}/boot/initrd.img
+else
+  # Collect data from the USB initrd:
+  read_initrd ${USBMNT}/boot/initrd.img
+fi
+
 # Copy the ISO content into the USB Linux partition:
 echo "--- Copying files from ISO to USB... takes some time."
 if [ $VERBOSE -eq 1 ]; then
   # Show verbose progress:
-  rsync -av --progress --exclude=EFI ${ISOMNT}/* ${USBMNT}/
+  rsync -rlptD -v --progress --exclude=EFI ${ISOMNT}/* ${USBMNT}/
 elif [ -z "$(rsync  --info=progress2 2>&1 |grep "unknown option")" ]; then
   # Use recent rsync to display some progress because this can take _long_ :
-  rsync -a --no-inc-recursive --info=progress2 --exclude=EFI \
+  rsync -rlptD --no-inc-recursive --info=progress2 --exclude=EFI \
     ${ISOMNT}/* ${USBMNT}/
 else
   # Remain silent if we have an older rsync:
-  rsync -a --exclude=EFI ${ISOMNT}/* ${USBMNT}/
+  rsync -rlptD --exclude=EFI ${ISOMNT}/* ${USBMNT}/
+fi
+
+if [ $REFRESH -eq 1 ]; then
+  # Clean out old Live system data:
+  echo "--- Cleaning out old Live system data."
+  LIVEMAIN="$(echo $(find ${ISOMNT} -name "0099*") |rev |cut -d/ -f3 |rev)"
+  rsync -rlptD --delete \
+    ${ISOMNT}/${LIVEMAIN}/system/ ${USBMNT}/${LIVEMAIN}/system/
+  chattr -i ${USBMNT}/boot/extlinux/ldlinux.sys 2>/dev/null
+  rsync -rlptD --delete \
+    ${ISOMNT}/boot/ ${USBMNT}/boot/
 fi
 
 # Write down the version of the ISO image:
@@ -528,8 +578,21 @@ if [ $DOLUKS -eq 1 ]; then
   LUKSHOME=${CNTFILE}
 fi
 
-# Add more USB WAIT seconds to the initrd:
+# Update the initrd with longer USB wait time and LUKS /home info:
 update_initrd ${USBMNT}/boot/initrd.img
+
+if [ $REFRESH -eq 1 ]; then
+  # Determine what we need to do with persistence if this is a refresh.
+  if [ -f ${USBMNT}/${PERSISTENCE}.img ]; then
+    # If a persistence container exists, we re-use it:
+    PERSISTTYPE="file"
+  elif [ -d ${USBMNT}/${PERSISTENCE} -a "${PERSISTTYPE}" = "file" ]; then
+    # A persistence directory exists but the user wants a container now;
+    # so we will delete the persistence directory and create a container file
+    # (sorry persistent data will not be migrated):
+    rm -rf ${USBMNT}/${PERSISTENCE}
+  fi
+fi
 
 if [ "${PERSISTTYPE}" = "dir" ]; then
   # Create persistence directory:
@@ -557,7 +620,7 @@ fi
 echo "--- Making the USB drive '$TARGET' bootable using extlinux..."
 mv ${USBMNT}/boot/syslinux ${USBMNT}/boot/extlinux
 mv ${USBMNT}/boot/extlinux/isolinux.cfg ${USBMNT}/boot/extlinux/extlinux.conf
-rm ${USBMNT}/boot/extlinux/isolinux.*
+rm -f ${USBMNT}/boot/extlinux/isolinux.*
 /sbin/extlinux --install ${USBMNT}/boot/extlinux
 
 # No longer needed:
@@ -569,14 +632,26 @@ if [ $EFIBOOT -eq 1 ]; then
   mkdir -p ${USBMNT}/EFI/BOOT
   rsync -rlptD ${ISOMNT}/EFI/BOOT/* ${USBMNT}/EFI/BOOT/
   mkdir -p ${USBMNT}/boot
-  rsync -rlptD ${ISOMNT}/boot/* ${USBMNT}/boot/
-  # Add more USB WAIT seconds to the initrd:
+  echo "--- Copying EFI boot files from ISO to USB."
+  if [ $VERBOSE -eq 1 ]; then
+    rsync -rlptD -v ${ISOMNT}/boot/* ${USBMNT}/boot/
+  else
+    rsync -rlptD ${ISOMNT}/boot/* ${USBMNT}/boot/
+  fi
+  if [ $REFRESH -eq 1 ]; then
+    # Clean out old Live system data:
+    echo "--- Cleaning out old Live system data."
+    rsync -rlptD --delete \
+      ${ISOMNT}/EFI/BOOT/ ${USBMNT}/EFI/BOOT/
+    rsync -rlptD --delete \
+      ${ISOMNT}/boot/ ${USBMNT}/boot/
+  fi
+  # Update the initrd with longer USB wait time and LUKS container info:
   update_initrd ${USBMNT}/boot/initrd.img
 fi
 
 # No longer needed:
 if /sbin/mount |grep -qw ${USBMNT} ; then /sbin/umount ${USBMNT} ; fi
-if /sbin/mount |grep -qw ${EFIMNT} ; then /sbin/umount ${EFIMNT} ; fi
 
 # Unmount/remove stuff:
 cleanup
