@@ -198,7 +198,7 @@ update_initrd() {
     echo "--- Compressing the initrd image again:"
     chmod 0755 ${IMGDIR}
     find . |cpio -o -H newc |$COMPR > ${IMGFILE}
-  cd - 2>/dev/null
+  cd - 1>/dev/null
   rm -rf $IMGDIR/*
 } # End of update_initrd()
 
@@ -213,7 +213,7 @@ create_container() {
   # Create a container file or re-use previously created one:
   if [ -f $USBMNT/${CNTBASE}.img ]; then
     CNTFILE="${CNTBASE}.img"
-    CNTSIZE=$(( $(du -sk ${CNTFILE}) / 1024 ))
+    CNTSIZE=$(( $(du -sk $USBMNT/${CNTFILE} |tr '\t' ' ' |cut -f1 -d' ') / 1024 ))
     echo "--- Keeping existing '${CNTFILE}' (size ${CNTSIZE} MB)."
     return
   fi
@@ -561,7 +561,9 @@ if [ $REFRESH -eq 1 ]; then
   LIVEMAIN="$(echo $(find ${ISOMNT} -name "0099*") |rev |cut -d/ -f3 |rev)"
   rsync -rlptD --delete \
     ${ISOMNT}/${LIVEMAIN}/system/ ${USBMNT}/${LIVEMAIN}/system/
-  chattr -i ${USBMNT}/boot/extlinux/ldlinux.sys 2>/dev/null
+  if [ -f ${USBMNT}/boot/extlinux/ldlinux.sys ]; then
+    chattr -i ${USBMNT}/boot/extlinux/ldlinux.sys 2>/dev/null 
+  fi
   rsync -rlptD --delete \
     ${ISOMNT}/boot/ ${USBMNT}/boot/
 fi
@@ -586,6 +588,10 @@ if [ $REFRESH -eq 1 ]; then
   if [ -f ${USBMNT}/${PERSISTENCE}.img ]; then
     # If a persistence container exists, we re-use it:
     PERSISTTYPE="file"
+    if cryptsetup isLuks ${USBMNT}/${PERSISTENCE}.img ; then
+      # If the persistence file is LUKS encrypted we need to record its size:
+      PLUKSSIZE=$(( $(du -sk $USBMNT/${PERSISTENCE}.img |tr '\t' ' ' |cut -f1 -d' ') / 1024 ))
+    fi
   elif [ -d ${USBMNT}/${PERSISTENCE} -a "${PERSISTTYPE}" = "file" ]; then
     # A persistence directory exists but the user wants a container now;
     # so we will delete the persistence directory and create a container file
