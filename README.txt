@@ -80,6 +80,8 @@ This script, called 'iso2usb.sh', accepts the following parameters: <code>
   -i|--infile <filename>     Full path to the ISO image file.
   -o|--outdev <filename>     The device name of your USB drive.
   -p|--persistence <name>    Custom name of the 'persistence' directory/file.
+  -r|--refresh               Refresh the USB stick with the ISO content.
+                             No formatting, do not touch user content.
   -u|--unattended            Do not ask any questions.
   -v|--verbose               Show verbose messages.
   -w|--wait<number>          Add <number> seconds wait time to initialize USB.
@@ -256,6 +258,9 @@ nop => No persistence, i.e. boot the virgin installation in
   If you want to ignore any persistent data during boot,
   including LUKS data, specify "nop luksvol=" .
  
+nop=wipe => Wipe all data from persistence directory or container.
+  Useful in cases where your persistent data got corrupted.
+
 persistence=name => Use this if you are using a different
   directory/file than "persistence" for storing persistent data.
 
