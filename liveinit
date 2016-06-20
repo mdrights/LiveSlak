@@ -691,19 +691,19 @@ if [ "$RESCUE" = "" ]; then
       mount -o remount,rw /mnt/media
       # Find a free loop device to mount the persistence container file:
       prdev=$(find_loop)
-      prdir=${PERSISTENCE}_$(od -An -N1 -tu1 /dev/urandom |tr -d ' ')
+      prdir=$(basename ${PERSISTENCE})_$(od -An -N1 -tu1 /dev/urandom |tr -d ' ')
       mkdir -p /mnt/live/${prdir}
       losetup $prdev /mnt/media/${PERSISTENCE}.img
       # Check if the persistence container is LUKS encrypted:
       if cryptsetup isLuks $prdev 1>/dev/null 2>/dev/null ; then
         echo "Unlocking LUKS encrypted persistence file '/${PERSISTENCE}.img'"
-        cryptsetup luksOpen $prdev ${PERSISTENCE} </dev/tty0 >/dev/tty0 2>&1
+        cryptsetup luksOpen $prdev $(basename ${PERSISTENCE}) </dev/tty0 >/dev/tty0 2>&1
         if [ $? -ne 0 ]; then
           echo "${MARKER}:  Failed to unlock persistence file '/${PERSISTENCE}.img'."
           echo "${MARKER}:  Falling back to RAM."
         else
           # LUKS properly unlocked; from now on use the mapper device instead:
-          prdev=/dev/mapper/${PERSISTENCE}
+          prdev=/dev/mapper/$(basename ${PERSISTENCE})
         fi
       fi
       prfs=$(blkid $prdev |rev |cut -d'"' -f2 |rev)
@@ -714,10 +714,10 @@ if [ "$RESCUE" = "" ]; then
       else
         if [ "$WIPE_PERSISTENCE" = "1" ]; then
           echo "${MARKER}:  Wiping existing persistent data in '/${PERSISTENCE}.img'."
-          find /mnt/live/${prdir}/${PERSISTENCE}/ -mindepth 1 -exec rm -rf {} \; 2>/dev/null
+          find /mnt/live/${prdir}/$(basename ${PERSISTENCE})/ -mindepth 1 -exec rm -rf {} \; 2>/dev/null
         fi
         echo "${MARKER}:  Writing persistent changes to file '/${PERSISTENCE}.img'."
-        UPPERDIR=/mnt/live/${prdir}/${PERSISTENCE}
+        UPPERDIR=/mnt/live/${prdir}/$(basename ${PERSISTENCE})
         OVLWORK=/mnt/live/${prdir}/.ovlwork
       fi
     fi

@@ -28,7 +28,8 @@ FORCE=0
 
 # By default, we use 'persistence' as the name of the persistence directory,
 # or 'persistence.img' as the name of the persistence container:
-PERSISTENCE="persistence"
+DEF_PERSISTENCE="persistence"
+PERSISTENCE="${DEF_PERSISTENCE}"
 
 # Default persistence type is a directory:
 PERSISTTYPE="dir"
@@ -40,6 +41,7 @@ UNATTENDED=0
 VERBOSE=0
 
 # Variables to store content from an initrd we are going to refresh:
+OLDPERSISTENCE=""
 OLDWAIT=""
 OLDLUKS=""
 
@@ -84,7 +86,7 @@ cleanup() {
     # In case of failure, only the most recent device should still be open:
     if mount |grep -q ${CNTDEV} ; then
       umount -f ${CNTDEV}
-      cryptsetup luksClose ${CNTBASE}
+      cryptsetup luksClose $(basename ${CNTBASE})
       losetup -d ${LODEV}
     fi
   fi
@@ -148,6 +150,7 @@ uncompressfs () {
 read_initrd() {
   IMGFILE="$1"
 
+  OLDPERSISTENCE=$(uncompressfs ${IMGFILE} |cpio -i --to-stdout init |grep "^PERSISTENCE" |cut -d '"' -f2 2>/dev/null)
   OLDWAIT=$(uncompressfs ${IMGFILE} |cpio -i --to-stdout wait-for-root 2>/dev/null)
   OLDLUKS=$(uncompressfs ${IMGFILE} |cpio -i --to-stdout luksdev 2>/dev/null)
 }
@@ -182,6 +185,15 @@ update_initrd() {
       echo "--- Refreshing Slackware initrd..."
       WAIT="$OLDWAIT"
       echo "$OLDLUKS" >> luksdev
+      if [ "${PERSISTENCE}" != "${DEF_PERSISTENCE}" ]; then
+        # If the user specified a nonstandard persistence, use that:
+        sed -i -e "s,^PERSISTENCE=.*,PERSISTENCE=\"${PERSISTENCE}\"," init
+      elif ["${PERSISTENCE}" != "${OLDPERSISTENCE}" ]; then
+        # The user did not specify persistence, re-use the custome value:
+        sed -i -e "s,^PERSISTENCE=.*,PERSISTENCE=\"${OLDPERSISTENCE}\"," init
+        echo "--- Updating 'persistence' from '$PERSISTENCE' to '$OLDPERSISTENCE':"
+        PERSISTENCE="${OLDPERSISTENCE}"
+      fi
     else
       echo "--- Updating 'waitforroot' time from '$OLDWAIT' to '$WAIT':"
     fi
@@ -253,6 +265,7 @@ create_container() {
   fi
 
   echo "--- Creating ${CNTSIZE} MB container file using 'dd if=/dev/urandom', patience please..."
+  mkdir -p $USBMNT/$(dirname "${CNTBASE}")
   CNTFILE="${CNTBASE}.img"
   # Create a sparse file (not allocating any space yet):
   dd of=$USBMNT/${CNTFILE} bs=1M count=0 seek=$CNTSIZE
@@ -266,8 +279,8 @@ create_container() {
     cryptsetup -y luksFormat $LODEV
     # Unlock the LUKS encrypted container:
     echo "--- Unlocking the LUKS container requires your passphrase again..."
-    cryptsetup luksOpen $LODEV ${CNTBASE}
-    CNTDEV=/dev/mapper/${CNTBASE}
+    cryptsetup luksOpen $LODEV $(basename ${CNTBASE})
+    CNTDEV=/dev/mapper/$(basename ${CNTBASE})
     # Now we allocate blocks for the LUKS device. We write encrypted zeroes,
     # so that the file looks randomly filled from the outside.
     # Take care not to write more bytes than the internal size of the container:
@@ -305,7 +318,7 @@ create_container() {
 
   # Don't forget to clean up after ourselves:
   if [ "${CNTENCR}" = "luks" ]; then
-    cryptsetup luksClose ${CNTBASE}
+    cryptsetup luksClose $(basename ${CNTBASE})
   fi
   losetup -d ${LODEV} || true
 
@@ -580,11 +593,20 @@ if [ $DOLUKS -eq 1 ]; then
   LUKSHOME=${CNTFILE}
 fi
 
-# Update the initrd with longer USB wait time and LUKS /home info:
+# Update the initrd with regard to USB wait time, persistence and LUKS.
+# If this is a refresh and anything changed to persistence, then the
+# variable $PERSISTENCE will have the correct value when exing this call:
 update_initrd ${USBMNT}/boot/initrd.img
 
 if [ $REFRESH -eq 1 ]; then
   # Determine what we need to do with persistence if this is a refresh.
+  if [ "${PERSISTENCE}" != "${OLDPERSISTENCE}" ]; then
+    # The user specified a nonstandard persistence, so move the old one first;
+    # hide any errors if it did not *yet* exist:
+    mkdir -p ${USBMNT}/$(dirname ${PERSISTENCE})
+    mv ${USBMNT}/${OLDPERSISTENCE}.img ${USBMNT}/${PERSISTENCE}.img 2>/dev/null
+    mv ${USBMNT}/${OLDPERSISTENCE} ${USBMNT}/${PERSISTENCE} 2>/dev/null
+  fi
   if [ -f ${USBMNT}/${PERSISTENCE}.img ]; then
     # If a persistence container exists, we re-use it:
     PERSISTTYPE="file"
