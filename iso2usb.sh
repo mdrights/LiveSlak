@@ -187,17 +187,23 @@ update_initrd() {
       echo "$OLDLUKS" >> luksdev
       if [ "${PERSISTENCE}" != "${DEF_PERSISTENCE}" ]; then
         # If the user specified a nonstandard persistence, use that:
+        echo "--- Updating persistence from '$OLDPERSISTENCE' to '$PERSISTENCE'"
         sed -i -e "s,^PERSISTENCE=.*,PERSISTENCE=\"${PERSISTENCE}\"," init
       elif ["${PERSISTENCE}" != "${OLDPERSISTENCE}" ]; then
-        # The user did not specify persistence, re-use the custome value:
+        # The user did not specify persistence, re-use the retrieved value:
         sed -i -e "s,^PERSISTENCE=.*,PERSISTENCE=\"${OLDPERSISTENCE}\"," init
-        echo "--- Updating 'persistence' from '$PERSISTENCE' to '$OLDPERSISTENCE':"
+        echo "--- Updating persistence from '$PERSISTENCE' to '$OLDPERSISTENCE'"
         PERSISTENCE="${OLDPERSISTENCE}"
       fi
     else
-      echo "--- Updating 'waitforroot' time from '$OLDWAIT' to '$WAIT':"
+      if [ "${PERSISTENCE}" != "${DEF_PERSISTENCE}" ]; then
+        # If the user specified a nonstandard persistence, use that:
+        echo "--- Updating persitence from '$DEF_PERSISTENCE' to '$PERSISTENCE'"
+        sed -i -e "s,^PERSISTENCE=.*,PERSISTENCE=\"${PERSISTENCE}\"," init
+      fi
     fi
 
+    echo "--- Updating 'waitforroot' time from '$OLDWAIT' to '$WAIT'"
     echo ${WAIT} > wait-for-root
 
     if [ $DOLUKS -eq 1 -a -n "${LUKSHOME}" ]; then
