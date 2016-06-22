@@ -220,14 +220,18 @@ for ARG in $(cat /proc/cmdline); do
   esac
 done
 
+# Verbose boot script execution:
 [ $DEBUG -ge 2 ] && set -x
 
 debugit () {
-  [ $DEBUG -eq 0 -o $DEBUG -gt 3 ] && return
-  echo "DEBUG>> -- blkid info -- :"
-  blkid | while read LINE ; do echo "DEBUG>> $LINE" ; done
-  echo "DEBUG>> -- mount info -- :"
-  mount | while read LINE ; do echo "DEBUG>> $LINE" ; done
+  if [ $DEBUG -eq 0 -o $DEBUG -gt 3 ]; then
+    return
+  elif [ $DEBUG -le 2 ]; then
+    echo "DEBUG>> -- blkid info -- :"
+    blkid | while read LINE ; do echo "DEBUG>> $LINE" ; done
+    echo "DEBUG>> -- mount info -- :"
+    mount | while read LINE ; do echo "DEBUG>> $LINE" ; done
+  fi
   echo "DEBUG>> -- Press ENTER to continue -- : "
   read JUNK
   return
@@ -729,6 +733,8 @@ if [ "$RESCUE" = "" ]; then
       mount -o remount,rw /mnt/media
     fi
   fi
+
+  debugit
 
   # Create the writable upper directory, plus the workdir which is required
   # for overlay to function (the two must be in the same POSIX filesystem):
