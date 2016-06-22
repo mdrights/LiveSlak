@@ -198,7 +198,7 @@ update_initrd() {
     else
       if [ "${PERSISTENCE}" != "${DEF_PERSISTENCE}" ]; then
         # If the user specified a nonstandard persistence, use that:
-        echo "--- Updating persitence from '$DEF_PERSISTENCE' to '$PERSISTENCE'"
+        echo "--- Updating persistence from '$DEF_PERSISTENCE' to '$PERSISTENCE'"
         sed -i -e "s,^PERSISTENCE=.*,PERSISTENCE=\"${PERSISTENCE}\"," init
       fi
     fi
