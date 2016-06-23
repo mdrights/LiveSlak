@@ -60,21 +60,20 @@ elif [ -f "$2" -a "$INTERACTIVE" = "YES" ]; then
   fi
 fi
 
-# .sxz extension uses xz compression:
-COMPR="xz"
+MODEXT=$(echo "$2" |rev |cut -d'.' -f1 |rev)
+case $MODEXT in
+  sxz) COMPR="xz" ;;
+  sgz) COMPR="gzip" ;;
+  xzm) COMPR="xz" ;;
+    *) echo "-- Unsupported module extension '$MODEXT'" ; exit 1 ;;
+esac 
 
 if [ -d "$1" ]; then
-  echo "Creating .sxz from directory."
+  echo "Creating .${MODEXT} module from directory using '$COMPR' compression."
+  TMPDIR=$(mktemp -t -d makesxz.XXXXXX)
   PKGDIR="$1"
 else
-  MODEXT=$(echo "$2" |rev |cut -d'.' -f1 |rev)
-  case $MODEXT in
-    sxz) COMPR="xz" ;;
-    sgz) COMPR="gzip" ;;
-    xzm) COMPR="xz" ;;
-      *) echo "-- Unsupported module extension '$MODEXT'" ; exit 1 ;;
-  esac 
-  echo "Creating .${MODEXT} from package."
+  echo "Creating .${MODEXT} module from package using '$COMPR' compression."
   TMPDIR=$(mktemp -t -d makesxz.XXXXXX)
   PKGDIR="$TMPDIR"
   if [ ! -d $PKGDIR ]; then
