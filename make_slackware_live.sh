@@ -129,6 +129,9 @@ MARKER=${MARKER:-"SLACKWARELIVE"}
 # The filesystem label we will be giving our ISO:
 MEDIALABEL=${MEDIALABEL:-"LIVESLAK"}
 
+# For x86_64 you can add multilib:
+MULTILIB=${MULTILIB:-"NO"}
+
 # The name of the directory used for storing persistence data:
 PERSISTENCE=${PERSISTENCE:-"persistence"}
 
@@ -596,7 +599,7 @@ EOL
 # Action!
 # ---------------------------------------------------------------------------
 
-while getopts "a:d:efhm:r:s:t:vz:HO:R:X" Option
+while getopts "a:d:efhm:r:s:t:vz:H:MO:R:X" Option
 do
   case $Option in
     h )
@@ -629,6 +632,7 @@ do
         echo " -v                 Show debug/error output."
         echo " -z version         Define your ${DISTRO^} version (default: $SL_VERSION)."
         echo " -H hostname        Hostname of the Live OS (default: $LIVE_HOSTNAME)."
+        echo " -M                 Add multilib (x86_64 only)."
         echo " -O outfile         Custom filename for the ISO."
         echo " -R runlevel        Runlevel to boot into (default: $RUNLEVEL)."
         echo " -X                 Use xorriso instead of mkisofs/isohybrid."
@@ -655,6 +659,8 @@ do
     z ) SL_VERSION="${OPTARG}"
         ;;
     H ) LIVE_HOSTNAME="${OPTARG}"
+        ;;
+    M ) MULTILIB="YES"
         ;;
     O ) OUTFILE="${OPTARG}"
         OUTPUT="$(cd $(dirname "${OUTFILE}"); pwd)"
@@ -689,6 +695,11 @@ fi
 
 if [ $RUNLEVEL -ne 3 -a $RUNLEVEL -ne 4 ]; then
   echo ">> Default runlevel other than 3 or 4 is not supported."
+  exit 1
+fi
+
+if [ "$SL_ARCH" != "x86_64" -a "$MULTILIB" = "YES" ]; then
+  echo ">> Multilib is only supported on x86_64 architecture."
   exit 1
 fi
 
@@ -800,8 +811,15 @@ case "$LIVEDE" in
              ;;
 esac
 
+# Do we need to include multilib?
+if [ "$MULTILIB" = "YES" ]; then
+  echo "-- Adding multilib."
+  MSEQ="${MSEQ} pkglist:multilib"
+fi
+
 # Do we need to create/include additional module(s) defined by a pkglist:
 if [ -n "$SEQ_ADDMOD" ]; then
+  echo "-- Adding ${SEQ_ADDMOD}."
   MSEQ="${MSEQ} pkglist:${SEQ_ADDMOD}"
 fi
 
