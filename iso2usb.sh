@@ -26,9 +26,14 @@ set -e
 # Set to '1' if you want to ignore all warnings:
 FORCE=0
 
+# By default, we use 'slhome.img' as the name of the LUKS home containerfile.
+DEF_SLHOME="slhome"
+SLHOME="${DEF_SLHOME}"
+
 # By default, we use 'persistence' as the name of the persistence directory,
 # or 'persistence.img' as the name of the persistence container:
-PERSISTENCE="persistence"
+DEF_PERSISTENCE="persistence"
+PERSISTENCE="${DEF_PERSISTENCE}"
 
 # Default persistence type is a directory:
 PERSISTTYPE="dir"
@@ -40,6 +45,7 @@ UNATTENDED=0
 VERBOSE=0
 
 # Variables to store content from an initrd we are going to refresh:
+OLDPERSISTENCE=""
 OLDWAIT=""
 OLDLUKS=""
 
@@ -64,6 +70,7 @@ IMGDIR=""
 ISOMNT=""
 CNTMNT=""
 USBMNT=""
+US2MNT=""
 
 # Compressor used on the initrd ("gzip" or "xz --check=crc32");
 # Note that the kernel's XZ decompressor does not understand CRC64:
@@ -84,13 +91,14 @@ cleanup() {
     # In case of failure, only the most recent device should still be open:
     if mount |grep -q ${CNTDEV} ; then
       umount -f ${CNTDEV}
-      cryptsetup luksClose ${CNTBASE}
+      cryptsetup luksClose $(basename ${CNTBASE})
       losetup -d ${LODEV}
     fi
   fi
   [ -n "${ISOMNT}" ] && ( /sbin/umount -f ${ISOMNT} 2>/dev/null; rmdir $ISOMNT )
   [ -n "${CNTMNT}" ] && ( /sbin/umount -f ${CNTMNT} 2>/dev/null; rmdir $CNTMNT )
   [ -n "${USBMNT}" ] && ( /sbin/umount -f ${USBMNT} 2>/dev/null; rmdir $USBMNT )
+  [ -n "${US2MNT}" ] && ( /sbin/umount -f ${US2MNT} 2>/dev/null; rmdir $US2MNT )
   [ -n "${IMGDIR}" ] && ( rm -rf $IMGDIR )
   set -e
 }
@@ -114,8 +122,11 @@ cat <<EOT
 #   -f|--force                 Ignore most warnings (except the back-out).
 #   -h|--help                  This help.
 #   -i|--infile <filename>     Full path to the ISO image file.
+#   -l|--lukshome <name>       Custom path to the containerfile for your LUKS
+#                              encrypted /home ($SLHOME by default).
 #   -o|--outdev <filename>     The device name of your USB drive.
-#   -p|--persistence <dirname> Custom name of the 'persistence' directory.
+#   -p|--persistence <name>    Custom path to the 'persistence' directory
+#                              or containerfile ($PERSISTENCE by default).
 #   -r|--refresh               Refresh the USB stick with the ISO content.
 #                              No formatting, do not touch user content.
 #   -u|--unattended            Do not ask any questions.
@@ -148,6 +159,7 @@ uncompressfs () {
 read_initrd() {
   IMGFILE="$1"
 
+  OLDPERSISTENCE=$(uncompressfs ${IMGFILE} |cpio -i --to-stdout init |grep "^PERSISTENCE" |cut -d '"' -f2 2>/dev/null)
   OLDWAIT=$(uncompressfs ${IMGFILE} |cpio -i --to-stdout wait-for-root 2>/dev/null)
   OLDLUKS=$(uncompressfs ${IMGFILE} |cpio -i --to-stdout luksdev 2>/dev/null)
 }
@@ -181,11 +193,30 @@ update_initrd() {
     if [ $REFRESH -eq 1 ]; then
       echo "--- Refreshing Slackware initrd..."
       WAIT="$OLDWAIT"
+      if [ -n "$OLDLUKS" ]; then
+        echo "--- Detected LUKS container configuration:"
+        echo "$OLDLUKS" | sed 's/^/    /'
+      fi
       echo "$OLDLUKS" >> luksdev
+      if [ "${PERSISTENCE}" != "${DEF_PERSISTENCE}" ]; then
+        # If the user specified a nonstandard persistence, use that:
+        echo "--- Updating persistence from '$OLDPERSISTENCE' to '$PERSISTENCE'"
+        sed -i -e "s,^PERSISTENCE=.*,PERSISTENCE=\"${PERSISTENCE}\"," init
+      elif [ "${PERSISTENCE}" != "${OLDPERSISTENCE}" ]; then
+        # The user did not specify persistence, re-use the retrieved value:
+        sed -i -e "s,^PERSISTENCE=.*,PERSISTENCE=\"${OLDPERSISTENCE}\"," init
+        echo "--- Re-use previous '$OLDPERSISTENCE' for persistence"
+        PERSISTENCE="${OLDPERSISTENCE}"
+      fi
     else
-      echo "--- Updating 'waitforroot' time from '$OLDWAIT' to '$WAIT':"
+      if [ "${PERSISTENCE}" != "${DEF_PERSISTENCE}" ]; then
+        # If the user specified a nonstandard persistence, use that:
+        echo "--- Updating persistence from '$DEF_PERSISTENCE' to '$PERSISTENCE'"
+        sed -i -e "s,^PERSISTENCE=.*,PERSISTENCE=\"${PERSISTENCE}\"," init
+      fi
     fi
 
+    echo "--- Updating 'waitforroot' time from '$OLDWAIT' to '$WAIT'"
     echo ${WAIT} > wait-for-root
 
     if [ $DOLUKS -eq 1 -a -n "${LUKSHOME}" ]; then
@@ -253,6 +284,7 @@ create_container() {
   fi
 
   echo "--- Creating ${CNTSIZE} MB container file using 'dd if=/dev/urandom', patience please..."
+  mkdir -p $USBMNT/$(dirname "${CNTBASE}")
   CNTFILE="${CNTBASE}.img"
   # Create a sparse file (not allocating any space yet):
   dd of=$USBMNT/${CNTFILE} bs=1M count=0 seek=$CNTSIZE
@@ -266,8 +298,8 @@ create_container() {
     cryptsetup -y luksFormat $LODEV
     # Unlock the LUKS encrypted container:
     echo "--- Unlocking the LUKS container requires your passphrase again..."
-    cryptsetup luksOpen $LODEV ${CNTBASE}
-    CNTDEV=/dev/mapper/${CNTBASE}
+    cryptsetup luksOpen $LODEV $(basename ${CNTBASE})
+    CNTDEV=/dev/mapper/$(basename ${CNTBASE})
     # Now we allocate blocks for the LUKS device. We write encrypted zeroes,
     # so that the file looks randomly filled from the outside.
     # Take care not to write more bytes than the internal size of the container:
@@ -305,7 +337,7 @@ create_container() {
 
   # Don't forget to clean up after ourselves:
   if [ "${CNTENCR}" = "luks" ]; then
-    cryptsetup luksClose ${CNTBASE}
+    cryptsetup luksClose $(basename ${CNTBASE})
   fi
   losetup -d ${LODEV} || true
 
@@ -337,6 +369,10 @@ while [ ! -z "$1" ]; do
       ;;
     -i|--infile)
       SLISO="$(cd $(dirname $2); pwd)/$(basename $2)"
+      shift 2
+      ;;
+    -l|--lukshome)
+      SLHOME="$2"
       shift 2
       ;;
     -o|--outdev)
@@ -508,7 +544,7 @@ if [ ! -d $ISOMNT ]; then
 else
   chmod 711 $ISOMNT
 fi
-# USB mount:
+# USB mounts:
 USBMNT=$(mktemp -d -p /mnt -t alienusb.XXXXXX)
 if [ ! -d $USBMNT ]; then
   echo "*** Failed to create a temporary mount point for the USB device!"
@@ -516,6 +552,14 @@ if [ ! -d $USBMNT ]; then
   exit 1
 else
   chmod 711 $USBMNT
+fi
+US2MNT=$(mktemp -d -p /mnt -t alienus2.XXXXXX)
+if [ ! -d $US2MNT ]; then
+  echo "*** Failed to create a temporary mount point for the USB device!"
+  cleanup
+  exit 1
+else
+  chmod 711 $US2MNT
 fi
 
 # Mount the Linux partition:
@@ -576,15 +620,26 @@ fi
 
 if [ $DOLUKS -eq 1 ]; then
   # Create LUKS container file:
-  create_container ${TARGET}3 ${HLUKSSIZE} slhome luks /home
+  create_container ${TARGET}3 ${HLUKSSIZE} ${SLHOME} luks /home
   LUKSHOME=${CNTFILE}
 fi
 
-# Update the initrd with longer USB wait time and LUKS /home info:
+# Update the initrd with regard to USB wait time, persistence and LUKS.
+# If this is a refresh and anything changed to persistence, then the
+# variable $PERSISTENCE will have the correct value when exing this function:
+# If you want to move your LUKS home containerfile you'll have to do that
+# manually - not a supported option for now.
 update_initrd ${USBMNT}/boot/initrd.img
 
 if [ $REFRESH -eq 1 ]; then
   # Determine what we need to do with persistence if this is a refresh.
+  if [ "${PERSISTENCE}" != "${OLDPERSISTENCE}" ]; then
+    # The user specified a nonstandard persistence, so move the old one first;
+    # hide any errors if it did not *yet* exist:
+    mkdir -p ${USBMNT}/$(dirname ${PERSISTENCE})
+    mv ${USBMNT}/${OLDPERSISTENCE}.img ${USBMNT}/${PERSISTENCE}.img 2>/dev/null
+    mv ${USBMNT}/${OLDPERSISTENCE} ${USBMNT}/${PERSISTENCE} 2>/dev/null
+  fi
   if [ -f ${USBMNT}/${PERSISTENCE}.img ]; then
     # If a persistence container exists, we re-use it:
     PERSISTTYPE="file"
@@ -629,35 +684,34 @@ mv ${USBMNT}/boot/extlinux/isolinux.cfg ${USBMNT}/boot/extlinux/extlinux.conf
 rm -f ${USBMNT}/boot/extlinux/isolinux.*
 /sbin/extlinux --install ${USBMNT}/boot/extlinux
 
-# No longer needed:
-if /sbin/mount |grep -qw ${USBMNT} ; then /sbin/umount ${USBMNT} ; fi
-
 if [ $EFIBOOT -eq 1 ]; then
   # Mount the EFI partition and copy /EFI as well as /boot directories into it:
-  /sbin/mount -t vfat -o shortname=mixed ${TARGET}2 ${USBMNT}
-  mkdir -p ${USBMNT}/EFI/BOOT
-  rsync -rlptD ${ISOMNT}/EFI/BOOT/* ${USBMNT}/EFI/BOOT/
+  /sbin/mount -t vfat -o shortname=mixed ${TARGET}2 ${US2MNT}
+  mkdir -p ${US2MNT}/EFI/BOOT
+  rsync -rlptD ${ISOMNT}/EFI/BOOT/* ${US2MNT}/EFI/BOOT/
   mkdir -p ${USBMNT}/boot
   echo "--- Copying EFI boot files from ISO to USB."
   if [ $VERBOSE -eq 1 ]; then
-    rsync -rlptD -v ${ISOMNT}/boot/* ${USBMNT}/boot/
+    rsync -rlptD -v ${ISOMNT}/boot/* ${US2MNT}/boot/
   else
-    rsync -rlptD ${ISOMNT}/boot/* ${USBMNT}/boot/
+    rsync -rlptD ${ISOMNT}/boot/* ${US2MNT}/boot/
   fi
   if [ $REFRESH -eq 1 ]; then
     # Clean out old Live system data:
     echo "--- Cleaning out old Live system data."
     rsync -rlptD --delete \
-      ${ISOMNT}/EFI/BOOT/ ${USBMNT}/EFI/BOOT/
+      ${ISOMNT}/EFI/BOOT/ ${US2MNT}/EFI/BOOT/
     rsync -rlptD --delete \
-      ${ISOMNT}/boot/ ${USBMNT}/boot/
+      ${ISOMNT}/boot/ ${US2MNT}/boot/
   fi
-  # Update the initrd with longer USB wait time and LUKS container info:
-  update_initrd ${USBMNT}/boot/initrd.img
+  # Copy the modified initrd over from the Linux partition:
+  cat ${USBMNT}/boot/initrd.img > ${US2MNT}/boot/initrd.img
+  sync
 fi
 
 # No longer needed:
 if /sbin/mount |grep -qw ${USBMNT} ; then /sbin/umount ${USBMNT} ; fi
+if /sbin/mount |grep -qw ${US2MNT} ; then /sbin/umount ${US2MNT} ; fi
 
 # Unmount/remove stuff:
 cleanup

@@ -220,14 +220,18 @@ for ARG in $(cat /proc/cmdline); do
   esac
 done
 
+# Verbose boot script execution:
 [ $DEBUG -ge 2 ] && set -x
 
 debugit () {
-  [ $DEBUG -eq 0 -o $DEBUG -gt 3 ] && return
-  echo "DEBUG>> -- blkid info -- :"
-  blkid | while read LINE ; do echo "DEBUG>> $LINE" ; done
-  echo "DEBUG>> -- mount info -- :"
-  mount | while read LINE ; do echo "DEBUG>> $LINE" ; done
+  if [ $DEBUG -eq 0 -o $DEBUG -gt 3 ]; then
+    return
+  elif [ $DEBUG -le 2 ]; then
+    echo "DEBUG>> -- blkid info -- :"
+    blkid | while read LINE ; do echo "DEBUG>> $LINE" ; done
+    echo "DEBUG>> -- mount info -- :"
+    mount | while read LINE ; do echo "DEBUG>> $LINE" ; done
+  fi
   echo "DEBUG>> -- Press ENTER to continue -- : "
   read JUNK
   return
@@ -691,19 +695,19 @@ if [ "$RESCUE" = "" ]; then
       mount -o remount,rw /mnt/media
       # Find a free loop device to mount the persistence container file:
       prdev=$(find_loop)
-      prdir=${PERSISTENCE}_$(od -An -N1 -tu1 /dev/urandom |tr -d ' ')
+      prdir=$(basename ${PERSISTENCE})_$(od -An -N1 -tu1 /dev/urandom |tr -d ' ')
       mkdir -p /mnt/live/${prdir}
       losetup $prdev /mnt/media/${PERSISTENCE}.img
       # Check if the persistence container is LUKS encrypted:
       if cryptsetup isLuks $prdev 1>/dev/null 2>/dev/null ; then
         echo "Unlocking LUKS encrypted persistence file '/${PERSISTENCE}.img'"
-        cryptsetup luksOpen $prdev ${PERSISTENCE} </dev/tty0 >/dev/tty0 2>&1
+        cryptsetup luksOpen $prdev $(basename ${PERSISTENCE}) </dev/tty0 >/dev/tty0 2>&1
         if [ $? -ne 0 ]; then
           echo "${MARKER}:  Failed to unlock persistence file '/${PERSISTENCE}.img'."
           echo "${MARKER}:  Falling back to RAM."
         else
           # LUKS properly unlocked; from now on use the mapper device instead:
-          prdev=/dev/mapper/${PERSISTENCE}
+          prdev=/dev/mapper/$(basename ${PERSISTENCE})
         fi
       fi
       prfs=$(blkid $prdev |rev |cut -d'"' -f2 |rev)
@@ -714,10 +718,10 @@ if [ "$RESCUE" = "" ]; then
       else
         if [ "$WIPE_PERSISTENCE" = "1" ]; then
           echo "${MARKER}:  Wiping existing persistent data in '/${PERSISTENCE}.img'."
-          find /mnt/live/${prdir}/${PERSISTENCE}/ -mindepth 1 -exec rm -rf {} \; 2>/dev/null
+          find /mnt/live/${prdir}/$(basename ${PERSISTENCE})/ -mindepth 1 -exec rm -rf {} \; 2>/dev/null
         fi
         echo "${MARKER}:  Writing persistent changes to file '/${PERSISTENCE}.img'."
-        UPPERDIR=/mnt/live/${prdir}/${PERSISTENCE}
+        UPPERDIR=/mnt/live/${prdir}/$(basename ${PERSISTENCE})
         OVLWORK=/mnt/live/${prdir}/.ovlwork
       fi
     fi
@@ -729,6 +733,8 @@ if [ "$RESCUE" = "" ]; then
       mount -o remount,rw /mnt/media
     fi
   fi
+
+  debugit
 
   # Create the writable upper directory, plus the workdir which is required
   # for overlay to function (the two must be in the same POSIX filesystem):
