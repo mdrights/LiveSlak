@@ -1284,15 +1284,18 @@ echo "-- Configuring KDE4."
 
 # Adjust some usability issues with the default desktop layout:
 if [ -f ${LIVE_ROOTDIR}/usr/share/apps/plasma/layout-templates/org.kde.plasma-desktop.defaultPanel/contents/layout.js ]; then
-  sed -i \
-    -e '/showActivityManager/a konsole = panel.addWidget("quicklaunch")' \
-    -e '/showActivityManager/a dolphin = panel.addWidget("quicklaunch")' \
-    -e '/showActivityManager/a firefox = panel.addWidget("quicklaunch")' \
-    -e '$a firefox.writeConfig("iconUrls","file:///usr/share/applications/mozilla-firefox.desktop")' \
-    -e '$a dolphin.writeConfig("iconUrls","file:////usr/share/applications/kde4/dolphin.desktop")' \
-    -e '$a konsole.writeConfig("iconUrls","file:///usr/share/applications/kde4/konsole.desktop")' \
-    -e '/tasks.writeConfig/d' \
-    ${LIVE_ROOTDIR}/usr/share/apps/plasma/layout-templates/org.kde.plasma-desktop.defaultPanel/contents/layout.js
+  # Only apply to an unmodified file (Slackware 14.2 already implements it):
+  if grep -q 'tasks.writeConfig' ${LIVE_ROOTDIR}/usr/share/apps/plasma/layout-templates/org.kde.plasma-desktop.defaultPanel/contents/layout.js ]; then
+    sed -i \
+      -e '/showActivityManager/a konsole = panel.addWidget("quicklaunch")' \
+      -e '/showActivityManager/a dolphin = panel.addWidget("quicklaunch")' \
+      -e '/showActivityManager/a firefox = panel.addWidget("quicklaunch")' \
+      -e '$a firefox.writeConfig("iconUrls","file:///usr/share/applications/mozilla-firefox.desktop")' \
+      -e '$a dolphin.writeConfig("iconUrls","file:////usr/share/applications/kde4/dolphin.desktop")' \
+      -e '$a konsole.writeConfig("iconUrls","file:///usr/share/applications/kde4/konsole.desktop")' \
+      -e '/tasks.writeConfig/d' \
+      ${LIVE_ROOTDIR}/usr/share/apps/plasma/layout-templates/org.kde.plasma-desktop.defaultPanel/contents/layout.js
+  fi
 fi
 
 # Prepare some KDE4 defaults for the 'live' user and any new users.
