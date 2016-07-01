@@ -1108,8 +1108,8 @@ MIRRORPLUS['slackpkgplus']=http://slakfinder.org/slackpkg+/
 MIRRORPLUS['restricted']=http://bear.alienbase.nl/mirrors/people/alien/restricted_sbrepos/${SL_VERSION}/${SL_ARCH}/
 MIRRORPLUS['alienbob']=http://bear.alienbase.nl/mirrors/people/alien/sbrepos/${SL_VERSION}/${SL_ARCH}/
 MIRRORPLUS['ktown_testing']=http://bear.alienbase.nl/mirrors/alien-kde/${SL_VERSION}/testing/${SL_ARCH}/
-MIRRORPLUS['mate_testing']=http://slackware.uk/msb/testing/1.12/${SL_ARCH}/
-
+#MIRRORPLUS['ktown']=http://bear.alienbase.nl/mirrors/alien-kde/${SL_VERSION}/latest/${SL_ARCH}/
+MIRRORPLUS['mate']=http://slackware.uk/msb/${SL_VERSION}/latest/${SL_ARCH}/ 
 EOPL
 fi
 
