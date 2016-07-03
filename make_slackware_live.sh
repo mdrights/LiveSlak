@@ -1285,7 +1285,7 @@ echo "-- Configuring KDE4."
 # Adjust some usability issues with the default desktop layout:
 if [ -f ${LIVE_ROOTDIR}/usr/share/apps/plasma/layout-templates/org.kde.plasma-desktop.defaultPanel/contents/layout.js ]; then
   # Only apply to an unmodified file (Slackware 14.2 already implements it):
-  if grep -q 'tasks.writeConfig' ${LIVE_ROOTDIR}/usr/share/apps/plasma/layout-templates/org.kde.plasma-desktop.defaultPanel/contents/layout.js ]; then
+  if grep -q 'tasks.writeConfig' ${LIVE_ROOTDIR}/usr/share/apps/plasma/layout-templates/org.kde.plasma-desktop.defaultPanel/contents/layout.js ; then
     sed -i \
       -e '/showActivityManager/a konsole = panel.addWidget("quicklaunch")' \
       -e '/showActivityManager/a dolphin = panel.addWidget("quicklaunch")' \
