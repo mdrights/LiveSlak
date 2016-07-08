@@ -63,6 +63,41 @@ Slackware Live Edition knows two user accounts: "root" and "live".  They have pa
 Slackware Live Edition deviates as little as possible from a regular Slackware boot.  Once you have passed the initial Liveboot stage and brought up the actual OS, you login as user "live".  From that moment onwards, you are in a regular Slackware environment.
 
 
+==== Booting the Live OS ====
+
+
+=== BIOS boot ===
+
+
+Slackware Live Edition uses syslinux to boot the Linux kernel on BIOS computers. To be precise, the "isolinux" variant is installed to the ISO image and the "extlinux" variant is installed into the Linux partition of the USB Live version.
+
+Syslinux shows a graphical boot menu with a nice Slackware-themed background and several options:
+  * Start (SLACKWARE | PLASMA5 | XFCE | MATE) Live (depending on which of the ISOs you boot)
+  * Non-US Keyboard selection
+  * Non-US Language selection
+  * Memory test with memtest86+
+
+You can select a keyboard mapping that matches your computer's.  Also you can boot Slackware in another language than US English.
+If you stick to US English interface language you will probably still want to change the timezone because it will default to UTC.  You have to specify a custom timezone manually by adding "tz=YourGeography/YourLocation" because the syslinux bootmenu does not offer you a selection of timezones.  Syslinux allows you to edit the boot commandline by pressing <TAB>.  Press <ENTER> to boot after you made your changes or <ESC> to discard your edit and return to the menu.
+
+
+=== UEFI boot ===
+
+
+On UEFI computers, Grub2 handles the boot and it will show a menu similar (and similarly themed) to the Syslinux menu:
+
+  * Start (SLACKWARE | PLASMA5 | XFCE | MATE) Live (depending on which of the ISOs you boot)
+  * Non-US Keyboard selection
+  * Non-US Language selection
+  * Non-US Timezone selection
+  * Memory test with memtest86+
+  * Help on boot parameters
+
+Editing a Grub menu before booting it is possible by pressing the "e" key.  After making your changes to the boot commandline, press <F10> to boot.  To discard your changes, press <ESC>.
+
+Another difference between Syslinux and Grub2 menus: in Grub2 you can select a non-US keyboard, language and/or timezone and you will return to the main menu every time.  You still have to select "Start SLACKWARE Live" to boot the computer.  In the Syslinux menu, only the keyboard selection menu will return you to the main menu.  Any non-US *language* selection on the other hand will boot you into Slackware Live immediately; without returning to the main menu.  This is a limitation of syslinux which would require exponentially more menu files to construct a menu with more choices.  Grub2 supports variables which make it easy to modify a menu entry's characteristics.
+
+
 ==== Transfering ISO content to USB stick ====
 
 
@@ -654,38 +689,6 @@ Slackware Live Edition expects its modules to adhere to a particularly loose fil
 
   - Example of a core module: 0099-slackware_zzzconf-14.2-x86_64.sxz
   - Example of an optional module: 0060-nvidia-352.79_4.4.1-current-x86_64.sxz
-
-
-=== BIOS boot ===
-
-
-Slackware Live Edition uses syslinux to boot the Linux kernel on BIOS computers. To be precise, the "isolinux" variant is installed to the ISO image and the "extlinux" variant is installed into the Linux partition of the USB Live version.
-
-Syslinux shows a graphical boot menu with a nice Slackware-themed background and several options:
-  * Start (SLACKWARE | PLASMA5 | XFCE | MATE) Live (depending on which of the ISOs you boot)
-  * Non-US Keyboard selection
-  * Non-US Language selection
-  * Memory test with memtest86+
-
-You can select a keyboard mapping that matches your computer's.  Also you can boot Slackware in another language than US English.
-If you stick to US English interface language you will probably still want to change the timezone because it will default to UTC.  You have to specify a custom timezone manually by adding "tz=YourGeography/YourLocation" because the syslinux bootmenu does not offer you a selection of timezones.  Syslinux allows you to edit the boot commandline by pressing <TAB>.  Press <ENTER> to boot after you made your changes or <ESC> to discard your edit and return to the menu.
-
-
-=== UEFI boot ===
-
-
-On UEFI computers, Grub2 handles the boot and it will show a menu similar (and similarly themed) to the Syslinux menu:
-
-  * Start (SLACKWARE | PLASMA5 | XFCE | MATE) Live (depending on which of the ISOs you boot)
-  * Non-US Keyboard selection
-  * Non-US Language selection
-  * Non-US Timezone selection
-  * Memory test with memtest86+
-  * Help on boot parameters
-
-Editing a Grub menu before booting it is possible by pressing the "e" key.  After making your changes to the boot commandline, press <F10> to boot.  To discard your changes, press <ESC>.
-
-Another difference between Syslinux and Grub2 menus: in Grub2 you can select a non-US keyboard, language and/or timezone and you will return to the main menu every time.  You still have to select "Start SLACKWARE Live" to boot the computer.  In the Syslinux menu, only the keyboard selection menu will return you to the main menu.  Any non-US *language* selection on the other hand will boot you into Slackware Live immediately; without returning to the main menu.  This is a limitation of syslinux which would require exponentially more menu files to construct a menu with more choices.  Grub2 supports variables which make it easy to modify a menu entry's characteristics.
 
 
 ===== Other Slackware based Live distros =====
