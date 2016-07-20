@@ -805,6 +805,9 @@ EOT
     # Note that the XkbOptions can be several comma-separated values.
     # The XkbLayout and XkbVariant values must not contain commas.
     # You can set just the XkbVariant by adding something like "kbd=ch xkb=,fr"
+
+    # Catch a missing comma in the "$XKB" string value which messes with 'cut':
+    XKB="$XKB,"
     XKBLAYOUT=$(echo $XKB |cut -d, -f1)
     XKBVARIANT=$(echo $XKB |cut -d, -f2)
     XKBOPTIONS=$(echo $XKB |cut -d, -f3-)
@@ -831,27 +834,37 @@ EOT
   if [ -z "$XKBOPTIONS" ]; then
     # If the user did not specify any X keyboard options then we will
     # determine a set of sane defaults:
-    if [ "$XKBLAYOUT" = "de" ]; then
-      # Germans use the AltGr key, so Scroll Lock will be their Compose Key:
-      XKBOPTIONS="compose:sclk"
-    else
-      # Rest of the world use the Right Alt (AltGr):
-      XKBOPTIONS="compose:ralt"
-    fi
     if [ "$XKBLAYOUT" != "us" ]; then
-      # User should be able to switch between layouts:
-      XKBOPTIONS="grp:alt_shift_toggle,grp_led:scroll,$XKBOPTIONS"
+      # User should be able to switch between layouts (Alt-Shift toggles).
+      # Also, many languages use the AltGr key, so we will use Scroll Lock
+      # as the Compose Key:
+      XKBOPTIONS="grp:alt_shift_toggle,grp_led:scroll,compose:sclk"
+    else
+      # For US keyboard we use the Right Alt (AltGr):
+      XKBOPTIONS="compose:ralt"
     fi
   fi
   mkdir -p /mnt/overlay/etc/X11/xorg.conf.d
-  cat <<EOT > /mnt/overlay/etc/X11/xorg.conf.d/30-keyboard.conf
+  echo > /mnt/overlay/etc/X11/xorg.conf.d/30-keyboard.conf
+  cat <<EOT >> /mnt/overlay/etc/X11/xorg.conf.d/30-keyboard.conf
 Section "InputClass"
   Identifier "keyboard-all"
+  MatchIsKeyboard "on"
+  MatchDevicePath "/dev/input/event*"
   Driver "evdev"
   Option "XkbLayout" "$XKBLAYOUT"
-  Option "XkbVariant" "$XKBVARIANT"
+EOT
+  if [ -z "$XKBVARIANT" ]; then
+    cat <<EOT >> /mnt/overlay/etc/X11/xorg.conf.d/30-keyboard.conf
+    #Option "XkbVariant" "$XKBVARIANT"
+EOT
+  else
+    cat <<EOT >> /mnt/overlay/etc/X11/xorg.conf.d/30-keyboard.conf
+    Option "XkbVariant" "$XKBVARIANT"
+EOT
+  fi
+  cat <<EOT >> /mnt/overlay/etc/X11/xorg.conf.d/30-keyboard.conf
   Option "XkbOptions" "$XKBOPTIONS"
-  MatchIsKeyboard "on"
 EndSection
 EOT
 
