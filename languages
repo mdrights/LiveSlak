@@ -12,4 +12,5 @@ ja:japanese:jp106:Asia/Tokyo:ja_JP.utf8:
 nl:nederlands:nl:Europe/Amsterdam:nl_NL.utf8:
 pt:portugues:pt-latin1:Europe/Lisbon:pt_PT.utf8:
 ru:russian:ru_win:Europe/Moscow:ru_RU.utf8:
+se:svensk:sv-latin1:Europe/Stockholm:sv_SE.utf8:se,
 us:us american:us:US/Pacific:en_US.utf8:
