@@ -814,16 +814,17 @@ case "$LIVEDE" in
              ;;
 esac
 
-# Do we need to include multilib?
-if [ "$MULTILIB" = "YES" ]; then
-  echo "-- Adding multilib."
-  MSEQ="${MSEQ} pkglist:multilib"
-fi
-
 # Do we need to create/include additional module(s) defined by a pkglist:
 if [ -n "$SEQ_ADDMOD" ]; then
   echo "-- Adding ${SEQ_ADDMOD}."
   MSEQ="${MSEQ} pkglist:${SEQ_ADDMOD}"
+fi
+
+# Do we need to include multilib?
+# Add these last so we can easily distribute the module separately.
+if [ "$MULTILIB" = "YES" ]; then
+  echo "-- Adding multilib."
+  MSEQ="${MSEQ} pkglist:multilib"
 fi
 
 echo "-- Creating '${LIVEDE}' image."
