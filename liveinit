@@ -800,11 +800,16 @@ EOT
   fi
   if [ ! -z "$KEYMAP" -o ! -z "$XKB" ]; then
     # Set a keyboard mapping in X.Org, derived from the console map if needed:
-    # Variable XKB can be set to "XkbLayout,XkbVariant", like "xkb=ch,fr"
+    # Variable XKB can be set to "XkbLayout,XkbVariant,XkbOptions".
+    # For example "xkb=ch,fr,compose:sclk,grp:alt_shift_toggle"
+    # Note that the XkbOptions can be several comma-separated values.
+    # The XkbLayout and XkbVariant values must not contain commas.
     # You can set just the XkbVariant by adding something like "kbd=ch xkb=,fr"
     XKBLAYOUT=$(echo $XKB |cut -d, -f1)
     XKBVARIANT=$(echo $XKB |cut -d, -f2)
-    # Ensure that XKBLAYOUT gets a value; XKBVARIANT is allowed to be empty.
+    XKBOPTIONS=$(echo $XKB |cut -d, -f3-)
+    # Ensure that XKBLAYOUT gets a value;
+    # XKBVARIANT and XKBOPTIONS are allowed to be empty.
     if [ -z "$XKBLAYOUT" ]; then
       if [ -z "$KEYMAP" ]; then
         XKBLAYOUT="us"
@@ -816,17 +821,27 @@ EOT
     XKBLAYOUT="us"
   fi
   echo "${MARKER}:  Switching live X desktop to '$XKBLAYOUT' keyboard"
-  # Germans use the AltGr key, so Scroll Lock will be their Compose Key:
-  if [ "$XKBLAYOUT" = "de" ]; then
-    XKBOPTIONS="compose:sclk"
-  else
-    XKBOPTIONS="compose:ralt"
-  fi
-  # If the layout is not 'us' then add 'us' as a secondary nevertheless:
+
   if [ "$XKBLAYOUT" != "us" ]; then
+    # If the layout is not 'us' then add 'us' as a secondary nevertheless:
     XKBLAYOUT="$XKBLAYOUT,us"
     XKBVARIANT="$XKBVARIANT,"
-    XKBOPTIONS="grp:alt_shift_toggle,grp_led:scroll,$XKBOPTIONS"
+  fi
+
+  if [ -z "$XKBOPTIONS" ]; then
+    # If the user did not specify any X keyboard options then we will
+    # determine a set of sane defaults:
+    if [ "$XKBLAYOUT" = "de" ]; then
+      # Germans use the AltGr key, so Scroll Lock will be their Compose Key:
+      XKBOPTIONS="compose:sclk"
+    else
+      # Rest of the world use the Right Alt (AltGr):
+      XKBOPTIONS="compose:ralt"
+    fi
+    if [ "$XKBLAYOUT" != "us" ]; then
+      # User should be able to switch between layouts:
+      XKBOPTIONS="grp:alt_shift_toggle,grp_led:scroll,$XKBOPTIONS"
+    fi
   fi
   mkdir -p /mnt/overlay/etc/X11/xorg.conf.d
   cat <<EOT > /mnt/overlay/etc/X11/xorg.conf.d/30-keyboard.conf
