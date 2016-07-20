@@ -80,6 +80,9 @@ THEDATE=$(date +%Y%m%d)
 # ---------------------------------------------------------------------------
 #
 
+# The live username of the image:
+LIVEUID=${LIVEUID:-"live"}
+
 # The root and live user passwords of the image:
 ROOTPW=${ROOTPW:-"root"}
 LIVEPW=${LIVEPW:-"live"}
@@ -1058,13 +1061,13 @@ EOL
 # Set a root password.
 echo "root:${ROOTPW}" | chpasswd --root ${LIVE_ROOTDIR}
 
-# Create a nonprivileged user account "live":
-chroot ${LIVE_ROOTDIR} /usr/sbin/useradd -c "Slackware Live User" -g users -G wheel,audio,cdrom,floppy,plugdev,video,power,netdev,lp,scanner,kmem,dialout,games,disk -u 1000 -d /home/live -m -s /bin/bash live
-echo "live:${LIVEPW}" | chpasswd --root ${LIVE_ROOTDIR}
+# Create a nonprivileged user account (called "live" by default):
+chroot ${LIVE_ROOTDIR} /usr/sbin/useradd -c "Slackware Live User" -g users -G wheel,audio,cdrom,floppy,plugdev,video,power,netdev,lp,scanner,kmem,dialout,games,disk -u 1000 -d /home/${LIVEUID} -m -s /bin/bash ${LIVEUID}
+echo "${LIVEUID}:${LIVEPW}" | chpasswd --root ${LIVE_ROOTDIR}
 
 # Configure suauth:
 cat <<EOT >${LIVE_ROOTDIR}/etc/suauth
-root:live:OWNPASS
+root:${LIVEUID}:OWNPASS
 root:ALL EXCEPT GROUP wheel:DENY
 EOT
 chmod 600 ${LIVE_ROOTDIR}/etc/suauth
@@ -1248,9 +1251,9 @@ echo "-- Configuring the X base system."
 sed -i -e '/^c3\|^c4\|^c5\|^c6/s/^/# /' ${LIVE_ROOTDIR}/etc/inittab
 
 # Give the 'live' user a face:
-cp ${LIVE_TOOLDIR}/blueSW-64px.png ${LIVE_ROOTDIR}/home/live/.face.icon
-chown --reference=${LIVE_ROOTDIR}/home/live ${LIVE_ROOTDIR}/home/live/.face.icon
-( cd ${LIVE_ROOTDIR}/home/live/ ; ln .face.icon .face )
+cp ${LIVE_TOOLDIR}/blueSW-64px.png ${LIVE_ROOTDIR}/home/${LIVEUID}/.face.icon
+chown --reference=${LIVE_ROOTDIR}/home/${LIVEUID} ${LIVE_ROOTDIR}/home/${LIVEUID}/.face.icon
+( cd ${LIVE_ROOTDIR}/home/${LIVEUID}/ ; ln .face.icon .face )
 mkdir -p ${LIVE_ROOTDIR}/usr/share/apps/kdm/pics/users
 cp ${LIVE_TOOLDIR}/blueSW-64px.png ${LIVE_ROOTDIR}/usr/share/apps/kdm/pics/users/blues.icon
 
@@ -1264,7 +1267,7 @@ sed -i "s/@LIBDIR@/lib${DIRSUFFIX}/g" ${LIVE_ROOTDIR}/etc/X11/xdm/liveslak-xdm/x
 
 # The Xscreensaver should show a blank screen only, to prevent errors about
 # missing modules:
-echo "mode:           blank" > ${LIVE_ROOTDIR}/home/live/.xscreensaver
+echo "mode:           blank" > ${LIVE_ROOTDIR}/home/${LIVEUID}/.xscreensaver
 
 # -------------------------------------------------------------------------- #
 echo "-- Configuring XFCE."
@@ -1304,7 +1307,7 @@ fi
 mkdir -p ${LIVE_ROOTDIR}/var/lib/kdm
 cat <<EOT > ${LIVE_ROOTDIR}/var/lib/kdm/kdmsts
 [PrevUser]
-:0=live
+:0=${LIVEUID}
 EOT
 chmod 600 ${LIVE_ROOTDIR}/var/lib/kdm/kdmsts
 
@@ -1374,7 +1377,7 @@ if [ "$LIVEDE" = "PLASMA5" ]; then
   cat <<EOT > ${LIVE_ROOTDIR}/var/lib/sddm/state.conf 
 [Last]
 # Name of the last logged-in user. This username will be preselected/shown when the login screen shows up
-User=live
+User=${LIVEUID}
 
 # Name of the session file of the last session selected. This session will be preselected when the login screen shows up.
 Session=/usr/share/xsessions/plasma.desktop
@@ -1455,15 +1458,16 @@ if type custom_config 1>/dev/null 2>/dev/null ; then
 fi
 
 # Workaround a bug where our Xkbconfig is not loaded sometimes:
-echo "setxkbmap" > ${LIVE_ROOTDIR}/home/live/.xprofile
+echo "setxkbmap" > ${LIVE_ROOTDIR}/home/${LIVEUID}/.xprofile
 
 # Give the live user a copy of our XFCE (and more) skeleton configuration:
 cd ${LIVE_ROOTDIR}/etc/skel/
-  find . -exec cp -a --parents "{}" ${LIVE_ROOTDIR}/home/live/ \;
+  find . -exec cp -a --parents "{}" ${LIVE_ROOTDIR}/home/${LIVEUID}/ \;
+  find ${LIVE_ROOTDIR}/home/${LIVEUID}/ -type f -exec sed -i -e "s,/home/live,/home/${LIVEUID}," "{}" \;
 cd - 1>/dev/null
 
 # Make sure that user 'live' owns her own files:
-chroot ${LIVE_ROOTDIR} chown -R live:users home/live
+chroot ${LIVE_ROOTDIR} chown -R ${LIVEUID}:users home/${LIVEUID}
 
 # -------------------------------------------------------------------------- #
 echo "-- Tweaking system startup."
