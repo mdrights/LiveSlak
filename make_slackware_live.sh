@@ -1879,10 +1879,10 @@ if [ "$LIVEDE" != "XFCE" -a "$LIVEDE" != "SLACKWARE" ]; then
   # however the SLACKWARE ISO should not have any non-Slackware content.
   # You can 'cheat' when building the SLACKWARE ISO by copying the graphics
   # drivers into the 'optional' directory yourself.
-  if ls ${LIVE_TOOLDIR}/graphics/*${KVER}-*.sxz 1>/dev/null 2>&1 ; then
+  if ls ${LIVE_TOOLDIR}/graphics/*${KVER}-${SL_VERSION}-${SL_ARCH}.sxz 1>/dev/null 2>&1 ; then
     # Add custom (proprietary) graphics drivers:
     echo "-- Adding binary GPU drivers supporting kernel ${KVER}."
-    cp ${LIVE_TOOLDIR}/graphics/*${KVER}-*.sxz ${LIVE_MOD_OPT}/
+    cp ${LIVE_TOOLDIR}/graphics/*${KVER}-${SL_VERSION}-${SL_ARCH}.sxz ${LIVE_MOD_OPT}/
   fi
 fi
 
