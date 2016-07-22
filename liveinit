@@ -838,12 +838,13 @@ EOT
     # determine a set of sane defaults:
     if [ "$XKBLAYOUT" != "us" ]; then
       # User should be able to switch between layouts (Alt-Shift toggles).
-      # Also, many languages use the AltGr key, so we will use Scroll Lock
-      # as the Compose Key:
-      XKBOPTIONS="grp:alt_shift_toggle,grp_led:scroll,compose:sclk"
+      # Also, many languages use the AltGr key, so we will use Shift-AltGr
+      # (press them, then release them, then enter your two keys of choice)
+      # as the Compose Key - see "/usr/share/X11/xkb/rules/xorg.lst":
+      XKBOPTIONS="grp:alt_shift_toggle,grp_led:scroll,lv3:ralt_switch_multikey"
     else
-      # For US keyboard we use the Right Alt (AltGr):
-      XKBOPTIONS="compose:ralt"
+      # For US keyboard we just define the Compose Key as before:
+      XKBOPTIONS="lv3:ralt_switch_multikey"
     fi
   fi
   mkdir -p /mnt/overlay/etc/X11/xorg.conf.d
@@ -858,11 +859,11 @@ Section "InputClass"
 EOT
   if [ -z "$XKBVARIANT" ]; then
     cat <<EOT >> /mnt/overlay/etc/X11/xorg.conf.d/30-keyboard.conf
-    #Option "XkbVariant" "$XKBVARIANT"
+  #Option "XkbVariant" "$XKBVARIANT"
 EOT
   else
     cat <<EOT >> /mnt/overlay/etc/X11/xorg.conf.d/30-keyboard.conf
-    Option "XkbVariant" "$XKBVARIANT"
+  Option "XkbVariant" "$XKBVARIANT"
 EOT
   fi
   cat <<EOT >> /mnt/overlay/etc/X11/xorg.conf.d/30-keyboard.conf
