@@ -5,6 +5,7 @@
 OpenAL
 PyQt5
 cfitsio
+elogind
 grantlee
 grantlee-qt4
 json-glib
@@ -12,11 +13,13 @@ libappindicator
 libdbusmenu-gtk
 libdbusmenu-qt5
 libindicator
+libinput
 libxkbcommon
 lmdb
+mesa
 ninja
 noto-cjk-font-ttf
-noto-font-ttf-2015-09
+noto-font-ttf
 phonon
 phonon-gstreamer
 phonon-vlc
@@ -25,7 +28,6 @@ qca-qt5
 qt-gstreamer
 qt5
 qt5-webkit
-sip
 sni-qt
 wayland
 
@@ -388,6 +390,7 @@ systemsettings
 # applications extra:
 ktorrent
 libktorrent
+skanlite
 
 # telepathy:
 kaccounts-integration

@@ -6,7 +6,6 @@
 
 # Slackware's KDE4:
 amarok
-#bluedevil
 calligra
 k3b
 kaudiocreator
@@ -16,10 +15,8 @@ kdevelop-pg-qt
 kdevelop-php
 kdevelop-php-docs
 kdevplatform
-kio-mtp
 kplayer
 kwebkitpart
 oxygen-gtk2
 partitionmanager
-skanlite
 
