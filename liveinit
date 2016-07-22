@@ -40,6 +40,8 @@ LIVEMAIN="@LIVEMAIN@"
 MARKER="@MARKER@"
 PERSISTENCE="@PERSISTENCE@"
 
+LIVEUID="@LIVEUID@"
+
 LIVEMEDIA=""
 LIVEPATH=""
 
@@ -893,21 +895,21 @@ EOT
     echo ${TZ} > /mnt/overlay/etc/timezone
 
     # KDE4 and PLASMA5 user timezone re-configuration:
-    if [ -f /mnt/overlay/home/live/.kde/share/config/ktimezonedrc ]; then
+    if [ -f /mnt/overlay/home/${LIVEUID}/.kde/share/config/ktimezonedrc ]; then
       sed -i -e "s%^LocalZone=.*%LocalZone=${TZ}%" \
-        /mnt/overlay/home/live/.kde/share/config/ktimezonedrc
+        /mnt/overlay/home/${LIVEUID}/.kde/share/config/ktimezonedrc
     fi
-    if [ -f /mnt/overlay/home/live/.config/ktimezonedrc ]; then
+    if [ -f /mnt/overlay/home/${LIVEUID}/.config/ktimezonedrc ]; then
       sed -i -e "s%^LocalZone=.*%LocalZone=${TZ}%" \
-        /mnt/overlay/home/live/.config/ktimezonedrc
+        /mnt/overlay/home/${LIVEUID}/.config/ktimezonedrc
     fi
   fi
 
   if [ ! -z "$LIVEPW" ]; then
     # User entered a custom live password on the boot commandline:
-    echo "${MARKER}:  Changing password for user 'live'."
+    echo "${MARKER}:  Changing password for user '${LIVEUID}'."
     chroot /mnt/overlay /usr/sbin/chpasswd <<EOPW
-live:${LIVEPW}
+${LIVEUID}:${LIVEPW}
 EOPW
   fi
 
