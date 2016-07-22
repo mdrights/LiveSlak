@@ -18,13 +18,11 @@ aaa_elflibs-compat32
 attr-compat32
 bzip2-compat32
 cups-compat32
-cxxlibs-compat32
 dbus-compat32
 e2fsprogs-compat32
 eudev-compat32
 libgudev-compat32
 openssl-solibs-compat32
-udev-compat32
 util-linux-compat32
 xz-compat32
 # The AP/ series:
@@ -33,7 +31,6 @@ cups-filters-compat32
 flac-compat32
 mariadb-compat32
 mpg123-compat32
-mysql-compat32
 sqlite-compat32
 # The D/ series:
 libtool-compat32
@@ -65,7 +62,6 @@ gst-plugins-good-compat32
 gst-plugins-good0-compat32
 gstreamer-compat32
 gstreamer0-compat32
-hal-compat32
 harfbuzz-compat32
 icu4c-compat32
 jasper-compat32
@@ -75,14 +71,12 @@ lcms2-compat32
 libaio-compat32
 libart_lgpl-compat32
 libasyncns-compat32
-libelf-compat32
 libexif-compat32
 libffi-compat32
 libglade-compat32
 libgphoto2-compat32
 libidn-compat32
 libieee1284-compat32
-libjpeg-compat32
 libjpeg-turbo-compat32
 libmng-compat32
 libmpc-compat32
@@ -139,7 +133,6 @@ libICE-compat32
 libSM-compat32
 libX11-compat32
 libXScrnSaver-compat32
-libXTrap-compat32
 libXau-compat32
 libXaw-compat32
 libXcomposite-compat32
@@ -158,7 +151,6 @@ libXinerama-compat32
 libXmu-compat32
 libXp-compat32
 libXpm-compat32
-libXprintUtil-compat32
 libXrandr-compat32
 libXrender-compat32
 libXres-compat32

@@ -1,18 +1,24 @@
 # MSB DEPS:
 docutils
 gksu
+glade
 gssdp
 gtk-engines
 gtksourceview
+gtksourceview3
 gupnp
 libgksu
 libgtop
+libgxps
 libunique
+libunique3
 libwnck3
 murrine
 pangox-compat
 pygtksourceview
 rarian
+vala
+vte3
 yelp-tools
 yelp-xsl
 zenity
