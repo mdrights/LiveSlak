@@ -278,7 +278,7 @@ fi
 
 # Load kernel modules (ideally this was already done by udev):
 if [ ! -d /lib/modules/$(uname -r) ]; then
-  echo "No kernel modules found for Linux $(uname -r)."
+  echo "${MARKER}:  No kernel modules found for Linux $(uname -r)."
 elif [ -x ./load_kernel_modules ]; then # use load_kernel_modules script:
   echo "${MARKER}:  Loading kernel modules from initrd image:"
   . ./load_kernel_modules 1>/dev/null 2>/dev/null
