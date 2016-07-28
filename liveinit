@@ -503,10 +503,15 @@ if [ "$RESCUE" = "" ]; then
         MODLOC=$(find_modloc ${MODULE} /mnt/media)
         mkdir /mnt/live/modules/${MODBASE}
         mount -t squashfs -o loop ${MODLOC} /mnt/live/modules/${MODBASE}
-        RODIRS=":/mnt/live/modules/${MODBASE}${RODIRS}"
-        # 0099-* are the Live customizations, exclude those for setup2hd:
-        if ! echo ${MODBASE} | grep -q ^0099 ; then
-          FS2HD=":/mnt/live/modules/${MODBASE}${FS2HD}"
+        if [ $? -eq 0 ]; then
+          RODIRS=":/mnt/live/modules/${MODBASE}${RODIRS}"
+          # 0099-* are the Live customizations, exclude those for setup2hd:
+          if ! echo ${MODBASE} | grep -q ^0099 ; then
+            FS2HD=":/mnt/live/modules/${MODBASE}${FS2HD}"
+          fi
+        else
+          echo "${MARKER}:  Failed to mount $SUBSYS module '${MODBASE}', excluding it from the overlay."
+            echo "$MODBASE" >> /mnt/live/modules/failed
         fi
       done
     fi
