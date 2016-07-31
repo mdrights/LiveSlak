@@ -58,9 +58,12 @@ libreoffice-kde-integration
 libtorrent-rasterbar
 openjdk
 p7zip
+python-twisted
 podofo
 qbittorrent
 sqlitebrowser
+sshfs-fuse
 veracrypt
 vlc
 wxGTK
+zope.interface

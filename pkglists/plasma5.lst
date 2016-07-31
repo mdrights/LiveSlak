@@ -24,6 +24,7 @@ phonon
 phonon-gstreamer
 phonon-vlc
 polkit-qt5-1
+poppler
 qca-qt5
 qt-gstreamer
 qt5
