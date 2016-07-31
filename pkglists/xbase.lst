@@ -22,6 +22,8 @@ boost
 cairo
 cgmanager
 compositeproto
+cups
+cups-filters
 damageproto
 db48
 dbus
@@ -282,7 +284,7 @@ sqlite
 startup-notification
 svgalib
 t1lib
-tibmachuni-font-ttf
+#tibmachuni-font-ttf
 ttf-indic-fonts
 udisks
 udisks2
