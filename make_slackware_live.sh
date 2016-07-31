@@ -135,6 +135,10 @@ MEDIALABEL=${MEDIALABEL:-"LIVESLAK"}
 # For x86_64 you can add multilib:
 MULTILIB=${MULTILIB:-"NO"}
 
+# Use the '-G' parameter to generate the ISO from a pre-populated directory
+# containing the live OS files:
+ONLY_ISO="NO"
+
 # The name of the directory used for storing persistence data:
 PERSISTENCE=${PERSISTENCE:-"persistence"}
 
@@ -598,11 +602,98 @@ EOL
   done
 }
 
+#
+# Create an ISO file from a directory's content:
+#
+create_iso() {
+  TOPDIR=${1:-"${LIVE_STAGING}"}
+
+  cd "$TOPDIR"
+
+  # Tag the type of live environment to the ISO filename:
+  if [ "$LIVEDE" = "SLACKWARE" ]; then
+    ISOTAG=""
+  else
+    ISOTAG="-$(echo $LIVEDE |tr A-Z a-z)"
+  fi
+
+  # Determine whether we add UEFI boot capabilities to the ISO:
+  if [ -f boot/syslinux/efiboot.img -a "$USEXORR" = "NO" ]; then
+    UEFI_OPTS="-eltorito-alt-boot -no-emul-boot -eltorito-platform 0xEF -eltorito-boot boot/syslinux/efiboot.img"
+  elif [ -f boot/syslinux/efiboot.img -a "$USEXORR" = "YES" ]; then
+    UEFI_OPTS="-eltorito-alt-boot -e boot/syslinux/efiboot.img -no-emul-boot"
+  else
+    UEFI_OPTS=""
+  fi
+
+  # Time to determine the output filename, now that we know all the variables
+  # and ensured that the OUTPUT directory exists:
+  OUTFILE=${OUTFILE:-"${OUTPUT}/${DISTRO}${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso"}
+  if [ "$USEXORR" = "NO" ]; then
+    mkisofs -o "${OUTFILE}" \
+      -V "${MEDIALABEL}" \
+      -R -J \
+      -hide-rr-moved \
+      -v -d -N \
+      -no-emul-boot -boot-load-size ${BOOTLOADSIZE} -boot-info-table \
+      -sort boot/syslinux/iso.sort \
+      -b boot/syslinux/isolinux.bin \
+      -c boot/syslinux/isolinux.boot \
+      ${UEFI_OPTS} \
+      -preparer "$(echo $LIVEDE |sed 's/BASE//') Live built by ${BUILDER}" \
+      -publisher "The Slackware Linux Project - http://www.slackware.com/" \
+      -A "${DISTRO^}-${SL_VERSION} for ${SL_ARCH} ($(echo $LIVEDE |sed 's/BASE//') Live $VERSION)" \
+      -x ./$(basename ${LIVE_WORK}) \
+      -x ./${LIVEMAIN}/bootinst \
+      -x boot/syslinux/testing \
+      .
+
+    if [ "$SL_ARCH" = "x86_64" -o "$EFI32" = "YES" ]; then
+      # Make this a hybrid ISO with UEFI boot support on x86_64.
+      # On 32bit, the variable EFI32 must be explicitly enabled.
+      isohybrid -u "${OUTFILE}"
+    else
+      isohybrid "${OUTFILE}"
+    fi # End UEFI hybrid ISO.
+  else
+    echo "-- Using xorriso to generate the ISO and make it hybrid."
+    xorriso -as mkisofs -o "${OUTFILE}" \
+      -V "${MEDIALABEL}" \
+      -J -joliet-long -r \
+      -hide-rr-moved \
+      -v -d -N \
+      -b boot/syslinux/isolinux.bin \
+      -c boot/syslinux/isolinux.boot \
+      -boot-load-size ${BOOTLOADSIZE} -boot-info-table -no-emul-boot \
+      ${UEFI_OPTS} \
+      -isohybrid-mbr /usr/share/syslinux/isohdpfx.bin \
+      -isohybrid-gpt-basdat \
+      -preparer "$(echo $LIVEDE |sed 's/BASE//') Live built by ${BUILDER}" \
+      -publisher "The Slackware Linux Project - http://www.slackware.com/" \
+      -A "${DISTRO^}-${SL_VERSION} for ${SL_ARCH} ($(echo $LIVEDE |sed 's/BASE//') Live $VERSION)" \
+      -x ./$(basename ${LIVE_WORK}) \
+      -x ./${LIVEMAIN}/bootinst \
+      -x boot/syslinux/testing \
+      .
+  fi
+
+  # Return to original directory:
+  cd - 1>/dev/null
+
+  cd "${OUTPUT}"
+    md5sum "$(basename "${OUTFILE}")" \
+      > "$(basename "${OUTFILE}")".md5
+  cd - 1>/dev/null
+  echo "-- Live ISO image created:"
+  ls -l "${OUTFILE}"*
+
+} # End of create_iso()
+
 # ---------------------------------------------------------------------------
 # Action!
 # ---------------------------------------------------------------------------
 
-while getopts "a:d:efhm:r:s:t:vz:H:MO:R:X" Option
+while getopts "a:d:efhm:r:s:t:vz:GH:MO:R:X" Option
 do
   case $Option in
     h )
@@ -634,6 +725,7 @@ do
         echo " -t <doc|mandoc>    Trim the ISO (remove man and/or doc)."
         echo " -v                 Show debug/error output."
         echo " -z version         Define your ${DISTRO^} version (default: $SL_VERSION)."
+        echo " -G                 Generate ISO file from existing directory tree"
         echo " -H hostname        Hostname of the Live OS (default: $LIVE_HOSTNAME)."
         echo " -M                 Add multilib (x86_64 only)."
         echo " -O outfile         Custom filename for the ISO."
@@ -661,6 +753,8 @@ do
         ;;
     z ) SL_VERSION="${OPTARG}"
         ;;
+    G ) ONLY_ISO="YES"
+        ;;
     H ) LIVE_HOSTNAME="${OPTARG}"
         ;;
     M ) MULTILIB="YES"
@@ -686,12 +780,20 @@ shift $(($OPTIND - 1))
 #  if one exists.
 # ---------------------------------------------------------------------------
 
+[ "$DEBUG" = "NO" ] && DBGOUT="/dev/null" || DBGOUT="/dev/stderr"
+
 # -----------------------------------------------------------------------------
 # Some sanity checks first.
 # -----------------------------------------------------------------------------
 
 if [ -n "$REFRESH" -a "$FORCE" = "YES" ]; then
   echo ">> Please use only _one_ of the switches '-f' or '-r'!"
+  echo ">> Run '$0 -h' for more help."
+  exit 1
+fi
+
+if [ "$ONLY_ISO" = "YES" -a "$FORCE" = "YES" ]; then
+  echo ">> Please use only _one_ of the switches '-f' or '-G'!"
   echo ">> Run '$0 -h' for more help."
   exit 1
 fi
@@ -725,12 +827,6 @@ DEF_SL_PKGROOT=${SL_PKGROOT}
 SL_PATCHROOT=${SL_REPO}/${DISTRO}${DIRSUFFIX}-${SL_VERSION}/patches/packages
 DEF_SL_PATCHROOT=${SL_PATCHROOT}
 
-# Do we have a local Slackware repository?
-if [ ! -d ${SL_REPO} ]; then
-  echo "-- Slackware repository root '${SL_REPO}' does not exist! Exiting."
-  exit 1
-fi
-
 # Are all the required add-on tools present?
 [ "$USEXORR" = "NO" ] && ISOGEN="mkisofs isohybrid" || ISOGEN="xorriso"
 PROG_MISSING=""
@@ -746,7 +842,38 @@ if [ ! -z "$PROG_MISSING" ] ; then
   exit 1
 fi
 
-[ "$DEBUG" = "NO" ] && DBGOUT="/dev/null" || DBGOUT="/dev/stderr"
+# Create output directory for image file:
+mkdir -p "${OUTPUT}"
+if [ $? -ne 0 ]; then
+  echo "-- Creation of output directory '${OUTPUT}' failed! Exiting."
+  exit 1
+fi
+
+# If so requested, we generate the ISO image and immediately exit.
+if [ "$ONLY_ISO" = "YES" -a -n "${LIVE_STAGING}" ]; then
+  create_iso ${LIVE_STAGING}
+  cleanup
+  exit 0
+else
+  # Remove ./boot - it will be created from scratch later:
+  rm -rf ${LIVE_STAGING}/boot
+fi
+
+# Do we have a local Slackware repository?
+if [ ! -d ${SL_REPO} ]; then
+  echo "-- Slackware repository root '${SL_REPO}' does not exist! Exiting."
+  exit 1
+fi
+
+# Create temporary directories for building the live filesystem:
+for LTEMP in $LIVE_OVLDIR $LIVE_BOOT $LIVE_MOD_SYS $LIVE_MOD_ADD $LIVE_MOD_OPT ; do
+  umount ${LTEMP} 2>${DBGOUT} || true
+  mkdir -p ${LTEMP}
+  if [ $? -ne 0 ]; then
+    echo "-- Creation of temporary directory '${LTEMP}' failed! Exiting."
+    exit 1
+  fi
+done
 
 # Cleanup if we are FORCEd to rebuild from scratch:
 if [ "$FORCE" = "YES" ]; then
@@ -755,23 +882,6 @@ if [ "$FORCE" = "YES" ]; then
   umount ${LIVE_ROOTDIR} 2>${DBGOUT} || true
   rm -rf ${LIVE_STAGING}/${LIVEMAIN} ${LIVE_WORK} ${LIVE_ROOTDIR}
 fi
-
-# Create output directory for image file:
-mkdir -p "${OUTPUT}"
-if [ $? -ne 0 ]; then
-  echo "-- Creation of output directory '${OUTPUT}' failed! Exiting."
-  exit 1
-fi
-
-# Create temporary directories for building the live filesystem:
-for LTEMP in $LIVE_OVLDIR $LIVE_BOOT $LIVE_MOD_SYS $LIVE_MOD_ADD $LIVE_MOD_OPT ; do
-   umount ${LTEMP} 2>${DBGOUT} || true
-  mkdir -p ${LTEMP}
-  if [ $? -ne 0 ]; then
-    echo "-- Creation of temporary directory '${LTEMP}' failed! Exiting."
-    exit 1
-  fi
-done
 
 # Create the mount point for our Slackware filesystem:
 if [ ! -d ${LIVE_ROOTDIR} ]; then
@@ -1864,13 +1974,6 @@ fi
 
 echo "-- Assemble the ISO image."
 
-# Tag the type of live environment to the ISO filename:
-if [ "$LIVEDE" = "SLACKWARE" ]; then
-  ISOTAG=""
-else
-  ISOTAG="-$(echo $LIVEDE |tr A-Z a-z)"
-fi
-
 # We keep strict size requirements for the XFCE ISO:
 # addons/optional modules will not be added.
 if [ "$LIVEDE" != "XFCE"  ]; then
@@ -1901,80 +2004,7 @@ fi
 mkdir -p ${LIVE_STAGING}/${LIVEMAIN}/rootcopy
 
 # Create an ISO file from the directories found below ${LIVE_STAGING}:
-cd ${LIVE_STAGING}
-
-# Determine whether we add UEFI boot capabilities to the ISO:
-if [ -f boot/syslinux/efiboot.img -a "$USEXORR" = "NO" ]; then
-  UEFI_OPTS="-eltorito-alt-boot -no-emul-boot -eltorito-platform 0xEF -eltorito-boot boot/syslinux/efiboot.img"
-elif [ -f boot/syslinux/efiboot.img -a "$USEXORR" = "YES" ]; then
-  UEFI_OPTS="-eltorito-alt-boot -e boot/syslinux/efiboot.img -no-emul-boot"
-else
-  UEFI_OPTS=""
-fi
-
-# Time to determine the output filename, now that we know all the variables
-# and ensured that the OUTPUT directory exists:
-OUTFILE=${OUTFILE:-"${OUTPUT}/${DISTRO}${DIRSUFFIX}-live${ISOTAG}-${SL_VERSION}.iso"}
-if [ "$USEXORR" = "NO" ]; then
-  mkisofs -o "${OUTFILE}" \
-    -V "${MEDIALABEL}" \
-    -R -J \
-    -hide-rr-moved \
-    -v -d -N \
-    -no-emul-boot -boot-load-size ${BOOTLOADSIZE} -boot-info-table \
-    -sort boot/syslinux/iso.sort \
-    -b boot/syslinux/isolinux.bin \
-    -c boot/syslinux/isolinux.boot \
-    ${UEFI_OPTS} \
-    -preparer "$(echo $LIVEDE |sed 's/BASE//') Live built by ${BUILDER}" \
-    -publisher "The Slackware Linux Project - http://www.slackware.com/" \
-    -A "${DISTRO^}-${SL_VERSION} for ${SL_ARCH} ($(echo $LIVEDE |sed 's/BASE//') Live $VERSION)" \
-    -x ./$(basename ${LIVE_WORK}) \
-    -x ./${LIVEMAIN}/bootinst \
-    -x boot/syslinux/testing \
-    .
-
-  if [ "$SL_ARCH" = "x86_64" -o "$EFI32" = "YES" ]; then
-    # Make this a hybrid ISO with UEFI boot support on x86_64.
-    # On 32bit, the variable EFI32 must be explicitly enabled.
-    isohybrid -u "${OUTFILE}"
-  else
-    isohybrid "${OUTFILE}"
-  fi # End UEFI hybrid ISO.
-else
-  echo "-- Using xorriso to generate the ISO and make it hybrid."
-  xorriso -as mkisofs -o "${OUTFILE}" \
-    -V "${MEDIALABEL}" \
-    -J -joliet-long -r \
-    -hide-rr-moved \
-    -v -d -N \
-    -b boot/syslinux/isolinux.bin \
-    -c boot/syslinux/isolinux.boot \
-    -boot-load-size ${BOOTLOADSIZE} -boot-info-table -no-emul-boot \
-    ${UEFI_OPTS} \
-    -isohybrid-mbr /usr/share/syslinux/isohdpfx.bin \
-    -isohybrid-gpt-basdat \
-    -preparer "$(echo $LIVEDE |sed 's/BASE//') Live built by ${BUILDER}" \
-    -publisher "The Slackware Linux Project - http://www.slackware.com/" \
-    -A "${DISTRO^}-${SL_VERSION} for ${SL_ARCH} ($(echo $LIVEDE |sed 's/BASE//') Live $VERSION)" \
-    -x ./$(basename ${LIVE_WORK}) \
-    -x ./${LIVEMAIN}/bootinst \
-    -x boot/syslinux/testing \
-    .
-fi
-
-# This copy is no longer needed:
-rm -rf ./boot
-
-# Return to original directory:
-cd - 1>/dev/null
-
-cd "${OUTPUT}"
-  md5sum "$(basename "${OUTFILE}")" \
-    > "$(basename "${OUTFILE}")".md5
-cd - 1>/dev/null
-echo "-- Live ISO image created:"
-ls -l "${OUTFILE}"*
+create_iso ${LIVE_STAGING}
 
 # Clean out the mounts etc:
 cleanup
