@@ -1704,6 +1704,10 @@ cat $LIVE_TOOLDIR/liveinit | sed \
   -e "s/@PERSISTENCE@/$PERSISTENCE/g" \
   -e "s/@DARKSTAR@/$LIVE_HOSTNAME/g" \
   -e "s/@LIVEUID@/$LIVEUID/g" \
+  -e "s/@DISTRO@/$DISTRO/g" \
+  -e "s/@CDISTRO@/${DISTRO^}/g" \
+  -e "s/@UDISTRO@/${DISTRO^^}/g" \
+  -e "s/@VERSION@/$VERSION/g" \
   > ${LIVE_ROOTDIR}/boot/initrd-tree/init
 cat /dev/null > ${LIVE_ROOTDIR}/boot/initrd-tree/luksdev
 # We do not add openobex to the initrd and don't want to see irrelevant errors:

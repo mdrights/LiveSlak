@@ -40,6 +40,10 @@ LIVEMAIN="@LIVEMAIN@"
 MARKER="@MARKER@"
 PERSISTENCE="@PERSISTENCE@"
 
+DISTRO="@DISTRO@"
+CDISTRO="@CDISTRO@"
+VERSION="@VERSION@"
+
 LIVEUID="@LIVEUID@"
 
 LIVEMEDIA=""
@@ -483,27 +487,33 @@ if [ "$RESCUE" = "" ]; then
     # SUBSYS can be 'system', 'addons', 'optional':
     SUBSYS="$1"
 
-    if ls /mnt/media/${LIVEMAIN}/${SUBSYS}/*.sxz 1>/dev/null 2>/dev/null ; then
-      for MODULE in /mnt/media/${LIVEMAIN}/${SUBSYS}/*.sxz ; do
-        MODBASE="$(basename ${MODULE} .sxz)"
-        if [ "$SUBSYS" = "optional" ]; then
-          # Load one or more optionals by using boot parameter 'load':
-          # load=mod1[,mod2[,mod3]]
-          if [ -z "$LOAD" -o -z "$(echo ",${LOAD}," |grep -i ",$(echo $MODBASE |cut -d- -f2),")" ]; then
-            continue
-          fi
-        elif [ "$SUBSYS" = "addons" ]; then
-          # Skip loading one or more addons by using boot parameter 'noload':
-          # noload=mod1[,mod2[,mod3]]
-          if [ -n "$NOLOAD" -a -n "$(echo ",${NOLOAD}," |grep -i ",$(echo $MODBASE |cut -d- -f2),")" ]; then
-            echo "$MODBASE" >> /mnt/live/modules/skipped
-            continue
-          fi
+    for MODULE in $(find /mnt/media/${LIVEMAIN}/${SUBSYS}/ -name "*.sxz" 2>/dev/null) ; do
+      MODBASE="$(basename ${MODULE} .sxz)"
+      if [ "$SUBSYS" = "optional" ]; then
+        # Load one or more optionals by using boot parameter 'load':
+        # load=mod1[,mod2[,mod3]]
+        if [ -z "$LOAD" -o -z "$(echo ",${LOAD}," |grep -i ",$(echo $MODBASE |cut -d- -f2),")" ]; then
+          continue
         fi
-        MODLOC=$(find_modloc ${MODULE} /mnt/media)
+      elif [ "$SUBSYS" = "addons" ]; then
+        # Skip loading one or more addons by using boot parameter 'noload':
+        # noload=mod1[,mod2[,mod3]]
+        if [ -n "$NOLOAD" -a -n "$(echo ",${NOLOAD}," |grep -i ",$(echo $MODBASE |cut -d- -f2),")" ]; then
+          echo "$MODBASE" >> /mnt/live/modules/skipped
+          continue
+        fi
+      fi
+      MODLOC=$(find_modloc ${MODULE} /mnt/media)
+      if [ -d /mnt/live/modules/${MODBASE} ]; then
+        echo "${MARKER}:  duplicate $SUBSYS module '${MODBASE}', excluding it from the overlay."
+        echo "$MODBASE" >> /mnt/live/modules/dupes
+      else
         mkdir /mnt/live/modules/${MODBASE}
         mount -t squashfs -o loop ${MODLOC} /mnt/live/modules/${MODBASE}
         if [ $? -eq 0 ]; then
+          if echo ${MODBASE} | grep -q ^0000 -a ; then
+            echo "${MARKER}:  ${CDISTRO} Live based on liveslak-${VERSION} #$(cat /mnt/live/modules/${MODBASE}/${MARKER})"
+          fi
           RODIRS=":/mnt/live/modules/${MODBASE}${RODIRS}"
           # 0099-* are the Live customizations, exclude those for setup2hd:
           if ! echo ${MODBASE} | grep -q ^0099 ; then
@@ -513,8 +523,8 @@ if [ "$RESCUE" = "" ]; then
           echo "${MARKER}:  Failed to mount $SUBSYS module '${MODBASE}', excluding it from the overlay."
             echo "$MODBASE" >> /mnt/live/modules/failed
         fi
-      done
-    fi
+      fi
+    done
   }
 
   ## End support functions ##
