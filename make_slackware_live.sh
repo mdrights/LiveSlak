@@ -1795,6 +1795,10 @@ if [ "$SL_ARCH" = "x86_64" -o "$EFI32" = "YES" ]; then
   # Copy the UEFI boot directory structure:
   mkdir -p ${LIVE_STAGING}/EFI/BOOT
   cp -a ${LIVE_TOOLDIR}/EFI/BOOT/{grub-embedded.cfg,make-grub.sh,*.txt,theme} ${LIVE_STAGING}/EFI/BOOT/
+  if [ "$LIVEDE" = "XFCE" ]; then
+    # We do not use the unicode font, so it can be removed to save space:
+    rm -f ${LIVE_STAGING}/EFI/BOOT/theme/unicode.pf2
+  fi
 
   # Create the grub fonts used in the theme:
   for FSIZE in 5 10 12; do
