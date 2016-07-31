@@ -204,8 +204,18 @@ The following parameters are recognized by Slackware Live Edition.  To boot with
   The default is 4 for graphical login. 
  
 kbd=fr xkb=ch,fr => Example of custom X keyboard layout.
+  The parameter xkb can be set to "XkbLayout,XkbVariant,XkbOptions".
   The boot menus will configure some of these for you but you can
   of course always modify the values.
+  Note that the optional XkbOptions can be several comma-separated values.
+  The XkbLayout and XkbVariant values must not contain commas.
+  You can set just the XkbVariant by adding something like "kbd=ch xkb=,fr"
+
+For example "xkb=ch,fr,compose:sclk,grp:alt_shift_toggle"
+Note that the XkbOptions can be several comma-separated values.
+The XkbLayout and XkbVariant values must not contain commas.
+
+You can still set just the XkbVariant by adding something like "kbd=ch xkb=,fr"
  
 livepw="somestring" => Change the password for user "live".
   The password is passed as a cleartext string.
@@ -553,7 +563,9 @@ The script's parameters are:
  -t <doc|mandoc>    Trim the ISO (remove man and/or doc).
  -v                 Show debug/error output.
  -z version         Define your Slackware version (default: current).
+ -G                 Generate ISO file from existing directory tree
  -H hostname        Hostname of the Live OS (default: darkstar).
+ -M                 Add multilib (x86_64 only).
  -O outfile         Custom filename for the ISO.
  -R runlevel        Runlevel to boot into (default: 4).
  -X                 Use xorriso instead of mkisofs/isohybrid.
@@ -582,6 +594,7 @@ You can create your own custom Live OS by changing its characteristics in the co
 
   * The name of the Desktop variant (the script itself knows SLACKWARE, PLASMA5, XFCE, MATE and CINNAMON),
   * The list(s) of packages used for your custom distribution,
+  * The name of the useraccount (by default that is "live"),
   * The name of the distribution (by default that is "slackware"),
   * And finally you can define a function "custom_config()" where you can add all your costom post-installation steps that are not covered in the "make_slackware_live.sh" script itself.
 
@@ -600,6 +613,10 @@ This is the section in ''make_slackware_live.conf'' which deals with these custo
 # OPTIONAL:
 # Your custom distro name (will reflect in boot screen & filenames):
 #DISTRO="cinelerra"
+
+#OPTIONAL:
+# Name of the 'live' user account in the Live image:
+#LIVEUID="live"
 
 # OPTIONAL:
 # Marker used for finding the Slackware Live files:
