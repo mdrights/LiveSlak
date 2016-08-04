@@ -256,8 +256,8 @@ create_container() {
   PARTFREE=${PARTFREE%M}
 
   if [ $PARTFREE -lt 10 ]; then
-    echo "** Free space on USB partition is less than 10 MB;"
-    echo "** Not creating a container file!"
+    echo "*** Free space on USB partition is less than 10 MB;"
+    echo "*** Not creating a container file!"
     exit 1
   fi
 
@@ -274,12 +274,12 @@ create_container() {
   esac
 
   if [ $CNTSIZE -le 0 ]; then
-    echo "** Container size must be larger than ZERO!"
-    echo "** Check your '-c' commandline parameter."
+    echo "*** Container size must be larger than ZERO!"
+    echo "*** Check your '-c' commandline parameter."
     exit 1
   elif [ $CNTSIZE -ge $PARTFREE ]; then
-    echo "** Not enough free space for container file!"
-    echo "** Check your '-c' commandline parameter."
+    echo "*** Not enough free space for container file!"
+    echo "*** Check your '-c' commandline parameter."
     exit 1
   fi
 
@@ -295,10 +295,16 @@ create_container() {
   if [ "${CNTENCR}" = "luks" ]; then
     # Format the loop device with LUKS:
     echo "--- Encrypting the container file with LUKS; enter 'YES' and a passphrase..."
-    cryptsetup -y luksFormat $LODEV
+    until cryptsetup -y luksFormat $LODEV ; do
+      echo ">>> Did you type two different passphrases?"
+      read -p ">>> Press [ENTER] to try again or Ctrl-C to abort ..." REPLY 
+    done
     # Unlock the LUKS encrypted container:
     echo "--- Unlocking the LUKS container requires your passphrase again..."
-    cryptsetup luksOpen $LODEV $(basename ${CNTBASE})
+    until cryptsetup luksOpen $LODEV $(basename ${CNTBASE}) ; do
+      echo ">>> Did you type an incorrect passphrases?"
+      read -p ">>> Press [ENTER] to try again or Ctrl-C to abort ..." REPLY 
+    done
     CNTDEV=/dev/mapper/$(basename ${CNTBASE})
     # Now we allocate blocks for the LUKS device. We write encrypted zeroes,
     # so that the file looks randomly filled from the outside.
