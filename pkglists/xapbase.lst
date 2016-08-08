@@ -5,6 +5,7 @@ audacious
 audacious-plugins
 blueman
 cairomm
+fltk
 geeqie
 gftp
 gimp
@@ -18,6 +19,7 @@ hexchat
 imagemagick
 js185
 libsigc++
+lftp
 mozilla-firefox
 #mozilla-thunderbird
 network-manager-applet
@@ -28,6 +30,7 @@ rdesktop
 rxvt
 sane
 seamonkey-solibs
+tigervnc
 vim-gvim
 x11-ssh-askpass
 x3270

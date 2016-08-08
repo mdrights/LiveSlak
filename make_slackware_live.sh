@@ -387,10 +387,25 @@ function install_pkgs() {
   if [ "$TRIM" = "doc" -o "$TRIM" = "mandoc" -o "$LIVEDE" = "XFCE"  ]; then
     # Remove undesired (too big for a live OS) document subdirectories:
     (cd "${2}/usr/doc" && find . -type d -mindepth 2 -maxdepth 2 -exec rm -rf {} \;)
+    rm -rf "$2"/usr/share/gtk-doc
+    rm -rf "$2"/usr/share/help
+    # Remove residual bloat:
+    rm -f "${2}"/usr/doc/*/*.{html,css,xml,pdf,db,bz2,xz}
   fi
   if [ "$TRIM" = "mandoc" ]; then
-    # Also remove man pages:
-    rm -rf "$2"/usr/man
+    # Also remove man and info pages:
+    rm -rf "$2"/usr/man "$2"/usr/info
+  fi
+  if [ "$LIVEDE" = "XFCE"  ]; then
+    # By pruning stuff that no one likely needs anyway,
+    # we make room for packages we would otherwise not be able to add.
+    # MySQL embedded is only used by Amarok:
+    rm -f "$2"/usr/bin/mysql*embedded*
+    # I am against torture:
+    rm -f "$2"/usr/bin/smbtorture
+    # Also remove some of the big unused/esoteric static libraries:
+    rm -rf "$2"/usr/lib${DIRSUFFIX}/{libaudiofile,libgdk,libglib,libgtk}.a
+    rm -rf "$2"/usr/lib${DIRSUFFIX}/{liblftp*,libnl}.a
   fi
 
   # End install_pkgs

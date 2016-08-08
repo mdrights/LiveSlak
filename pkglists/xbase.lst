@@ -20,6 +20,7 @@ bigreqsproto
 bluez
 boost
 cairo
+cdrtools
 cgmanager
 compositeproto
 cups
@@ -33,6 +34,7 @@ dejavu-fonts-ttf
 desktop-file-utils
 djvulibre
 dmxproto
+dosfstools
 dri2proto
 dri3proto
 elfutils
@@ -97,6 +99,7 @@ gtkspell
 gvfs
 harfbuzz
 hicolor-icon-theme
+hplip
 hunspell
 iceauth
 ico
@@ -240,6 +243,7 @@ mozilla-nss
 mpg123
 mtdev
 neon
+net-snmp
 nettle
 newt
 nfs-utils
