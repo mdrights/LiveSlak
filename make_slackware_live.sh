@@ -880,6 +880,14 @@ if [ ! -d ${SL_REPO} ]; then
   exit 1
 fi
 
+# Cleanup if we are FORCEd to rebuild from scratch:
+if [ "$FORCE" = "YES" ]; then
+  echo "-- Removing old files and directories!"
+  umount ${LIVE_ROOTDIR}/{proc,sys,dev} 2>${DBGOUT} || true
+  umount ${LIVE_ROOTDIR} 2>${DBGOUT} || true
+  rm -rf ${LIVE_STAGING}/${LIVEMAIN} ${LIVE_WORK} ${LIVE_ROOTDIR}
+fi
+
 # Create temporary directories for building the live filesystem:
 for LTEMP in $LIVE_OVLDIR $LIVE_BOOT $LIVE_MOD_SYS $LIVE_MOD_ADD $LIVE_MOD_OPT ; do
   umount ${LTEMP} 2>${DBGOUT} || true
@@ -889,14 +897,6 @@ for LTEMP in $LIVE_OVLDIR $LIVE_BOOT $LIVE_MOD_SYS $LIVE_MOD_ADD $LIVE_MOD_OPT ;
     exit 1
   fi
 done
-
-# Cleanup if we are FORCEd to rebuild from scratch:
-if [ "$FORCE" = "YES" ]; then
-  echo "-- Removing old files and directories!"
-  umount ${LIVE_ROOTDIR}/{proc,sys,dev} 2>${DBGOUT} || true
-  umount ${LIVE_ROOTDIR} 2>${DBGOUT} || true
-  rm -rf ${LIVE_STAGING}/${LIVEMAIN} ${LIVE_WORK} ${LIVE_ROOTDIR}
-fi
 
 # Create the mount point for our Slackware filesystem:
 if [ ! -d ${LIVE_ROOTDIR} ]; then
