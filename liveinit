@@ -487,7 +487,7 @@ if [ "$RESCUE" = "" ]; then
     # SUBSYS can be 'system', 'addons', 'optional':
     SUBSYS="$1"
 
-    for MODULE in $(find /mnt/media/${LIVEMAIN}/${SUBSYS}/ -name "*.sxz" 2>/dev/null) ; do
+    for MODULE in $(find /mnt/media/${LIVEMAIN}/${SUBSYS}/ -name "*.sxz" 2>/dev/null |sort) ; do
       MODBASE="$(basename ${MODULE} .sxz)"
       if [ "$SUBSYS" = "optional" ]; then
         # Load one or more optionals by using boot parameter 'load':
