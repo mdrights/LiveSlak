@@ -58,10 +58,14 @@ DOLUKS=0
 # We are NOT refreshing existing Live content by default:
 REFRESH=0
 
+# These tools are required by the script, we will check for their existence:
+REQTOOLS="blkid cpio extlinux fdisk gdisk isoinfo mkdosfs sgdisk"
+
 # Initialize more variables:
 CNTBASE=""
 CNTDEV=""
 CNTFILE=""
+HLUKSSIZE=""
 LUKSHOME=""
 LODEV=""
 
@@ -363,6 +367,8 @@ while [ ! -z "$1" ]; do
     -c|--crypt)
       HLUKSSIZE="$2"
       DOLUKS=1
+      # Needs unsquashfs to extract the /home
+      REQTOOLS="${REQTOOLS} unsquashfs"
       shift 2
       ;;
     -f|--force)
@@ -450,7 +456,7 @@ fi
 
 # Are all the required not-so-common add-on tools present?
 PROG_MISSING=""
-for PROGN in blkid cpio extlinux fdisk gdisk isoinfo mkdosfs sgdisk unsquashfs ; do
+for PROGN in ${REQTOOLS} ; do
   if ! PATH="/sbin:$PATH" which $PROGN 1>/dev/null 2>/dev/null ; then
     PROG_MISSING="${PROG_MISSING}--   $PROGN\n"
   fi
@@ -624,8 +630,8 @@ if [ -n "$VERSION" ]; then
   echo "$VERSION" > ${USBMNT}/.isoversion
 fi
 
-if [ $DOLUKS -eq 1 ]; then
-  # Create LUKS container file:
+if [ -n "${HLUKSSIZE}" ]; then
+  # Create LUKS container file for /home:
   create_container ${TARGET}3 ${HLUKSSIZE} ${SLHOME} luks /home
   LUKSHOME=${CNTFILE}
 fi
