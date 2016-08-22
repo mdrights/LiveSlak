@@ -8,6 +8,7 @@ cfitsio
 elogind
 grantlee
 grantlee-qt4
+hack-font-ttf
 json-glib
 libappindicator
 libdbusmenu-gtk
@@ -31,6 +32,7 @@ qt5
 qt5-webkit
 sni-qt
 wayland
+xorg-server
 
 # telepathy deps:
 farstream
@@ -158,6 +160,9 @@ threadweaver
 # kdepim:
 akonadi
 akonadi-calendar
+akonadi-contacts
+akonadi-mime
+akonadi-notes
 akonadi-search
 calendarsupport
 eventviews
