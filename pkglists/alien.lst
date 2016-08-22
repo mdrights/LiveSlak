@@ -5,10 +5,12 @@ chromium-pepperflash-plugin
 chromium-widevine-plugin
 dropbox-client
 ffmpeg
+freerdp
 gecko-mediaplayer
 gmtk
 gnome-mplayer
 gst-plugins-ffmpeg0
+gst-plugins-libav
 icedtea-web
 libdvdcss
 libreoffice
@@ -56,6 +58,7 @@ libreoffice-dict-vi
 libreoffice-dict-zu
 libreoffice-kde-integration
 libtorrent-rasterbar
+lumina
 openjdk
 p7zip
 python-twisted
@@ -67,3 +70,41 @@ veracrypt
 vlc
 wxGTK
 zope.interface
+
+# LXQT deps:
+# If you are making a standalone LXQT Live ISO, then please note that LXQT
+# needs quite a bit of Plasma5 packages and deps.
+# Therefore you might want to use these definition files instead:
+# ./pkglists/lxqtdeps.* and ./pkglists/lxqt.*
+obconf
+openbox
+
+# LXQT:
+compton-conf
+libconfig
+libfm
+libfm-extra
+libfm-qt
+liblxqt
+libqtxdg
+libsysstat
+lximage-qt
+lxmenu-data
+lxqt-about
+lxqt-common
+lxqt-config
+lxqt-globalkeys
+lxqt-notificationd
+lxqt-openssh-askpass
+lxqt-panel
+lxqt-policykit
+lxqt-powermanagement
+lxqt-qtplugin
+lxqt-runner
+lxqt-session
+lxqt-sudo
+menu-cache
+obconf-qt
+pcmanfm-qt
+qterminal
+qtermwidget
