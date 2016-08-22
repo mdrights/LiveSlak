@@ -1496,8 +1496,10 @@ if [ "$LIVEDE" = "PLASMA5" ]; then
   echo "-- Configuring PLASMA5."
   # -------------------------------------------------------------------------- #
 
+  # Remove the confusing openbox session if present:
+  rm -f ${LIVE_ROOTDIR}/usr/share/xsessions/openbox-session.desktop || true
   # Remove the buggy mediacenter session:
-  rm ${LIVE_ROOTDIR}/usr/share/xsessions/plasma-mediacenter.desktop || true
+  rm -f ${LIVE_ROOTDIR}/usr/share/xsessions/plasma-mediacenter.desktop || true
   # Set sane SDDM defaults on first boot (root-owned file):
   mkdir -p ${LIVE_ROOTDIR}/var/lib/sddm
   cat <<EOT > ${LIVE_ROOTDIR}/var/lib/sddm/state.conf 
