@@ -44,6 +44,9 @@ UNATTENDED=0
 # By default do not show file operations in detail:
 VERBOSE=0
 
+# Limit the search path:
+export PATH="/usr/sbin:/sbin:/usr/bin:/bin"
+
 # Variables to store content from an initrd we are going to refresh:
 OLDPERSISTENCE=""
 OLDWAIT=""
@@ -99,10 +102,10 @@ cleanup() {
       losetup -d ${LODEV}
     fi
   fi
-  [ -n "${ISOMNT}" ] && ( /sbin/umount -f ${ISOMNT} 2>/dev/null; rmdir $ISOMNT )
-  [ -n "${CNTMNT}" ] && ( /sbin/umount -f ${CNTMNT} 2>/dev/null; rmdir $CNTMNT )
-  [ -n "${USBMNT}" ] && ( /sbin/umount -f ${USBMNT} 2>/dev/null; rmdir $USBMNT )
-  [ -n "${US2MNT}" ] && ( /sbin/umount -f ${US2MNT} 2>/dev/null; rmdir $US2MNT )
+  [ -n "${ISOMNT}" ] && ( umount -f ${ISOMNT} 2>/dev/null; rmdir $ISOMNT )
+  [ -n "${CNTMNT}" ] && ( umount -f ${CNTMNT} 2>/dev/null; rmdir $CNTMNT )
+  [ -n "${USBMNT}" ] && ( umount -f ${USBMNT} 2>/dev/null; rmdir $USBMNT )
+  [ -n "${US2MNT}" ] && ( umount -f ${US2MNT} 2>/dev/null; rmdir $US2MNT )
   [ -n "${IMGDIR}" ] && ( rm -rf $IMGDIR )
   set -e
 }
@@ -429,8 +432,7 @@ while [ ! -z "$1" ]; do
 done
 
 # Before we start:
-[ -x /bin/id ] && CMD_ID="/bin/id" || CMD_ID="/usr/bin/id"
-if [ "$($CMD_ID -u)" != "0" -a $FORCE -eq 0 ]; then
+if [ "$(id -u)" != "0" -a $FORCE -eq 0 ]; then
   echo "*** You need to be root to run $(basename $0)."
   exit 1
 fi
@@ -457,12 +459,12 @@ fi
 # Are all the required not-so-common add-on tools present?
 PROG_MISSING=""
 for PROGN in ${REQTOOLS} ; do
-  if ! PATH="/sbin:$PATH" which $PROGN 1>/dev/null 2>/dev/null ; then
+  if ! which $PROGN 1>/dev/null 2>/dev/null ; then
     PROG_MISSING="${PROG_MISSING}--   $PROGN\n"
   fi
 done
 if [ ! -z "$PROG_MISSING" ] ; then
-  echo "-- Required program(s) not found in root's PATH!"
+  echo "-- Required program(s) not found in search path '$PATH'!"
   echo -e ${PROG_MISSING}
   echo "-- Exiting."
   exit 1
@@ -493,7 +495,7 @@ fi
 # FDISK OUTPUT:
 EOT
 
-  echo q |/sbin/gdisk -l $TARGET 2>/dev/null | \
+  echo q |gdisk -l $TARGET 2>/dev/null | \
     while read LINE ; do echo "# $LINE" ; done
 
   if [ $UNATTENDED -eq 0 ]; then
@@ -512,7 +514,7 @@ if [ $REFRESH -eq 0 ]; then
   # Continue with the wipe/partitioning/formatting.
 
   # Get the LABEL used for the ISO:
-  LIVELABEL=$(/sbin/blkid -s LABEL -o value ${SLISO})
+  LIVELABEL=$(blkid -s LABEL -o value ${SLISO})
 
   # Use sgdisk to wipe and then setup the USB device:
   # - 1 MB BIOS boot partition
@@ -522,26 +524,26 @@ if [ $REFRESH -eq 0 ]; then
   # Make sure that there is no MBR nor a partition table anymore:
   dd if=/dev/zero of=$TARGET bs=512 count=1 conv=notrunc
   # The first sgdisk command is allowed to have non-zero exit code:
-  /sbin/sgdisk -og $TARGET || true
-  /sbin/sgdisk \
+  sgdisk -og $TARGET || true
+  sgdisk \
     -n 1:2048:4095 -c 1:"BIOS Boot Partition" -t 1:ef02 \
     -n 2:4096:208895 -c 2:"EFI System Partition" -t 2:ef00 \
     -n 3:208896:0 -c 3:"Slackware Linux" -t 3:8300 \
     $TARGET
-  /sbin/sgdisk -A 3:set:2 $TARGET
+  sgdisk -A 3:set:2 $TARGET
   # Show what we did to the USB stick:
-  /sbin/sgdisk -p -A 3:show $TARGET
+  sgdisk -p -A 3:show $TARGET
 
   # Create filesystems:
   # Not enough clusters for a 32 bit FAT:
-  /sbin/mkdosfs -s 2 -n "DOS" ${TARGET}1
-  /sbin/mkdosfs -F32 -s 2 -n "EFI" ${TARGET}2
+  mkdosfs -s 2 -n "DOS" ${TARGET}1
+  mkdosfs -F32 -s 2 -n "EFI" ${TARGET}2
   # KDE tends to automount.. so try an umount:
-  if /sbin/mount |grep -qw ${TARGET}3 ; then
-    /sbin/umount ${TARGET}3 || true
+  if mount |grep -qw ${TARGET}3 ; then
+    umount ${TARGET}3 || true
   fi
-  /sbin/mkfs.ext4 -F -F -L "${LIVELABEL}" -m 0 ${TARGET}3
-  /sbin/tune2fs -c 0 -i 0 ${TARGET}3
+  mkfs.ext4 -F -F -L "${LIVELABEL}" -m 0 ${TARGET}3
+  tune2fs -c 0 -i 0 ${TARGET}3
 
 fi # End [ $REFRESH -eq 0 ]
 
@@ -575,10 +577,10 @@ else
 fi
 
 # Mount the Linux partition:
-/sbin/mount -t auto ${TARGET}3 ${USBMNT}
+mount -t auto ${TARGET}3 ${USBMNT}
 
 # Loop-mount the ISO (or 1st partition if this is a hybrid ISO):
-/sbin/mount -o loop ${SLISO} ${ISOMNT}
+mount -o loop ${SLISO} ${ISOMNT}
 
 # Find out if the ISO contains an EFI bootloader and use it:
 if [ ! -f ${ISOMNT}/EFI/BOOT/boot*.efi ]; then
@@ -694,11 +696,11 @@ echo "--- Making the USB drive '$TARGET' bootable using extlinux..."
 mv ${USBMNT}/boot/syslinux ${USBMNT}/boot/extlinux
 mv ${USBMNT}/boot/extlinux/isolinux.cfg ${USBMNT}/boot/extlinux/extlinux.conf
 rm -f ${USBMNT}/boot/extlinux/isolinux.*
-/sbin/extlinux --install ${USBMNT}/boot/extlinux
+extlinux --install ${USBMNT}/boot/extlinux
 
 if [ $EFIBOOT -eq 1 ]; then
   # Mount the EFI partition and copy /EFI as well as /boot directories into it:
-  /sbin/mount -t vfat -o shortname=mixed ${TARGET}2 ${US2MNT}
+  mount -t vfat -o shortname=mixed ${TARGET}2 ${US2MNT}
   mkdir -p ${US2MNT}/EFI/BOOT
   rsync -rlptD ${ISOMNT}/EFI/BOOT/* ${US2MNT}/EFI/BOOT/
   mkdir -p ${USBMNT}/boot
@@ -722,8 +724,8 @@ if [ $EFIBOOT -eq 1 ]; then
 fi
 
 # No longer needed:
-if /sbin/mount |grep -qw ${USBMNT} ; then /sbin/umount ${USBMNT} ; fi
-if /sbin/mount |grep -qw ${US2MNT} ; then /sbin/umount ${US2MNT} ; fi
+if mount |grep -qw ${USBMNT} ; then umount ${USBMNT} ; fi
+if mount |grep -qw ${US2MNT} ; then umount ${US2MNT} ; fi
 
 # Unmount/remove stuff:
 cleanup
