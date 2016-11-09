@@ -108,6 +108,7 @@ sharutils
 slackpkg
 slocate
 squashfs-tools
+sshfs
 strace
 sudo
 sysklogd
