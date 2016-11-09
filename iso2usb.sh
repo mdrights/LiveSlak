@@ -51,6 +51,10 @@ export PATH="/usr/sbin:/sbin:/usr/bin:/bin"
 OLDPERSISTENCE=""
 OLDWAIT=""
 OLDLUKS=""
+OLDVERSION=""
+
+# Version information stored in the ISO file:
+VERSION=""
 
 # Seconds to add to the initrd as wait-for-root value:
 WAIT=5
@@ -470,6 +474,9 @@ if [ ! -z "$PROG_MISSING" ] ; then
   exit 1
 fi
 
+# Retrieve the version information from the ISO:
+VERSION=$(isoinfo -d -i ${SLISO} 2>/dev/null |grep Application |cut -d: -f2-)
+
 if [ $REFRESH -eq 0 ]; then
   # We are creating a USB stick from scratch,
   # i.e. not refreshing the Live content.
@@ -483,7 +490,8 @@ else
   # Confirm refresh:
   cat <<EOT
 #
-# We are going to refresh the Live OS on this device - '$TARGET':
+# We are going to refresh the Live OS on this device with '$VERSION'.
+# Target is - '$TARGET':
 EOT
 fi
   # Continue with the common text message:
@@ -597,6 +605,11 @@ if [ $REFRESH -eq 0 ]; then
 else
   # Collect data from the USB initrd:
   read_initrd ${USBMNT}/boot/initrd.img
+  # Display the old Live version:
+  OLDVERSION="$(cat ${USBMNT}/.isoversion 2>/dev/null)"
+  if [ -n "${OLDVERSION}" -a -n "${VERSION}" ]; then
+    echo "--- Refreshing Live OS on USB (${OLDVERSION}) to '${VERSION}'."
+  fi
 fi
 
 # Copy the ISO content into the USB Linux partition:
@@ -627,7 +640,6 @@ if [ $REFRESH -eq 1 ]; then
 fi
 
 # Write down the version of the ISO image:
-VERSION=$(isoinfo -d -i ${SLISO} 2>/dev/null |grep Application |cut -d: -f2-)
 if [ -n "$VERSION" ]; then
   echo "$VERSION" > ${USBMNT}/.isoversion
 fi
