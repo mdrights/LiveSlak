@@ -411,6 +411,21 @@ function install_pkgs() {
     # Also remove some of the big unused/esoteric static libraries:
     rm -rf "$2"/usr/lib${DIRSUFFIX}/{libaudiofile,libgdk,libglib,libgtk}.a
     rm -rf "$2"/usr/lib${DIRSUFFIX}/{liblftp*,libnl}.a
+    # Remove unneeded languages from glibc:
+    KEEPLANG="$(cat ${LIVE_TOOLDIR}/languages|grep -Ev "(^ *#|^$)"|cut -d: -f1)"
+    for LOCALEDIR in /usr/lib${DIRSUFFIX}/locale /usr/share/i18n/locales /usr/share/locale ; do
+      if [ -d "${2}"/${LOCALEDIR} ]; then
+        cd "${2}"/${LOCALEDIR}
+        mkdir .keep
+        for KL in C ${KEEPLANG} ; do
+          mv ${KL}* .keep 2>/dev/null
+        done
+        rm -rf [A-Za-z]*
+        mv .keep/* . 2>/dev/null
+        rm -rf .keep
+        cd - 1>/dev/null
+      fi
+    done
   fi
 
   # End install_pkgs
