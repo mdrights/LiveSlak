@@ -611,6 +611,11 @@ This is the section in ''make_slackware_live.conf'' which deals with these custo
 #SEQ_CUSTOM="min,xbase,xapbase,xfcebase,cinelerra"
 
 # OPTIONAL:
+# Use something else than the name "min",
+# for the package list containing the generic kernel:
+#MINLIST="min"
+
+# OPTIONAL:
 # Your custom distro name (will reflect in boot screen & filenames):
 #DISTRO="cinelerra"
 

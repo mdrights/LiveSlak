@@ -132,6 +132,11 @@ MARKER=${MARKER:-"SLACKWARELIVE"}
 # The filesystem label we will be giving our ISO:
 MEDIALABEL=${MEDIALABEL:-"LIVESLAK"}
 
+# The name of the custom package list containing the generic kernel.
+# This package list is special because the script will also take care of
+# the ISO boot setup when processing the MINLIST package list:
+MINLIST=${MINLIST:-"min"}
+
 # For x86_64 you can add multilib:
 MULTILIB=${MULTILIB:-"NO"}
 
@@ -159,11 +164,11 @@ SEQ_SLACKWARE="tagfile:a,ap,d,e,f,k,kde,kdei,l,n,t,tcl,x,xap,xfce,y pkglist:slac
 
 # Stripped-down Slackware with XFCE as the Desktop Environment:
 # - each series will become a squashfs module:
-SEQ_XFCEBASE="min,xbase,xapbase,xfcebase"
+SEQ_XFCEBASE="${MINLIST},xbase,xapbase,xfcebase"
 
 # Stripped-down Slackware with KDE4 as the Desktop Environment:
 # - each series will become a squashfs module:
-SEQ_KDE4BASE="pkglist:min,xbase,xapbase,kde4base"
+SEQ_KDE4BASE="pkglist:${MINLIST},xbase,xapbase,kde4base"
 
 # List of Slackware package series with Plasma5 instead of KDE 4 (full install):
 # - each will become a squashfs module:
@@ -994,7 +999,7 @@ for SPS in ${SL_SERIES} ; do
     install_pkgs ${SPS} ${LIVE_ROOTDIR} ${MTYPE}
     umount ${LIVE_ROOTDIR} || true
 
-    if [ "$SPS" = "a" -o "$SPS" = "min" ]; then
+    if [ "$SPS" = "a" -o "$SPS" = "${MINLIST}" ]; then
 
       # We need to take care of a few things first:
       if [ "$SL_ARCH" = "x86_64" -o "$SMP32" = "NO" ]; then
@@ -1025,7 +1030,7 @@ for SPS in ${SL_SERIES} ; do
     # End result: we have our .sxz file and the INSTDIR is empty again,
     # Next step is to loop-mount the squashfs file onto INSTDIR.
 
-  elif [ "$SPS" = "a" -o "$SPS" = "min" ]; then
+  elif [ "$SPS" = "a" -o "$SPS" = "${MINLIST}" ]; then
 
     # We need to do a bit more if we skipped creation of 'a' or 'min' module:
     # Extract the content of the /boot directory out of the boot module,
