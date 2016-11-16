@@ -1,0 +1,22 @@
+--- liloconfig.orig	2016-07-12 01:21:03.000000000 +0200
++++ liloconfig	2016-11-12 11:57:41.585974417 +0100
+@@ -767,7 +767,7 @@
+ 
+  # If we're installing from the umsdos.gz rootdisk, suggest skipping LILO:
+  if [ ! "$T_PX" = "/" ]; then
+-   if mount | grep " on /mnt " | grep umsdos 1> /dev/null 2> /dev/null ; then
++   if mount | grep " on $T_PX " | grep umsdos 1> /dev/null 2> /dev/null ; then
+      dialog --title "SKIP LILO CONFIGURATION? (RECOMMENDED)" --yesno "Since \
+ you are installing to a FAT partition, it's suggested that you do not \
+ configure LILO at this time.  (Instead, use your bootdisk.  For booting \
+@@ -1236,8 +1236,8 @@
+    if [ -r $TMP/lilo.conf ]; then
+     dialog --title "YOUR NEW /etc/lilo.conf" --textbox "$TMP/lilo.conf" 22 70
+    else
+-    if [ -r /mnt/etc/lilo.conf ]; then
+-     dialog --title "YOUR OLD /etc/lilo.conf" --textbox "/mnt/etc/lilo.conf" 22 70
++    if [ -r $T_PX/etc/lilo.conf ]; then
++     dialog --title "YOUR OLD /etc/lilo.conf" --textbox "$T_PX/etc/lilo.conf" 22 70
+     elif [ "$T_PX" = "/" -a -r /etc/lilo.conf ]; then
+      dialog --title "YOUR OLD /etc/lilo.conf" --textbox "/etc/lilo.conf" 22 70
+     else

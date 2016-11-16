@@ -1337,7 +1337,9 @@ if ls ${LIVE_ROOTDIR}/boot/vmlinuz-huge-* 1>/dev/null 2>/dev/null; then
     rm -r usr sbin
   cd - 1>/dev/null
   # Fix some occurrences of '/mnt' that should not be used in the Live ISO:
-  sed -i -e 's, /mnt, ${T_PX},g' -e 's,T_PX=/mnt,T_PX=/setup2hd,g' ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}/*
+  sed -i -e 's, /mnt, ${T_PX},g' -e 's,=/mnt/,=${T_PX}/,g' -e 's,T_PX=/mnt,T_PX=/setup2hd,g' ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}/*
+  patch ${LIVE_ROOTDIR}/usr/sbin/liloconfig ${LIVE_TOOLDIR}/patches/liloconfig.patch
+  patch ${LIVE_ROOTDIR}/usr/sbin/eliloconfig ${LIVE_TOOLDIR}/patches/eliloconfig.patch
   # Fix some occurrences of '/usr/lib/setup/' are covered by $PATH:
   sed -i -e 's,/usr/lib/setup/,,g' -e 's,:/usr/lib/setup,:/usr/share/${LIVEMAIN},g' ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}/*
   # Add the Slackware Live HD installer:
