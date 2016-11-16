@@ -1,4 +1,6 @@
 # deps:
+libstatgrab
+muparser
 obconf
 openbox
 
@@ -17,6 +19,7 @@ lxqt-about
 lxqt-common
 lxqt-config
 lxqt-globalkeys
+lxqt-l10n
 lxqt-notificationd
 lxqt-openssh-askpass
 lxqt-panel
@@ -28,6 +31,7 @@ lxqt-session
 lxqt-sudo
 menu-cache
 obconf-qt
+pavucontrol-qt
 pcmanfm-qt
 qterminal
 qtermwidget
