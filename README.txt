@@ -7,7 +7,7 @@
 
 Welcome to the Slackware Live Edition!  This is a version of Slackware-current (soon to become 14.2), that can be run from a DVD or a USB stick.  It is an ISO image meant to be a showcase of what Slackware is about.  You get the default install, no custom packages or kernel, but with all the power.  The ISO is created from scratch using a Slackware package mirror, by the "liveslak" scripts.
 
-Slackware Live Edition does not have to be installed to a computer hard drive.  You can carry the USB stick version with you in your pocket.  You'll have a pre-configured Slackware OS up & running in a minute wherever you can get your hands on a computer with a USB port.
+Slackware Live Edition does not have to be installed to a computer hard drive (however you do have that choice if you want to: using the setup2hd script).  You can carry the USB stick version with you in your pocket.  You'll have a pre-configured Slackware OS up & running in a minute wherever you can get your hands on a computer with a USB port.
 
 The USB version is "persistent" - meaning that the OS stores your updates on the USB stick.  The CD/DVD versions (and the USB stick if you configure it accordingly) operate without persistence, which means that all the changes you make to the OS are lost when you reboot.
 
