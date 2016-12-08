@@ -732,7 +732,7 @@ The Live functionality of SLAX is based on aufs and unionfs which requires a cus
 === Porteus ===
 
 
-Website: http://ww.porteus.org/
+Website: http://www.porteus.org/
 
 Porteus was created as a fork of SLAX by the SLAX community when the development of SLAX seemed to have ended.  Porteus has an active user community where it's "all about the modules".  The use of aufs instead of overlayfs allows Porteus (like SLAX) to add and remove squashfs modules in the running Live system on the fly, which sparked the development of a lot of community modules.  It looks like the next generation of Porteus will be based on Arch Linux instead of Slackware: this has to do with the original Porteus developer leaving the team.
 
