@@ -144,6 +144,7 @@ libXevie-compat32
 libXext-compat32
 libXfixes-compat32
 libXfont-compat32
+libXfont2-compat32
 libXfontcache-compat32
 libXft-compat32
 libXi-compat32
