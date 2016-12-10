@@ -6,6 +6,7 @@ OpenAL
 PyQt5
 cfitsio
 elogind
+gpgme
 grantlee
 grantlee-qt4
 hack-font-ttf
@@ -44,6 +45,7 @@ libsignon-glib
 signon
 signon-plugin-oauth2
 signon-ui
+telegram-qt
 telepathy-accounts-signon
 telepathy-farstream
 telepathy-gabble
@@ -52,6 +54,7 @@ telepathy-haze
 telepathy-logger
 telepathy-logger-qt5
 telepathy-mission-control
+telepathy-morse
 telepathy-qt5
 
 # kde4 extragear:
@@ -155,6 +158,7 @@ oxygen-icons5
 plasma-framework
 solid
 sonnet
+syntax-highlighting
 threadweaver
 
 # kdepim:
