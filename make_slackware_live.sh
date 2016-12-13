@@ -1205,11 +1205,11 @@ KERNEL=="loop*", ENV{UDISKS_IGNORE}="1"
 EOL
 
 # Set a root password.
-echo "root:${ROOTPW}" | chpasswd --root ${LIVE_ROOTDIR}
+echo "root:${ROOTPW}" | chroot ${LIVE_ROOTDIR} /usr/sbin/chpasswd
 
 # Create a nonprivileged user account (called "live" by default):
 chroot ${LIVE_ROOTDIR} /usr/sbin/useradd -c "Slackware Live User" -g users -G wheel,audio,cdrom,floppy,plugdev,video,power,netdev,lp,scanner,kmem,dialout,games,disk -u 1000 -d /home/${LIVEUID} -m -s /bin/bash ${LIVEUID}
-echo "${LIVEUID}:${LIVEPW}" | chpasswd --root ${LIVE_ROOTDIR}
+echo "${LIVEUID}:${LIVEPW}" | chroot ${LIVE_ROOTDIR} /usr/sbin/chpasswd
 
 # Configure suauth:
 cat <<EOT >${LIVE_ROOTDIR}/etc/suauth
