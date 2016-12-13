@@ -353,7 +353,12 @@ function install_pkgs() {
       fi
     fi
 
-    for PKG in $(cat ${PKGFILE} |grep -v -E '^ *#|^$' |cut -d: -f1); do
+    for PKGPAT in $(cat ${PKGFILE} |grep -v -E '^ *#|^$' |cut -d: -f1); do
+      # Extract the name of the package to install:
+      PKG=$(echo $PKGPAT |cut -d% -f2)
+      # Extract the name of the potential package to replace; if there is
+      # no package to replace then the 'cut' will make REP equal to PKG:
+      REP=$(echo $PKGPAT |cut -d% -f1)
       # Look in ./patches ; then ./${DISTRO}$DIRSUFFIX ; then ./extra
       # Need to escape any '+' in package names such a 'gtk+2':
       if [ ! -z "${SL_PATCHROOT}" ]; then
@@ -375,13 +380,18 @@ function install_pkgs() {
         echo "-- Package $PKG was not found in $(dirname ${SL_REPO}) !"
       else
         # Determine if we need to install or upgrade a package:
-        for INSTPKG in $(ls -1 "$2"/var/log/packages/${PKG}-* 2>/dev/null |rev |cut -d/ -f1 |cut -d- -f4- |rev) ; do
-          if [ "$INSTPKG" = "$PKG" ]; then
+        for INSTPKG in $(ls -1 "$2"/var/log/packages/${REP}-* 2>/dev/null |rev |cut -d/ -f1 |cut -d- -f4- |rev) ; do
+          if [ "$INSTPKG" = "$REP" ]; then
             break
           fi
         done
-        if [ "$INSTPKG" = "$PKG" ]; then
-          ROOT="$2" upgradepkg --reinstall "${FULLPKG}"
+        if [ "$INSTPKG" = "$REP" ]; then
+          if [ "$PKG" = "$REP" ]; then
+            ROOT="$2" upgradepkg --reinstall "${FULLPKG}"
+          else
+            # We need to replace one package (REP) with another (FULLPKG):
+            ROOT="$2" upgradepkg "${REP}%${FULLPKG}"
+          fi
         else
           installpkg --terse --root "$2" "${FULLPKG}"
         fi
