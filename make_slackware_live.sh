@@ -94,7 +94,7 @@ DISTRO=${DISTRO:-"slackware"}
 LIVE_HOSTNAME=${LIVE_HOSTNAME:-"darkstar"}
 
 # What type of Live image?
-# Choices are: SLACKWARE, XFCE, KDE4, PLASMA5, MATE, CINNAMON
+# Choices are: SLACKWARE, XFCE, KDE4, PLASMA5, MATE, CINNAMON, DLACK
 LIVEDE=${LIVEDE:-"SLACKWARE"}
 
 # What runlevel to use if adding a DE like: XFCE, KDE4, PLASMA5 etc...
@@ -181,6 +181,10 @@ SEQ_MSB="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,mate loc
 # List of Slackware package series with Cinnamon instead of KDE4 (full install):
 # - each will become a squashfs module:
 SEQ_CIN="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,cinnamon local:slackpkg+"
+
+# Slackware package series with Gnome3/systemd instead of KDE4 (full install):
+# - each will become a squashfs module:
+SEQ_DLACK="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap pkglist:slackextra,systemd,dlackware"
 
 # List of kernel modules required for a live medium to boot properly;
 # Lots of HID modules added to support keyboard input for LUKS password entry:
@@ -758,8 +762,8 @@ do
         echo " -h                 This help."
         echo " -a arch            Machine architecture (default: ${SL_ARCH})."
         echo "                    Use i586 for a 32bit ISO, x86_64 for 64bit."
-        echo " -d desktoptype     SLACKWARE (full Slack), KDE4 (basic KDE4),"
-        echo "                    XFCE (basic XFCE), PLASMA5, MATE, CINNAMON."
+        echo " -d desktoptype     SLACKWARE (full Slack), KDE4 basic,"
+        echo "                    XFCE basic, PLASMA5, MATE, CINNAMON, DLACK."
         echo " -e                 Use ISO boot-load-size of 32 for computers."
         echo "                    where the ISO won't boot otherwise."
         echo " -f                 Forced re-generation of all squashfs modules,"
@@ -960,6 +964,7 @@ case "$LIVEDE" in
     PLASMA5) MSEQ="${SEQ_PLASMA5}" ;;
        MATE) MSEQ="${SEQ_MSB}" ;;
    CINNAMON) MSEQ="${SEQ_CIN}" ;;
+      DLACK) MSEQ="${SEQ_DLACK}" ;;
           *) if [ -n "${SEQ_CUSTOM}" ]; then
                # Custom distribution with a predefined package list:
                MSEQ="${SEQ_CUSTOM}"              
@@ -1602,6 +1607,21 @@ EOGL
 
 fi # End LIVEDE = PLASMA5
 
+if [ "$LIVEDE" = "DLACK" ]; then
+
+  # -------------------------------------------------------------------------- #
+  echo "-- Configuring DLACK."
+  # -------------------------------------------------------------------------- #
+
+  # Make sure we start in graphical mode with gdm enabled.
+  ln -sf /lib/systemd/system/graphical.target ${LIVE_ROOTDIR}/etc/systemd/system/default.target
+  ln -sf /lib/systemd/system/gdm.service ${LIVE_ROOTDIR}/etc/systemd/system/display-manager.service
+
+  # Do not show the blueman applet, Gnome3 has its own BlueTooth widget:
+  echo "NotShowIn=GNOME;" >> ${LIVE_ROOTDIR}/etc/xdg/autostart/blueman.desktop
+
+fi # End LIVEDE = DLACK  
+
 # You can define the function 'custom_config()' by uncommenting it in
 # the configuration file 'make_slackware_live.conf'.
 if type custom_config 1>/dev/null 2>/dev/null ; then
@@ -1644,6 +1664,8 @@ elif [ "$LIVEDE" = "MATE" ]; then
   ln -sf xinitrc.mate-session ${LIVE_ROOTDIR}/etc/X11/xinit/xinitrc
 elif [ "$LIVEDE" = "CINNAMON" ]; then
   ln -sf xinitrc.cinnamon-session ${LIVE_ROOTDIR}/etc/X11/xinit/xinitrc
+elif [ "$LIVEDE" = "DLACK" ]; then
+  ln -sf xinitrc.gnome ${LIVE_ROOTDIR}/etc/X11/xinit/xinitrc
 elif [ -f ${LIVE_ROOTDIR}/etc/X11/xinit/xinitrc.xfce ]; then
   ln -sf xinitrc.xfce ${LIVE_ROOTDIR}/etc/X11/xinit/xinitrc
 fi
