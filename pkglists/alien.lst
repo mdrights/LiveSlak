@@ -12,7 +12,7 @@ gnome-mplayer
 gst-plugins-ffmpeg0
 gst-plugins-libav
 icedtea-web
-libdvdcss
+keepassx
 libreoffice
 libreoffice-dict-af
 libreoffice-dict-ar
@@ -58,7 +58,7 @@ libreoffice-dict-vi
 libreoffice-dict-zu
 libreoffice-kde-integration
 libstatgrab
-libtinfo
+#libtinfo
 libtorrent-rasterbar
 lumina
 muparser
