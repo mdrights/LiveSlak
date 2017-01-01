@@ -33,6 +33,7 @@ udisks2
 upower
 wayland
 wayland-protocols
+wpa_supplicant
 xorg-server
 xorg-server-xwayland
 
@@ -60,6 +61,8 @@ dbus-python3
 dconf
 dconf-editor
 devhelp
+dlack-settings
+dlackware
 eog
 epiphany
 evince
@@ -120,6 +123,7 @@ gnome-shell-extensions
 gnome-system-log
 gnome-system-monitor
 gnome-terminal
+gnome-todo
 gnome-tweak-tool
 gnome-user-docs
 gnome-user-share
