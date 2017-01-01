@@ -1129,6 +1129,7 @@ if grep -q "^ *export LANG=" ${LIVE_ROOTDIR}/etc/profile.d/lang.sh ; then
 else
   echo "export LANG=en_US.UTF-8" >> ${LIVE_ROOTDIR}/etc/profile.d/lang.sh
 fi
+echo "LANG=en_US.UTF-8" > ${LIVE_ROOTDIR}/etc/locale.conf
 
 # Set timezone to UTC:
 cp -a ${LIVE_ROOTDIR}/usr/share/zoneinfo/UTC ${LIVE_ROOTDIR}/etc/localtime
