@@ -73,6 +73,8 @@ farstream
 file-roller
 folks
 gdk-pixbuf2
+# ibus needs to be installed before gdm:
+ibus
 gdm
 gedit
 gegl3
@@ -147,7 +149,6 @@ gupnp-av
 gupnp-dlna
 gupnp-igd
 hyphen
-ibus
 libchamplain
 libcryptui
 libdmapsharing
