@@ -1627,6 +1627,14 @@ if [ "$LIVEDE" = "DLACK" ]; then
   # Do not show the blueman applet, Gnome3 has its own BlueTooth widget:
   echo "NotShowIn=GNOME;" >> ${LIVE_ROOTDIR}/etc/xdg/autostart/blueman.desktop
 
+  # Do not start gnome-initial-setup:
+  mkdir -p ${LIVE_ROOTDIR}/home/${LIVEUID}/.config
+  touch ${LIVE_ROOTDIR}/home/${LIVEUID}/.config/gnome-initial-setup-done
+
+  # Do not let systemd re-generate dynamic linker cache on boot:
+  echo "File created by ${MARKER}.  See systemd-update-done.service(8)." \
+    |tee ${LIVE_ROOTDIR}/etc/.updated >${LIVE_ROOTDIR}/var/.updated
+
 fi # End LIVEDE = DLACK  
 
 # You can define the function 'custom_config()' by uncommenting it in
