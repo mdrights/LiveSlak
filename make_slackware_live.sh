@@ -1345,16 +1345,30 @@ if ls ${LIVE_ROOTDIR}/boot/vmlinuz-huge-* 1>/dev/null 2>/dev/null; then
     uncompressfs ${DEF_SL_PKGROOT}/../isolinux/initrd.img | cpio -i -d -H newc --no-absolute-filenames usr/lib/setup/* sbin/probe sbin/fixdate
     mv -i usr/lib/setup/* sbin/probe sbin/fixdate .
     rm -r usr sbin
+    rm -f setup
   cd - 1>/dev/null
   # Fix some occurrences of '/mnt' that should not be used in the Live ISO:
-  sed -i -e 's, /mnt, ${T_PX},g' -e 's,=/mnt/,=${T_PX}/,g' -e 's,T_PX=/mnt,T_PX=/setup2hd,g' ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}/*
+  sed -i -e 's, /mnt, ${T_PX},g' -e 's,=/mnt$,=${T_PX},g' -e 's,=/mnt/,=${T_PX}/,g' -e 's,T_PX=/mnt,T_PX="`cat $TMP/SeTT_PX`",g' ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}/*
+  # If T_PX is used in a script, it should be defined first:
+  for FILE in ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}/* ; do
+    if grep -q T_PX $FILE ; then
+      if ! grep -q "^T_PX=" $FILE ; then
+        if ! grep -q "^TMP=" $FILE ; then
+          sed -e '/#!/a T_PX="`cat $TMP/SeTT_PX`"' -i $FILE
+          sed -e '/#!/a TMP=/var/log/setup/tmp' -i $FILE
+        else
+          sed -e '/^TMP=/a T_PX="`cat $TMP/SeTT_PX`"' -i $FILE
+        fi
+      fi
+    fi
+  done
   if [ -f ${LIVE_ROOTDIR}/sbin/liloconfig ]; then
     patch ${LIVE_ROOTDIR}/sbin/liloconfig ${LIVE_TOOLDIR}/patches/liloconfig.patch
   fi
   if [ -f ${LIVE_ROOTDIR}/usr/sbin/eliloconfig ]; then
     patch ${LIVE_ROOTDIR}/usr/sbin/eliloconfig ${LIVE_TOOLDIR}/patches/eliloconfig.patch
   fi
-  # Fix some occurrences of '/usr/lib/setup/' are covered by $PATH:
+  # Fix some occurrences of '/usr/lib/setup/' that are covered by $PATH:
   sed -i -e 's,/usr/lib/setup/,,g' -e 's,:/usr/lib/setup,:/usr/share/${LIVEMAIN},g' ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}/*
   # Add the Slackware Live HD installer:
   mkdir -p ${LIVE_ROOTDIR}/usr/local/sbin
