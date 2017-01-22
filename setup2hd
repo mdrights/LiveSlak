@@ -287,7 +287,7 @@ EOF
  if [ "$MAINSELECT" = "CONFIGURE" ]; then
   # Patch (e)liloconfig on the target systems to remove hardcoded /mnt:
   if [ -f /sbin/liloconfig -a -f $T_PX/sbin/liloconfig ]; then
-    cat /sbin/eliloconfig > $T_PX/sbin/liloconfig
+    cat /sbin/liloconfig > $T_PX/sbin/liloconfig
   fi
   if [ -f /usr/sbin/eliloconfig -a -f $T_PX/usr/sbin/eliloconfig ]; then
     cat /usr/sbin/eliloconfig > $T_PX/usr/sbin/eliloconfig
