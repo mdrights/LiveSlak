@@ -1876,7 +1876,7 @@ fi
 echo "-- Creating initrd for kernel-generic $KVER ..."
 chroot ${LIVE_ROOTDIR} /sbin/mkinitrd -c -w ${WAIT} -l us -o /boot/initrd_${KVER}.img -k ${KVER} -m ${KMODS} -L -C dummy 1>${DBGOUT} 2>${DBGOUT}
 # Modify the initrd content for the Live OS:
-cat $LIVE_TOOLDIR/liveinit | sed \
+cat $LIVE_TOOLDIR/liveinit.tpl | sed \
   -e "s/@LIVEMAIN@/$LIVEMAIN/g" \
   -e "s/@MARKER@/$MARKER/g" \
   -e "s/@MEDIALABEL@/$MEDIALABEL/g" \
