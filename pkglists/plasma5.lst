@@ -14,8 +14,10 @@ json-glib
 libappindicator
 libdbusmenu-gtk
 libdbusmenu-qt5
+libdmtx
 libindicator
 libinput
+libwacom
 libxkbcommon
 lmdb
 mesa
@@ -28,9 +30,11 @@ phonon-vlc
 polkit-qt5-1
 poppler
 qca-qt5
+qrencode
 qt-gstreamer
 qt5
 qt5-webkit
+sip
 sni-qt
 wayland
 xorg-server
@@ -156,6 +160,7 @@ modemmanager-qt
 networkmanager-qt
 oxygen-icons5
 plasma-framework
+prison
 solid
 sonnet
 syntax-highlighting
@@ -164,35 +169,44 @@ threadweaver
 # kdepim:
 akonadi
 akonadi-calendar
+akonadi-calendar-tools
 akonadi-contacts
+akonadi-import-wizard
 akonadi-mime
 akonadi-notes
 akonadi-search
+akonadiconsole
+akregator
+blogilo
 calendarsupport
 eventviews
-gpgmepp
+grantlee-editor
 grantleetheme
 incidenceeditor
+kaddressbook
+kalarm
 kalarmcal
 kblog
 kcalcore
 kcalutils
 kcontacts
-kdepim
 kdepim-addons
 kdepim-apps-libs
 kdepim-runtime
-kdepimlibs
-kdgantt2
 kholidays
 kidentitymanagement
 kimap
 kldap
 kleopatra
+kmail
+kmail-account-wizard
 kmailtransport
 kmbox
 kmime
+knotes
+kontact
 kontactinterface
+korganizer
 kpimtextedit
 ktnef
 libgravatar
@@ -201,7 +215,11 @@ libkleo
 libksieve
 mailcommon
 mailimporter
+mbox-importer
 messagelib
+pim-data-exporter
+pim-sieve-editor
+pim-storage-service-manager
 pimcommon
 syndication
 
@@ -265,6 +283,7 @@ cervisia
 dolphin
 dolphin-plugins
 dragon
+ffmpegthumbs
 filelight
 granatier
 gwenview
@@ -289,7 +308,6 @@ kcalc
 kcharselect
 kcolorchooser
 kcron
-kde-baseapps
 kde-dev-scripts
 kde-dev-utils
 kde-runtime
@@ -303,9 +321,12 @@ kdenetwork-strigi-analyzers
 kdesdk-kioslaves
 kdesdk-strigi-analyzers
 kdesdk-thumbnailers
-kdewebdev
 kdf
+kdialog
 kdiamond
+keditbookmarks
+kfilereplace
+kfind
 kfloppy
 kfourinline
 kgeography
@@ -316,14 +337,15 @@ khangman
 kig
 kigo
 killbots
+kimagemapeditor
 kio-extras
 kiriki
 kiten
-kjots
 kjumpingcube
 klettres
 klickety
 klines
+klinkstatus
 kmag
 kmahjongg
 kmines
@@ -336,7 +358,9 @@ knetwalk
 kolf
 kollision
 kolourpaint
+kommander
 kompare
+konqueror
 konquest
 konsole
 kopete
@@ -363,8 +387,8 @@ ktouch
 ktuberling
 kturtle
 kubrick
-kuser
 kwalletmanager
+kwave
 kwordquiz
 libkcddb
 libkcompactdisc
@@ -397,9 +421,18 @@ sweeper
 umbrello
 zeroconf-ioslave
 
-# applications extra:
+# applications-extra:
+kdev-php
+kdevelop
+kdevelop-pg-qt
+kdevplatform
+kdiagram
+kjots
+kpmcore
 ktorrent
+kuser
 libktorrent
+partitionmanager
 skanlite
 
 # telepathy:

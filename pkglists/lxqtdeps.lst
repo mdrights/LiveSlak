@@ -1,5 +1,6 @@
 # deps:
 libinput
+libwacom
 libxkbcommon
 qt5
 qt5-webkit
@@ -77,6 +78,7 @@ modemmanager-qt
 networkmanager-qt
 oxygen-icons5
 plasma-framework
+prison
 solid
 sonnet
 syntax-highlighting
