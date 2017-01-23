@@ -1320,7 +1320,7 @@ mkdir -p ${LIVE_ROOTDIR}/var/lib/tftpboot/pxelinux.cfg
 cp -ia /usr/share/syslinux/pxelinux.0 ${LIVE_ROOTDIR}/var/lib/tftpboot/
 ln -s /mnt/livemedia/boot/generic ${LIVE_ROOTDIR}/var/lib/tftpboot/
 ln -s /mnt/livemedia/boot/initrd.img ${LIVE_ROOTDIR}/var/lib/tftpboot/
-cat ${LIVE_TOOLDIR}/pxeserver | sed \
+cat ${LIVE_TOOLDIR}/pxeserver.tpl | sed \
   -e "s/@DIRSUFFIX@/$DIRSUFFIX/g" \
   -e "s/@DISTRO@/$DISTRO/g" \
   -e "s/@CDISTRO@/${DISTRO^}/g" \
@@ -1372,7 +1372,7 @@ if ls ${LIVE_ROOTDIR}/boot/vmlinuz-huge-* 1>/dev/null 2>/dev/null; then
   sed -i -e 's,/usr/lib/setup/,,g' -e 's,:/usr/lib/setup,:/usr/share/${LIVEMAIN},g' ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}/*
   # Add the Slackware Live HD installer:
   mkdir -p ${LIVE_ROOTDIR}/usr/local/sbin
-  cat ${LIVE_TOOLDIR}/setup2hd | sed \
+  cat ${LIVE_TOOLDIR}/setup2hd.tpl | sed \
     -e "s/@DIRSUFFIX@/$DIRSUFFIX/g" \
     -e "s/@DISTRO@/$DISTRO/g" \
     -e "s/@CDISTRO@/${DISTRO^}/g" \
