@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2014, 2015, 2016  Eric Hameleers, Eindhoven, NL 
+# Copyright 2014, 2015, 2016, 2017  Eric Hameleers, Eindhoven, NL 
 # All rights reserved.
 #
 #   Permission to use, copy, modify, and distribute this software for
