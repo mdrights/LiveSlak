@@ -814,6 +814,7 @@ if [ -x /usr/bin/loadkeys ]; then
 fi
 EOT
     chmod 755 /mnt/overlay/etc/rc.d/rc.keymap
+    echo "KEYMAP=${KEYMAP}" > /mnt/overlay/etc/vconsole.conf
   fi
   if [ ! -z "$KEYMAP" -o ! -z "$XKB" ]; then
     # Set a keyboard mapping in X.Org, derived from the console map if needed:
@@ -890,6 +891,7 @@ EOT
     # Configure custom locale:
     echo "${MARKER}:  Switching to '$LOCALE' locale"
     sed -i -e "s/^ *export LANG=.*/export LANG=${LOCALE}/" /mnt/overlay/etc/profile.d/lang.sh
+    echo "LANG=${LOCALE}" > /mnt/overlay/etc/locale.conf
   fi
 
   if [ ! -z "$TZ" -a -f /mnt/overlay/usr/share/zoneinfo/${TZ} ]; then
