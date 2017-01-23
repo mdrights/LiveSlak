@@ -70,6 +70,7 @@ libgudev
 libksba
 libmpc
 libtermcap
+libunistring
 lilo
 links
 logrotate

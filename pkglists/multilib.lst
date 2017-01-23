@@ -90,6 +90,7 @@ libsndfile-compat32
 libtasn1-compat32
 libtermcap-compat32
 libtiff-compat32
+libunistring-compat32
 libusb-compat32
 libvorbis-compat32
 libxml2-compat32
@@ -139,7 +140,6 @@ libXcomposite-compat32
 libXcursor-compat32
 libXdamage-compat32
 libXdmcp-compat32
-libepoxy-compat32
 libXevie-compat32
 libXext-compat32
 libXfixes-compat32
@@ -164,11 +164,14 @@ libXxf86misc-compat32
 libXxf86vm-compat32
 libdmx-compat32
 libdrm-compat32
+libepoxy-compat32
 libfontenc-compat32
+libinput-compat32
 libpciaccess-compat32
 libva-compat32
 libva-intel-driver-compat32
 libvdpau-compat32
+libwacom-compat32
 libxcb-compat32
 libxshmfence-compat32
 mesa-compat32

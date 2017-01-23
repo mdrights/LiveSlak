@@ -184,6 +184,7 @@ libical
 libidl
 libieee1284
 libimobiledevice
+libinput
 libiodbc
 libjpeg-turbo
 libmad
@@ -220,6 +221,7 @@ libvdpau
 libvisual
 libvorbis
 libvpx
+libwacom
 libwmf
 libwnck
 libx86
