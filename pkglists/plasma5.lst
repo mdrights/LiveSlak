@@ -62,7 +62,9 @@ telepathy-morse
 telepathy-qt5
 
 # kde4 extragear:
+k3b
 kio-mtp
+libkcddb4
 
 # kde4 based:
 akonadi4
@@ -422,6 +424,8 @@ umbrello
 zeroconf-ioslave
 
 # applications-extra:
+calligra
+krita
 kdev-php
 kdevelop
 kdevelop-pg-qt
