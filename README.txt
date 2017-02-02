@@ -573,7 +573,7 @@ The script's parameters are:
 
 The script uses package repositories to create a Live ISO.  The packages will be installed into a temporary directory.
 
-In order to create a Live ISO for any of these variants, the package repositories that are required must be available as a local directory (this can be a network-mounted directory).  A local mirror of the Slackware repository is mandatory.  Any packages that are used from a 3rd party repository will be downloaded from a remote server as long as a rsync URL for the repository is configured in ./pkglists/*.conf.
+In order to create a Live ISO for any of these variants, the package repositories that are required must be available as a local directory (this can be a network-mounted directory).  A local mirror of the Slackware repository is mandatory  - you have to download these yourself..  Any other packages, i.e. those that are used from a 3rd party repository will be downloaded from a remote server as long as a rsync URL for the repository is configured in ./pkglists/*.conf.
 
 When all pre-reqs are met, you issue a single command to generate the ISO.  The following example will create a pure Slackware Live Edition:
   # ./make_slackware_live.sh
