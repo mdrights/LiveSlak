@@ -457,6 +457,7 @@ ktp-call-ui
 signon-kwallet-extension
 
 # Supported languages in the ISO:
+kde-l10n-da
 kde-l10n-de
 kde-l10n-en_GB
 kde-l10n-es
