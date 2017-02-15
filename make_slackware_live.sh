@@ -1356,7 +1356,11 @@ if ls ${LIVE_ROOTDIR}/boot/vmlinuz-huge-* 1>/dev/null 2>/dev/null; then
     rm -f setup
   cd - 1>/dev/null
   # Fix some occurrences of '/mnt' that should not be used in the Live ISO:
-  sed -i -e 's, /mnt, ${T_PX},g' -e 's,=/mnt$,=${T_PX},g' -e 's,=/mnt/,=${T_PX}/,g' -e 's,T_PX=/mnt,T_PX="`cat $TMP/SeTT_PX`",g' ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}/*
+  sed -i ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}/* \
+    -e 's,T_PX=/mnt,T_PX="`cat $TMP/SeTT_PX`",g' \
+    -e 's, /mnt, ${T_PX},g' \
+    -e 's,=/mnt$,=${T_PX},g' \
+    -e 's,=/mnt/,=${T_PX}/,g'
   # If T_PX is used in a script, it should be defined first:
   for FILE in ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}/* ; do
     if grep -q T_PX $FILE ; then
