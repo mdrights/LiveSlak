@@ -63,6 +63,7 @@ libstatgrab
 libtorrent-rasterbar
 lumina
 muparser
+nvme-cli
 openjdk
 p7zip
 python-twisted
