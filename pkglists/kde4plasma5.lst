@@ -1,22 +1,8 @@
-# Slackware deps:
-#PyQt
-#polkit-qt-1
-#qjson
-#sip
-
 # Slackware's KDE4:
 amarok
-calligra
-k3b
 kaudiocreator
 kdev-python
-kdevelop
-kdevelop-pg-qt
-kdevelop-php
-kdevelop-php-docs
-kdevplatform
 kplayer
 kwebkitpart
 oxygen-gtk2
-partitionmanager
 

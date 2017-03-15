@@ -11,6 +11,7 @@ grantlee
 grantlee-qt4
 hack-font-ttf
 json-glib
+lensfun
 libappindicator
 libdbusmenu-gtk
 libdbusmenu-qt5
@@ -24,6 +25,7 @@ mesa
 ninja
 noto-cjk-font-ttf
 noto-font-ttf
+opencv
 phonon
 phonon-gstreamer
 phonon-vlc
@@ -62,7 +64,6 @@ telepathy-morse
 telepathy-qt5
 
 # kde4 extragear:
-k3b
 kio-mtp
 libkcddb4
 
@@ -399,6 +400,7 @@ libkdeedu
 libkdegames
 libkeduvocdocument
 libkexiv2
+libkface
 libkgeomap
 libkipi
 libkmahjongg
@@ -425,6 +427,8 @@ zeroconf-ioslave
 
 # applications-extra:
 calligra
+digikam
+k3b
 krita
 kdev-php
 kdevelop
@@ -433,6 +437,7 @@ kdevplatform
 kdiagram
 kjots
 kpmcore
+krusader
 ktorrent
 kuser
 libktorrent
