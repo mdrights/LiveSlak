@@ -7,7 +7,7 @@ blueman
 cairomm
 fltk
 geeqie
-gftp
+#gftp
 gimp
 gkrellm
 glibmm
