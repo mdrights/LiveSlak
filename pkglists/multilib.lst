@@ -35,6 +35,7 @@ sqlite-compat32
 # The D/ series:
 libtool-compat32
 llvm-compat32
+opencl-headers-compat32
 # The L/ series:
 alsa-lib-compat32
 alsa-oss-compat32
@@ -46,6 +47,7 @@ dbus-glib-compat32
 elfutils-compat32
 esound-compat32
 expat-compat32
+ffmpeg-compat32
 fftw-compat32
 freetype-compat32
 fribidi-compat32
@@ -60,6 +62,7 @@ gst-plugins-base-compat32
 gst-plugins-base0-compat32
 gst-plugins-good-compat32
 gst-plugins-good0-compat32
+gst-plugins-libav-compat32
 gstreamer-compat32
 gstreamer0-compat32
 harfbuzz-compat32
@@ -71,6 +74,8 @@ lcms2-compat32
 libaio-compat32
 libart_lgpl-compat32
 libasyncns-compat32
+libclc-compat32
+libedit-compat32
 libexif-compat32
 libffi-compat32
 libglade-compat32
@@ -97,11 +102,13 @@ libxml2-compat32
 libxslt-compat32
 lzo-compat32
 ncurses-compat32
+ocl-icd-compat32
 openjpeg-compat32
 orc-compat32
 pango-compat32
 popt-compat32
 pulseaudio-compat32
+python-six-compat32
 qt-compat32
 readline-compat32
 sbc-compat32
