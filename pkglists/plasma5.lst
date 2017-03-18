@@ -5,7 +5,9 @@
 OpenAL
 PyQt5
 cfitsio
+dvdauthor
 elogind
+frei0r-plugins
 gpgme
 grantlee
 grantlee-qt4
@@ -22,6 +24,7 @@ libwacom
 libxkbcommon
 lmdb
 mesa
+mlt
 ninja
 noto-cjk-font-ttf
 noto-font-ttf
@@ -38,6 +41,7 @@ qt5
 qt5-webkit
 sip
 sni-qt
+vid.stab
 wayland
 xorg-server
 
@@ -321,6 +325,7 @@ kdegraphics-strigi-analyzer
 kdegraphics-thumbnailers
 kdenetwork-filesharing
 kdenetwork-strigi-analyzers
+kdenlive
 kdesdk-kioslaves
 kdesdk-strigi-analyzers
 kdesdk-thumbnailers
