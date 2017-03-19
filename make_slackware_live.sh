@@ -215,8 +215,14 @@ SXZ_COMP=${SXZ_COMP:-"xz"}
 # Mount point where Live filesystem is assembled (no storage requirements):
 LIVE_ROOTDIR=${LIVE_ROOTDIR:-"/mnt/slackwarelive"}
 
+# Directory where the live ISO image will be written:
+OUTPUT=${OUTPUT:-"/tmp"}
+
+# Directory where we create the staging directory:
+TMP=${TMP:-"/tmp"}
+
 # Toplevel directory of our staging area (this needs sufficient storage):
-LIVE_STAGING=${LIVE_STAGING:-"/tmp/slackwarelive_staging"}
+LIVE_STAGING=${LIVE_STAGING:-"${TMP}/slackwarelive_staging"}
 
 # Work directory where we will create all the temporary stuff:
 LIVE_WORK=${LIVE_WORK:-"${LIVE_STAGING}/temp"}
@@ -233,9 +239,6 @@ LIVE_BOOT=${LIVE_BOOT:-"${LIVE_STAGING}/${LIVEMAIN}/bootinst"}
 LIVE_MOD_SYS=${LIVE_MOD_SYS:-"${LIVE_STAGING}/${LIVEMAIN}/system"}
 LIVE_MOD_ADD=${LIVE_MOD_ADD:-"${LIVE_STAGING}/${LIVEMAIN}/addons"}
 LIVE_MOD_OPT=${LIVE_MOD_OPT:-"${LIVE_STAGING}/${LIVEMAIN}/optional"}
-
-# Directory where the live ISO image will be written:
-OUTPUT=${OUTPUT:-"/tmp"}
 
 # ---------------------------------------------------------------------------
 # Define some functions.
