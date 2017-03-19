@@ -1866,7 +1866,12 @@ rm -f ${LIVE_ROOTDIR}/root/.bash*
 
 # Create a locate cache:
 echo "-- Creating locate cache, takes a few seconds..."
-chroot ${LIVE_ROOTDIR} /etc/cron.daily/slocate 2>${DBGOUT}
+if [ -x ${LIVE_ROOTDIR}/etc/cron.daily/mlocate ]; then
+  LOCATE_BIN=mlocate
+else
+  LOCATE_BIN=slocate
+fi
+chroot ${LIVE_ROOTDIR} /etc/cron.daily/${LOCATE_BIN} 2>${DBGOUT}
 
 # -----------------------------------------------------------------------------
 # Done with configuring the live system!
