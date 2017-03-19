@@ -37,6 +37,7 @@ libtool-compat32
 llvm-compat32
 opencl-headers-compat32
 # The L/ series:
+SDL2-compat32
 alsa-lib-compat32
 alsa-oss-compat32
 alsa-plugins-compat32
