@@ -4,7 +4,9 @@
 # deps:
 OpenAL
 PyQt5
+accountsservice
 cfitsio
+cracklib
 dvdauthor
 elogind
 frei0r-plugins
@@ -20,6 +22,7 @@ libdbusmenu-qt5
 libdmtx
 libindicator
 libinput
+libpwquality
 libwacom
 libxkbcommon
 lmdb
@@ -275,6 +278,7 @@ polkit-kde-framework
 powerdevil
 sddm-kcm
 systemsettings
+user-manager
 
 # applications:
 analitza
