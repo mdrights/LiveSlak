@@ -17,6 +17,7 @@ hack-font-ttf
 json-glib
 lensfun
 libappindicator
+libburn
 libdbusmenu-gtk
 libdbusmenu-qt5
 libdmtx
