@@ -172,15 +172,15 @@ SEQ_KDE4BASE="pkglist:${MINLIST},xbase,xapbase,kde4base"
 
 # List of Slackware package series with Plasma5 instead of KDE 4 (full install):
 # - each will become a squashfs module:
-SEQ_PLASMA5="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,kde4plasma5,plasma5,alien,alienrest local:slackpkg+"
+SEQ_PLASMA5="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,kde4plasma5,plasma5,alien,alienrest,slackpkgplus"
 
 # List of Slackware package series with MSB instead of KDE 4 (full install):
 # - each will become a squashfs module:
-SEQ_MSB="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,mate local:slackpkg+"
+SEQ_MSB="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,mate,slackpkgplus"
 
 # List of Slackware package series with Cinnamon instead of KDE4 (full install):
 # - each will become a squashfs module:
-SEQ_CIN="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,cinnamon local:slackpkg+"
+SEQ_CIN="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,cinnamon,slackpkgplus"
 
 # Slackware package series with Gnome3/systemd instead of KDE4 (full install):
 # - each will become a squashfs module:
