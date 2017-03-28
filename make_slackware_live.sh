@@ -1349,6 +1349,7 @@ chmod 755 ${LIVE_ROOTDIR}/usr/local/sbin/pxeserver
 # to the ISO.  The huge kernel does not require an initrd and installation
 # to the hard drive will not be complicated.
 if ls ${LIVE_ROOTDIR}/boot/vmlinuz-huge-* 1>/dev/null 2>/dev/null; then
+ if [ -f ${DEF_SL_PKGROOT}/../isolinux/initrd.img ]; then
   # Extract the 'setup' files we need from the Slackware installer
   # and move them to a single directory in the ISO:
   mkdir -p  ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}
@@ -1423,6 +1424,9 @@ if ls ${LIVE_ROOTDIR}/boot/vmlinuz-huge-* 1>/dev/null 2>/dev/null; then
     -e "s/@VERSION@/$VERSION/g" \
     > ${HOOK_DST}
   chmod 644 ${HOOK_DST}
+ else
+  echo "-- Could not find ${DEF_SL_PKGROOT}/../isolinux/initrd.img - not adding 'setup2hd'!"
+ fi
 fi
 
 # Add the documentation:
