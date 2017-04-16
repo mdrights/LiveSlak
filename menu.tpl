@@ -43,7 +43,7 @@ label live
   menu label Start @LIVEDE@ Live
   menu default
   kernel /boot/generic
-  append initrd=/boot/initrd.img load_ramdisk=1 prompt_ramdisk=0 rw printk.time=0 kbd=@KBD@
+  append initrd=/boot/initrd.img @KAPPEND@ load_ramdisk=1 prompt_ramdisk=0 rw printk.time=0 kbd=@KBD@
   text help
     @CDISTRO@@DIRSUFFIX@-@SL_VERSION@, kernel @KVER@.
     Add 'load=nvidia' to the commandline

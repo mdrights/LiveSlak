@@ -94,7 +94,7 @@ DISTRO=${DISTRO:-"slackware"}
 LIVE_HOSTNAME=${LIVE_HOSTNAME:-"darkstar"}
 
 # What type of Live image?
-# Choices are: SLACKWARE, XFCE, KDE4, PLASMA5, MATE, CINNAMON, DLACK
+# Choices are: SLACKWARE, XFCE, KDE4, PLASMA5, MATE, CINNAMON, DLACK, STUDIOWARE
 LIVEDE=${LIVEDE:-"SLACKWARE"}
 
 # What runlevel to use if adding a DE like: XFCE, KDE4, PLASMA5 etc...
@@ -186,9 +186,19 @@ SEQ_CIN="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,cinnamon
 # - each will become a squashfs module:
 SEQ_DLACK="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap pkglist:slackextra,systemd,dlackware"
 
+# List of Slackware package series with StudioWare (full install):
+# - each will become a squashfs module:
+SEQ_STUDW="tagfile:a,ap,d,e,f,k,kde,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,studioware,slackpkgplus"
+
 # List of kernel modules required for a live medium to boot properly;
 # Lots of HID modules added to support keyboard input for LUKS password entry:
 KMODS=${KMODS:-"squashfs:overlay:loop:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:mmc-core:sdhci:usb-storage:hid:usbhid:i2c-hid:hid-generic:hid-apple:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:hid_multitouch:jbd:mbcache:ext3:ext4:isofs:fat:nls_cp437:nls_iso8859-1:msdos:vfat:ntfs"}
+
+# If any Live variant needs additional 'append' parameters, define them here:
+case "$LIVEDE" in
+ STUDIOWARE) KAPPEND=${KAPPEND:-"threadirqs"} ;;
+          *) ;;
+esac
 
 # Firmware for wired network cards required for NFS root support:
 NETFIRMWARE="3com acenic adaptec bnx tigon e100 sun kaweth tr_smctr cxgb3"
@@ -478,6 +488,7 @@ function gen_bootmenu() {
     -e "s/@LIVEDE@/$(echo $LIVEDE |sed 's/BASE//')/g" \
     -e "s/@SL_VERSION@/$SL_VERSION/g" \
     -e "s/@VERSION@/$VERSION/g" \
+    -e "s/@KAPPEND@/$KAPPEND/g" \
     > ${MENUROOTDIR}/vesamenu.cfg
 
   for LANCOD in $(cat ${LIVE_TOOLDIR}/languages |grep -Ev "(^ *#|^$)" |cut -d: -f1)
@@ -513,6 +524,7 @@ EOL
       -e "s/@LIVEDE@/$(echo $LIVEDE |sed 's/BASE//')/g" \
       -e "s/@SL_VERSION@/$SL_VERSION/g" \
       -e "s/@VERSION@/$VERSION/g" \
+      -e "s/@KAPPEND@/$KAPPEND/g" \
       > ${MENUROOTDIR}/menu_${LANCOD}.cfg
 
     # Generate custom language selection submenu for selected keyboard:
@@ -527,7 +539,7 @@ EOL
       fi
       cat <<EOL >> ${MENUROOTDIR}/lang_${LANCOD}.cfg
   kernel /boot/generic
-  append initrd=/boot/initrd.img load_ramdisk=1 prompt_ramdisk=0 rw printk.time=0 kbd=$KBD tz=$(cat ${LIVE_TOOLDIR}/languages |grep "^$SUBCOD:" |cut -d: -f4) locale=$(cat ${LIVE_TOOLDIR}/languages |grep "^$SUBCOD:" |cut -d: -f5) xkb=$(cat ${LIVE_TOOLDIR}/languages |grep "^$SUBCOD:" |cut -d: -f6)
+  append initrd=/boot/initrd.img $KAPPEND load_ramdisk=1 prompt_ramdisk=0 rw printk.time=0 kbd=$KBD tz=$(cat ${LIVE_TOOLDIR}/languages |grep "^$SUBCOD:" |cut -d: -f4) locale=$(cat ${LIVE_TOOLDIR}/languages |grep "^$SUBCOD:" |cut -d: -f5) xkb=$(cat ${LIVE_TOOLDIR}/languages |grep "^$SUBCOD:" |cut -d: -f6)
 
 EOL
     done
@@ -566,6 +578,7 @@ function gen_uefimenu() {
     -e "s/@LIVEDE@/$(echo $LIVEDE |sed 's/BASE//')/g" \
     -e "s/@SL_VERSION@/$SL_VERSION/g" \
     -e "s/@VERSION@/$VERSION/g" \
+    -e "s/@KAPPEND@/$KAPPEND/g" \
     > ${GRUBDIR}/grub.cfg
 
   # Set a default keyboard selection:
@@ -968,6 +981,7 @@ case "$LIVEDE" in
        MATE) MSEQ="${SEQ_MSB}" ;;
    CINNAMON) MSEQ="${SEQ_CIN}" ;;
       DLACK) MSEQ="${SEQ_DLACK}" ;;
+ STUDIOWARE) MSEQ="${SEQ_STUDW}" ;;
           *) if [ -n "${SEQ_CUSTOM}" ]; then
                # Custom distribution with a predefined package list:
                MSEQ="${SEQ_CUSTOM}"              
@@ -1272,14 +1286,15 @@ ALLOW32BIT=off
 USEBL=1
 WGETOPTS="--timeout=20 --tries=2"
 GREYLIST=on
-PKGS_PRIORITY=( restricted alienbob ktown mate )
-REPOPLUS=( slackpkgplus restricted alienbob ktown mate )
+PKGS_PRIORITY=( restricted alienbob ktown mate studioware )
+REPOPLUS=( slackpkgplus restricted alienbob ktown mate studioware )
 MIRRORPLUS['slackpkgplus']=http://slakfinder.org/slackpkg+/
 MIRRORPLUS['restricted']=http://bear.alienbase.nl/mirrors/people/alien/restricted_sbrepos/${SL_VERSION}/${SL_ARCH}/
 MIRRORPLUS['alienbob']=http://bear.alienbase.nl/mirrors/people/alien/sbrepos/${SL_VERSION}/${SL_ARCH}/
 #MIRRORPLUS['ktown_testing']=http://bear.alienbase.nl/mirrors/alien-kde/${SL_VERSION}/testing/${SL_ARCH}/
 MIRRORPLUS['ktown']=http://bear.alienbase.nl/mirrors/alien-kde/${SL_VERSION}/latest/${SL_ARCH}/
 MIRRORPLUS['mate']=http://slackware.uk/msb/${SL_VERSION}/latest/${SL_ARCH}/ 
+MIRRORPLUS['studioware']=http://slackware.uk/studioware/${SL_VERSION}/ 
 EOPL
 fi
 
@@ -1661,6 +1676,34 @@ if [ "$LIVEDE" = "DLACK" ]; then
     |tee ${LIVE_ROOTDIR}/etc/.updated >${LIVE_ROOTDIR}/var/.updated
 
 fi # End LIVEDE = DLACK  
+
+if [ "$LIVEDE" = "STUDIOWARE" ]; then
+
+  # -------------------------------------------------------------------------- #
+  echo "-- Configuring STUDIOWARE."
+  # -------------------------------------------------------------------------- #
+
+  # Create group and user for the Avahi service:
+  chroot ${LIVE_ROOTDIR} /usr/sbin/groupadd -g 214 avahi
+  chroot ${LIVE_ROOTDIR} /usr/sbin/useradd -c "Avahi Service Account" -u 214 -g 214 -d /dev/null -s /bin/false avahi
+  echo "avahi:$(openssl rand -base64 12)" | chroot ${LIVE_ROOTDIR} /usr/sbin/chpasswd
+
+  # RT Scheduling and Locked Memory:
+  cat << "EOT" > ${LIVE_ROOTDIR}/etc/initscript
+# Set umask to safe level:
+umask 022
+# Disable core dumps:
+ulimit -c 0
+# Allow unlimited size to be locked into memory:
+ulimit -l unlimited
+# Address issue of jackd failing to start with realtime scheduling:
+ulimit -r 65
+
+# Execute the program.
+eval exec "$4"
+EOT
+
+fi # End LIVEDE = STUDIOWARE  
 
 # You can define the function 'custom_config()' by uncommenting it in
 # the configuration file 'make_slackware_live.conf'.
