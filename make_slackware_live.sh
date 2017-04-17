@@ -310,14 +310,17 @@ full_pkgname() {
 function install_pkgs() {
   if [ -z "$1" ]; then
     echo "-- function install_pkgs: Missing module name."
+    cleanup
     exit 1
   fi
   if [ ! -d "$2" ]; then
     echo "-- function install_pkgs: Target directory '$2' does not exist!"
+    cleanup
     exit 1
   elif [ ! -f "$2/${MARKER}" ]; then
     echo "-- function install_pkgs: Target '$2' does not contain '${MARKER}' file."
     echo "-- Did you choose the right installation directory?"
+    cleanup
     exit 1
   fi
 
@@ -366,6 +369,7 @@ function install_pkgs() {
       fi
       if [ $RRES -ne 0 ]; then
         echo "** Exiting."
+        cleanup
         exit 1
       fi
     fi
@@ -642,6 +646,7 @@ EOL
   TZLIST=$(mktemp -t alientz.XXXXXX)
   if [ ! -f $TZLIST ]; then
     echo "*** Failed to create a temporary file!"
+    cleanup
     exit 1
   fi
   # First, create a list of timezones:
@@ -1069,6 +1074,7 @@ for SPS in ${SL_SERIES} ; do
       fi
       if [ -z "$KVER" ]; then
         echo "-- Could not find installed kernel in '${INSTDIR}'! Exiting."
+        cleanup
         exit 1
       else
         # Move the content of the /boot directory out of the minimal system,
@@ -2010,6 +2016,7 @@ if [ "$NFSROOTSUP" = "YES" ]; then
   KMODS_TEMP=$(mktemp -d -p /mnt -t liveslak.XXXXXX)
   if [ ! -d $KMODS_TEMP ]; then
     echo "*** Failed to create a temporary extraction directory for the initrd!"
+    cleanup
     exit 1
   fi
   # We need to extract the full kernel-modules package for deps resolving:
