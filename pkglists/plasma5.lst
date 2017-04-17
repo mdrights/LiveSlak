@@ -43,6 +43,7 @@ qrencode
 qt-gstreamer
 qt5
 qt5-webkit
+qtav
 sip
 sni-qt
 vid.stab
@@ -74,6 +75,7 @@ telepathy-qt5
 # kde4 extragear:
 kio-mtp
 libkcddb4
+libkcompactdisc4
 
 # kde4 based:
 akonadi4
@@ -201,6 +203,7 @@ kblog
 kcalcore
 kcalutils
 kcontacts
+kdav
 kdepim-addons
 kdepim-apps-libs
 kdepim-runtime
@@ -222,6 +225,7 @@ kpimtextedit
 ktnef
 libgravatar
 libkdepim
+libkgapi
 libkleo
 libksieve
 mailcommon
@@ -300,6 +304,7 @@ filelight
 granatier
 gwenview
 juk
+k3b
 kaccessible
 kajongg
 kalgebra
@@ -438,7 +443,6 @@ zeroconf-ioslave
 # applications-extra:
 calligra
 digikam
-k3b
 krita
 kdev-php
 kdevelop
