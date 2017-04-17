@@ -194,11 +194,10 @@ SEQ_STUDW="tagfile:a,ap,d,e,f,k,kde,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,st
 # Lots of HID modules added to support keyboard input for LUKS password entry:
 KMODS=${KMODS:-"squashfs:overlay:loop:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:mmc-core:sdhci:usb-storage:hid:usbhid:i2c-hid:hid-generic:hid-apple:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:hid_multitouch:jbd:mbcache:ext3:ext4:isofs:fat:nls_cp437:nls_iso8859-1:msdos:vfat:ntfs"}
 
-# If any Live variant needs additional 'append' parameters, define them here:
-case "$LIVEDE" in
- STUDIOWARE) KAPPEND=${KAPPEND:-"threadirqs"} ;;
-          *) ;;
-esac
+# If any Live variant needs additional 'append' parameters, define them here,
+# either using a variable name 'KAPPEND_<LIVEDE>', or by defining 'KAPPEND' in the .conf file:
+KAPPEND_SLACKWARE=""
+KAPPEND_STUDIOWARE="threadirqs"
 
 # Firmware for wired network cards required for NFS root support:
 NETFIRMWARE="3com acenic adaptec bnx tigon e100 sun kaweth tr_smctr cxgb3"
@@ -2056,6 +2055,11 @@ mv ${LIVE_BOOT}/boot/initrd_${KVER}.img ${LIVE_STAGING}/boot/initrd.img
 
 # Squash the boot directory into its own module:
 mksquashfs ${LIVE_BOOT} ${LIVE_MOD_SYS}/0000-${DISTRO}_boot-${SL_VERSION}-${SL_ARCH}.sxz -noappend -comp ${SXZ_COMP} -b 1M
+
+# Determine additional boot parameters to be added:
+if [ -z ${KAPPEND} ]; then
+  eval KAPPEND=\$KAPPEND_${LIVEDE}
+fi
 
 # Copy the syslinux configuration.
 # The next block checks here for a possible UEFI grub boot image:
