@@ -156,8 +156,12 @@ SL_ARCH=${SL_ARCH:-"x86_64"}
 # Root directory of a Slackware local mirror tree;
 # You can define custom repository location (must be in local filesystem)
 # for any module in the file ./pkglists/<module>.conf:
-SL_REPO=${SL_REPO:-"/mnt/auto/sox/ftp/pub/Linux/Slackware"}
+SL_REPO=${SL_REPO:-"/var/cache/liveslak/Slackware"}
 DEF_SL_REPO=${SL_REPO}
+
+# The rsync URI of our default Slackware mirror server:
+SL_REPO_URL=${SL_REPO_URL:-"rsync.osuosl.org::slackware"}
+DEF_SL_REPO_URL=${SL_REPO_URL}
 
 # List of Slackware package series - each will become a squashfs module:
 SEQ_SLACKWARE="tagfile:a,ap,d,e,f,k,kde,kdei,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra"
@@ -318,6 +322,7 @@ function install_pkgs() {
   fi
 
   # Define the default Slackware repository, can be overridden here:
+  SL_REPO_URL="${DEF_SL_REPO_URL}"
   SL_REPO="${DEF_SL_REPO}"
   SL_PKGROOT="${DEF_SL_PKGROOT}"
   SL_PATCHROOT="${DEF_SL_PATCHROOT}"
@@ -333,24 +338,20 @@ function install_pkgs() {
     else
       PKGCONF=${LIVE_TOOLDIR}/pkglists/$(echo $1 |tr [A-Z] [a-z]).conf
       PKGFILE=${LIVE_TOOLDIR}/pkglists/$(echo $1 |tr [A-Z] [a-z]).lst
-    fi
-
-    if [ -f ${PKGCONF} ]; then
-      echo "-- Loading repo info for '$1'."
-      . ${PKGCONF}
-    fi
-
-    if [ -f ${PKGFILE} ]; then
-      echo "-- Loading package list '$PKGFILE'."
-    else
-      echo "-- Mandatory package list file '$PKGFILE' is missing! Exiting."
-      exit 1
+      if [ -f ${PKGCONF} ]; then
+        echo "-- Loading repo info for '$1'."
+        . ${PKGCONF}
+      fi
     fi
 
     if [ "${SL_REPO}" = "${DEF_SL_REPO}" ]; then
-      # We require that the Slackware package mirror is available:
-      true
-    elif [ ! -d ${SL_REPO} -o -z "$(find ${SL_PKGROOT} -type f 2>/dev/null)" ]; then
+      # We need only one release from the Slackware package mirror;
+      # This must *not* end with a '/' :
+      SELECTION="${DISTRO}${DIRSUFFIX}-${SL_VERSION}"
+    else
+      SELECTION=""
+    fi
+    if [ ! -d ${SL_REPO} -o -z "$(find ${SL_PKGROOT} -type f 2>/dev/null)" ]; then
       # Oops... empty local repository. Let's see if we can rsync from remote:
       echo "** Slackware package repository root '${SL_REPO}' does not exist or is empty!"
       RRES=1
@@ -359,7 +360,7 @@ function install_pkgs() {
         # Must be a rsync URL!
         echo "-- Rsync-ing repository content from '${SL_REPO_URL}' to local directory '${SL_REPO}'..."
         echo "-- This can be time-consuming.  Please wait."
-        rsync -rlptD --no-motd ${SL_REPO_URL}/ ${SL_REPO}/
+        rsync -rlptD --no-motd --exclude=source ${RSYNCREP} ${SL_REPO_URL}/${SELECTION} ${SL_REPO}/
         RRES=$?
         echo "-- Done rsync-ing from '${SL_REPO_URL}'."
       fi
@@ -367,6 +368,14 @@ function install_pkgs() {
         echo "** Exiting."
         exit 1
       fi
+    fi
+
+    if [ -f ${PKGFILE} ]; then
+      echo "-- Loading package list '$PKGFILE'."
+    else
+      echo "-- Mandatory package list file '$PKGFILE' is missing! Exiting."
+      cleanup
+      exit 1
     fi
 
     for PKGPAT in $(cat ${PKGFILE} |grep -v -E '^ *#|^$' |cut -d: -f1); do
@@ -894,7 +903,7 @@ DEF_SL_PATCHROOT=${SL_PATCHROOT}
 # Are all the required add-on tools present?
 [ "$USEXORR" = "NO" ] && ISOGEN="mkisofs isohybrid" || ISOGEN="xorriso"
 PROG_MISSING=""
-for PROGN in mksquashfs unsquashfs grub-mkfont syslinux $ISOGEN installpkg upgradepkg keytab-lilo ; do
+for PROGN in mksquashfs unsquashfs grub-mkfont syslinux $ISOGEN installpkg upgradepkg keytab-lilo rsync ; do
   if ! which $PROGN 1>/dev/null 2>/dev/null ; then
     PROG_MISSING="${PROG_MISSING}--   $PROGN\n"
   fi
@@ -904,6 +913,15 @@ if [ ! -z "$PROG_MISSING" ] ; then
   echo -e ${PROG_MISSING}
   echo "-- Exiting."
   exit 1
+fi
+
+# Check rsync progress report capability:
+if [ -z "$(rsync  --info=progress2 2>&1 |grep "unknown option")" ]; then
+  # Use recent rsync to display some progress:
+  RSYNCREP="--no-inc-recursive --info=progress2"
+else
+  # Remain silent if we have an older rsync:
+  RSYNCREP=" "
 fi
 
 # Create output directory for image file:
@@ -921,12 +939,6 @@ if [ "$ONLY_ISO" = "YES" -a -n "${LIVE_STAGING}" ]; then
 else
   # Remove ./boot - it will be created from scratch later:
   rm -rf ${LIVE_STAGING}/boot
-fi
-
-# Do we have a local Slackware repository?
-if [ ! -d ${SL_REPO} ]; then
-  echo "-- Slackware repository root '${SL_REPO}' does not exist! Exiting."
-  exit 1
 fi
 
 # Cleanup if we are FORCEd to rebuild from scratch:
