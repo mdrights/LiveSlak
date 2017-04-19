@@ -73,6 +73,7 @@ telepathy-morse
 telepathy-qt5
 
 # kde4 extragear:
+audiocd-kio4
 kio-mtp
 libkcddb4
 libkcompactdisc4
