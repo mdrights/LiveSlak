@@ -77,6 +77,12 @@ LOCALHD=0
 # Usability tweaks:
 TWEAKS=""
 
+# Deal with freetype's sub-pixel hinting.
+# Enable the new v40 interpreter only if /etc/profile.d/freetype.sh is found.
+# Otherwise (or in case 'tweaks=nsh' is passed at boot) disable the new
+# interpreter and fall back to the old v35 interpreter.
+SPH=1
+
 # Perhaps we need to blacklist some kernel module(s):
 BLACKLIST=""
 
@@ -209,6 +215,7 @@ for ARG in $(cat /proc/cmdline); do
     tweaks=*)
       # Comma-separated set of usability tweaks.
       # nga: no glamor 2d acceleration.
+      # nsh: no sub-pixel hinting in freetype.
       # tpb: trackpoint scrolling while pressing middle mouse button.
       # syn: start synaptics daemon and extend X.Org capabilities.
       # ssh: start SSH daemon (disabled by default).
@@ -992,6 +999,8 @@ Section "Device"
   Option "AccelMethod" "none"
 EndSection
 EOT
+    elif [ "$TWEAK" = "nsh" ]; then
+      SPH=0
     elif [ "$TWEAK" = "tpb" ]; then
       # Enable scrolling with TrackPoint while pressing the middle mouse button.
       # Note: if this does not work for your TrackPoint,
@@ -1048,6 +1057,45 @@ EOT
       chmod +x /mnt/overlay/etc/rc.d/rc.sshd
     fi
   done # End Tweaks.
+
+  # After parsing the tweaks, we know what to do with freetype's rendering:
+  if [ ! -f /mnt/overlay/etc/profile.d/freetype.sh ]; then
+    # Old freetype - disable sub-pixel hinting:
+    SPH=0
+  fi
+  if [ $SPH -eq 1 ]; then
+    # Enable the new v40 interpreter in freetype:
+    sed -e 's/^ *[^# ]/#&/' -i /mnt/overlay/etc/profile.d/freetype.sh
+    cat <<EOT >> /mnt/overlay/etc/profile.d/freetype.sh
+export FREETYPE_PROPERTIES="truetype:interpreter-version=40"
+EOT
+    sed -e 's/^ *[^# ]/#&/' -i /mnt/overlay/etc/profile.d/freetype.csh
+    cat <<EOT >> /mnt/overlay/etc/profile.d/freetype.csh
+setenv FREETYPE_PROPERTIES "truetype:interpreter-version=40"
+EOT
+    # Adapt the font configuration:
+    ln -s /etc/fonts/conf.avail/10-hinting-slight.conf /mnt/overlay/etc/fonts/conf.d/
+    ln -s /etc/fonts/conf.avail/11-lcdfilter-default.conf /mnt/overlay/etc/fonts/conf.d/
+    cat <<EOT > /mnt/overlay/home/${LIVEUID}/.Xresources
+Xft.dpi: 96
+Xft.antialias: 1
+Xft.hinting: 1
+Xft.hintstyle: hintslight
+Xft.lcdfilter: lcddefault
+Xft.rgba: rgb
+Xft.autohint: 0
+EOT
+  elif [ -f /mnt/overlay/etc/profile.d/freetype.sh ]; then
+    # Explicitly configure the non-default old v35 interpreter in freetype:
+    sed -e 's/^ *[^# ]/#&/' -i /mnt/overlay/etc/profile.d/freetype.sh
+    cat <<EOT >> /mnt/overlay/etc/profile.d/freetype.sh
+export FREETYPE_PROPERTIES="truetype:interpreter-version=35"
+EOT
+    sed -e 's/^ *[^# ]/#&/' -i /mnt/overlay/etc/profile.d/freetype.csh
+    cat <<EOT >> /mnt/overlay/etc/profile.d/freetype.csh
+setenv FREETYPE_PROPERTIES "truetype:interpreter-version=35"
+EOT
+  fi # End Sub-Pixel Hinting
 
   # Blacklist kernel modules if requested:
   if [ ! -z "$BLACKLIST" ]; then
