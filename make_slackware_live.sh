@@ -1020,7 +1020,7 @@ if [ "$MULTILIB" = "YES" ]; then
   MSEQ="${MSEQ} pkglist:multilib"
 fi
 
-echo "-- Creating '${LIVEDE}' image."
+echo "-- Creating '${LIVEDE}' image (based on ${DISTRO^}-${SL_VERSION} ${SL_ARCH})."
 
 # Module sequence can be composed of multiple sub-sequences:
 for MSUBSEQ in ${MSEQ} ; do
