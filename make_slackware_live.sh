@@ -1484,6 +1484,22 @@ chown --reference=${LIVE_ROOTDIR}/home/${LIVEUID} ${LIVE_ROOTDIR}/home/${LIVEUID
 mkdir -p ${LIVE_ROOTDIR}/usr/share/apps/kdm/pics/users
 cp ${LIVE_TOOLDIR}/blueSW-64px.png ${LIVE_ROOTDIR}/usr/share/apps/kdm/pics/users/blues.icon
 
+# Add some convenience to the bash shell:
+mkdir -p  ${LIVE_ROOTDIR}/etc/skel/
+cat << "EOT" > ${LIVE_ROOTDIR}/etc/skel/.profile
+# Source a .bashrc if it exists:
+[[ -r ~/.bashrc ]] && . ~/.bashrc
+
+# Define some useful aliases:
+alias ll="ls -la $LS_OPTIONS"
+lsp() { basename $(ls -1 "/var/log/packages/$@"*) ; }
+alias md="mkdir"
+alias tarview="tar -tvf"
+
+# Ctrl-D should not log us off immediately; now it needs 10 times:
+set -o ignoreeof
+EOT
+
 # Give XDM a nicer look:
 mkdir -p ${LIVE_ROOTDIR}/etc/X11/xdm/liveslak-xdm
 cp -a ${LIVE_TOOLDIR}/xdm/* ${LIVE_ROOTDIR}/etc/X11/xdm/liveslak-xdm/
