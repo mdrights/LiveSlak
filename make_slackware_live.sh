@@ -1500,6 +1500,10 @@ alias tarview="tar -tvf"
 set -o ignoreeof
 EOT
 
+# Do the root account the same favor:
+cat ${LIVE_ROOTDIR}/etc/skel/.profile > ${LIVE_ROOTDIR}/root/.profile
+chown root:root ${LIVE_ROOTDIR}/root/.profile
+
 # Give XDM a nicer look:
 mkdir -p ${LIVE_ROOTDIR}/etc/X11/xdm/liveslak-xdm
 cp -a ${LIVE_TOOLDIR}/xdm/* ${LIVE_ROOTDIR}/etc/X11/xdm/liveslak-xdm/
