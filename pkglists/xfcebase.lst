@@ -22,7 +22,7 @@ xfce4-systemload-plugin
 xfce4-taskmanager
 xfce4-terminal
 xfce4-volumed
-xfce4-weather-plugin
+#xfce4-weather-plugin
 xfconf
 xfdesktop
 xfwm4
