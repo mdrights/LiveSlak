@@ -434,7 +434,8 @@ function install_pkgs() {
     rm -rf "$2"/usr/share/gtk-doc
     rm -rf "$2"/usr/share/help
     # Remove residual bloat:
-    rm -f "${2}"/usr/doc/*/*.{html,css,xml,pdf,db,bz2,xz}
+    rm -rf "${2}"/usr/doc/*/html
+    rm -f "${2}"/usr/doc/*/*.{html,css,xml,pdf,db,gz,bz2,xz,txt,TXT}
   fi
   if [ "$TRIM" = "mandoc" ]; then
     # Also remove man and info pages:
@@ -450,6 +451,13 @@ function install_pkgs() {
     # Also remove some of the big unused/esoteric static libraries:
     rm -rf "$2"/usr/lib${DIRSUFFIX}/{libaudiofile,libgdk,libglib,libgtk}.a
     rm -rf "$2"/usr/lib${DIRSUFFIX}/{liblftp*,libnl}.a
+    rm -rf "$2"/usr/lib${DIRSUFFIX}/libboost*test*.a
+    # The llvm static libraries are not needed since we also ship the .so:
+    rm -rf "$2"/usr/lib${DIRSUFFIX}/lib{LLVM,clang,lldb}*.a
+    # And these are not needed for a simple XFCE ISO:
+    rm -rf "$2"/usr/lib${DIRSUFFIX}/clang/*/lib/linux/*.a{,.syms}
+    # Get rid of useless documentation:
+    rm -rf "$2"/usr/share/ghostscript/*/doc/
     # Remove unneeded languages from glibc:
     KEEPLANG="$(cat ${LIVE_TOOLDIR}/languages|grep -Ev "(^ *#|^$)"|cut -d: -f1)"
     for LOCALEDIR in /usr/lib${DIRSUFFIX}/locale /usr/share/i18n/locales /usr/share/locale ; do
