@@ -62,10 +62,14 @@ libstatgrab
 #libtinfo
 libtorrent-rasterbar
 lumina
+mkvtoolnix
 muparser
+nodejs
 nvme-cli
 openjdk
+#oxygen-gtk2
 p7zip
+palemoon
 python-twisted
 podofo
 qbittorrent
