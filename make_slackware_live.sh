@@ -1311,15 +1311,15 @@ ALLOW32BIT=off
 USEBL=1
 WGETOPTS="--timeout=20 --tries=2"
 GREYLIST=on
-PKGS_PRIORITY=( restricted alienbob ktown mate studioware )
-REPOPLUS=( slackpkgplus restricted alienbob ktown mate studioware )
+PKGS_PRIORITY=( restricted alienbob ktown mate )
+REPOPLUS=( slackpkgplus restricted alienbob ktown mate )
 MIRRORPLUS['slackpkgplus']=http://slakfinder.org/slackpkg+/
 MIRRORPLUS['restricted']=http://bear.alienbase.nl/mirrors/people/alien/restricted_sbrepos/${SL_VERSION}/${SL_ARCH}/
 MIRRORPLUS['alienbob']=http://bear.alienbase.nl/mirrors/people/alien/sbrepos/${SL_VERSION}/${SL_ARCH}/
 #MIRRORPLUS['ktown_testing']=http://bear.alienbase.nl/mirrors/alien-kde/${SL_VERSION}/testing/${SL_ARCH}/
 MIRRORPLUS['ktown']=http://bear.alienbase.nl/mirrors/alien-kde/${SL_VERSION}/latest/${SL_ARCH}/
 MIRRORPLUS['mate']=http://slackware.uk/msb/${SL_VERSION}/latest/${SL_ARCH}/ 
-MIRRORPLUS['studioware']=http://slackware.uk/studioware/${SL_VERSION}/ 
+#MIRRORPLUS['studioware']=http://slackware.uk/studioware/${SL_VERSION}/ 
 EOPL
 fi
 
