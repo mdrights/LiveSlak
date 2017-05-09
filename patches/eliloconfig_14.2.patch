@@ -1,0 +1,25 @@
+--- eliloconfig.orig	2016-04-01 20:37:40.000000000 +0200
++++ eliloconfig	2016-11-12 01:32:24.804762277 +0100
+@@ -75,9 +75,9 @@
+   exit
+ fi
+ 
+-# If there's no vfat mounted on /boot/efi or /mnt/boot/efi, forget it:
++# If there's no vfat mounted on /boot/efi or $T_PX/boot/efi, forget it:
+ if ! mount | grep vfat | grep -wq /boot/efi ; then
+-  if ! mount | grep vfat | grep -wq /mnt/boot/efi ; then
++  if ! mount | grep vfat | grep -wq $T_PX/boot/efi ; then
+     if [ "$T_PX" = "/" ]; then
+       echo "ERROR:  No EFI System Partition mounted on /boot/efi."
+     fi
+@@ -90,8 +90,8 @@
+   EFI_DEVICE=$(mount | grep vfat | grep -w /boot/efi | cut -b 1-8)
+   EFI_PARTITION=$(mount | grep vfat | grep -w /boot/efi | cut -f 1 -d ' ' | cut -b 9- | tr -d [a-z])
+ else
+-  EFI_DEVICE=$(mount | grep vfat | grep -w /mnt/boot/efi | cut -b 1-8)
+-  EFI_PARTITION=$(mount | grep vfat | grep -w /mnt/boot/efi | cut -f 1 -d ' ' | cut -b 9- | tr -d [a-z])
++  EFI_DEVICE=$(mount | grep vfat | grep -w $T_PX/boot/efi | cut -b 1-8)
++  EFI_PARTITION=$(mount | grep vfat | grep -w $T_PX/boot/efi | cut -f 1 -d ' ' | cut -b 9- | tr -d [a-z])
+ fi
+ 
+ # There better be a kernel:

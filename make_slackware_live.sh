@@ -1419,10 +1419,20 @@ if ls ${LIVE_ROOTDIR}/boot/vmlinuz-huge-* 1>/dev/null 2>/dev/null; then
     fi
   done
   if [ -f ${LIVE_ROOTDIR}/sbin/liloconfig ]; then
-    patch ${LIVE_ROOTDIR}/sbin/liloconfig ${LIVE_TOOLDIR}/patches/liloconfig.patch
+    if [ -f ${LIVE_TOOLDIR}/patches/liloconfig_${SL_VERSION}.patch ]; then
+      LILOPATCH=liloconfig_${SL_VERSION}.patch
+    else
+      LILOPATCH=liloconfig.patch
+    fi
+    patch ${LIVE_ROOTDIR}/sbin/liloconfig ${LIVE_TOOLDIR}/patches/${LILOPATCH}
   fi
   if [ -f ${LIVE_ROOTDIR}/usr/sbin/eliloconfig ]; then
-    patch ${LIVE_ROOTDIR}/usr/sbin/eliloconfig ${LIVE_TOOLDIR}/patches/eliloconfig.patch
+    if [ -f ${LIVE_TOOLDIR}/patches/eliloconfig_${SL_VERSION}.patch ]; then
+      ELILOPATCH=eliloconfig_${SL_VERSION}.patch
+    else
+      ELILOPATCH=eliloconfig.patch
+    fi
+    patch ${LIVE_ROOTDIR}/usr/sbin/eliloconfig ${LIVE_TOOLDIR}/patches/${ELILOPATCH}
   fi
   # Fix some occurrences of '/usr/lib/setup/' that are covered by $PATH:
   sed -i -e 's,/usr/lib/setup/,,g' -e 's,:/usr/lib/setup,:/usr/share/${LIVEMAIN},g' ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}/*
