@@ -1399,7 +1399,8 @@ if ls ${LIVE_ROOTDIR}/boot/vmlinuz-huge-* 1>/dev/null 2>/dev/null; then
     rm -r usr sbin
     rm -f setup
   cd - 1>/dev/null
-  # Fix some occurrences of '/mnt' that should not be used in the Live ISO:
+  # Fix some occurrences of '/mnt' that should not be used in the Live ISO
+  # (this was applied in Slackware > 14.2 but does not harm to do this anyway):
   sed -i ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}/* \
     -e 's,T_PX=/mnt,T_PX="`cat $TMP/SeTT_PX`",g' \
     -e 's, /mnt, ${T_PX},g' \
@@ -1421,18 +1422,26 @@ if ls ${LIVE_ROOTDIR}/boot/vmlinuz-huge-* 1>/dev/null 2>/dev/null; then
   if [ -f ${LIVE_ROOTDIR}/sbin/liloconfig ]; then
     if [ -f ${LIVE_TOOLDIR}/patches/liloconfig_${SL_VERSION}.patch ]; then
       LILOPATCH=liloconfig_${SL_VERSION}.patch
-    else
+    elif [ -f ${LIVE_TOOLDIR}/patches/liloconfig.patch ]; then
       LILOPATCH=liloconfig.patch
+    else
+      LILOPATCH=""
     fi
-    patch ${LIVE_ROOTDIR}/sbin/liloconfig ${LIVE_TOOLDIR}/patches/${LILOPATCH}
+    if [ -n "${LILOPATCH}" ]; then
+      patch ${LIVE_ROOTDIR}/sbin/liloconfig ${LIVE_TOOLDIR}/patches/${LILOPATCH}
+    fi
   fi
   if [ -f ${LIVE_ROOTDIR}/usr/sbin/eliloconfig ]; then
     if [ -f ${LIVE_TOOLDIR}/patches/eliloconfig_${SL_VERSION}.patch ]; then
       ELILOPATCH=eliloconfig_${SL_VERSION}.patch
-    else
+    elif  [ -f ${LIVE_TOOLDIR}/patches/eliloconfig.patch ]; then
       ELILOPATCH=eliloconfig.patch
+    else
+      ELILOPATCH=""
     fi
-    patch ${LIVE_ROOTDIR}/usr/sbin/eliloconfig ${LIVE_TOOLDIR}/patches/${ELILOPATCH}
+    if [ -n "${ELILOPATCH}" ]; then
+      patch ${LIVE_ROOTDIR}/usr/sbin/eliloconfig ${LIVE_TOOLDIR}/patches/${ELILOPATCH}
+    fi
   fi
   # Fix some occurrences of '/usr/lib/setup/' that are covered by $PATH:
   sed -i -e 's,/usr/lib/setup/,,g' -e 's,:/usr/lib/setup,:/usr/share/${LIVEMAIN},g' ${LIVE_ROOTDIR}/usr/share/${LIVEMAIN}/*
