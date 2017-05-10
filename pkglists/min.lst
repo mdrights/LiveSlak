@@ -35,8 +35,8 @@ floppy
 gawk
 gc
 gcc
-ghostscript
-ghostscript-fonts-std
+#ghostscript
+#ghostscript-fonts-std
 glibc
 #glibc-solibs
 glibc-zoneinfo
