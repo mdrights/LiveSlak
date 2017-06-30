@@ -35,7 +35,7 @@
 # -----------------------------------------------------------------------------
 
 # Version of the Live OS generator:
-VERSION="1.1.8"
+VERSION="1.1.8.1"
 
 # Directory where our live tools are stored:
 LIVE_TOOLDIR=${LIVE_TOOLDIR:-"$(cd $(dirname $0); pwd)"}
@@ -1028,7 +1028,7 @@ if [ "$MULTILIB" = "YES" ]; then
   MSEQ="${MSEQ} pkglist:multilib"
 fi
 
-echo "-- Creating '${LIVEDE}' image (based on ${DISTRO^}-${SL_VERSION} ${SL_ARCH})."
+echo "-- Creating liveslak ${VERSION} '${LIVEDE}' image (based on ${DISTRO^}-${SL_VERSION} ${SL_ARCH})."
 
 # Module sequence can be composed of multiple sub-sequences:
 for MSUBSEQ in ${MSEQ} ; do
