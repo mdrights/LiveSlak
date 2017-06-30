@@ -77,6 +77,7 @@ audiocd-kio4
 kio-mtp
 libkcddb4
 libkcompactdisc4
+oxygen-gtk2
 
 # kde4 based:
 akonadi4
@@ -285,6 +286,7 @@ powerdevil
 sddm-kcm
 systemsettings
 user-manager
+xdg-desktop-portal-kde
 
 # applications:
 analitza

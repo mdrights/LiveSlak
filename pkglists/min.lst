@@ -90,6 +90,7 @@ net-tools
 netkit-ftp
 netkit-routed
 network-scripts
+npth
 openldap-client
 openssh
 openssl

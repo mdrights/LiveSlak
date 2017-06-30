@@ -43,6 +43,7 @@ encodings
 esound
 evieext
 exiv2
+ffmpeg
 fftw
 fixesproto
 flac
@@ -116,6 +117,7 @@ jasper
 json-c
 kbproto
 keybinder
+lame
 lcms
 lcms2
 libFS
