@@ -322,6 +322,9 @@ blacklist=mod1[,mod2[...]]  => Add one or more kernel modules
 debug => During init, pause at strategic locations while
   assembling the overlay filesystem and show mount information.
 
+debug=<number> => '2' enables verbose script execution;
+  '4' dumps you into a debug shell right before the switch_root.
+
 rescue => After initialization, you will be dropped in a
   rescue shell to perform lowlevel maintenance.
 
