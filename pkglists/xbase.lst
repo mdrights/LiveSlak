@@ -2,6 +2,12 @@ ConsoleKit2
 GConf
 ModemManager
 NetworkManager
+SDL2
+SDL2_gfx
+SDL2_image
+SDL2_mixer
+SDL2_net
+SDL2_ttf
 a52dec
 aalib
 adwaita-icon-theme
@@ -32,7 +38,7 @@ dbus-glib
 dbus-python
 dejavu-fonts-ttf
 desktop-file-utils
-djvulibre
+#djvulibre
 dmxproto
 dosfstools
 dri2proto
@@ -93,7 +99,7 @@ gst-plugins-good
 gst-plugins-good0
 gstreamer
 gstreamer0
-gtk+
+#gtk+
 gtk+2
 gtk+3
 gtkspell
@@ -160,6 +166,7 @@ libarchive
 libart_lgpl
 libasyncns
 libatasmart
+libbluray
 libcaca
 libcanberra
 libcddb
@@ -171,7 +178,7 @@ libdmx
 libdrm
 libdvdnav
 libdvdread
-liberation-fonts-ttf
+#liberation-fonts-ttf
 libepoxy
 libevdev
 libexif
@@ -252,6 +259,7 @@ net-snmp
 nettle
 newt
 nfs-utils
+ocl-icd
 openexr
 openjpeg
 orc
@@ -402,7 +410,7 @@ xsetroot
 xsm
 xstdcmap
 xtrans
-xv
+#xv
 xvidtune
 xvinfo
 xwd

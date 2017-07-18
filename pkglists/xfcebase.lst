@@ -4,7 +4,7 @@ garcon
 gtk-xfce-engine
 libxfce4ui
 libxfce4util
-orage
+#orage
 thunar-volman
 tumbler
 xfce4-appfinder

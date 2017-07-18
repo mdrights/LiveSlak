@@ -6,7 +6,8 @@ attr
 bash
 bin
 binutils
-bind
+# Add 'bind' at the end because it does a chroot:
+#bind
 bison
 #bsd-games
 bzip2
@@ -25,7 +26,7 @@ diffutils
 dmidecode
 dnsmasq
 e2fsprogs
-elvis
+#elvis
 etc
 eudev
 file
@@ -35,7 +36,7 @@ floppy
 gawk
 gc
 gcc
-#ghostscript
+ghostscript
 #ghostscript-fonts-std
 glibc
 #glibc-solibs
@@ -63,15 +64,17 @@ kernel-modules
 kmod
 less
 libassuan
+libedit
 libevent
 libgcrypt
 libgpg-error
 libgudev
+libidn2
 libksba
 libmpc
 libtermcap
 libunistring
-lilo
+#lilo
 links
 logrotate
 lvm2
@@ -128,3 +131,5 @@ wget
 which
 whois
 xz
+# Bind needs to run at the end:
+bind

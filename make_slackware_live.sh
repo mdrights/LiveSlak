@@ -433,13 +433,16 @@ function install_pkgs() {
     (cd "${2}/usr/doc" && find . -type d -mindepth 2 -maxdepth 2 -exec rm -rf {} \;)
     rm -rf "$2"/usr/share/gtk-doc
     rm -rf "$2"/usr/share/help
+    find "$2"/usr/share/ -type d -name doc |xargs rm -rf
     # Remove residual bloat:
     rm -rf "${2}"/usr/doc/*/html
     rm -f "${2}"/usr/doc/*/*.{html,css,xml,pdf,db,gz,bz2,xz,txt,TXT}
+    # Remove info pages:
+    rm -rf "$2"/usr/info
   fi
   if [ "$TRIM" = "mandoc" ]; then
-    # Also remove man and info pages:
-    rm -rf "$2"/usr/man "$2"/usr/info
+    # Also remove man pages:
+    rm -rf "$2"/usr/man
   fi
   if [ "$LIVEDE" = "XFCE"  ]; then
     # By pruning stuff that no one likely needs anyway,
@@ -458,14 +461,31 @@ function install_pkgs() {
     rm -rf "$2"/usr/lib${DIRSUFFIX}/clang/*/lib/linux/*.a{,.syms}
     # Get rid of useless documentation:
     rm -rf "$2"/usr/share/ghostscript/*/doc/
+    # We don't need tests or examples:
+    find "$2"/usr/ -type d -iname test |xargs rm -rf
+    find "$2"/usr/ -type d -iname "example*" |xargs rm -rf
+    # Get rid of most of the screensavers:
+    KEEPXSCR="julia xflame xjack"
+    if [ -d "${2}"/usr/libexec/xscreensaver ]; then
+      cd "${2}"/usr/libexec/xscreensaver
+        mkdir .keep
+        for XSCR in ${KEEPXSCR} ; do
+          mv ${XSCR} .keep/ 2>/dev/null
+        done
+        rm -rf [A-Za-z]*
+        mv .keep/* . 2>/dev/null
+        rm -rf .keep
+      cd - 1>/dev/null
+    fi
     # Remove unneeded languages from glibc:
-    KEEPLANG="$(cat ${LIVE_TOOLDIR}/languages|grep -Ev "(^ *#|^$)"|cut -d: -f1)"
+    KEEPLANG="$(cat ${LIVE_TOOLDIR}/languages|grep -Ev "(^ *#|^$)"|cut -d: -f5)"
     for LOCALEDIR in /usr/lib${DIRSUFFIX}/locale /usr/share/i18n/locales /usr/share/locale ; do
       if [ -d "${2}"/${LOCALEDIR} ]; then
         cd "${2}"/${LOCALEDIR}
         mkdir .keep
         for KL in C ${KEEPLANG} ; do
-          mv ${KL}* .keep 2>/dev/null
+          mv ${KL%%.utf8}* .keep/ 2>/dev/null   # en_US.utf8 -> en_US*
+          mv ${KL%%_*} .keep/ 2>/dev/null       # en_US.utf8 -> en
         done
         rm -rf [A-Za-z]*
         mv .keep/* . 2>/dev/null
