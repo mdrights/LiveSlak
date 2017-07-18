@@ -1345,6 +1345,8 @@ fi
 
 ARCH=${SL_ARCH} /usr/sbin/slackpkg -batch=on update gpg
 ARCH=${SL_ARCH} /usr/sbin/slackpkg -batch=on update
+# Let any lingering .new files replace their originals:
+yes o | ARCH=${SL_ARCH} /usr/sbin/slackpkg new-config
 
 EOSL
 
