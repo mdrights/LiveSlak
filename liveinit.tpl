@@ -601,7 +601,7 @@ if [ "$RESCUE" = "" ]; then
     sleep 1
   else
     # LIVEMEDIA was specified on the boot commandline using "livemedia="
-    if [ ! -b "$LIVEMEDIA" ]; then
+    if [ "$LIVEMEDIA" != "scandev" -a ! -b "$LIVEMEDIA" ]; then
       # Passed a UUID or LABEL?
       LIVEALL=$(findfs UUID=$LIVEMEDIA 2>/dev/null) || LIVEALL=$(findfs LABEL=$LIVEMEDIA 2>/dev/null)
       LIVEMEDIA="$LIVEALL"
@@ -613,10 +613,36 @@ if [ "$RESCUE" = "" ]; then
     else
       if [ -n "$LIVEPATH" -a "$LIVEPATH" != "$LIVEMEDIA" ]; then
         # Boot option used: "livemedia=/dev/sdX:/path/to/live.iso",
-        # instead of just "livemedia=/dev/sdX".
+        # or: "livemedia=scandev:/path/to/live.iso",
+        # instead of just: "livemedia=/dev/sdX".
+        #
         # First mount the partition and then loopmount the ISO:
         SUPERMNT=/mnt/super_$(od -An -N1 -tu1 /dev/urandom |tr -d ' ')
         mkdir -p ${SUPERMNT}
+        #
+        if [ "$LIVEMEDIA" = "scandev" ]; then
+          # Scan partitions to find the one with the ISO and set LIVEMEDIA:
+          echo "${MARKER}:  Scanning for '$LIVEPATH'..."
+          for ISOPART in $(blkid |cut -d: -f1 |grep "[0-9]$") $(blkid |cut -d: -f1 |grep -v "[0-9]$") ; do
+            PARTFS=$(blkid $ISOPART |rev |cut -d'"' -f2 |rev)
+            # Abuse the $SUPERMNT a bit, we will actually use it later:
+            mount -t $PARTFS -o ro $ISOPART ${SUPERMNT}
+            if [ -f ${SUPERMNT}/${LIVEPATH} ]; then
+              # Found our ISO!
+              LIVEMEDIA=$ISOPART
+              umount $ISOPART
+              unset ISOPART
+              break
+            else
+              umount $ISOPART
+            fi
+          done
+          if [ -n "$ISOPART" ]; then
+            echo "${MARKER}:  Partition scan unable to find ISO, trouble ahead."
+          fi
+        fi
+        # At this point we know $LIVEMEDIA - either because the bootparameter
+        # specified it or else because the 'scandev' found it for us:
         SUPERFS=$(blkid $LIVEMEDIA |rev |cut -d'"' -f2 |rev)
         mount -t $SUPERFS -o ro $LIVEMEDIA ${SUPERMNT}
         if [ -f "${SUPERMNT}/$LIVEPATH" ]; then

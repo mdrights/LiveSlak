@@ -290,6 +290,9 @@ livemedia=/dev/sdX => Tell the init script which partition
 livemedia=/dev/sdX:/path/to/live.iso => Use this if you want to
   load the live OS from an ISO file on a local harddisk partition.
 
+livemedia=scandev:/path/to/live.iso => Use this if liveslak should
+  scan all device partitions to locate the ISO file.
+
 livemain=directoryname => Use this if you copied the content
   of the ISO to a different directory than "liveslak".
 
