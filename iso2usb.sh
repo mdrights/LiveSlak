@@ -447,7 +447,7 @@ if [ -z "$TARGET" -o -z "$SLISO" ]; then
   exit 1
 fi
 
-if [ $FORCE -eq 0 -a ! -f $SLISO ]; then
+if [ $FORCE -eq 0 -a ! -f "$SLISO" ]; then
   echo "*** This is not a useable file: '$SLISO' !"
   exit 1
 fi
@@ -475,7 +475,7 @@ if [ ! -z "$PROG_MISSING" ] ; then
 fi
 
 # Retrieve the version information from the ISO:
-VERSION=$(isoinfo -d -i ${SLISO} 2>/dev/null |grep Application |cut -d: -f2-)
+VERSION=$(isoinfo -d -i "${SLISO}" 2>/dev/null |grep Application |cut -d: -f2-)
 
 if [ $REFRESH -eq 0 ]; then
   # We are creating a USB stick from scratch,
@@ -522,7 +522,7 @@ if [ $REFRESH -eq 0 ]; then
   # Continue with the wipe/partitioning/formatting.
 
   # Get the LABEL used for the ISO:
-  LIVELABEL=$(blkid -s LABEL -o value ${SLISO})
+  LIVELABEL=$(blkid -s LABEL -o value "${SLISO}")
 
   # Use sgdisk to wipe and then setup the USB device:
   # - 1 MB BIOS boot partition
@@ -588,7 +588,7 @@ fi
 mount -t auto ${TARGET}3 ${USBMNT}
 
 # Loop-mount the ISO (or 1st partition if this is a hybrid ISO):
-mount -o loop ${SLISO} ${ISOMNT}
+mount -o loop "${SLISO}" ${ISOMNT}
 
 # Find out if the ISO contains an EFI bootloader and use it:
 if [ ! -f ${ISOMNT}/EFI/BOOT/boot*.efi ]; then
