@@ -550,7 +550,13 @@ if [ $REFRESH -eq 0 ]; then
   if mount |grep -qw ${TARGET}3 ; then
     umount ${TARGET}3 || true
   fi
-  mkfs.ext4 -F -F -L "${LIVELABEL}" -m 0 ${TARGET}3
+  # http://www.syslinux.org/wiki/index.php?title=Filesystem
+  # As of Syslinux 6.03, "pure 64-bits" compression/encryption is not supported.
+  # Modern mke2fs creates file systems with the metadata_csum and 64bit
+  # features enabled by default.
+  # Explicitly disable 64bit feature in the mke2fs command with '-O ^64bit';
+  # otherwise, the syslinux bootloader (>= 6.03) will fail.
+  mkfs.ext4 -F -F -L "${LIVELABEL}" -m 0 -O ^64bit ${TARGET}3
   tune2fs -c 0 -i 0 ${TARGET}3
 
 fi # End [ $REFRESH -eq 0 ]
