@@ -194,23 +194,25 @@ SEQ_DLACK="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap pkglist:slackextra,systemd,dlack
 # - each will become a squashfs module:
 SEQ_STUDW="tagfile:a,ap,d,e,f,k,kde,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,studioware,slackpkgplus"
 
+# -- START: Used verbatim in upslak.sh -- #
 # List of kernel modules required for a live medium to boot properly;
 # Lots of HID modules added to support keyboard input for LUKS password entry:
 KMODS=${KMODS:-"squashfs:overlay:loop:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:mmc-core:mmc-block:sdhci:sdhci-pci:sdhci-acpi:usb-storage:hid:usbhid:i2c-hid:hid-generic:hid-apple:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:hid_multitouch:jbd:mbcache:ext3:ext4:isofs:fat:nls_cp437:nls_iso8859-1:msdos:vfat:ntfs"}
-
-# If any Live variant needs additional 'append' parameters, define them here,
-# either using a variable name 'KAPPEND_<LIVEDE>', or by defining 'KAPPEND' in the .conf file:
-KAPPEND_SLACKWARE=""
-KAPPEND_STUDIOWARE="threadirqs"
-
-# Firmware for wired network cards required for NFS root support:
-NETFIRMWARE="3com acenic adaptec bnx tigon e100 sun kaweth tr_smctr cxgb3"
 
 # Network kernel modules to include for NFS root support:
 NETMODS="kernel/drivers/net"
 
 # Network kernel modules to exclude from above list:
 NETEXCL="appletalk arcnet bonding can dummy.ko hamradio hippi ifb.ko irda macvlan.ko macvtap.ko pcmcia sb1000.ko team tokenring tun.ko usb veth.ko wan wimax wireless xen-netback.ko"
+# -- END: Used verbatim in upslak.sh -- #
+
+# Firmware for wired network cards required for NFS root support:
+NETFIRMWARE="3com acenic adaptec bnx tigon e100 sun kaweth tr_smctr cxgb3"
+
+# If any Live variant needs additional 'append' parameters, define them here,
+# either using a variable name 'KAPPEND_<LIVEDE>', or by defining 'KAPPEND' in the .conf file:
+KAPPEND_SLACKWARE=""
+KAPPEND_STUDIOWARE="threadirqs"
 
 #
 # ---------------------------------------------------------------------------
