@@ -1088,14 +1088,20 @@ EOT
   if [ ! -f /mnt/overlay/etc/profile.d/freetype.sh ]; then
     # Old freetype - disable sub-pixel hinting:
     SPH=0
+  else
+    # First, remove anything about sub-pixel hinting that could be enabled,
+    # then decide what to do:
+    sed -e 's/^ *[^# ]/#&/' -i /mnt/overlay/etc/profile.d/freetype.sh
+    sed -e 's/^ *[^# ]/#&/' -i /mnt/overlay/etc/profile.d/freetype.csh
+    rm -f /mnt/overlay/etc/fonts/conf.d/10-hinting-slight.conf
+    rm -f /mnt/overlay/etc/fonts/conf.d/11-lcdfilter-default.conf
+    rm -f /mnt/overlay/home/${LIVEUID}/.Xresources
   fi
   if [ $SPH -eq 1 ]; then
-    # Enable the new v40 interpreter in freetype:
-    sed -e 's/^ *[^# ]/#&/' -i /mnt/overlay/etc/profile.d/freetype.sh
+    # Enable the new v40 interpreter in freetype (bash and c-shell):
     cat <<EOT >> /mnt/overlay/etc/profile.d/freetype.sh
 export FREETYPE_PROPERTIES="truetype:interpreter-version=40"
 EOT
-    sed -e 's/^ *[^# ]/#&/' -i /mnt/overlay/etc/profile.d/freetype.csh
     cat <<EOT >> /mnt/overlay/etc/profile.d/freetype.csh
 setenv FREETYPE_PROPERTIES "truetype:interpreter-version=40"
 EOT
@@ -1113,11 +1119,9 @@ Xft.autohint: 0
 EOT
   elif [ -f /mnt/overlay/etc/profile.d/freetype.sh ]; then
     # Explicitly configure the non-default old v35 interpreter in freetype:
-    sed -e 's/^ *[^# ]/#&/' -i /mnt/overlay/etc/profile.d/freetype.sh
     cat <<EOT >> /mnt/overlay/etc/profile.d/freetype.sh
 export FREETYPE_PROPERTIES="truetype:interpreter-version=35"
 EOT
-    sed -e 's/^ *[^# ]/#&/' -i /mnt/overlay/etc/profile.d/freetype.csh
     cat <<EOT >> /mnt/overlay/etc/profile.d/freetype.csh
 setenv FREETYPE_PROPERTIES "truetype:interpreter-version=35"
 EOT
