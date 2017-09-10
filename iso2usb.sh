@@ -66,7 +66,18 @@ DOLUKS=0
 REFRESH=0
 
 # These tools are required by the script, we will check for their existence:
-REQTOOLS="blkid cpio extlinux fdisk gdisk isoinfo mkdosfs sgdisk"
+REQTOOLS="blkid cpio extlinux fdisk gdisk isoinfo mkdosfs sgdisk syslinux"
+
+# Path to syslinux files:
+if [ -d /usr/share/syslinux ]; then
+  SYSLXLOC="/usr/share/syslinux"
+elif [ -d /usr/lib/syslinux ]; then
+  SYSLXLOC="/usr/lib/syslinux"
+else
+  # Should not happen... in this case we use what we have on the ISO
+  # and hope for the best:
+  SYSLXLOC=""
+fi
 
 # Initialize more variables:
 CNTBASE=""
@@ -714,6 +725,11 @@ echo "--- Making the USB drive '$TARGET' bootable using extlinux..."
 mv ${USBMNT}/boot/syslinux ${USBMNT}/boot/extlinux
 mv ${USBMNT}/boot/extlinux/isolinux.cfg ${USBMNT}/boot/extlinux/extlinux.conf
 rm -f ${USBMNT}/boot/extlinux/isolinux.*
+if [ -f "$SYSLXLOC"/vesamenu.c32 ]; then
+  # We will use our own copy only as a fallback,
+  # because it is better to use the version that comes with syslinux:
+  cp -a ${SYSLXLOC}/vesamenu.c32 ${USBMNT}/boot/extlinux/
+fi
 extlinux --install ${USBMNT}/boot/extlinux
 
 if [ $EFIBOOT -eq 1 ]; then
@@ -749,8 +765,10 @@ if mount |grep -qw ${US2MNT} ; then umount ${US2MNT} ; fi
 cleanup
 
 # Install a GPT compatible MBR record:
-if [ -f /usr/share/syslinux/gptmbr.bin ]; then
-  cat /usr/share/syslinux/gptmbr.bin > ${TARGET}
+if [ -f ${SYSLXLOC}/gptmbr.bin ]; then
+  cat ${SYSLXLOC}/gptmbr.bin > ${TARGET}
+elif [ -f ${USBMNT}/boot/extlinux/gptmbr.bin ]; then
+  cat ${USBMNT}/boot/extlinux/gptmbr.bin > ${TARGET}
 else
   echo "*** Failed to make USB device bootable - 'gptmbr.bin' not found!"
   cleanup

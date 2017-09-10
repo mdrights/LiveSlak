@@ -2227,6 +2227,9 @@ for SLFILE in message.txt f2.txt syslinux.cfg lang.cfg ; do
       -e "s/@SL_VERSION@/$SL_VERSION/g"
   fi
 done
+# The iso2usb.sh script can use this copy of a MBR file as fallback:
+cp -a /usr/share/syslinux/gptmbr.bin ${LIVE_STAGING}/boot/syslinux/
+# We have memtest in the syslinux bootmenu:
 mv ${LIVE_STAGING}/boot/syslinux/memtest ${LIVE_STAGING}/boot/
 
 # Make use of proper console font if we have it available:
