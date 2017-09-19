@@ -41,6 +41,12 @@ PERSISTENCE="${DEF_PERSISTENCE}"
 # Default persistence type is a directory:
 PERSISTTYPE="dir"
 
+# Timeout when scanning for inserted USB device:
+SCANWAIT=30
+
+# Set to '1' if we are to scan for device insertion:
+SCAN=0
+
 # Set to '1' if the script should not ask any questions:
 UNATTENDED=0
 
@@ -141,6 +147,7 @@ cat <<EOT
 #                              requested size of the container in kB, MB, GB,
 #                              or as a percentage of free space.
 #                              Examples: '-c 125M', '-c 1.3G', '-c 20%'.
+#   -d|--devices               List removable devices on this computer.
 #   -f|--force                 Ignore most warnings (except the back-out).
 #   -h|--help                  This help.
 #   -i|--infile <filename>     Full path to the ISO image file.
@@ -151,6 +158,8 @@ cat <<EOT
 #                              or containerfile ($PERSISTENCE by default).
 #   -r|--refresh               Refresh the USB stick with the ISO content.
 #                              No formatting, do not touch user content.
+#   -s|--scan                  Scan for insertion of new USB device instead of
+#                              providing a devicename (using option '-o').
 #   -u|--unattended            Do not ask any questions.
 #   -v|--verbose               Show verbose messages.
 #   -w|--wait<number>          Add <number> seconds wait time to initialize USB.
@@ -176,6 +185,30 @@ uncompressfs () {
     xz -cd "${1}"
   fi
 }
+
+# Scan for insertion of a USB device:
+scan_devices() {
+  local BD
+  # Inotifywatch does not trigger on symlink creation,
+  # so we can not watch /sys/block/
+  BD=$(inotifywait -q -t ${SCANWAIT} -e create /dev 2>/dev/null |cut -d' ' -f3)
+  echo ${BD}
+} # End of scan_devices()
+
+# Show a list of removable devices detected on this computer:
+show_devices() {
+  local MYDATA="${*}"
+  if [ -z "${MYDATA}" ]; then
+    MYDATA="$(ls --indicator-style=none /sys/block/ |grep -Ev '(ram|loop|dm-)')"
+  fi
+  echo "# Removable devices detected on this computer:"
+  for BD in ${MYDATA} ; do
+    if [ $(cat /sys/block/${BD}/removable) -eq 1 ]; then
+      echo "# /dev/${BD} : $(cat /sys/block/${BD}/device/vendor) $(cat /sys/block/${BD}/device/model): $(( $(cat /sys/block/${BD}/size) / 2048)) MB"
+    fi
+  done
+  echo "#"
+} # End of show_devices()
 
 # Read configuration data from old initrd:
 read_initrd() {
@@ -389,6 +422,10 @@ while [ ! -z "$1" ]; do
       REQTOOLS="${REQTOOLS} unsquashfs"
       shift 2
       ;;
+    -d|--devices)
+      show_devices
+      exit
+      ;;
     -f|--force)
       FORCE=1
       shift
@@ -415,6 +452,10 @@ while [ ! -z "$1" ]; do
       ;;
     -r|--refresh)
       REFRESH=1
+      shift
+      ;;
+    -s|--scan)
+      SCAN=1
       shift
       ;;
     -u|--unattended)
@@ -453,8 +494,28 @@ if [ "$(id -u)" != "0" -a $FORCE -eq 0 ]; then
 fi
 
 # More sanity checks:
-if [ -z "$TARGET" -o -z "$SLISO" ]; then
-  echo "*** You must specify both the Live ISO filename and the USB devicename!"
+if [ -z "$SLISO" ]; then
+  echo "*** You must specify the Live ISO filename (option '-i')!"
+  exit 1
+fi
+
+# Either provide a block device, or else scan for a block device:
+if [ -z "$TARGET" ]; then
+  if [ $SCAN -eq 1 ]; then
+    echo "-- Waiting for a USB stick to be inserted..."
+    TARGET=$(scan_devices)
+    if [ -z "$TARGET" ]; then
+      echo "*** No new USB device detected during $SCANWAIT seconds scan."
+      exit 1
+    else
+      TARGET="/dev/${TARGET}"
+    fi
+  else
+    echo "*** You must specify the Live USB devicename (option '-o')!"
+    exit 1
+  fi
+elif [ $SCAN -eq 1 ]; then
+  echo "*** You can not use options '-o' and '-s' at the same time!"
   exit 1
 fi
 
@@ -465,9 +526,11 @@ fi
 
 if [ ! -b $TARGET -a $FORCE -eq 0 ]; then
   echo "*** Not a block device: '$TARGET' !"
+  show_devices
   exit 1
 elif [ "$(echo ${TARGET%[0-9]})" != "$TARGET" -a $FORCE -eq 0 ]; then
   echo "*** You need to point to the USB device, not a partition ($TARGET)!"
+  show_devices
   exit 1
 fi
 
