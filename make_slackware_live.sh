@@ -1687,6 +1687,8 @@ if [ "$LIVEDE" = "PLASMA5" ]; then
   rm -f ${LIVE_ROOTDIR}/usr/share/xsessions/openbox-session.desktop || true
   # Remove the buggy mediacenter session:
   rm -f ${LIVE_ROOTDIR}/usr/share/xsessions/plasma-mediacenter.desktop || true
+  # Remove the non-functional wayland session:
+  rm -f ${LIVE_ROOTDIR}/usr/share/wayland-sessions/plasmawayland.desktop || true
   # Set sane SDDM defaults on first boot (root-owned file):
   mkdir -p ${LIVE_ROOTDIR}/var/lib/sddm
   cat <<EOT > ${LIVE_ROOTDIR}/var/lib/sddm/state.conf 
