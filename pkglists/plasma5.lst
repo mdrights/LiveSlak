@@ -7,6 +7,7 @@ PyQt5
 accountsservice
 cfitsio
 cracklib
+ddcutil
 dvdauthor
 elogind
 frei0r-plugins
@@ -14,6 +15,7 @@ gpgme
 grantlee
 grantlee-qt4
 hack-font-ttf
+id3lib
 json-glib
 lensfun
 libappindicator
@@ -146,6 +148,7 @@ kidletime
 kimageformats
 kinit
 kio
+kirigami2
 kitemmodels
 kitemviews
 kjobwidgets
