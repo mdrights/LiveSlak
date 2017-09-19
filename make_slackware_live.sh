@@ -1389,7 +1389,7 @@ fi
 
 # Add our scripts to the Live OS:
 mkdir -p  ${LIVE_ROOTDIR}/usr/local/sbin
-install -m0755 ${LIVE_TOOLDIR}/makemod ${LIVE_TOOLDIR}/iso2usb.sh  ${LIVE_ROOTDIR}/usr/local/sbin/
+install -m0755 ${LIVE_TOOLDIR}/makemod ${LIVE_TOOLDIR}/iso2usb.sh ${LIVE_TOOLDIR}/upslak.sh ${LIVE_ROOTDIR}/usr/local/sbin/
 
 # Add PXE Server infrastructure:
 mkdir -p ${LIVE_ROOTDIR}/var/lib/tftpboot/pxelinux.cfg

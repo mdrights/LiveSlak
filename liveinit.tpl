@@ -732,8 +732,9 @@ if [ "$RESCUE" = "" ]; then
       # Try a write... just to be dead sure:
       if touch /mnt/media/${PERSISTENCE}/.rwtest 2>/dev/null && rm /mnt/media/${PERSISTENCE}/.rwtest 2>/dev/null ; then
         # Writable media and we are allowed to write to it.
-        if [ "$WIPE_PERSISTENCE" = "1" ]; then
+        if [ "$WIPE_PERSISTENCE" = "1" -o -f /mnt/media/${PERSISTENCE}/.wipe ]; then
           echo "${MARKER}:  Wiping existing persistent data in '/${PERSISTENCE}'."
+          rm -f /mnt/media/${PERSISTENCE}/.wipe 2>/dev/null
           find /mnt/media/${PERSISTENCE}/ -mindepth 1 -exec rm -rf {} \; 2>/dev/null
         fi
         echo "${MARKER}:  Writing persistent changes to media directory '/${PERSISTENCE}'."
@@ -766,8 +767,9 @@ if [ "$RESCUE" = "" ]; then
         echo "${MARKER}:  Failed to mount persistence file '/${PERSISTENCE}.img'."
         echo "${MARKER}:  Falling back to RAM."
       else
-        if [ "$WIPE_PERSISTENCE" = "1" ]; then
+        if [ "$WIPE_PERSISTENCE" = "1" -o -f /mnt/live/${prdir}/$(basename ${PERSISTENCE})/.wipe ]; then
           echo "${MARKER}:  Wiping existing persistent data in '/${PERSISTENCE}.img'."
+          rm -f /mnt/live/${prdir}/$(basename ${PERSISTENCE})/.wipe 2>/dev/null
           find /mnt/live/${prdir}/$(basename ${PERSISTENCE})/ -mindepth 1 -exec rm -rf {} \; 2>/dev/null
         fi
         echo "${MARKER}:  Writing persistent changes to file '/${PERSISTENCE}.img'."
@@ -799,14 +801,28 @@ if [ "$RESCUE" = "" ]; then
   mount -t overlay -o lowerdir=${FS2HD} overlay /mnt/${LIVEMAIN}fs
   # And this is the actual Live overlay:
   mount -t overlay -o workdir=${OVLWORK},upperdir=${UPPERDIR},lowerdir=${RODIRS} overlay /mnt/overlay
-  if [ $? -ne 0 -a "$VIRGIN" = "0" ]; then
-    # Failed to create the persistent overlay - try without persistence:
-    echo "${MARKER}:  Failed to create persistent overlay, attempting to continue in RAM."
-    UPPERDIR=/mnt/live/changes
-    OVLWORK=/mnt/live/.ovlwork
-    mkdir -p ${UPPERDIR}
-    mkdir -p ${OVLWORK}
-    mount -t overlay -o workdir=${OVLWORK},upperdir=${UPPERDIR},lowerdir=${RODIRS} overlay /mnt/overlay
+  MNTSTAT=$?
+  if [ "$VIRGIN" = "0" ]; then
+    if [ $MNTSTAT -ne 0 ]; then
+      # Failed to create the persistent overlay - try without persistence:
+      echo "${MARKER}:  Failed to create persistent overlay, attempting to continue in RAM."
+      # Clean up and re-create upper and work directories:
+      rmdir $UPPERDIR 2>/dev/null
+      rmdir $OVLWORK 2>/dev/null
+      [ -n "${prdir}" ] && rmdir /mnt/live/${prdir} 2>/dev/null
+      VIRGIN=1
+      UPPERDIR=/mnt/live/changes
+      OVLWORK=/mnt/live/.ovlwork
+      mkdir -p ${UPPERDIR}
+      mkdir -p ${OVLWORK}
+      mount -t overlay -o workdir=${OVLWORK},upperdir=${UPPERDIR},lowerdir=${RODIRS} overlay /mnt/overlay
+    else
+      # Use a predictable name "changes" for the changes-directory which we can
+      # use later to squash its contents into a new .sxz module if needed.
+      # Will be a directory when there's no persistence, otherwise a bind-mount.
+      mkdir -p /mnt/live/changes
+      mount --rbind ${UPPERDIR} /mnt/live/changes
+    fi
   fi
 
   debugit
