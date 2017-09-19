@@ -2088,13 +2088,13 @@ cat $LIVE_TOOLDIR/liveinit.tpl | sed \
 cat /dev/null > ${LIVE_ROOTDIR}/boot/initrd-tree/luksdev
 # We do not add openobex to the initrd and don't want to see irrelevant errors:
 rm ${LIVE_ROOTDIR}/boot/initrd-tree/lib/udev/rules.d/*openobex*rules 2>${DBGOUT} || true
+# Add dhcpcd for NFS root support (just to have it - even if we won't need it):
+DHCPD_PKG=$(find ${DEF_SL_PKGROOT}/../ -name "dhcpcd-*.t?z" |head -1)
+tar -C ${LIVE_ROOTDIR}/boot/initrd-tree/ -xf ${DHCPD_PKG} \
+  var/lib/dhcpcd lib/dhcpcd sbin/dhcpcd usr/lib${DIRSUFFIX}/dhcpcd \
+  etc/dhcpcd.conf.new
+mv ${LIVE_ROOTDIR}/boot/initrd-tree/etc/dhcpcd.conf{.new,}
 if [ "$NFSROOTSUP" = "YES" ]; then
-  # Add dhcpcd for NFS root support:
-  DHCPD_PKG=$(find ${DEF_SL_PKGROOT}/../ -name "dhcpcd-*.t?z" |head -1)
-  tar -C ${LIVE_ROOTDIR}/boot/initrd-tree/ -xf ${DHCPD_PKG} \
-    var/lib/dhcpcd lib/dhcpcd sbin/dhcpcd usr/lib${DIRSUFFIX}/dhcpcd \
-    etc/dhcpcd.conf.new
-  mv ${LIVE_ROOTDIR}/boot/initrd-tree/etc/dhcpcd.conf{.new,}
   # Add just the right kernel network modules by pruning unneeded stuff:
   if [ "$SL_ARCH" = "x86_64" -o "$SMP32" = "NO" ]; then
     KMODS_PKG=$(find ${DEF_SL_PKGROOT}/../ -name "kernel-modules-*$(echo $KGEN |tr - _)*.t?z" |grep -v smp |head -1)
