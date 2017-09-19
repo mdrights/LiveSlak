@@ -23,6 +23,9 @@
 # Be careful:
 set -e
 
+# Limit the search path:
+export PATH="/usr/sbin:/sbin:/usr/bin:/bin"
+
 # Set to '1' if you want to ignore all warnings:
 FORCE=0
 
@@ -43,9 +46,6 @@ UNATTENDED=0
 
 # By default do not show file operations in detail:
 VERBOSE=0
-
-# Limit the search path:
-export PATH="/usr/sbin:/sbin:/usr/bin:/bin"
 
 # Variables to store content from an initrd we are going to refresh:
 OLDPERSISTENCE=""
@@ -507,9 +507,11 @@ EOT
 fi
   # Continue with the common text message:
   cat <<EOT
+# ---------------------------------------------------------------------------
 # Vendor : $(cat /sys/block/$(basename $TARGET)/device/vendor)
 # Model  : $(cat /sys/block/$(basename $TARGET)/device/model)
 # Size   : $(( $(cat /sys/block/$(basename $TARGET)/size) / 2048)) MB
+# ---------------------------------------------------------------------------
 #
 # FDISK OUTPUT:
 EOT
@@ -646,7 +648,7 @@ fi
 if [ $REFRESH -eq 1 ]; then
   # Clean out old Live system data:
   echo "--- Cleaning out old Live system data."
-  LIVEMAIN="$(echo $(find ${ISOMNT} -name "0099*") |rev |cut -d/ -f3 |rev)"
+  LIVEMAIN="$(echo $(find ${ISOMNT} -name "0099*" |tail -1) |rev |cut -d/ -f3 |rev)"
   rsync -rlptD --delete \
     ${ISOMNT}/${LIVEMAIN}/system/ ${USBMNT}/${LIVEMAIN}/system/
   if [ -f ${USBMNT}/boot/extlinux/ldlinux.sys ]; then
