@@ -53,6 +53,7 @@ fftw-compat32
 freetype-compat32
 fribidi-compat32
 gamin-compat32
+gc-compat32
 gdk-pixbuf2-compat32
 giflib-compat32
 glib2-compat32
@@ -70,6 +71,7 @@ harfbuzz-compat32
 icu4c-compat32
 jasper-compat32
 json-c-compat32
+lame-compat32
 lcms-compat32
 lcms2-compat32
 libaio-compat32
@@ -82,6 +84,7 @@ libffi-compat32
 libglade-compat32
 libgphoto2-compat32
 libidn-compat32
+libidn2-compat32
 libieee1284-compat32
 libjpeg-turbo-compat32
 libmng-compat32
@@ -99,6 +102,7 @@ libtiff-compat32
 libunistring-compat32
 libusb-compat32
 libvorbis-compat32
+libwebp-compat32
 libxml2-compat32
 libxslt-compat32
 lzo-compat32
@@ -184,6 +188,7 @@ libxcb-compat32
 libxshmfence-compat32
 mesa-compat32
 pixman-compat32
+vulkan-sdk-compat32
 xcb-util-compat32
 # The XAP/ series:
 sane-compat32
