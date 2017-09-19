@@ -103,13 +103,14 @@ Another difference between Syslinux and Grub2 menus: in Grub2 you can select a n
 
 A script is available which allows you to transfer the ISO image content to a USB stick, making some modifications depending on the script's parameters.
 
-The USB stick will be erased and re-formatted when running this script!  Before inflicting any irreversible damage, the script will show you a prompt at which point you can evaluate whether it is safe to continue.
+The USB stick will be erased and re-formatted when running this script (except when using the '-r' refresh optoin)!  Before inflicting any irreversible damage, the script will show you a prompt at which point you can evaluate whether it is safe to continue.
 
 This script, called 'iso2usb.sh', accepts the following parameters: <code>
   -c|--crypt size|perc       Add a LUKS encrypted /home ; parameter is the
                              requested size of the container in kB, MB, GB,
                              or as a percentage of free space.
                              Examples: '-c 125M', '-c 1.3G', '-c 20%'.
+  -d|--devices               List removable devices on this computer.
   -f|--force                 Ignore most warnings (except the back-out).
   -h|--help                  This help.
   -i|--infile <filename>     Full path to the ISO image file.
@@ -117,6 +118,8 @@ This script, called 'iso2usb.sh', accepts the following parameters: <code>
   -p|--persistence <name>    Custom name of the 'persistence' directory/file.
   -r|--refresh               Refresh the USB stick with the ISO content.
                              No formatting, do not touch user content.
+  -s|--scan                  Scan for insertion of new USB device instead of
+                             providing a devicename (using option '-o').
   -u|--unattended            Do not ask any questions.
   -v|--verbose               Show verbose messages.
   -w|--wait<number>          Add <number> seconds wait time to initialize USB.
@@ -136,8 +139,55 @@ Examples:
     # ./iso2usb.sh -i slackware64-live-current.iso -o /dev/sdX -c 30% -P
   * Create a USB Live with both the /home and the persistent data encrypted (the persistence filesystem will be 300 MB in size):
     # ./iso2usb.sh -i slackware64-live-current.iso -o /dev/sdX -c 30% -C 300M
+  * Refresh the system modules on a USB Live using a Live ISO as the source.  Let the script scan for insertion of a USB stick instead of specifying the device name on the commandline.  Note that the addons and optional modules will not be touched by this action:
+    # ./iso2usb.sh -i slackware64-live-current.iso -r -s
 
 You might have noticed that the "-P" parameter does not accept a size parameter.  This is because the unencrypted container file is created as a 'sparse' file that starts at zero size and is allowed to grow dynmically to a maximum of 90% of the initial free space on the Linux partition of the USB stick.
+
+
+==== Updating the kernel (and more) on a USB stick ====
+
+
+A script is available which allows you to tweak the content of a USB Live stick.
+
+Specifically, the script is able to:
+  * Upgrade the kernel and modules, making a backup of the old kernel and modules.
+  * Restore the backed-up kernel and modules if the new kernel is not working.
+  * Add network support modules for PXE boot (if missing).
+  * Increase (or decrease) USB wait time during boot.
+  * Replace the Live init script inside the initrd image with a new script that you supply.
+  * Move current persistence data to a new squashfs module in 'addons' afther which the persistence store will be re-initialized.  The new module's name is time-stamped (/liveslak/addons/0099-slackware__customchanges-yymmddHHMMSS.sxz) so that this action can be repeated many times.
+
+The script is meant to be used while you are running Slackare Live from that same USB stick but this is not mandatory. With the exception of the '-p' option which moves the persistence data into a squashfs module, its functions can be used on any Linux computer where you can insert the USB stick. 
+
+Before making any modifications, the script will show you a prompt at which point you can evaluate whether it is safe to continue.
+
+This script, called 'upslak.sh', accepts the following parameters: <code>
+  -b|--nobackup              Do not try to backup original kernel and modules.
+  -d|--devices               List removable devices on this computer.
+  -h|--help                  This help.
+  -i|--init <filename>       Replacement init script.
+  -k|--kernel <filename>     The kernel file (or package).
+  -m|--kmoddir <name>        The kernel modules directory (or package).
+  -n|--netsupport            Add network boot support if not yet present.
+  -o|--outdev <filename>     The device name of your USB drive.
+  -p|--persistence           Move persistent data into new Live module.
+  -r|--restore               Restore previous kernel and modules.
+  -s|--scan                  Scan for insertion of new USB device instead of
+                             providing a devicename (using option '-o').
+  -v|--verbose               Show verbose messages.
+  -w|--wait<number>          Add <number> seconds wait time to initialize USB.
+</code>
+Examples:
+
+  * Get a listing of all available removable devices on the computer:
+    # ./upslak.sh -d
+  * Updating kernel and modules, providing two packages as input and assuming the USB stick is known as /dev/sdX:
+    # ./upslak.sh -o /dev/sdX -m kernel-modules-4.9.50-x86_64-1.txz -k kernel-generic-4.9.50-x86_64-1.txz
+  * Restore the previous kernel and modules after a failed update, and let the script scan your computer for the insertion of your USB stick:
+    # ./upslak.sh -s -r
+  * Replace the Live init script with the latest template taken from the git repository:
+    # ./upslak.sh -o /dev/sdX -i liveslak/liveinit.tpl
 
 
 ==== PXE booting the Live OS ====
@@ -394,7 +444,7 @@ Stage two:
     * 'root' and 'live' user accounts are created,
     * an initial environment for the accounts is configured,
     * the desktop environment is pre-configured for first use,
-    * the liveslak scripts "makemod" and "iso2usb.sh" are copied to "/usr/local/sbin/" in the ISO for your convenience,
+    * the liveslak scripts "makemod", "iso2usb.sh" and "upslak.sh" are copied to "/usr/local/sbin/" in the ISO for your convenience,
     * if the Live system contains a huge kernel (all ISO variants except XFCE) then the "setup2hd" script and the Slackware installer files are copied to "/usr/local/sbin" and "/usr/share/liveslak" respectively,
     * slackpkg is configured,
     * a locate database is created,
@@ -504,6 +554,47 @@ kbd=<server_kbd_layout>
   * Note that when networkbooting, the hostname of the Live OS will be suffixed with the machine's MAC address to make the hostname of every network-booted computer unique.
 
 
+=== upslak.sh ===
+
+
+The sixth script:
+
+The "upslak.sh" script's runtime usage is explained in detail in a previous paragraph "Updating the kernel (and more) on a USB stick".
+
+This section explains how the script modifies the content of the Live USB stick.
+
+When the script is started, it will do some sanity checks and then extracts the comtent of the initrd image. Some characteristics of the initrd will be recorded:
+  * existence of previously backed-up kernel modules is checked,
+  * template variables and their values are obtained from the init sctript,
+  * the current USB wait time is checked.
+Depending on the parameters passed to the script, it will then perform one or more of the following actions:
+
+== Update the kernel and moules ==
+
+You can provide a new kernel and its modules in two ways.  The '-k' option accepts a kernel image file or else a Slackware package contaning a kernel.  The '-m' option accepts a directory tree of modules below "/lib/modules/, or else a Slackware package containing kernel modules.
+If there is sufficient space on the Linux and EFI partitions, the script will make a backup of the current kernel and modules by renaming the kernel and the module directory with a ".prev" suffix.  Sufficient space means that at least 10 MB of free space must remain on the partition(s) after making the backup and installing the new kernel plus modules. If space is an issue, you can skip making a backup by providing the '-b' parameter to the script (a possibly unsafe choice).
+
+== Restore backed-up kernel and modules ==
+
+If a backup was made of kernel and modules, the upslak.sh script is able to restore these using the '-r' option, thereby removing the replacements.  This comes in handy when the replacement kernel turns out to be non-functional.
+
+== Add network support modules ==
+
+This should normally not be needed.  By default, all liveslak ISO images have network support built-in.  But customized Live ISO images may be shipped without network support initially.  If you want your Live OS to be PXE-bootable you need network support in the kernel.  Use the '-n' option.
+
+== Increase (or decrease) USB wait time ==
+
+Similar to the functionality of the "iso2usb.sh" script, the "upslak.sh" script is able to alter the USB wait time at boot using the '-w' option.
+
+== Replace the liveslak init script ==
+
+The init script inside the initrd image is the core of liveslak.  The init script prepares the Live filesystem and configures several run-time OS parameters.  If you have made modifications to this init script you can easily replace the default init script with yourw own script using the '-i' option.  The "upslak.sh" script is smart enough to recognize a iveslak template as input.  The ".tpl" extension of some liveslak files means that these are templates.  They are not usable as-is, because they contain placeholder strings like "@VERSION@ or "@DISTRO@" that first need to be replaced with real values.  The "upslak.sh" script will take care of these substitutions.
+
+== Wrap persistence data into a new squashfs module ==
+
+Persistence data will accumulate over time on the USB stick.  That is perfectly OK, and you can wipe it on boot if that is needed.  But sometimes you want to capture the packages you installed into the persistent storage, and create a new squashfs module out of them.  The "upslak.sh" script is able to move your persistence data into a new squashfs module using the '-p' option.  The new module will be created in the "/liveslak/addons/" directory so that it will be loaded into the Live OS everytime your USB Live boots up.  After creating the new module, the persistence store will be re-initialized (i.e. its content will be erased on the next boot).  The new module's name is time-stamped (/liveslak/addons/0099-slackware__customchanges-yyyymmddHHMMSS.sxz where yyyymmddHHMMSS is the timestamp) so that this action can be repeated as many times as you want.
+
+
 ==== Creating a Live ISO from scratch ====
 
 
@@ -511,7 +602,7 @@ Creating an ISO image of Slackware Live Edition requires that you are running Sl
 
 You also need the "liveslak" script collection which can be downloaded from any of the links at the bottom of this page.
 
-Liveslak is a directory tree containing scripts, bitmaps and configuration files.  Only 5 scripts are meant to be run by you, the user.  These scripts ("make_slackware_live.sh", "iso2usb.sh", "makemod", "setup2hd" and "pxeserver") are explained in more detail in the section "Scripts and tools" higher up.  When creating a Live ISO from scratch, you only need to run the "make_slackware_live.sh" script.
+Liveslak is a directory tree containing scripts, bitmaps and configuration files.  Only 6 scripts are meant to be run by you, the user.  These scripts ("make_slackware_live.sh", "iso2usb.sh", "makemod", "setup2hd", "pxeserver" and "upslak.sh) are explained in more detail in the section "Scripts and tools" higher up.  When creating a Live ISO from scratch, you only need to run the "make_slackware_live.sh" script.
 
 
 === Liveslak sources layout ===
