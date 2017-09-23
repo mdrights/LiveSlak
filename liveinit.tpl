@@ -467,7 +467,7 @@ if [ "$RESCUE" = "" ]; then
       lodev=/dev/loop${NOD}
     elif [ ! -b $lodev ]; then
       # We exhausted the available loop devices, so create the block device:
-      mknod -m660 $lodev b 7 $(echo $lodev |sed %/dev/loop%%)
+      mknod -m660 $lodev b 7 $(echo $lodev |sed 's%/dev/loop%%')
     fi
     echo "$lodev"
   }
