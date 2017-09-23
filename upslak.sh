@@ -541,7 +541,7 @@ parse_template() {
     -e "s/@DISTRO@/$DISTRO/g" \
     -e "s/@CDISTRO@/${DISTRO^}/g" \
     -e "s/@UDISTRO@/${DISTRO^^}/g" \
-    -e "s/@VERSION@/${VERSION}.1337/g" \
+    -e "s/@VERSION@/${VERSION}/g" \
     > ${OUTFILE}
 } # End of parse_template()
 
