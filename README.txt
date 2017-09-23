@@ -31,11 +31,13 @@ The reasons I had for creating the Slackware Live Edition are as follows:
 
 
 The "liveslak" scripts can generate a variety of Slackware flavors:
-  - a complete 64bit Slackware-current Live Edition (in a 2.6 GB ISO);
+  - a complete 64bit Slackware-current Live Edition (in a 3.1 GB ISO);
   - a slimmed-down XFCE ISO (700 MB) with XDM as the graphical login manager.  It fits on a CDROM medium or a 1 GB USB stick;
-  -  a ISO image (3.1 GB) of Slackware64-current containing Plasma 5 instead of KDE 4, with an addition of several other packages from the alienBOB repositories: vlc, libreoffice, calibre, qbittorrent, ffmpeg, chromium, openjdk, veracrypt.
-  - a Mate variant (1.7 GB) where KDE 4 has been replaced by Mate (a Gnome 2 fork);
+  -  a ISO image (4.6 GB) of Slackware64-current containing Plasma 5 instead of KDE 4, with an addition of several other packages from the alienBOB repositories: vlc, libreoffice, calibre, qbittorrent, ffmpeg, chromium, openjdk, veracrypt.
+  - a Mate variant (2.1 GB) where KDE 4 has been replaced by Mate (a Gnome 2 fork);
   - a Cinnamon flavour (a fork of the Gnome 3 Shell replacing Slackware's KDE 4).
+  - a Dlackware variant, which is Gnome3 + PAM + systemd on top of Slackware and stripped of KDE4.
+  - a StudioWare edition containing all the project's audio, video and photo editing software packages.
   - a "Custom" variant which you can give your own name, its own package list and custom post-install configuration.
 
 
