@@ -571,7 +571,7 @@ while [ ! -z "$1" ]; do
       exit
       ;;
     -i|--init)
-      LIVEINIT="$2"
+      LIVEINIT="$(cd $(dirname $2); pwd)/$(basename $2)"
       shift 2
       ;;
     -k|--kernel)
