@@ -2,6 +2,7 @@
 docutils
 gksu
 glade
+graphviz
 gssdp
 gtk-engines
 gtksourceview
