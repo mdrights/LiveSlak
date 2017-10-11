@@ -634,10 +634,10 @@ if [ $REFRESH -eq 0 ]; then
   # otherwise, the syslinux bootloader (>= 6.03) will fail.
   # Note: older 32bit OS-es will trip over the '^64bit' feature so be gentle.
   mkfs.ext4 -F -F -L "${LIVELABEL}" ${TARGET}3
-  if ! tune2fs -O '^64bit' ${TARGET}3 1>/dev/null 2>/dev/null ; then
+  if ! tune2fs -O ^64bit ${TARGET}3 1>/dev/null 2>/dev/null ; then
     FEAT_64BIT=""
   else
-    FEAT_64BIT="-O '^64bit'"
+    FEAT_64BIT="-O ^64bit"
   fi
   tune2fs -c 0 -i 0 -m 0 ${FEAT_64BIT} ${TARGET}3
 
