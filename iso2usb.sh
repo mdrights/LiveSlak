@@ -502,7 +502,7 @@ fi
 # Either provide a block device, or else scan for a block device:
 if [ -z "$TARGET" ]; then
   if [ $SCAN -eq 1 ]; then
-    echo "-- Waiting for a USB stick to be inserted..."
+    echo "-- Waiting  ${SCANWAIT} seconds for a USB stick to be inserted..."
     TARGET=$(scan_devices)
     if [ -z "$TARGET" ]; then
       echo "*** No new USB device detected during $SCANWAIT seconds scan."
