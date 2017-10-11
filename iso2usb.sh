@@ -123,10 +123,10 @@ cleanup() {
       losetup -d ${LODEV}
     fi
   fi
-  [ -n "${ISOMNT}" ] && ( umount -f ${ISOMNT} 2>/dev/null; rmdir $ISOMNT )
-  [ -n "${CNTMNT}" ] && ( umount -f ${CNTMNT} 2>/dev/null; rmdir $CNTMNT )
-  [ -n "${USBMNT}" ] && ( umount -f ${USBMNT} 2>/dev/null; rmdir $USBMNT )
-  [ -n "${US2MNT}" ] && ( umount -f ${US2MNT} 2>/dev/null; rmdir $US2MNT )
+  [ -n "${ISOMNT}" ] && ( umount -f ${ISOMNT} 2>/dev/null; rmdir $ISOMNT 2>/dev/null )
+  [ -n "${CNTMNT}" ] && ( umount -f ${CNTMNT} 2>/dev/null; rmdir $CNTMNT 2>/dev/null )
+  [ -n "${USBMNT}" ] && ( umount -f ${USBMNT} 2>/dev/null; rmdir $USBMNT 2>/dev/null )
+  [ -n "${US2MNT}" ] && ( umount -f ${US2MNT} 2>/dev/null; rmdir $US2MNT 2>/dev/null )
   [ -n "${IMGDIR}" ] && ( rm -rf $IMGDIR )
   set -e
 }
