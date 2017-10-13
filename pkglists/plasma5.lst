@@ -179,6 +179,7 @@ networkmanager-qt
 oxygen-icons5
 plasma-framework
 prison
+qqc2-desktop-style
 solid
 sonnet
 syntax-highlighting
@@ -254,6 +255,7 @@ sddm-qt5
 bluedevil
 breeze
 breeze-gtk
+drkonqi
 kactivitymanagerd
 kde-cli-tools
 kde-gtk-config
@@ -281,6 +283,7 @@ plasma-integration
 plasma-mediacenter
 plasma-pa
 plasma-sdk
+plasma-vault
 plasma-workspace
 plasma-workspace-wallpapers
 plasma5-nm
