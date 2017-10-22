@@ -6,9 +6,9 @@ chromium
 chromium-pepperflash-plugin
 chromium-widevine-plugin
 dropbox-client
-ffmpeg
+#ffmpeg
 freerdp
-gcc5
+#gcc5
 gecko-mediaplayer
 gmtk
 gnome-mplayer
@@ -16,6 +16,7 @@ gst-plugins-ffmpeg0
 gst-plugins-libav
 icedtea-web
 keepassx
+lame
 libreoffice
 libreoffice-dict-af
 libreoffice-dict-ar
@@ -80,7 +81,7 @@ sqlitebrowser
 sshfs-fuse
 unrar
 veracrypt
-vlc
+#vlc
 wxGTK
 zope.interface
 
