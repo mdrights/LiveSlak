@@ -1688,7 +1688,7 @@ if [ "$LIVEDE" = "PLASMA5" ]; then
   # Remove the buggy mediacenter session:
   rm -f ${LIVE_ROOTDIR}/usr/share/xsessions/plasma-mediacenter.desktop || true
   # Remove non-functional wayland session:
-  if [ ! -f ${LIVE_ROOTDIR}usr/lib${DIRSUFFIX}/qt5/bin/qtwaylandscanner ];
+  if [ ! -f ${LIVE_ROOTDIR}/usr/lib${DIRSUFFIX}/qt5/bin/qtwaylandscanner ];
   then
     rm -f ${LIVE_ROOTDIR}/usr/share/wayland-sessions/plasmawayland.desktop || true
   fi
