@@ -2,6 +2,7 @@
 # cd current/testing/x86_64 ; find -name *.t?z |rev |cut -d- -f4- |rev |sort
 #
 # deps:
+ConsoleKit2
 OpenAL
 PyQt5
 accountsservice
@@ -50,6 +51,7 @@ sip
 sni-qt
 vid.stab
 wayland
+wayland-protocols
 xorg-server
 
 # telepathy deps:
