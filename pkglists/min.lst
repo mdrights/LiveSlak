@@ -51,6 +51,7 @@ grep
 groff
 guile
 gzip
+hostname
 idnkit
 infozip
 iproute2
