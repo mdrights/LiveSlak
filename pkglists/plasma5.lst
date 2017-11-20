@@ -454,6 +454,7 @@ zeroconf-ioslave
 # applications-extra:
 calligra
 digikam
+kaudiocreator
 krita
 kdev-php
 kdevelop
@@ -466,6 +467,7 @@ kpmcore
 krusader
 ktorrent
 kuser
+kwebkitpart
 libktorrent
 partitionmanager
 skanlite
