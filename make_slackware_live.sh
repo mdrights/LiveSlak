@@ -390,44 +390,52 @@ function install_pkgs() {
     for PKGPAT in $(cat ${PKGFILE} |grep -v -E '^ *#|^$' |cut -d: -f1); do
       # Extract the name of the package to install:
       PKG=$(echo $PKGPAT |cut -d% -f2)
-      # Extract the name of the potential package to replace; if there is
-      # no package to replace then the 'cut' will make REP equal to PKG:
+      # Extract the name of the potential package to replace/remove:
+      # - If there is no package to replace then the 'cut' will make
+      #   REP equal to PKG.
+      # - If PKG is empty then this is a request to remove the package.
       REP=$(echo $PKGPAT |cut -d% -f1)
-      # Look in ./patches ; then ./${DISTRO}$DIRSUFFIX ; then ./extra
-      # Need to escape any '+' in package names such a 'gtk+2':
-      if [ ! -z "${SL_PATCHROOT}" ]; then
-        FULLPKG=$(full_pkgname ${PKG} ${SL_PATCHROOT})
+      if [ -z "${PKG}" ]; then
+        # Package removal:
+        ROOT="$2" removepkg "${REP}"
       else
-        FULLPKG=""
-      fi
-      if [ "x${FULLPKG}" = "x" ]; then
-        FULLPKG=$(full_pkgname ${PKG} ${SL_PKGROOT})
-      else
-        echo "-- $PKG found in patches"
-      fi
-      if [ "x${FULLPKG}" = "x" ]; then
-        # One last attempt: look in ./extra
-        FULLPKG=$(full_pkgname ${PKG} $(dirname ${SL_PKGROOT})/extra)
-      fi
-
-      if [ "x${FULLPKG}" = "x" ]; then
-        echo "-- Package $PKG was not found in $(dirname ${SL_REPO}) !"
-      else
-        # Determine if we need to install or upgrade a package:
-        for INSTPKG in $(ls -1 "$2"/var/log/packages/${REP}-* 2>/dev/null |rev |cut -d/ -f1 |cut -d- -f4- |rev) ; do
-          if [ "$INSTPKG" = "$REP" ]; then
-            break
-          fi
-        done
-        if [ "$INSTPKG" = "$REP" ]; then
-          if [ "$PKG" = "$REP" ]; then
-            ROOT="$2" upgradepkg --reinstall "${FULLPKG}"
-          else
-            # We need to replace one package (REP) with another (FULLPKG):
-            ROOT="$2" upgradepkg "${REP}%${FULLPKG}"
-          fi
+        # Package install/upgrade:
+        # Look in ./patches ; then ./${DISTRO}$DIRSUFFIX ; then ./extra
+        # Need to escape any '+' in package names such a 'gtk+2'.
+        if [ ! -z "${SL_PATCHROOT}" ]; then
+          FULLPKG=$(full_pkgname ${PKG} ${SL_PATCHROOT})
         else
-          installpkg --terse --root "$2" "${FULLPKG}"
+          FULLPKG=""
+        fi
+        if [ "x${FULLPKG}" = "x" ]; then
+          FULLPKG=$(full_pkgname ${PKG} ${SL_PKGROOT})
+        else
+          echo "-- $PKG found in patches"
+        fi
+        if [ "x${FULLPKG}" = "x" ]; then
+          # One last attempt: look in ./extra
+          FULLPKG=$(full_pkgname ${PKG} $(dirname ${SL_PKGROOT})/extra)
+        fi
+
+        if [ "x${FULLPKG}" = "x" ]; then
+          echo "-- Package $PKG was not found in $(dirname ${SL_REPO}) !"
+        else
+          # Determine if we need to install or upgrade a package:
+          for INSTPKG in $(ls -1 "$2"/var/log/packages/${REP}-* 2>/dev/null |rev |cut -d/ -f1 |cut -d- -f4- |rev) ; do
+            if [ "$INSTPKG" = "$REP" ]; then
+              break
+            fi
+          done
+          if [ "$INSTPKG" = "$REP" ]; then
+            if [ "$PKG" = "$REP" ]; then
+              ROOT="$2" upgradepkg --reinstall "${FULLPKG}"
+            else
+              # We need to replace one package (REP) with another (FULLPKG):
+              ROOT="$2" upgradepkg "${REP}%${FULLPKG}"
+            fi
+          else
+            installpkg --terse --root "$2" "${FULLPKG}"
+          fi
         fi
       fi
     done
