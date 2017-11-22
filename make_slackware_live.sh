@@ -464,7 +464,7 @@ function install_pkgs() {
     rm -rf "$2"/usr/lib${DIRSUFFIX}/lib{LLVM,clang,lldb}*.a
     # And these are not needed for a simple XFCE ISO:
     rm -rf "$2"/usr/lib${DIRSUFFIX}/clang/*/lib/linux/*.a{,.syms}
-    rm -f "$2"/usr/bin/{c-index-test,clang-check,clang-query,clang-rename,clang-tidy}
+    rm -f "$2"/usr/bin/{c-index-test,clang-check,clang-import-test,clang-include-fixer,clang-offload-bundler,clang-order-fields,clang-query,clang-rename,clang-tidy}
     # Get rid of useless documentation:
     rm -rf "$2"/usr/share/ghostscript/*/doc/
     # We don't need tests or examples:
