@@ -1765,6 +1765,17 @@ EOGL
   # Do not show the blueman applet, Plasma5 has its own BlueTooth widget:
   echo "NotShowIn=KDE;" >> ${LIVE_ROOTDIR}/etc/xdg/autostart/blueman.desktop
 
+  # Set QtWebkit as the Konqueror rendering engine if available:
+  if [ -f ${LIVE_ROOTDIR}/usr/share/kservices5/kwebkitpart.desktop  ]; then
+    mkdir ${LIVE_ROOTDIR}/home/${LIVEUID}/.config
+    cat <<EOT >> ${LIVE_ROOTDIR}/home/${LIVEUID}/.config/mimeapps.list
+[Added KDE Service Associations]
+application/xhtml+xml=kwebkitpart.desktop;
+application/xml=kwebkitpart.desktop;
+text/html=kwebkitpart.desktop;
+EOT
+  fi
+
 fi # End LIVEDE = PLASMA5
 
 if [ "$LIVEDE" = "DLACK" ]; then
