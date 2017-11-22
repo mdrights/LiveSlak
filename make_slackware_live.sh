@@ -797,6 +797,8 @@ create_iso() {
       > "$(basename "${OUTFILE}")".md5
   cd - 1>/dev/null
   echo "-- Live ISO image created:"
+  echo "   - CDROM max size is 737.280.000 bytes (703 MB)"
+  echo "   - DVD max size is 4.706.074.624 bytes (4.38 GB aka 4.7 GiB)"
   ls -l "${OUTFILE}"*
 
 } # End of create_iso()
