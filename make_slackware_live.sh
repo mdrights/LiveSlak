@@ -214,6 +214,9 @@ NETFIRMWARE="3com acenic adaptec bnx tigon e100 sun kaweth tr_smctr cxgb3"
 KAPPEND_SLACKWARE=""
 KAPPEND_STUDIOWARE="threadirqs"
 
+# Add CACert root certificates yes/no?
+ADD_CACERT=${ADD_CACERT:-"YES"}
+
 #
 # ---------------------------------------------------------------------------
 #
@@ -1836,6 +1839,85 @@ cd ${LIVE_ROOTDIR}/etc/skel/
   find . -exec cp -a --parents "{}" ${LIVE_ROOTDIR}/home/${LIVEUID}/ \;
   find ${LIVE_ROOTDIR}/home/${LIVEUID}/ -type f -exec sed -i -e "s,/home/live,/home/${LIVEUID}," "{}" \;
 cd - 1>/dev/null
+
+if [ "${ADD_CACERT}" = "YES" -o "${ADD_CACERT}" = "yes" ]; then
+  echo "-- Importing CACert root certificates into OS and browsers."
+  # Import CACert root certificates into the OS:
+  ( mkdir -p ${LIVE_ROOTDIR}/etc/ssl/certs
+    cd ${LIVE_ROOTDIR}/etc/ssl/certs
+    wget -q -O cacert-root.crt http://www.cacert.org/certs/root.crt
+    wget -q -O cacert-class3.crt http://www.cacert.org/certs/class3.crt
+    ln -s cacert-root.crt \
+      $(openssl x509 -noout -hash -in cacert-root.crt).0
+    ln -s cacert-class3.crt \
+      $(openssl x509 -noout -hash -in cacert-class3.crt).0
+  )
+
+  # Create Mozilla Firefox profile:
+  mkdir -p ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/firefox/${LIVEUID}_profile.default
+  cat << EOT > ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/firefox/profiles.ini
+[General]
+StartWithLastProfile=1
+
+[Profile0]
+Name=default
+IsRelative=1
+Path=${LIVEUID}_profile.default
+Default=1
+EOT
+
+  # Create Mozilla Seamonkey profile:
+  mkdir -p ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/seamonkey/${LIVEUID}_profile.default
+  cat << EOT > ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/seamonkey/profiles.ini
+[General]
+StartWithLastProfile=1
+
+[Profile0]
+Name=default
+IsRelative=1
+Path=${LIVEUID}_profile.default
+Default=1
+EOT
+
+  # Create Pale Moon profile:
+  mkdir -p ${LIVE_ROOTDIR}/home/${LIVEUID}/.moonchild\ productions/pale\ moon/${LIVEUID}_profile.default
+    cat << EOT > ${LIVE_ROOTDIR}/home/${LIVEUID}/.moonchild\ productions/pale\ moon/profiles.ini
+[General]
+StartWithLastProfile=1
+
+[Profile0]
+Name=default
+IsRelative=1
+Path=${LIVEUID}_profile.default
+Default=1
+EOT
+
+  # Import CACert root certificates into the browsers:
+  (
+    # Mozilla Firefox:
+    certutil -N --empty-password -d ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/firefox/${LIVEUID}_profile.default
+    certutil -d ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/firefox/${LIVEUID}_profile.default \
+      -A -t TC -n "CAcert.org" -i ${LIVE_ROOTDIR}/etc/ssl/certs/cacert-root.crt
+    certutil -d ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/firefox/${LIVEUID}_profile.default \
+      -A -t TC -n "CAcert.org Class 3" -i ${LIVE_ROOTDIR}/etc/ssl/certs/cacert-class3.crt
+    # Seamonkey and Pale Moon (can just be a copy of the Firefox files):
+    cp -a \
+      ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/firefox/${LIVEUID}_profile.default/* \
+      ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/seamonkey/${LIVEUID}_profile.default/
+    cp -a \
+      ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/firefox/${LIVEUID}_profile.default/* \
+      ${LIVE_ROOTDIR}/home/${LIVEUID}/.moonchild\ productions/pale\ moon/${LIVEUID}_profile.default/
+    # NSS databases for Chrome based browsers have a different format (sql)
+    # than Mozilla based browsers:
+    mkdir -p ${LIVE_ROOTDIR}/home/${LIVEUID}/.pki/nssdb
+    certutil -N --empty-password -d ${LIVE_ROOTDIR}/home/${LIVEUID}/.pki/nssdb
+    certutil -d sql:${LIVE_ROOTDIR}/home/${LIVEUID}/.pki/nssdb \
+      -A -t TC -n "CAcert.org" -i ${LIVE_ROOTDIR}/etc/ssl/certs/cacert-root.crt
+    certutil -d sql:${LIVE_ROOTDIR}/home/${LIVEUID}/.pki/nssdb \
+      -A -t TC -n "CAcert.org Class 3" -i ${LIVE_ROOTDIR}/etc/ssl/certs/cacert-class3.crt
+  )
+  # TODO: find out how to configure KDE with additional Root CA's.
+fi # End ADD_CACERT
 
 # Make sure that user 'live' owns her own files:
 chroot ${LIVE_ROOTDIR} chown -R ${LIVEUID}:users home/${LIVEUID}
