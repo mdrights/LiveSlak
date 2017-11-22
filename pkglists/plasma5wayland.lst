@@ -1,0 +1,30 @@
+# Change Plasma5 into Plasma5 with Wayland support.
+# -------------------------------------------------
+# Modifications of Slackware's own packages
+# (note that a '%' at the end means: removepkg):
+ConsoleKit2
+mesa
+xorg-server-xephyr%
+xorg-server-xnest%
+xorg-server-xvfb%
+xorg-server
+# Taken from ktown 'testing':
+# New dep:
+wayland-protocols
+# Updated dep:
+libxkbcommon
+qt5
+# Frameworks:
+kwayland
+plasma-framework
+# Plasma;
+kinfocenter
+kscreenlocker
+kwayland-integration
+libkscreen2
+plasma-desktop
+plasma-integration
+plasma-workspace
+powerdevil
+kwin
+
