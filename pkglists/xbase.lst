@@ -169,6 +169,7 @@ libatasmart
 libbluray
 libcaca
 libcanberra
+libcap-ng
 libcddb
 libcdio
 libcdio-paranoia
@@ -220,6 +221,7 @@ libsndfile
 libsoup
 libssh
 libssh2
+libtasn1
 libtheora
 libtiff
 libtirpc
@@ -267,6 +269,7 @@ orc
 p11-kit
 pamixer
 pango
+pcre2
 pixman
 pm-utils
 poppler

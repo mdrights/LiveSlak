@@ -41,5 +41,6 @@ xgames
 #xlockmore
 #xmms
 #xpaint
-xpdf
+# Now needs qt:
+#xpdf
 xsane
