@@ -82,6 +82,7 @@ logrotate
 lvm2
 make
 man
+man-db
 man-pages
 mc
 mdadm

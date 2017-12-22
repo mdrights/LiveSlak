@@ -1,5 +1,6 @@
 ConsoleKit2
 GConf
+Mako
 ModemManager
 NetworkManager
 SDL2
@@ -115,6 +116,7 @@ icu4c
 ilmbase
 imake
 inputproto
+intel-vaapi-driver
 intltool
 ipw2100-fw
 ipw2200-fw
