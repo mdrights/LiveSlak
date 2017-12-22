@@ -22,7 +22,9 @@ dbus-compat32
 e2fsprogs-compat32
 eudev-compat32
 libgudev-compat32
+lzlib-compat32
 openssl-solibs-compat32
+plzip-compat32
 util-linux-compat32
 xz-compat32
 # The AP/ series:
@@ -37,6 +39,7 @@ libtool-compat32
 llvm-compat32
 opencl-headers-compat32
 # The L/ series:
+Mako-compat32
 SDL2-compat32
 alsa-lib-compat32
 alsa-oss-compat32
