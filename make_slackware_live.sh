@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2014, 2015, 2016, 2017  Eric Hameleers, Eindhoven, NL 
+# Copyright 2014, 2015, 2016, 2017, 2018  Eric Hameleers, Eindhoven, NL 
 # All rights reserved.
 #
 #   Permission to use, copy, modify, and distribute this software for
@@ -35,7 +35,7 @@
 # -----------------------------------------------------------------------------
 
 # Version of the Live OS generator:
-VERSION="1.1.9.4"
+VERSION="1.1.9.5"
 
 # Directory where our live tools are stored:
 LIVE_TOOLDIR=${LIVE_TOOLDIR:-"$(cd $(dirname $0); pwd)"}
