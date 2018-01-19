@@ -1,6 +1,7 @@
 # Showcases for using with Slackware Live:
 NetworkManager-openconnect
 NetworkManager-openvpn
+acpilight
 calibre
 chromium
 chromium-pepperflash-plugin
@@ -75,8 +76,9 @@ openjdk
 #oxygen-gtk2
 p7zip
 palemoon
-python-twisted
 podofo
+poppler-qt5
+python-twisted
 qbittorrent
 sqlitebrowser
 sshfs-fuse
