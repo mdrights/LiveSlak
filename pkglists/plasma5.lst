@@ -8,6 +8,8 @@ PyQt5
 accountsservice
 cfitsio
 cracklib
+cryfs
+cryptopp
 ddcutil
 dvdauthor
 elogind
