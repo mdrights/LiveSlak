@@ -45,7 +45,7 @@ The "liveslak" scripts can generate a variety of Slackware flavors:
 
 
 Common download locations are:
-  * Primary site: http://bear.alienbase.nl/mirrors/slackware-live/ (%%rsync://bear.alienbase.nl/mirrors/slackware-live/%%)
+  * Primary site: http://slackware.nl/slackware-live/ (%%rsync://slackware.nl/mirrors/slackware-live/%%)
   * Darren's http://slackware.uk/people/alien-slacklive/ (%%rsync://slackware.uk/people/alien-slacklive/%%)
   * Willy's http://repo.ukdw.ac.id/slackware-live/
   * Ryan's https://seattleslack.ryanpcmcquen.org/mirrors/slackware-live/
@@ -105,7 +105,7 @@ Another difference between Syslinux and Grub2 menus: in Grub2 you can select a n
 
 A script is available which allows you to transfer the ISO image content to a USB stick, making some modifications depending on the script's parameters.
 
-The USB stick will be erased and re-formatted when running this script (except when using the '-r' refresh optoin)!  Before inflicting any irreversible damage, the script will show you a prompt at which point you can evaluate whether it is safe to continue.
+The USB stick will be erased and re-formatted when running this script (except when using the '-r' refresh option)!  Before inflicting any irreversible damage, the script will show you a prompt at which point you can evaluate whether it is safe to continue.
 
 This script, called 'iso2usb.sh', accepts the following parameters: <code>
   -c|--crypt size|perc       Add a LUKS encrypted /home ; parameter is the
@@ -451,7 +451,7 @@ Stage two:
     * slackpkg is configured,
     * a locate database is created,
     * etc...
-  * All these modifications are written to the writable filesystem that was created in the previous section. This filesystem will also be stored on the ISO as a squashfs module and when the Live OS boots, it will be mounted read-only just like all the other modules. Its name will be "0099-slackware_zzzconf-current-x86_64.sxz" or more generically "0099-slackware_zzzconf-$SLACKVERSION}-${ARCH}.sxz"
+  * All these modifications are written to the writable filesystem that was created in the previous section. This filesystem will also be stored on the ISO as a squashfs module and when the Live OS boots, it will be mounted read-only just like all the other modules. Its name will be "0099-slackware_zzzconf-current-x86_64.sxz" or more generically "0099-slackware_zzzconf-${SLACKVERSION}-${ARCH}.sxz"
 
 
 == Configure the boot stage of the Live OS ==
@@ -482,6 +482,16 @@ The second script:
 The "iso2usb.sh" script's runtime usage is explained in detail in a previous paragraph "Transfering ISO content to USB stick".
 
 This section explains how the script modifies the ISO for the enhanced USB functionality.
+
+== Layout of the USB stick ==
+
+The "iso2usb.sh" script wipes and re-partitions the USB stick unless the "-r" or refresh parameter is used.  See section "Transfering ISO content to USB stick" for an explanation of all commandline switches.  The script will create 3 partitions:
+
+  * First partition: a small (1 MB in size) FAT partition which  is not used for Slackware Live Edition.  It can be used by an alternative bootloader if needed.  You can also store your LUKS keyfile on it to unlock a LUKS-encrypted Slackware Linux computer (see the README_CRYPT.TXT file on your Slackware DVD for more information on LUKS keyfiles).
+  * Second partition: a 100 MB VFAT partition containing the kernel, initrd and all the other stuff required by syslinux and grub2 to boot Slackware Live Edition.
+  * Third partition: a Linux partition taking up all of the remaining space. It contains the actual liveslak modules, the persistent live storage and optionally your encrypted homedirectory. You can use the remainder of this Linux ext4 filesystem's free space to store anything you like.
+
+Note that this script is the only supported method of transfering the liveslak ISO content to a USB stick and make that USB stick into a persistent live OS.  Several 3rd party tools (like multibootusb, rufus, unetbootin) that claim to be able to mix several Live OS'es on a single USB stick and make them all work in a multi-boot setup, are not currently supporting liveslak.
 
 == Mounting a filesystem in an encrypted container ==
 
@@ -565,7 +575,7 @@ The "upslak.sh" script's runtime usage is explained in detail in a previous para
 
 This section explains how the script modifies the content of the Live USB stick.
 
-When the script is started, it will do some sanity checks and then extracts the comtent of the initrd image. Some characteristics of the initrd will be recorded:
+When the script is started, it will do some sanity checks and then extracts the content of the initrd image. Some characteristics of the initrd will be recorded:
   * existence of previously backed-up kernel modules is checked,
   * template variables and their values are obtained from the init sctript,
   * the current USB wait time is checked.
@@ -590,7 +600,7 @@ Similar to the functionality of the "iso2usb.sh" script, the "upslak.sh" script 
 
 == Replace the liveslak init script ==
 
-The init script inside the initrd image is the core of liveslak.  The init script prepares the Live filesystem and configures several run-time OS parameters.  If you have made modifications to this init script you can easily replace the default init script with yourw own script using the '-i' option.  The "upslak.sh" script is smart enough to recognize a iveslak template as input.  The ".tpl" extension of some liveslak files means that these are templates.  They are not usable as-is, because they contain placeholder strings like "@VERSION@ or "@DISTRO@" that first need to be replaced with real values.  The "upslak.sh" script will take care of these substitutions.
+The init script inside the initrd image is the core of liveslak.  The init script prepares the Live filesystem and configures several run-time OS parameters.  If you have made modifications to this init script you can easily replace the default init script with your own script using the '-i' option.  The "upslak.sh" script is smart enough to recognize a iveslak template as input.  The ".tpl" extension of some liveslak files means that these are templates.  They are not usable as-is, because they contain placeholder strings like "@VERSION@" or "@DISTRO@" that first need to be replaced with real values.  The "upslak.sh" script will take care of these substitutions.
 
 == Wrap persistence data into a new squashfs module ==
 
@@ -633,13 +643,13 @@ The toplevel 'liveslak' directory contains the following files:
     * tz = timezone for the language's native country
     * locale = the locale used in the country
     * xkb = optional custom X keyboard variant for the language
-  * liveinit - this is the "init" script which is copied into the initrd image for the Live OS.  Together with the Slackware generic kernel, the initrd is what boots the computer. The "init" script assembles the Live filesystem from its squashfs modules.
+  * liveinit.tpl - this is the template for the "init" script which is copied into the initrd image for the Live OS.  Together with the Slackware generic kernel, the initrd is what boots the computer. The "init" script assembles the Live filesystem from its squashfs modules.
   * make_slackware_live.conf - the configuration file for the "make_slackware_live.sh" script.  You can define defaults for many script parameters here so that you do not have to edit the script itself.
   * make_slackware_live.sh - the script that generates the Live ISO.
   * makemod - this script creates a squashfs module out of a Slackware package (or out of a directory tree).
   * menu.tpl - template which is used to generate the syslinux boot menu for BIOS computers.
-  * pxeserver - the script that starts a PXE server allowing other computers to boot Slackware Live over the network.
-  * setup2hd - the script you use to install your Slackware Live to a harddisk.
+  * pxeserver.tpl - template to generate the script that starts a PXE server allowing other computers to boot Slackware Live over the network.
+  * setup2hd.tpl - template to generate the script you use to install your Slackware Live to a harddisk.
   * setup2hd.local - here a developer of a custom Live OS can override the default post-installation routine by (re-)defining the function "live_post_install()" in the ''setup2hd'' script.
 
 
@@ -652,7 +662,9 @@ The script's parameters are:
  -a arch            Machine architecture (default: x86_64).
                     Use i586 for a 32bit ISO, x86_64 for 64bit.
  -d desktoptype     SLACKWARE (full Slack), KDE4 (basic KDE4),
-                    XFCE (basic XFCE), PLASMA5, MATE, CINNAMON.
+                    XFCE (basic XFCE), PLASMA5 (KDE Plasma5 replaces KDE4),
+                    MATE (Gnome2 fork replaces KDE4), CINNAMON (fork of Gnome3
+                    Shell replaces KDE4), DLACK (adds Gnome3, PAM and systemd).
  -e                 Use ISO boot-load-size of 32 for computers
                     where the ISO won't boot otherwise (default: 4).
  -f                 Forced re-generation of all squashfs modules,
@@ -673,7 +685,8 @@ The script's parameters are:
 
 The script uses package repositories to create a Live ISO.  The packages will be installed into a temporary directory.
 
-In order to create a Live ISO for any of these variants, the package repositories that are required must be available as a local directory (this can be a network-mounted directory).  A local mirror of the Slackware repository is mandatory  - you have to download these yourself..  Any other packages, i.e. those that are used from a 3rd party repository will be downloaded from a remote server as long as a rsync URL for the repository is configured in ./pkglists/*.conf.
+In order to create a Live ISO for any of these variants, the package repositories that are required must be available as a local directory (this can be a network-mounted directory).
+If you have not mirrored them locally, then all packages of the Slackware repository as well as those you require from a 3rd party repository will be downloaded from a remote server as long as a rsync URL for the repository is configured in ./pkglists/*.conf.
 
 When all pre-reqs are met, you issue a single command to generate the ISO.  The following example will create a pure Slackware Live Edition:
   # ./make_slackware_live.sh
@@ -750,7 +763,7 @@ This is the section in ''make_slackware_live.conf'' which deals with these custo
 
 
 Overlayfs and squashfs are doing the real magic here.
-As explained earlier, the squashfs program takes a directory structure and complresses this into a single archive file. It does this in a special way, more like how mkisofs does this than how tar creates an archive.  The resulting module can be loop-mounted to access the filesystem inside.
+As explained earlier, the squashfs program takes a directory structure and compresses this into a single archive file. It does this in a special way, more like how mkisofs does this than how tar creates an archive.  The resulting module can be loop-mounted to access the filesystem inside.
 
 When you have several of these loop-mounted squashfs modules, each containing a fraction of the filesystem of the OS, you are going to stack these fractional filesystems on top of each other and thus assemble the complete filesystem (much like Tintin did in The Secret of the Unicorn when he overlayed several translucent pieces of parchment and looked through them to see the complete picture).  Overlayfs is the driver that performs this 'overlaying' of the fractional filesystems.  Overlayfs can work with many read-only fractional filesystems and exactly one writable filesystem.  The writable filesystem is what gives your Live OS the appearance that it is writing to a hard drive - the writes to the overlay filesystem are however done to RAM (in that case you have a real Live OS) or to a 'persistence' filesystem which is stored somewhere on a writable medium (a USB stick with 'persistence' is an example of this case).
 
@@ -858,7 +871,7 @@ Slackel is a Greek distro based on both Slackware and Salix.  It comes in three 
 
 Website: http://slackex.exton.net/
 
-A website offering Live versions based on many regular Linux distributions.  The SlackEX version is loosely based on Slackware with a custom kernel and some tools that are not part of Slackware itself.  I was unable to find the sources for this live distro.
+A website offering Live versions based on many regular Linux distributions.  The SlackEX version is loosely based on Slackware with a custom kernel and some tools that are not part of Slackware itself.  I was unable to find the sources for this live distro.  Its creator stopped SlackEX development in December 2017.
 
 
 ===== Liveslak Sources =====
@@ -866,8 +879,8 @@ A website offering Live versions based on many regular Linux distributions.  The
 
 Slackware Live Edition is created by the 'liveslak' scripts developed and maintained by Eric Hameleers aka Alien BOB [[alien@slackware.com]].
 
-  * Git repository: %%git://bear.alienbase.nl/liveslak.git%%
-  * Git repository (browsable): http://bear.alienbase.nl/cgit/liveslak/
+  * Git repository: %%git://slackware.nl/liveslak.git%%
+  * Git repository (browsable): http://git.slackware.nl/liveslak/
   * Download mirror: http://www.slackware.com/~alien/liveslak/
 
 
