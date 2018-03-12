@@ -36,7 +36,7 @@ floppy
 gawk
 gc
 gcc
-ghostscript
+#ghostscript
 #ghostscript-fonts-std
 glibc
 #glibc-solibs
@@ -80,6 +80,7 @@ libunistring
 links
 logrotate
 lvm2
+lzlib
 make
 man
 man-db
@@ -104,6 +105,7 @@ parted
 pciutils
 perl
 pkgtools
+plzip
 polkit
 procps-ng
 pth

@@ -227,6 +227,7 @@ libtasn1
 libtheora
 libtiff
 libtirpc
+libunwind
 libusbmuxd
 libva
 libva-intel-driver
@@ -267,6 +268,7 @@ nfs-utils
 ocl-icd
 openexr
 openjpeg
+opus
 orc
 p11-kit
 pamixer
@@ -302,6 +304,7 @@ shared-mime-info
 showfont
 sinhala_lklug-font-ttf
 smproxy
+speex
 speexdsp
 sqlite
 startup-notification
@@ -372,6 +375,7 @@ xf86-video-nv
 xf86-video-openchrome
 xf86-video-r128
 xf86-video-v4l
+xf86-video-vboxvideo
 xf86-video-vesa
 xf86-video-vmware
 xf86bigfontproto
