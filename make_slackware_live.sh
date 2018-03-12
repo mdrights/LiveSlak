@@ -474,6 +474,10 @@ function install_pkgs() {
     # And these are not needed for a simple XFCE ISO:
     rm -rf "$2"/usr/lib${DIRSUFFIX}/clang/*/lib/linux/*.a{,.syms}
     rm -f "$2"/usr/bin/{c-index-test,clang-check,clang-import-test,clang-include-fixer,clang-offload-bundler,clang-order-fields,clang-query,clang-rename,clang-tidy}
+    # Nor these datacenter NIC firmwares and drivers:
+    rm -rf "$2"/lib/firmware/{liquidio,netronome,qed}
+    rm -rf "$2"/lib/modules/*/kernel/drivers/infiniband
+    rm -rf "$2"/lib/modules/*/kernel/drivers/net/ethernet/{netronome,qlogic}
     # Get rid of useless documentation:
     rm -rf "$2"/usr/share/ghostscript/*/doc/
     # We don't need tests or examples:
