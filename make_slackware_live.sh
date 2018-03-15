@@ -168,11 +168,11 @@ SEQ_SLACKWARE="tagfile:a,ap,d,e,f,k,kde,kdei,l,n,t,tcl,x,xap,xfce,y pkglist:slac
 
 # Stripped-down Slackware with XFCE as the Desktop Environment:
 # - each series will become a squashfs module:
-SEQ_XFCEBASE="${MINLIST},xbase,xapbase,xfcebase"
+SEQ_XFCEBASE="${MINLIST},x_base,xapbase,xfcebase"
 
 # Stripped-down Slackware with KDE4 as the Desktop Environment:
 # - each series will become a squashfs module:
-SEQ_KDE4BASE="pkglist:${MINLIST},xbase,xapbase,kde4base"
+SEQ_KDE4BASE="pkglist:${MINLIST},x_base,xapbase,kde4base"
 
 # List of Slackware package series with Plasma5 instead of KDE 4 (full install):
 # - each will become a squashfs module:

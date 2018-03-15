@@ -54,6 +54,7 @@ ffmpeg
 fftw
 fixesproto
 flac
+fluidsynth
 #font-adobe-100dpi
 font-alias
 #font-bh-100dpi
@@ -310,6 +311,9 @@ sqlite
 startup-notification
 svgalib
 t1lib
+talloc
+tdb
+tevent
 #tibmachuni-font-ttf
 ttf-indic-fonts
 udisks
@@ -408,6 +412,7 @@ xmodmap
 xorg-cf-files
 xorg-server
 xorg-server-xvfb
+xorgproto
 xpr
 xprop
 xproto
