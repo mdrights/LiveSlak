@@ -103,6 +103,7 @@ libtasn1-compat32
 libtermcap-compat32
 libtiff-compat32
 libunistring-compat32
+libunwind-compat32
 libusb-compat32
 libvorbis-compat32
 libwebp-compat32
