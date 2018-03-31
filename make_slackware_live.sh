@@ -1219,9 +1219,10 @@ fi
 echo "LANG=en_US.UTF-8" > ${LIVE_ROOTDIR}/etc/locale.conf
 echo "KEYMAP=us" > ${LIVE_ROOTDIR}/etc/vconsole.conf
 
-# Set timezone to UTC:
+# Set timezone to UTC, mimicking the 'timeconfig' script in Slackware:
 cp -a ${LIVE_ROOTDIR}/usr/share/zoneinfo/UTC ${LIVE_ROOTDIR}/etc/localtime
-rm ${LIVE_ROOTDIR}/etc/localtime-copied-from
+# Could be absent so 'rm -f' to avoid script aborts:
+rm -f ${LIVE_ROOTDIR}/etc/localtime-copied-from
 ln -s /usr/share/zoneinfo/UTC ${LIVE_ROOTDIR}/etc/localtime-copied-from
 
 # Qt5 expects '/etc/localtime' to be a symlink, but in Slackware this is a
