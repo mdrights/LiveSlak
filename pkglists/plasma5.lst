@@ -5,6 +5,7 @@
 ConsoleKit2
 OpenAL
 PyQt5
+QScintilla
 accountsservice
 cfitsio
 cracklib
@@ -78,13 +79,6 @@ telepathy-mission-control
 telepathy-morse
 telepathy-qt5
 
-# kde4 extragear:
-audiocd-kio4
-kio-mtp
-libkcddb4
-libkcompactdisc4
-oxygen-gtk2
-
 # kde4 based:
 akonadi4
 baloo
@@ -111,6 +105,13 @@ qtruby
 smokegen
 smokekde
 smokeqt
+
+# kde4 extragear:
+audiocd-kio4
+kio-mtp
+libkcddb4
+libkcompactdisc4
+oxygen-gtk2
 
 # frameworks:
 attica-framework
@@ -250,13 +251,6 @@ pim-storage-service-manager
 pimcommon
 syndication
 
-# plasma-extra:
-kde-wallpapers
-kdeconnect-framework
-oxygen-fonts
-polkit-kde-kcmodules-framework
-sddm-qt5
-
 # plasma:
 bluedevil
 breeze
@@ -290,7 +284,6 @@ plasma-mediacenter
 plasma-pa
 plasma-sdk
 plasma-vault
-plasma-workspace
 plasma-workspace-wallpapers
 plasma5-nm
 polkit-kde-framework
@@ -299,6 +292,15 @@ sddm-kcm
 systemsettings
 user-manager
 xdg-desktop-portal-kde
+# Issues with 3 files in the squashfs module missing the last character:
+plasma-workspace
+
+# plasma-extra:
+kde-wallpapers
+kdeconnect-framework
+oxygen-fonts
+polkit-kde-kcmodules-framework
+sddm-qt5
 
 # applications:
 analitza
@@ -456,6 +458,7 @@ umbrello
 zeroconf-ioslave
 
 # applications-extra:
+alkimia
 calligra
 calligraplan
 digikam
@@ -469,6 +472,7 @@ kdevplatform
 kdiagram
 kile
 kjots
+kmymoney
 kpmcore
 krusader
 ktorrent

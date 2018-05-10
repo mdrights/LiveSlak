@@ -18,6 +18,7 @@ gv
 hexchat
 imagemagick
 js185
+json-c
 libsigc++
 lftp
 mozilla-firefox
@@ -28,6 +29,7 @@ pavucontrol
 pidgin
 rdesktop
 rxvt
+rxvt-unicode
 sane
 seamonkey-solibs
 tigervnc

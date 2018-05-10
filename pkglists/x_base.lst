@@ -83,6 +83,7 @@ gcr
 gd
 gdk-pixbuf2
 gegl
+gexiv2
 giflib
 glew
 glib-networking
@@ -124,6 +125,7 @@ ipw2200-fw
 iw
 jasper
 json-c
+json-glib
 kbproto
 keybinder
 lame
@@ -204,6 +206,7 @@ libmad
 libmbim
 libmng
 libmtp
+libmypaint
 libndp
 libnih
 libnl
@@ -261,6 +264,7 @@ motif
 mozilla-nss
 mpg123
 mtdev
+mypaint-brushes
 neon
 net-snmp
 nettle
@@ -329,6 +333,7 @@ vorbis-tools
 vte
 wavpack
 wireless-tools
+wireless_tools
 wpa_supplicant
 wqy-zenhei-font-ttf
 x11-skel
