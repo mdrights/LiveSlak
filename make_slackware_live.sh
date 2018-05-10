@@ -231,6 +231,15 @@ COMPR=${COMPR:-"xz --check=crc32"}
 # Default is xz, alternatives are gzip, lzma, lzo:
 SXZ_COMP=${SXZ_COMP:-"xz"}
 
+# What compression parameters to use?
+# For our lean XFCE image we try to achieve max compression,
+# at the expense of runtime latency:
+if [ "$LIVEDE" = "XFCE" ] ; then
+  SXZ_COMP_PARAMS=${SXZ_COMP_PARAMS:-"-b 1M"}
+else
+  SXZ_COMP_PARAMS=${SXZ_COMP_PARAMS:-"-b 512k -Xdict-size 100%"}
+fi
+
 # Mount point where Live filesystem is assembled (no storage requirements):
 LIVE_ROOTDIR=${LIVE_ROOTDIR:-"/mnt/slackwarelive"}
 
