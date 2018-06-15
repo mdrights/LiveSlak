@@ -330,6 +330,11 @@ swap => Allow the Live OS to activate all swap partitions on
 
 === Media tweaks ===
 
+cfg=[skip|write] =>
+  Specify 'skip' to skip disk-based configuration file containing
+  OS parameters; or specify 'write' to write current OS parameters
+  to disk.
+
 hostname=your_custom_hostname[,qualifier] =>
   Specify a custom hostname.  A qualifier 'fixed' can be appended
   to prohibit hostname modification in  case of network boot.

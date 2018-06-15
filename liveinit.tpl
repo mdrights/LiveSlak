@@ -2,7 +2,7 @@
 #
 # Copyright 2004  Slackware Linux, Inc., Concord, CA, USA
 # Copyright 2007, 2008, 2009, 2010, 2012  Patrick J. Volkerding, Sebeka, MN, USA
-# Copyright 2015, 2016, 2017  Eric Hameleers, Eindhoven, NL
+# Copyright 2015, 2016, 2017, 2018  Eric Hameleers, Eindhoven, NL
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -48,6 +48,9 @@ LIVEUID="@LIVEUID@"
 
 LIVEMEDIA=""
 LIVEPATH=""
+
+DISTROCFG="@DISTRO@_os.cfg"
+CFGACTION=""
 
 # By default, let the media determine if we can write persistent changes:
 # However, if we define TORAM=1, we will also set VIRGIN=1 since we want
@@ -184,6 +187,10 @@ for ARG in $(cat /proc/cmdline); do
     nic=*)
       # nic=<driver>:<interface>:<dhcp|static>[:ipaddr:netmask[:gateway]]
       ENET=$(echo $ARG | cut -f2 -d=)
+    ;;
+    cfg=*)
+      CFGACTION=$(echo $ARG | cut -f2 -d=)
+      if [ "${CFGACTION}" = "skip" ]; then DISTROCFG="" ; fi
     ;;
     noload=*)
       NOLOAD=$(echo $ARG | cut -f2 -d=)
@@ -675,6 +682,35 @@ if [ "$RESCUE" = "" ]; then
   fi
 
   debugit
+
+  # liveslak can optionally load a OS config file "@DISTRO@_os.cfg"
+  # which contains "VARIABLE=value" lines, where VARIABLE is one of
+  # the following variables that are used below in the live init script:
+  #   BLACKLIST, INIT, KEYMAP, LIVE_HOSTNAME, LOAD, LOCALE, LUKSVOL,
+  #   NOLOAD, RUNLEVEL, TWEAKS, TZ, XKB. 
+  if [ -z "$CFGACTION" ]; then
+    # Read OS configuration from disk file if present
+    # (prevent this by adding 'cfg=skip' to the boot commandline).
+    if [ -f "/mnt/media/${LIVEMAIN}/${DISTROCFG}" ]; then
+      source /mnt/media/${LIVEMAIN}/${DISTROCFG}
+    fi
+  elif [ "$CFGACTION" = "write" ]; then
+    # Write liveslak OS parameters to disk:
+    echo > /mnt/media/${LIVEMAIN}/${DISTROCFG} 2>/dev/null
+    if [ $? -ne 0 ]; then
+      echo "${MARKER}:  Live media read-only, cannot write config file."
+    else
+      echo "${MARKER}:  Writing config to /${LIVEMAIN}/${DISTROCFG}"
+      for LIVEPARM in \
+        BLACKLIST INIT KEYMAP LIVE_HOSTNAME LOAD LOCALE LUKSVOL \
+        NOLOAD RUNLEVEL TWEAKS TZ XKB ;
+      do
+        if [ -n "$(eval echo \$$LIVEPARM)" ]; then
+          echo $LIVEPARM=$(eval echo \$$LIVEPARM) >> /mnt/media/${LIVEMAIN}/${DISTROCFG}
+        fi 
+      done
+    fi
+  fi
 
   # Start assembling our live system components below /mnt/live :
   mkdir /mnt/live
