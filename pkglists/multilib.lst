@@ -23,6 +23,7 @@ e2fsprogs-compat32
 eudev-compat32
 libgudev-compat32
 lzlib-compat32
+openssl10-solibs-compat32
 openssl-solibs-compat32
 plzip-compat32
 util-linux-compat32
@@ -115,6 +116,8 @@ ocl-icd-compat32
 openjpeg-compat32
 orc-compat32
 pango-compat32
+pcre-compat32
+pcre2-compat32
 popt-compat32
 pulseaudio-compat32
 python-six-compat32
