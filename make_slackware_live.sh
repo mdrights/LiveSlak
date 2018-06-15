@@ -1578,6 +1578,10 @@ alias ll="ls -la $LS_OPTIONS"
 lsp() { basename $(ls -1 "/var/log/packages/$@"*) ; }
 alias md="mkdir"
 alias tarview="tar -tvf"
+# GREP_OPTIONS="--color=auto" is deprecated, use alias to enable colored output:
+alias grep="grep --color=auto"
+alias fgrep="fgrep --color=auto"
+alias egrep="egrep --color=auto"
 
 # Ctrl-D should not log us off immediately; now it needs 10 times:
 set -o ignoreeof
