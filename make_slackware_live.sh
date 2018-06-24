@@ -1377,6 +1377,12 @@ MIRRORPLUS['mate']=http://slackware.uk/msb/${SL_VERSION}/latest/${SL_ARCH}/
 EOPL
 fi
 
+# Slackpkg wants you to opt-in on slackware-current:
+if [ "${SL_VERSION}" = "current" ]; then
+  mkdir -p /var/lib/slackpkg
+  touch /var/lib/slackpkg/current
+fi
+
 ARCH=${SL_ARCH} /usr/sbin/slackpkg -batch=on update gpg
 ARCH=${SL_ARCH} /usr/sbin/slackpkg -batch=on update
 # Let any lingering .new files replace their originals:
