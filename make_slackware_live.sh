@@ -1368,13 +1368,24 @@ GREYLIST=on
 PKGS_PRIORITY=( restricted alienbob ktown mate )
 REPOPLUS=( slackpkgplus restricted alienbob ktown mate )
 MIRRORPLUS['slackpkgplus']=http://slakfinder.org/slackpkg+/
-MIRRORPLUS['restricted']=http://bear.alienbase.nl/mirrors/people/alien/restricted_sbrepos/${SL_VERSION}/${SL_ARCH}/
-MIRRORPLUS['alienbob']=http://bear.alienbase.nl/mirrors/people/alien/sbrepos/${SL_VERSION}/${SL_ARCH}/
-#MIRRORPLUS['ktown_testing']=http://bear.alienbase.nl/mirrors/alien-kde/${SL_VERSION}/testing/${SL_ARCH}/
-MIRRORPLUS['ktown']=http://bear.alienbase.nl/mirrors/alien-kde/${SL_VERSION}/latest/${SL_ARCH}/
+MIRRORPLUS['restricted']=http://slackware.nl/people/alien/restricted_sbrepos/${SL_VERSION}/${SL_ARCH}/
+MIRRORPLUS['alienbob']=http://slackware.nl/people/alien/sbrepos/${SL_VERSION}/${SL_ARCH}/
 MIRRORPLUS['mate']=http://slackware.uk/msb/${SL_VERSION}/latest/${SL_ARCH}/ 
 #MIRRORPLUS['studioware']=http://slackware.uk/studioware/${SL_VERSION}/ 
 EOPL
+  # Use the appropriate ktown variant:
+  eval $( grep "^ *VARIANT=" ${LIVE_TOOLDIR}/pkglists/plasma5.conf)
+  if [ "$VARIANT" = "latest" ]; then
+    cat <<EOPL >> etc/slackpkg/slackpkgplus.conf
+#MIRRORPLUS['ktown']=http://slackware.nl/alien-kde/${SL_VERSION}/testing/${SL_ARCH}/
+MIRRORPLUS['ktown']=http://slackware.nl/alien-kde/${SL_VERSION}/latest/${SL_ARCH}/
+EOPL
+  else
+    cat <<EOPL >> etc/slackpkg/slackpkgplus.conf
+#MIRRORPLUS['ktown']=http://slackware.nl/alien-kde/${SL_VERSION}/latest/${SL_ARCH}/
+MIRRORPLUS['ktown']=http://slackware.nl/alien-kde/${SL_VERSION}/testing/${SL_ARCH}/
+EOPL
+  fi
 fi
 
 # Slackpkg wants you to opt-in on slackware-current:
