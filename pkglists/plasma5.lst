@@ -255,6 +255,7 @@ syndication
 bluedevil
 breeze
 breeze-gtk
+breeze-grub
 drkonqi
 kactivitymanagerd
 kde-cli-tools
@@ -302,6 +303,7 @@ kdeconnect-framework
 oxygen-fonts
 polkit-kde-kcmodules-framework
 sddm-qt5
+wacomtablet
 
 # applications:
 analitza
@@ -328,11 +330,13 @@ kajongg
 kalgebra
 kalzium
 kamera
+kamoso
 kanagram
 kapman
 kapptemplate
 kate
 katomic
+kbackup
 kblackbox
 kblocks
 kbounce
@@ -467,6 +471,7 @@ falkon
 kaudiocreator
 krita
 kdev-php
+kdev-python
 kdevelop
 kdevelop-pg-qt
 kdevplatform
@@ -475,6 +480,7 @@ kile
 kjots
 kmymoney
 kpmcore
+krename
 krusader
 ktorrent
 kuser
