@@ -1,5 +1,7 @@
 Cython
+LibRaw
 MPlayer
+aspell
 atkmm
 audacious
 audacious-plugins
@@ -17,13 +19,14 @@ gucharmap
 gv
 hexchat
 imagemagick
+jansson
 js185
-json-c
 libsigc++
 lftp
 mozilla-firefox
 #mozilla-thunderbird
 network-manager-applet
+nghttp2
 pangomm
 pavucontrol
 pidgin

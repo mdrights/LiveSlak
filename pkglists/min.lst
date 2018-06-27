@@ -51,6 +51,7 @@ grep
 groff
 guile
 gzip
+haveged
 hostname
 idnkit
 infozip
@@ -101,6 +102,7 @@ npth
 openldap-client
 openssh
 openssl
+openssl10-solibs
 parted
 pciutils
 perl

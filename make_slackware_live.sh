@@ -460,6 +460,8 @@ function install_pkgs() {
     # Remove residual bloat:
     rm -rf "${2}"/usr/doc/*/html
     rm -f "${2}"/usr/doc/*/*.{html,css,xml,pdf,db,gz,bz2,xz,txt,TXT}
+    # This will remove more bloat but won't touch the license texts:
+    find "${2}"/usr/doc/ -type f -size +50k |xargs rm -f
     # Remove info pages:
     rm -rf "$2"/usr/info
   fi
@@ -482,7 +484,9 @@ function install_pkgs() {
     rm -rf "$2"/usr/lib${DIRSUFFIX}/lib{LLVM,clang,lldb}*.a
     # And these are not needed for a simple XFCE ISO:
     rm -rf "$2"/usr/lib${DIRSUFFIX}/clang/*/lib/linux/*.a{,.syms}
-    rm -f "$2"/usr/bin/{c-index-test,clang-check,clang-import-test,clang-include-fixer,clang-offload-bundler,clang-order-fields,clang-query,clang-rename,clang-tidy}
+    rm -f "$2"/usr/bin/{c-index-test,clang-check,clang-import-test,clang-include-fixer,clang-offload-bundler,clang-order-fields,clang-refactor,clang-query,clang-rename,clang-reorder-fields,clang-tidy,clangd,lldb-server,lldb-test}
+    rm -rf "$2"/usr/lib${DIRSUFFIX}/guile/*/ccache/*
+    rm -rf "$2"/usr/share/icons/HighContrast
     # Nor these datacenter NIC firmwares and drivers:
     rm -rf "$2"/lib/firmware/{bnx*,cxgb4,libertas,liquidio,mellanox,netronome,qed}
     rm -rf "$2"/lib/modules/*/kernel/drivers/infiniband
