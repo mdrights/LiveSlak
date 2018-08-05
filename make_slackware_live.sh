@@ -1696,6 +1696,13 @@ Used Soprano Backend=virtuosobackend
 rebuilt index for type indexing=true
 EOT
 
+# Disable baloo:
+mkdir -p ${LIVE_ROOTDIR}/etc/skel/.kde4/share/apps/config
+cat <<EOT >${LIVE_ROOTDIR}/etc/skel/.kde4/share/apps/config/baloofilerc
+[Basic Settings]
+Indexing-Enabled=false
+EOT
+
 mkdir -p ${LIVE_ROOTDIR}/etc/skel/.config
 cat <<EOT > ${LIVE_ROOTDIR}/etc/skel/.config/kwalletrc
 [Auto Allow]
@@ -1787,6 +1794,7 @@ KRES_EOF
   cat <<KWALLET_EOL >${LIVE_ROOTDIR}/etc/skel/.config/kwalletrc
 [Migration]
 alreadyMigrated=true
+
 KWALLET_EOL
 
   # Configure (default) UTC timezone so we can change it during boot:
