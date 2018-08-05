@@ -294,8 +294,6 @@ sddm-kcm
 systemsettings
 user-manager
 xdg-desktop-portal-kde
-# Issues with 3 files in the squashfs module missing the last character:
-plasma-workspace
 
 # plasma-extra:
 kde-wallpapers
@@ -520,3 +518,5 @@ kde-l10n-pt
 kde-l10n-sv
 kde-l10n-ru
 
+# Issues with 3 files in the squashfs module missing the last character:
+plasma-workspace
