@@ -176,24 +176,24 @@ SEQ_KDE4BASE="pkglist:${MINLIST},x_base,xapbase,kde4base"
 
 # List of Slackware package series with Plasma5 instead of KDE 4 (full install):
 # - each will become a squashfs module:
-#SEQ_PLASMA5="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,kde4plasma5,plasma5,alien,alienrest,slackpkgplus"
-SEQ_PLASMA5="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,plasma5,alien,alienrest,slackpkgplus"
+#SEQ_PLASMA5="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:alien,alienrest,kde4plasma5,plasma5,slackextra,slackpkgplus"
+SEQ_PLASMA5="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:alien,alienrest,plasma5,slackextra,slackpkgplus"
 
 # List of Slackware package series with MSB instead of KDE 4 (full install):
 # - each will become a squashfs module:
-SEQ_MSB="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,mate,slackpkgplus"
+SEQ_MSB="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:mate,slackextra,slackpkgplus"
 
 # List of Slackware package series with Cinnamon instead of KDE4 (full install):
 # - each will become a squashfs module:
-SEQ_CIN="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,cinnamon,slackpkgplus"
+SEQ_CIN="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap,xfce,y pkglist:cinnamon,slackextra,slackpkgplus"
 
 # Slackware package series with Gnome3/systemd instead of KDE4 (full install):
 # - each will become a squashfs module:
-SEQ_DLACK="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap pkglist:slackextra,systemd,dlackware"
+SEQ_DLACK="tagfile:a,ap,d,e,f,k,l,n,t,tcl,x,xap pkglist:dlackware,slackextra,systemd"
 
 # List of Slackware package series with StudioWare (full install):
 # - each will become a squashfs module:
-SEQ_STUDW="tagfile:a,ap,d,e,f,k,kde,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,studioware,slackpkgplus"
+SEQ_STUDW="tagfile:a,ap,d,e,f,k,kde,l,n,t,tcl,x,xap,xfce,y pkglist:slackextra,slackpkgplus,studioware"
 
 # -- START: Used verbatim in upslak.sh -- #
 # List of kernel modules required for a live medium to boot properly;
