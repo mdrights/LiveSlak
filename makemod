@@ -62,9 +62,10 @@ fi
 
 MODEXT=$(echo "$2" |rev |cut -d'.' -f1 |rev)
 case $MODEXT in
-  sxz) COMPR="xz" ;;
-  sgz) COMPR="gzip" ;;
-  xzm) COMPR="xz" ;;
+  sxz) COMPR=${COMPR:-"xz"} ;;
+  sgz) COMPR=${COMPR:-"gzip"} ;;
+  szs) COMPR=${COMPR:-"zstd"} ;;
+  xzm) COMPR=${COMPR:-"xz"} ;;  # Porteus module extension and compressor
     *) echo "-- Unsupported module extension '$MODEXT'" ; exit 1 ;;
 esac 
 

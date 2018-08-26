@@ -227,17 +227,41 @@ ADD_CACERT=${ADD_CACERT:-"YES"}
 # the alternative is gzip (which adds  ~30% to the initrd size).
 COMPR=${COMPR:-"xz --check=crc32"}
 
+# What compressors are available?
+SQ_COMP_AVAIL=(gzip lzma lzo xz zstd)
+
+# Compressor optimizations:
+declare -A SQ_COMP_PARAMS_DEF
+SQ_COMP_PARAMS_DEF[gzip]=""
+SQ_COMP_PARAMS_DEF[lzma]=""
+SQ_COMP_PARAMS_DEF[lzo]=""
+SQ_COMP_PARAMS_DEF[xz]=""-b 512k -Xdict-size 100%"
+SQ_COMP_PARAMS_DEF[zstd]="-b 512k -Xcompression-level 16"
+declare -A SQ_COMP_PARAMS_OPT
+SQ_COMP_PARAMS_OPT[gzip]=""
+SQ_COMP_PARAMS_OPT[lzma]=""
+SQ_COMP_PARAMS_OPT[lzo]=""
+SQ_COMP_PARAMS_OPT[xz]=""-b 1M"
+SQ_COMP_PARAMS_OPT[zstd]="-b 1M -Xcompression-level 19"
+
 # What compression to use for the squashfs modules?
-# Default is xz, alternatives are gzip, lzma, lzo:
+# Default is xz, alternatives are gzip, lzma, lzo, zstd:
 SQ_COMP=${SQ_COMP:-"xz"}
 
+# Test whether the compressor of choice is supported by the script:
+if [[ ${SQ_COMP_AVAIL[*]} =~ ${SQ_COMP} ]]; then
+  echo "*** Compressor '${SQ_COMP}' not supported by $(basename $0 .sh)!"
+  echo "*** Select one of '${SQ_COMP_AVAIL[@]}'"
+  exit 1
+fi
+ 
 # What compression parameters to use?
 # For our lean XFCE image we try to achieve max compression,
 # at the expense of runtime latency:
 if [ "$LIVEDE" = "XFCE" ] ; then
-  SQ_COMP_PARAMS=${SQ_COMP_PARAMS:-"-b 1M"}
+  SQ_COMP_PARAMS=${SQ_COMP_PARAMS:-"${SQ_COMP_PARAMS_OPT[${SQ_COMP}]}"}
 else
-  SQ_COMP_PARAMS=${SQ_COMP_PARAMS:-"-b 512k -Xdict-size 100%"}
+  SQ_COMP_PARAMS=${SQ_COMP_PARAMS:-"${SQ_COMP_PARAMS_DEF[${SQ_COMP}]}"}
 fi
 
 # Mount point where Live filesystem is assembled (no storage requirements):
@@ -1147,13 +1171,13 @@ for SPS in ${SL_SERIES} ; do
         rm -rf ${LIVE_BOOT}/boot
         mv ${INSTDIR}/boot ${LIVE_BOOT}/
         # Squash the boot files into a module as a safeguard:
-        mksquashfs ${LIVE_BOOT} ${LIVE_MOD_SYS}/0000-${DISTRO}_boot-${SL_VERSION}-${SL_ARCH}.sxz -noappend -comp ${SQ_COMP} -b 1M
+        mksquashfs ${LIVE_BOOT} ${LIVE_MOD_SYS}/0000-${DISTRO}_boot-${SL_VERSION}-${SL_ARCH}.sxz -noappend -comp ${SQ_COMP} ${SQ_COMP_PARAMS}
       fi
 
     fi
 
     # Squash the installed package series into a module:
-    mksquashfs ${INSTDIR} ${LIVE_MOD_SYS}/${MNUM}-${DISTRO}_${SPS}-${SL_VERSION}-${SL_ARCH}.sxz -noappend -comp ${SQ_COMP} -b 1M
+    mksquashfs ${INSTDIR} ${LIVE_MOD_SYS}/${MNUM}-${DISTRO}_${SPS}-${SL_VERSION}-${SL_ARCH}.sxz -noappend -comp ${SQ_COMP} ${SQ_COMP_PARAMS}
     rm -rf ${INSTDIR}/*
 
     # End result: we have our .sxz file and the INSTDIR is empty again,
@@ -2191,7 +2215,7 @@ chroot ${LIVE_ROOTDIR} /etc/cron.daily/${LOCATE_BIN} 2>${DBGOUT}
 
 # Squash the configuration into its own module:
 umount ${LIVE_ROOTDIR} 2>${DBGOUT} || true
-mksquashfs ${INSTDIR} ${LIVE_MOD_SYS}/0099-${DISTRO}_zzzconf-${SL_VERSION}-${SL_ARCH}.sxz -noappend -comp ${SQ_COMP} -b 1M
+mksquashfs ${INSTDIR} ${LIVE_MOD_SYS}/0099-${DISTRO}_zzzconf-${SL_VERSION}-${SL_ARCH}.sxz -noappend -comp ${SQ_COMP} ${SQ_COMP_PARAMS}
 rm -rf ${INSTDIR}/*
 
 # End result: we have our .sxz file and the INSTDIR is empty again,
@@ -2318,7 +2342,7 @@ cp -a ${LIVE_BOOT}/boot/vmlinuz-generic*-$KGEN ${LIVE_STAGING}/boot/generic
 mv ${LIVE_BOOT}/boot/initrd_${KVER}.img ${LIVE_STAGING}/boot/initrd.img
 
 # Squash the boot directory into its own module:
-mksquashfs ${LIVE_BOOT} ${LIVE_MOD_SYS}/0000-${DISTRO}_boot-${SL_VERSION}-${SL_ARCH}.sxz -noappend -comp ${SQ_COMP} -b 1M
+mksquashfs ${LIVE_BOOT} ${LIVE_MOD_SYS}/0000-${DISTRO}_boot-${SL_VERSION}-${SL_ARCH}.sxz -noappend -comp ${SQ_COMP} ${SQ_COMP_PARAMS}
 
 # Determine additional boot parameters to be added:
 if [ -z ${KAPPEND} ]; then
