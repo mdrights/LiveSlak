@@ -296,7 +296,7 @@ user-manager
 xdg-desktop-portal-kde
 
 # plasma-extra:
-kde-wallpapers
+#kde-wallpapers
 kdeconnect-framework
 oxygen-fonts
 polkit-kde-kcmodules-framework
