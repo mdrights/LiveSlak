@@ -228,41 +228,28 @@ ADD_CACERT=${ADD_CACERT:-"YES"}
 COMPR=${COMPR:-"xz --check=crc32"}
 
 # What compressors are available?
-SQ_COMP_AVAIL=(gzip lzma lzo xz zstd)
+SQ_COMP_AVAIL="gzip lzma lzo xz zstd"
+
+# What module exttensions do we accept:
+SQ_EXT_AVAIL="sxz sfz szs xzm"
 
 # Compressor optimizations:
 declare -A SQ_COMP_PARAMS_DEF
 SQ_COMP_PARAMS_DEF[gzip]=""
 SQ_COMP_PARAMS_DEF[lzma]=""
 SQ_COMP_PARAMS_DEF[lzo]=""
-SQ_COMP_PARAMS_DEF[xz]=""-b 512k -Xdict-size 100%"
+SQ_COMP_PARAMS_DEF[xz]="-b 512k -Xdict-size 100%"
 SQ_COMP_PARAMS_DEF[zstd]="-b 512k -Xcompression-level 16"
 declare -A SQ_COMP_PARAMS_OPT
 SQ_COMP_PARAMS_OPT[gzip]=""
 SQ_COMP_PARAMS_OPT[lzma]=""
 SQ_COMP_PARAMS_OPT[lzo]=""
-SQ_COMP_PARAMS_OPT[xz]=""-b 1M"
+SQ_COMP_PARAMS_OPT[xz]="-b 1M"
 SQ_COMP_PARAMS_OPT[zstd]="-b 1M -Xcompression-level 19"
 
 # What compression to use for the squashfs modules?
 # Default is xz, alternatives are gzip, lzma, lzo, zstd:
 SQ_COMP=${SQ_COMP:-"xz"}
-
-# Test whether the compressor of choice is supported by the script:
-if [[ ${SQ_COMP_AVAIL[*]} =~ ${SQ_COMP} ]]; then
-  echo "*** Compressor '${SQ_COMP}' not supported by $(basename $0 .sh)!"
-  echo "*** Select one of '${SQ_COMP_AVAIL[@]}'"
-  exit 1
-fi
- 
-# What compression parameters to use?
-# For our lean XFCE image we try to achieve max compression,
-# at the expense of runtime latency:
-if [ "$LIVEDE" = "XFCE" ] ; then
-  SQ_COMP_PARAMS=${SQ_COMP_PARAMS:-"${SQ_COMP_PARAMS_OPT[${SQ_COMP}]}"}
-else
-  SQ_COMP_PARAMS=${SQ_COMP_PARAMS:-"${SQ_COMP_PARAMS_DEF[${SQ_COMP}]}"}
-fi
 
 # Mount point where Live filesystem is assembled (no storage requirements):
 LIVE_ROOTDIR=${LIVE_ROOTDIR:-"/mnt/slackwarelive"}
@@ -863,7 +850,7 @@ create_iso() {
 # Action!
 # ---------------------------------------------------------------------------
 
-while getopts "a:d:efhm:r:s:t:vz:GH:MO:R:X" Option
+while getopts "a:c:d:efhm:r:s:t:vz:GH:MO:R:X" Option
 do
   case $Option in
     h )
@@ -883,6 +870,8 @@ do
         echo " -h                 This help."
         echo " -a arch            Machine architecture (default: ${SL_ARCH})."
         echo "                    Use i586 for a 32bit ISO, x86_64 for 64bit."
+        echo " -c comp            Squashfs compression (default: ${SQ_COMP})."
+        echo "                    Can be any of '${SQ_COMP_AVAIL}'."
         echo " -d desktoptype     SLACKWARE (full Slack), KDE4 basic,"
         echo "                    XFCE basic, PLASMA5, MATE, CINNAMON, DLACK."
         echo " -e                 Use ISO boot-load-size of 32 for computers."
@@ -904,6 +893,8 @@ do
         exit
         ;;
     a ) SL_ARCH="${OPTARG}"
+        ;;
+    c ) SQ_COMP="${OPTARG}"
         ;;
     d ) LIVEDE="$(echo ${OPTARG} |tr a-z A-Z)"
         ;;
@@ -1010,6 +1001,29 @@ if [ ! -z "$PROG_MISSING" ] ; then
   echo -e ${PROG_MISSING}
   echo "-- Exiting."
   exit 1
+fi
+
+# Test whether the compressor of choice is supported by the script:
+if ! echo ${SQ_COMP_AVAIL} | grep -wq ${SQ_COMP} ; then
+  echo "-- Compressor '${SQ_COMP}' not supported by liveslak!"
+  echo "-- Select one of '${SQ_COMP_AVAIL}'"
+  exit 1
+else
+  # Test whether the local squashfs-tools support the compressor:
+  if ! mksquashfs 2>&1 | grep -Ewq "^[[:space:]]*${SQ_COMP}" ; then
+    echo "-- Compressor '${SQ_COMP}' not supported by your 'mksquashfs'!"
+    echo "-- Select another one from '${SQ_COMP_AVAIL}'"
+    exit 1
+  fi
+fi
+ 
+# What compression parameters to use?
+# For our lean XFCE image we try to achieve max compression,
+# at the expense of runtime latency:
+if [ "$LIVEDE" = "XFCE" ] ; then
+  SQ_COMP_PARAMS=${SQ_COMP_PARAMS:-"${SQ_COMP_PARAMS_OPT[${SQ_COMP}]}"}
+else
+  SQ_COMP_PARAMS=${SQ_COMP_PARAMS:-"${SQ_COMP_PARAMS_DEF[${SQ_COMP}]}"}
 fi
 
 # Check rsync progress report capability:
@@ -2268,6 +2282,7 @@ cat $LIVE_TOOLDIR/liveinit.tpl | sed \
   -e "s/@CDISTRO@/${DISTRO^}/g" \
   -e "s/@UDISTRO@/${DISTRO^^}/g" \
   -e "s/@VERSION@/$VERSION/g" \
+  -e "s/@SQ_EXT_AVAIL@/${SQ_EXT_AVAIL}/" \
   > ${LIVE_ROOTDIR}/boot/initrd-tree/init
 cat /dev/null > ${LIVE_ROOTDIR}/boot/initrd-tree/luksdev
 # We do not add openobex to the initrd and don't want to see irrelevant errors:

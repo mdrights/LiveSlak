@@ -46,6 +46,8 @@ VERSION="@VERSION@"
 
 LIVEUID="@LIVEUID@"
 
+SQ_EXT_AVAIL="@SQ_EXT_AVAIL@"
+
 LIVEMEDIA=""
 LIVEPATH=""
 
@@ -479,6 +481,21 @@ if [ "$RESCUE" = "" ]; then
     echo "$lodev"
   }
 
+  mod_base() {
+    MY_MOD="$1"
+
+    echo $(basename ${MY_MOD}) |rev |cut -d. -f2- |rev
+  }
+
+  find_mod() {
+    MY_LOC="$1"
+
+    ( for MY_EXT in ${SQ_EXT_AVAIL} ; do
+        echo "$(find ${MY_LOC} -name "*.${MY_EXT}" 2>/dev/null)"
+      done
+    ) | sort
+  }
+
   find_modloc() {
     MY_LOC="$1"
     MY_BASE="$2"
@@ -501,8 +518,10 @@ if [ "$RESCUE" = "" ]; then
     # SUBSYS can be 'system', 'addons', 'optional':
     SUBSYS="$1"
 
-    for MODULE in $(find /mnt/media/${LIVEMAIN}/${SUBSYS}/ -name "*.sxz" 2>/dev/null |sort) ; do
-      MODBASE="$(basename ${MODULE} .sxz)"
+    # Find all supported modules:
+    for MODULE in $(find_mod /mnt/media/${LIVEMAIN}/${SUBSYS}/) ; do
+      # Strip path and extension from the modulename:
+      MODBASE="$(mod_base ${MODULE})"
       if [ "$SUBSYS" = "optional" ]; then
         # Load one or more optionals by using boot parameter 'load':
         # load=mod1[,mod2[,mod3]]
@@ -715,7 +734,7 @@ if [ "$RESCUE" = "" ]; then
   # Start assembling our live system components below /mnt/live :
   mkdir /mnt/live
 
-  # Mount our squashed modules (.sxz extension).
+  # Mount our squashed modules (.sxz or other supported extension)
   mkdir /mnt/live/modules
 
   if [ $TORAM -ne 0 ]; then
@@ -1192,7 +1211,7 @@ EOT
   RUN_DEPMOD=0
   for MOD in $(cat /sys/block/loop*/loop/backing_file |grep -E "optional|addons")
   do
-    if [ -d /mnt/live/modules/$(basename $MOD .sxz)/lib/modules/$(uname -r)/ ]
+    if [ -d /mnt/live/modules/$(mod_base $MOD)/lib/modules/$(uname -r)/ ]
     then
       # Found kernel modules directory; we need to make a 'depmod' call.
       RUN_DEPMOD=1
