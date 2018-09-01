@@ -509,9 +509,11 @@ function install_pkgs() {
     rm -rf "$2"/usr/lib${DIRSUFFIX}/lib{LLVM,clang,lldb}*.a
     # And these are not needed for a simple XFCE ISO:
     rm -rf "$2"/usr/lib${DIRSUFFIX}/clang/*/lib/linux/*.a{,.syms}
-    rm -f "$2"/usr/bin/{c-index-test,clang-check,clang-import-test,clang-include-fixer,clang-offload-bundler,clang-order-fields,clang-refactor,clang-query,clang-rename,clang-reorder-fields,clang-tidy,clangd,lldb-server,lldb-test}
+    rm -f "$2"/usr/bin/{c-index-test,clang-change-namespace,clang-check,clang-func-mapping,clang-import-test,clang-include-fixer,clang-offload-bundler,clang-order-fields,clang-refactor,clang-query,clang-rename,clang-reorder-fields,clang-tidy,clangd,find-all-symbols,lldb-server,lldb-test,modularize}
     rm -rf "$2"/usr/lib${DIRSUFFIX}/guile/*/ccache/*
     rm -rf "$2"/usr/share/icons/HighContrast
+    # Depends on Qt:
+    rm -f /usr/bin/wpa_gui /usr/share/applications/wpa_gui.desktop
     # Nor these datacenter NIC firmwares and drivers:
     rm -rf "$2"/lib/firmware/{bnx*,cxgb4,libertas,liquidio,mellanox,netronome,qed}
     rm -rf "$2"/lib/modules/*/kernel/drivers/infiniband
