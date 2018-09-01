@@ -371,7 +371,8 @@ function install_pkgs() {
 
   if [ "$3" = "local" -a -d ${LIVE_TOOLDIR}/local${DIRSUFFIX}/$1 ]; then
     echo "-- Installing local packages from subdir 'local${DIRSUFFIX}/$1'."
-    installpkg --terse --root "$2" "local${DIRSUFFIX}/$1/*.t?z"
+    #installpkg --terse --root "$2" "local${DIRSUFFIX}/$1/*.t?z"
+    ROOT="$2" upgradepkg --install-new --reinstall "local${DIRSUFFIX}/$1/*.t?z"
   else
     # Load package list and (optional) custom repo info:
     if [ "$3" = "tagfile" ]; then
