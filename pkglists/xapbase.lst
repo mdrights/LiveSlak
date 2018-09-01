@@ -13,14 +13,13 @@ geeqie
 gimp
 gkrellm
 glibmm
-gnuchess
+#gnuchess
 gtkmm3
 gucharmap
 gv
 hexchat
 imagemagick
 jansson
-js185
 libsigc++
 lftp
 mozilla-firefox
