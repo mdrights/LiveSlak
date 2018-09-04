@@ -46,13 +46,14 @@ VERSION="@VERSION@"
 
 LIVEUID="@LIVEUID@"
 
-SQ_EXT_AVAIL="@SQ_EXT_AVAIL@"
-
 LIVEMEDIA=""
 LIVEPATH=""
 
 DISTROCFG="@DISTRO@_os.cfg"
 CFGACTION=""
+
+# What extensions do we support for squashfs modules?
+SQ_EXT_AVAIL="@SQ_EXT_AVAIL@"
 
 # By default, let the media determine if we can write persistent changes:
 # However, if we define TORAM=1, we will also set VIRGIN=1 since we want
