@@ -189,6 +189,7 @@ purpose
 qqc2-desktop-style
 solid
 sonnet
+syndication
 syntax-highlighting
 threadweaver
 
@@ -249,7 +250,6 @@ pim-data-exporter
 pim-sieve-editor
 pim-storage-service-manager
 pimcommon
-syndication
 
 # plasma:
 bluedevil
