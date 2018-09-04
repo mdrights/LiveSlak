@@ -185,7 +185,7 @@ Examples:
   * Get a listing of all available removable devices on the computer:
     # ./upslak.sh -d
   * Updating kernel and modules, providing two packages as input and assuming the USB stick is known as /dev/sdX:
-    # ./upslak.sh -o /dev/sdX -m kernel-modules-4.9.50-x86_64-1.txz -k kernel-generic-4.9.50-x86_64-1.txz
+    # ./upslak.sh -o /dev/sdX -m kernel-modules-4.14.67-x86_64-1.txz -k kernel-generic-4.14670-x86_64-1.txz
   * Restore the previous kernel and modules after a failed update, and let the script scan your computer for the insertion of your USB stick:
     # ./upslak.sh -s -r
   * Replace the Live init script with the latest template taken from the git repository:
@@ -432,7 +432,7 @@ The script's inner workings can be subdivided into several distinct stages.  For
 Stage one:
 
   * The script reads a package sequence for the Live variant and installs all packages in this sequence to subdirectories of a temporary directory tree.
-  * Every Slackware package set (a, ap, d, ... , y) or package list (min, xbase, xapbase, ...) is installed into a separate 'root' directory.
+  * Every Slackware package set (a, ap, d, ... , y) or package list (min, noxbase,x_base, xapbase, ...) is installed into a separate 'root' directory.
   * Each of those root directories is "squashed" (using squashfs) into a separate squashfs module.  Such a module is a single archive file containing the compressed directory structure of the installed packages.
   * These module files are subsequently loop-mounted and then combined together into a single read-only directory structure using an "overlay mount".  The overlayfs is relatively new; earlier Live distros have been using aufs and unionfs to achieve similar functionality, but those were not part of any stock kernel source and therefore custom kernels had to be compiled for such a Live distro.
   * This "overlay assembly" is the filesystem that will be booted as the filesystem of the Live OS.
@@ -666,6 +666,8 @@ The script's parameters are:
  -h                 This help.
  -a arch            Machine architecture (default: x86_64).
                     Use i586 for a 32bit ISO, x86_64 for 64bit.
+ -c comp            Squashfs compression (default: xz).
+                    Can be any of 'gzip lzma lzo xz zstd'.
  -d desktoptype     SLACKWARE (full Slack), KDE4 (basic KDE4),
                     XFCE (basic XFCE), PLASMA5 (KDE Plasma5 replaces KDE4),
                     MATE (Gnome2 fork replaces KDE4), CINNAMON (fork of Gnome3
@@ -674,6 +676,8 @@ The script's parameters are:
                     where the ISO won't boot otherwise (default: 4).
  -f                 Forced re-generation of all squashfs modules,
                     custom configurations and new initrd.img.
+ -l <localization>  Enable a different default localization
+                    (script-default is 'us').
  -m pkglst[,pkglst] Add modules defined by pkglists/<pkglst>,...
  -r series[,series] Refresh only one or a few package series.
  -s slackrepo_dir   Directory containing Slackware repository.
@@ -726,7 +730,7 @@ This is the section in ''make_slackware_live.conf'' which deals with these custo
 # In this example you would need to create two files "pkglists/cinelerra.conf"
 # and "pkglists/cinelerra.lst" defining the package location and package list
 # respectively):
-#SEQ_CUSTOM="min,xbase,xapbase,xfcebase,cinelerra"
+#SEQ_CUSTOM="min,noxbase,x_base,xapbase,xfcebase,cinelerra"
 
 # OPTIONAL:
 # Use something else than the name "min",
@@ -822,7 +826,7 @@ Slackware Live Edition expects its modules to adhere to a particularly loose fil
   * The four digits of a modulename have a meaning.  Some ranges are claimed by the core OS, so please do not use them. Their prefixes are based on the package source: <code>
     0000 = contains the Slackware /boot directory
     0010-0019 = packages installed from a Slackware tagfile (a,ap,d, ... , y series)
-    0020-0029 = packages installed from a package list as found in the ./pkglists subdirectory of the liveslak sources (min, xbase, xapbase, xfcebase etc)
+    0020-0029 = packages installed from a package list as found in the ./pkglists subdirectory of the liveslak sources (min, noxbase, x_base, xapbase, xfcebase etc)
     0030-0039 = a 'local' package, i.e. a package found in subdirectory ./local or ./local64 (depending on architecture)
     0099 = liveslak configuration module (contaning all the customizations that change the installed packages into a usable Live OS) </code>
   * Other ranges are free to be used. Note that order in which the filesystem of the Live OS is assembled by overlaying the squashed directory trees depends on the module numbering.  So if you have modules that you want to have loaded in specific order, just ensure that their filenames have ascending numbers.
@@ -842,7 +846,7 @@ Naturally, there have been many who went before me, and since I started as a n00
 
 Website: https://www.slax.org/
 
-SLAX was the original Live variant of Slackware.  The linux-live scripts which are used to create a SLAX ISO were generalized so that they can create a Live version of any OS that is already installed to a harddrive.  SLAX development stalled a couple of years ago but its creator seems to have warmed up recently.
+SLAX was the original Live variant of Slackware.  The linux-live scripts which are used to create a SLAX ISO were generalized so that they can create a Live version of any OS that is already installed to a harddrive.  SLAX development stalled a couple of years ago but its creator seems to have warmed up recently.  However, the current SLAX is no longer based on Slackware - Debian is its base now.
 
 The Live functionality of SLAX is based on aufs and unionfs which requires a custom-built kernel with aufs support compiled-in.  It is small and has its boot scripts tweaked for startup speed.
 
