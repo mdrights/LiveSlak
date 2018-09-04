@@ -51,7 +51,7 @@ label live
   endtext
 
 menu begin kbd
-  menu title Non-US Keyboard selection
+  menu title Non-@ULANG@ Keyboard selection
   label Previous
   menu label Previous Menu
   menu exit
@@ -60,7 +60,7 @@ menu begin kbd
 menu end
 
 menu begin language
-  menu title Non-US Language selection
+  menu title Non-@ULANG@ Language selection
   label Previous
   menu label Previous Menu
   menu exit

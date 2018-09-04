@@ -218,6 +218,10 @@ KAPPEND_STUDIOWARE="threadirqs"
 # Add CACert root certificates yes/no?
 ADD_CACERT=${ADD_CACERT:-"YES"}
 
+# Default language selection for the Live OS; this can be changed with the
+# coomandline switch "-l":
+DEF_LANG="us"
+
 #
 # ---------------------------------------------------------------------------
 #
@@ -582,8 +586,10 @@ function gen_bootmenu() {
 
   # Generate main (US) vesamenu.cfg:
   cat ${LIVE_TOOLDIR}/menu.tpl | sed \
-    -e "s/@KBD@/us/g" \
-    -e "s/@LANG@/us/g" \
+    -e "s/@KBD@/${DEF_KBD}/g" \
+    -e "s/@LANG@/${DEF_LANG}/g" \
+    -e "s/@ULANG@/${DEF_LANG^^}/g" \
+    -e "s,@LOCALE@,${DEF_LOCALE},g" \
     -e "s/@CONSFONT@/$CONSFONT/g" \
     -e "s/@DIRSUFFIX@/$DIRSUFFIX/g" \
     -e "s/@DISTRO@/$DISTRO/g" \
@@ -672,8 +678,12 @@ function gen_uefimenu() {
 
   # Generate main grub.cfg:
   cat ${LIVE_TOOLDIR}/grub.tpl | sed \
-    -e "s/@KBD@/us/g" \
-    -e "s/@LANG@/us/g" \
+    -e "s/@KBD@/${DEF_KBD}/g" \
+    -e "s,@TZ@,${DEF_TZ},g" \
+    -e "s/@LANG@/${DEF_LANG}/g" \
+    -e "s/@ULANG@/${DEF_LANG^^}/g" \
+    -e "s/@LANDSC@/${DEF_LANDSC}/g" \
+    -e "s/@LOCALE@/${DEF_LOCALE}/g" \
     -e "s/@CONSFONT@/$CONSFONT/g" \
     -e "s/@DIRSUFFIX@/$DIRSUFFIX/g" \
     -e "s/@DISTRO@/$DISTRO/g" \
@@ -868,7 +878,7 @@ create_iso() {
 # Action!
 # ---------------------------------------------------------------------------
 
-while getopts "a:c:d:efhm:r:s:t:vz:GH:MO:R:X" Option
+while getopts "a:c:d:efhl:m:r:s:t:vz:GH:MO:R:X" Option
 do
   case $Option in
     h )
@@ -896,6 +906,8 @@ do
         echo "                    where the ISO won't boot otherwise."
         echo " -f                 Forced re-generation of all squashfs modules,"
         echo "                    custom configurations and new initrd.img."
+        echo " -l <localization>  Enable a different default localization"
+        echo "                    (script-default is '${DEF_LANG}')."
         echo " -m pkglst[,pkglst] Add modules defined by pkglists/<pkglst>,..."
         echo " -r series[,series] Refresh only one or a few package series."
         echo " -s slackrepo_dir   Directory containing ${DISTRO^} repository."
@@ -919,6 +931,8 @@ do
     e ) BOOTLOADSIZE=32
         ;;
     f ) FORCE="YES"
+        ;;
+    l ) DEF_LANG="${OPTARG}"
         ;;
     m ) SEQ_ADDMOD="${OPTARG}"
         ;;
@@ -985,6 +999,24 @@ fi
 if [ "$SL_ARCH" != "x86_64" -a "$MULTILIB" = "YES" ]; then
   echo ">> Multilib is only supported on x86_64 architecture."
   exit 1
+fi
+
+if ! cat ${LIVE_TOOLDIR}/languages |grep -Ev '(^ *#|^$)' |grep -q ^${DEF_LANG}:
+then
+  echo ">> Unsupported language '${DEF_LANG}', select a supported language:"
+  echo ">> $(cat ${LIVE_TOOLDIR}/languages |grep -Ev '(^ *#|^$)' |cut -d: -f1)."
+  exit 1
+else
+  # Default locale, timezone and keyboard layout based on language choice:
+  DEF_LANDSC="$(cat ${LIVE_TOOLDIR}/languages |grep ^${DEF_LANG}: |cut -d: -f2)"
+  DEF_KBD="$(cat ${LIVE_TOOLDIR}/languages |grep ^${DEF_LANG}: |cut -d: -f3)"
+  DEF_TZ="$(cat ${LIVE_TOOLDIR}/languages |grep ^${DEF_LANG}: |cut -d: -f4)"
+  DEF_LOCALE="$(cat ${LIVE_TOOLDIR}/languages |grep ^${DEF_LANG}: |cut -d: -f5)"
+  # Select sane defaults in case the language file lacks info:
+  DEF_LANDSC="${DEF_LANDSC:-'us american'}"
+  DEF_KBD="${DEF_KBD:-'us'}"
+  DEF_TZ="${DEF_TZ:-'US/Pacific'}"
+  DEF_LOCALE="${DEF_LOCALE:-'en_US.utf8'}"
 fi
 
 # Directory suffix, arch dependent:
@@ -1281,15 +1313,18 @@ nameserver 8.8.8.8
 
 EOT
 
-# Configure en_US.UTF-8 as the default locale (can be overridden on boot):
+# Configure default locale (script-default is 'en_US.utf8). Note that there
+# is 'UTF-8' versus 'utf8' and while the former has a preference, there is
+# no functional difference between the two when using Linux glibc.
+# This setting can be overridden on boot:
 if grep -q "^ *export LANG=" ${LIVE_ROOTDIR}/etc/profile.d/lang.sh ; then
-  sed -e "s/^ *export LANG=.*/export LANG=en_US.UTF-8/" -i ${LIVE_ROOTDIR}/etc/profile.d/lang.sh
+  sed -e "s/^ *export LANG=.*/export LANG=${DEF_LOCALE}/" -i ${LIVE_ROOTDIR}/etc/profile.d/lang.sh
 else
-  echo "export LANG=en_US.UTF-8" >> ${LIVE_ROOTDIR}/etc/profile.d/lang.sh
+  echo "export LANG=${DEF_LOCALE}" >> ${LIVE_ROOTDIR}/etc/profile.d/lang.sh
 fi
 # Does not hurt to also add systemd compatible configuration:
-echo "LANG=en_US.UTF-8" > ${LIVE_ROOTDIR}/etc/locale.conf
-echo "KEYMAP=us" > ${LIVE_ROOTDIR}/etc/vconsole.conf
+echo "LANG=${DEF_LOCALE}" > ${LIVE_ROOTDIR}/etc/locale.conf
+echo "KEYMAP=${DEF_KBD}" > ${LIVE_ROOTDIR}/etc/vconsole.conf
 
 # Set timezone to UTC, mimicking the 'timeconfig' script in Slackware:
 cp -a ${LIVE_ROOTDIR}/usr/share/zoneinfo/UTC ${LIVE_ROOTDIR}/etc/localtime
@@ -2300,7 +2335,10 @@ cat $LIVE_TOOLDIR/liveinit.tpl | sed \
   -e "s/@CDISTRO@/${DISTRO^}/g" \
   -e "s/@UDISTRO@/${DISTRO^^}/g" \
   -e "s/@VERSION@/$VERSION/g" \
-  -e "s/@SQ_EXT_AVAIL@/${SQ_EXT_AVAIL}/" \
+  -e "s/@SQ_EXT_AVAIL@/${SQ_EXT_AVAIL}/g" \
+  -e "s,@DEF_KBD@,${DEF_KBD},g" \
+  -e "s,@DEF_LOCALE@,${DEF_LOCALE},g" \
+  -e "s,@DEF_TZ@,${DEF_TZ},g" \
   > ${LIVE_ROOTDIR}/boot/initrd-tree/init
 cat /dev/null > ${LIVE_ROOTDIR}/boot/initrd-tree/luksdev
 # We do not add openobex to the initrd and don't want to see irrelevant errors:

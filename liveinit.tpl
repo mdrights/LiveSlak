@@ -55,6 +55,11 @@ CFGACTION=""
 # What extensions do we support for squashfs modules?
 SQ_EXT_AVAIL="@SQ_EXT_AVAIL@"
 
+# Defaults for keyboard, language and timezone:
+DEF_KBD=@DEF_KBD@
+DEF_LOCALE=@DEF_LOCALE@
+DEF_TZ=@DEF_TZ@
+
 # By default, let the media determine if we can write persistent changes:
 # However, if we define TORAM=1, we will also set VIRGIN=1 since we want
 # to avoid anything that writes to disk after we copy the OS to RAM.
@@ -318,12 +323,6 @@ fi
 sleep $WAIT
 # Fire at least one blkid:
 blkid 1>/dev/null 2>/dev/null
-
-# Load a custom keyboard mapping:
-if [ -n "$KEYMAP" ]; then
-  echo "${MARKER}:  Loading '$KEYMAP' keyboard mapping:"
-  tar xzOf /etc/keymaps.tar.gz ${KEYMAP}.bmap | loadkmap
-fi
 
 if [ "$RESCUE" = "" ]; then 
   if [ $LOCALHD -eq 1 ]; then
@@ -739,6 +738,24 @@ if [ "$RESCUE" = "" ]; then
         fi 
       done
     fi
+  fi
+
+  # Some variables require a value before continuing, so if they were not set
+  # on the boot commandline nor in a config file, we take care of it now:
+  if [ -z "$KEYMAP" ]; then
+    KEYMAP="${DEF_KBD}"
+  fi
+  if [ -z "$TZ" ]; then
+    TZ="${DEF_TZ}"
+  fi
+  if [ -z "$LOCALE" ]; then
+    LOCALE="${DEF_LOCALE}"
+  fi
+
+  # Load a custom keyboard mapping:
+  if [ -n "$KEYMAP" ]; then
+    echo "${MARKER}:  Loading '$KEYMAP' keyboard mapping:"
+    tar xzOf /etc/keymaps.tar.gz ${KEYMAP}.bmap | loadkmap
   fi
 
   # Start assembling our live system components below /mnt/live :

@@ -9,19 +9,19 @@ set timeout=20
 
 # Slackware Live defaults, can be changed in submenus:
 if [ -z "$sl_kbd" ]; then
-  set sl_kbd="us"
+  set sl_kbd="@KBD@"
   export sl_kbd
 fi
 if [ -z "$sl_tz" ]; then
-  set sl_tz="US/Pacific"
+  set sl_tz="@TZ@"
   export sl_tz
 fi
 if [ -z "$sl_lang" ]; then
-  set sl_lang="us american"
+  set sl_lang="@LANDSC@"
   export sl_lang
 fi
 if [ -z "$sl_locale" ]; then
-  set sl_locale="en_US.utf8"
+  set sl_locale="@LOCALE@"
   export sl_locale
 fi
 
@@ -48,15 +48,15 @@ menuentry "Start @CDISTRO@@DIRSUFFIX@ @SL_VERSION@ @LIVEDE@ Live @VERSION@ ($sl_
   initrd ($root)/boot/initrd.img
 }
 
-submenu "Non-US Keyboard selection" --hotkey k {
+submenu "Non-@ULANG@ Keyboard selection" --hotkey k {
   configfile $grubdir/kbd.cfg
 }
 
-submenu "Non-US Language selection" --hotkey l {
+submenu "Non-@ULANG@ Language selection" --hotkey l {
   configfile $grubdir/lang.cfg
 }
 
-submenu "Non-US Timezone selection" --hotkey t {
+submenu "Non-@ULANG@ Timezone selection" --hotkey t {
   configfile $grubdir/tz.cfg
 }
 
