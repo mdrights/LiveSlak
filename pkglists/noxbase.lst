@@ -6,6 +6,7 @@ alsa-oss
 alsa-plugins
 alsa-utils
 audiofile
+bison
 cgmanager
 db48
 dbus
@@ -15,6 +16,8 @@ elfutils
 exiv2
 fftw
 flac
+flex
+gcc
 gccmakedep
 gdk-pixbuf2
 giflib
@@ -22,6 +25,7 @@ glib-networking
 glib
 glib2
 glibc-i18n
+guile
 icu4c
 ilmbase
 intltool
@@ -89,6 +93,7 @@ libxslt
 llvm
 lm_sensors
 lzo
+make
 mozilla-nss
 mpg123
 mtdev

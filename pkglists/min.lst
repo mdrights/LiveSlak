@@ -8,7 +8,6 @@ bin
 binutils
 # Add 'bind' at the end because it does a chroot:
 #bind
-bison
 #bsd-games
 bzip2
 ca-certificates
@@ -31,11 +30,9 @@ etc
 eudev
 file
 findutils
-flex
 floppy
 gawk
 gc
-gcc
 #ghostscript
 #ghostscript-fonts-std
 glibc
@@ -49,7 +46,6 @@ gpm
 gptfdisk
 grep
 groff
-guile
 gzip
 haveged
 hostname
@@ -82,7 +78,6 @@ links
 logrotate
 lvm2
 lzlib
-make
 man
 man-db
 man-pages
