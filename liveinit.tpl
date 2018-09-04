@@ -706,13 +706,22 @@ if [ "$RESCUE" = "" ]; then
   # liveslak can optionally load a OS config file "@DISTRO@_os.cfg"
   # which contains "VARIABLE=value" lines, where VARIABLE is one of
   # the following variables that are used below in the live init script:
-  #   BLACKLIST, INIT, KEYMAP, LIVE_HOSTNAME, LOAD, LOCALE, LUKSVOL,
+  #   BLACKLIST, KEYMAP, LIVE_HOSTNAME, LOAD, LOCALE, LUKSVOL,
   #   NOLOAD, RUNLEVEL, TWEAKS, TZ, XKB. 
   if [ -z "$CFGACTION" ]; then
-    # Read OS configuration from disk file if present
+    # Read OS configuration from disk file if present and set any variable
+    # from that file if it has not yet been defined in the init script
     # (prevent this by adding 'cfg=skip' to the boot commandline).
     if [ -f "/mnt/media/${LIVEMAIN}/${DISTROCFG}" ]; then
-      source /mnt/media/${LIVEMAIN}/${DISTROCFG}
+      echo "${MARKER}:  Reading config from /${LIVEMAIN}/${DISTROCFG}"
+      for LIVEPARM in \
+        BLACKLIST KEYMAP LIVE_HOSTNAME LOAD LOCALE LUKSVOL \
+        NOLOAD RUNLEVEL TWEAKS TZ XKB ;
+      do
+        if [ -n "${LIVEPARM}" ]; then
+          eval $(grep -w ${LIVEPARM} /mnt/media/${LIVEMAIN}/${DISTROCFG})
+        fi
+      done
     fi
   elif [ "$CFGACTION" = "write" ]; then
     # Write liveslak OS parameters to disk:
@@ -722,7 +731,7 @@ if [ "$RESCUE" = "" ]; then
     else
       echo "${MARKER}:  Writing config to /${LIVEMAIN}/${DISTROCFG}"
       for LIVEPARM in \
-        BLACKLIST INIT KEYMAP LIVE_HOSTNAME LOAD LOCALE LUKSVOL \
+        BLACKLIST KEYMAP LIVE_HOSTNAME LOAD LOCALE LUKSVOL \
         NOLOAD RUNLEVEL TWEAKS TZ XKB ;
       do
         if [ -n "$(eval echo \$$LIVEPARM)" ]; then
