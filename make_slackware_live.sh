@@ -497,10 +497,9 @@ function install_pkgs() {
     # And these are not needed for a simple XFCE ISO:
     rm -rf "$2"/usr/lib${DIRSUFFIX}/clang/*/lib/linux/*.a{,.syms}
     rm -f "$2"/usr/bin/{c-index-test,clang-change-namespace,clang-check,clang-func-mapping,clang-import-test,clang-include-fixer,clang-offload-bundler,clang-order-fields,clang-refactor,clang-query,clang-rename,clang-reorder-fields,clang-tidy,clangd,find-all-symbols,lldb-server,lldb-test,modularize}
+    rm -rf "$2"/usr/lib${DIRSUFFIX}/d3d
     rm -rf "$2"/usr/lib${DIRSUFFIX}/guile/*/ccache/*
     rm -rf "$2"/usr/share/icons/HighContrast
-    # Depends on Qt:
-    rm -f /usr/bin/wpa_gui /usr/share/applications/wpa_gui.desktop
     # Nor these datacenter NIC firmwares and drivers:
     rm -rf "$2"/lib/firmware/{bnx*,cxgb4,libertas,liquidio,mellanox,netronome,qed}
     rm -rf "$2"/lib/modules/*/kernel/drivers/infiniband
@@ -508,6 +507,25 @@ function install_pkgs() {
     # Old wireless cards that eat space:
     rm -rf "$2"/lib/firmware/mrvl
     rm -rf "$2"/lib/modules/*/kernel/drivers/net/wireless/marvell
+    # Mediatek ARM firmware:
+    rm -rf "$2"/lib/firmware/vpu*.bin
+    # Not needed:
+    rm -rf "$2"/boot/System.map*
+    # Depends on Qt:
+    rm -f /usr/bin/wpa_gui /usr/share/applications/wpa_gui.desktop
+    # Replace 3.2 MB splash with a symlink to a 33 kB file:
+    if [ -e "$2"/usr/share/gimp/2.0/images/gimp-splash.png -a ! -L "$2"/usr/share/gimp/2.0/images/gimp-splash.png ]; then
+      rm -rf "$2"/usr/share/gimp/2.0/images/gimp-splash.png
+      ln -sf wilber.png "$2"/usr/share/gimp/2.0/images/gimp-splash.png
+    fi
+    # Replace big watch cursors with simpler ones:
+    if [ -e "$2"/usr/share/icons/Adwaita/cursors/watch -a ! -L "$2"/usr/share/icons/Adwaita/cursors/watch ]; then
+      rm -rf "$2"/usr/share/icons/Adwaita/cursors/{watch,left_ptr_watch}
+      ln -sf left_ptr "$2"/usr/share/icons/Adwaita/cursors/watch
+      ln -sf left_ptr "$2"/usr/share/icons/Adwaita/cursors/left_ptr_watch
+    fi
+    # Remove 9+ MB of brushes:
+    rm -rf "$2"/usr/share/gimp/2.0/brushes/Fun
     # Get rid of useless documentation:
     rm -rf "$2"/usr/share/ghostscript/*/doc/
     # We don't need tests or examples:
