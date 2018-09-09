@@ -1,17 +1,3 @@
-#djvulibre
-#font-adobe-100dpi
-#font-bh-100dpi
-#font-bh-75dpi
-#font-bh-lucidatypewriter-100dpi
-#font-bh-lucidatypewriter-75dpi
-#font-bh-ttf
-#font-bitstream-75dpi
-#font-bitstream-type1
-#gtk+
-#liberation-fonts-ttf
-#sazanami-fonts-ttf
-#tibmachuni-font-ttf
-#xv
 ConsoleKit2
 GConf
 Mako
@@ -41,6 +27,7 @@ damageproto
 dbus-python
 dejavu-fonts-ttf
 desktop-file-utils
+#djvulibre
 dmxproto
 dosfstools
 dri2proto
@@ -52,8 +39,16 @@ evieext
 ffmpeg
 fixesproto
 fluidsynth
+#font-adobe-100dpi
 font-alias
+#font-bh-100dpi
+#font-bh-75dpi
+#font-bh-lucidatypewriter-100dpi
+#font-bh-lucidatypewriter-75dpi
+#font-bh-ttf
+#font-bitstream-75dpi
 font-bitstream-100dpi
+#font-bitstream-type1
 font-cursor-misc
 font-misc-misc
 font-util
@@ -84,6 +79,7 @@ gst-plugins-good
 gst-plugins-good0
 gstreamer
 gstreamer0
+#gtk+
 gtk+2
 gtk+3
 gtkspell
@@ -146,6 +142,7 @@ libcroco
 libdmx
 libdrm
 libepoxy
+#liberation-fonts-ttf
 libevdev
 libfakekey
 libfontenc
@@ -201,6 +198,7 @@ rendercheck
 renderproto
 resourceproto
 rgb
+#sazanami-fonts-ttf
 sbc
 scrnsaverproto
 sdl
@@ -216,6 +214,7 @@ t1lib
 talloc
 tdb
 tevent
+#tibmachuni-font-ttf
 ttf-indic-fonts
 videoproto
 viewres
@@ -320,3 +319,4 @@ xvinfo
 xwd
 xwininfo
 xwud
+#xv
