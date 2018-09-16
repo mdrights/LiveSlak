@@ -1,0 +1,3 @@
+isolinux 100
+isolinux/isolinux.bin 200
+kernels 50

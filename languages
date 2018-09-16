@@ -1,0 +1,7 @@
+#code:name:kbd:tz:locale:xkb
+gb:british:uk:Etc/GMT:en_GB.utf8:
+zh_cn:chinese simplified:us:Asia/Shanghai:zh_CN.utf8:
+zh_tw:chinese traditional:us:Asia/Taipei:zh_TW.utf8:
+zh_hk:chinese cantonese:us:Asia/Hongkong:zh_HK.utf8:
+ja:japanese:jp106:Asia/Tokyo:ja_JP.utf8:
+us:us american:us:US/Pacific:en_US.utf8:

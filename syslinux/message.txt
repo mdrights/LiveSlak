@@ -1,0 +1,12 @@
+
+Welcome to 09Slackware@DIRSUFFIX@-Live07 version @SL_VERSION@ (Linux kernel @KVER@)!
+
+If you need to pass extra parameters to the kernel, enter them at the prompt
+below after the name of the kernel to boot (default: live).
+
+To test your memory with memtest86+, enter memtest on the boot line below.
+
+This prompt is just for entering extra parameters.  If you don't need to enter
+any parameters, hit ENTER to boot with default values or press [F2] 
+for a listing of customization choices.  Default kernel will boot in 30 seconds.
+

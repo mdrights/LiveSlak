@@ -1,0 +1,99 @@
+#!/bin/sh
+# Create squashfs module from a directory or a Slackware package.
+# Module can then be added to liveslak/addons directory.
+
+# By default, overwrite destination module file without asking if it pre-exists.
+INTERACTIVE=NO
+
+function help() {
+  cat <<EOH
+
+-- Usage:
+   $(basename $0) [-i] <packagename|directory> modulename.sxz
+-- Option parameters:
+   h :    This help.
+   i :    Interactive mode will not overwrite destination file by default.
+-- Description:
+   The first parameter is either the full path to a Slackware package,
+   or else a directory.
+   If a packagename is supplied as first parameter, it will be installed
+   into a temporary directory using Slackware's "installpkg".
+   The content of the temporary directory will be squashed into a module
+   by the "squashfs" program.
+   If a directoryname is supplied, its content will be squashed into
+   a module by the "squashfs" program.
+   The second parameter is the full pathname of the output module
+   which will be created.
+
+EOH
+}
+
+# Option parsing:
+while getopts "hi" Option
+do
+  case $Option in
+    h ) help; exit
+        ;;
+    i ) INTERACTIVE="YES"
+        ;;
+    * ) help; exit
+        ;;   # DEFAULT
+  esac
+done
+shift $(($OPTIND - 1))
+# End of option parsing.
+#  $1 now references the first non option item supplied on the command line
+# ---------------------------------------------------------------------------
+
+# Input check:
+if [ "x$1" = "x" ]; then
+   help
+   exit 1
+elif [ "x$2" = "x" ]; then
+   help
+   exit 1
+elif [ -f "$2" -a "$INTERACTIVE" = "YES" ]; then
+  read -p "-- Destination file '$2' already exists. Overwrite Y/N (y): " ANSWER
+  if [ "x$ANSWER" = "xN" -o "x$ANSWER" = "xn" ]; then
+    echo "-- Aborting now."
+    exit
+  fi
+fi
+
+MODEXT=$(echo "$2" |rev |cut -d'.' -f1 |rev)
+case $MODEXT in
+  sxz) COMPR="xz" ;;
+  sgz) COMPR="gzip" ;;
+  xzm) COMPR="xz" ;;
+    *) echo "-- Unsupported module extension '$MODEXT'" ; exit 1 ;;
+esac 
+
+if [ -d "$1" ]; then
+  echo "Creating .${MODEXT} module from directory using '$COMPR' compression."
+  TMPDIR=$(mktemp -t -d makesxz.XXXXXX)
+  PKGDIR="$1"
+else
+  echo "Creating .${MODEXT} module from package using '$COMPR' compression."
+  TMPDIR=$(mktemp -t -d makesxz.XXXXXX)
+  PKGDIR="$TMPDIR"
+  if [ ! -d $PKGDIR ]; then
+    echo "-- Failed to create temporary directory for extraction!"
+    exit 1
+  fi
+  # Extract the package:
+  /sbin/installpkg -root $PKGDIR "$1"
+  if [ $? -ne 0 ]; then
+    echo "-- Error installing package!"
+    exit 1
+  fi
+fi
+
+mksquashfs "${PKGDIR}" "$2" -noappend -comp ${COMPR} -b 256K $3 $4 $5 $6 $7 $8 $9
+if [ $? -ne 0 ]; then
+  echo "-- Error creating squashfs compressed module"
+  exit 1
+fi
+
+# If we extracted a package, clean up now:
+[ ! -z "$TMPDIR" ] && rm -rf $TMPDIR
+

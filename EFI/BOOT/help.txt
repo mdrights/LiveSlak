@@ -1,0 +1,109 @@
+==  Tweaks for the boot commandline ==
+
+To boot with default values just press ENTER.
+
+=== Desktop Environment ===
+
+0|1|2|3|4|5|6|S|s|single => Select a runlevel to start with. 
+  The default is 4 for graphical login. 
+ 
+kbd=fr xkb=ch,fr => Example of custom X keyboard layout.
+ 
+livepw="somestring" => Change the password for user "live".
+
+locale=nl_NL kbd=nl tz=Europe/Amsterdam => Example of language, 
+  keyboard and/or timezone customization. 
+ 
+rootpw="somestring" => Change the password for user "root".
+
+=== Custom software ===
+
+load=nvidia => Load and configure Nvidia drivers if available 
+  in the ISO. 
+ 
+load=mod1[,mod2[...]] => Load one or more squashfs modules
+  from the directory: "/liveslak/optional".
+  By default none of these modules is loaded on boot.
+
+noload=mod1[,mod2[...]] => Prevent loading of one or more
+  squashfs modules from the directory "/liveslak/addons".
+  By default all these modules are loaded on boot.
+
+=== Network boot ===
+
+dhcpwait=<numseconds> => Maximum wait time for the DHCP client to
+  configure a network interface (default: 20 seconds).
+
+nfsroot=ip.ad.dr.ess:/path/to/liveslak => defines the IP address
+  of the NFS server, and the path to the extracted content
+  of Slackware Live Edition.
+
+nic=<driver>:<interface>:<dhcp|static>[:ipaddr:netmask[:gateway]]
+  => network device customization, usually this parameter is
+  not needed when your network runs a DHCP server.
+  Specify a driver if UDEV does not detect the device. Specify the
+  interface if Slackware Live can not figure it out. If you specify
+  'static' you need to also specify ipaddr and netmask. The gateway
+  is optional but needed to access the internet for instance.
+
+=== Hardware related ===
+
+localhd => initialize RAID/LVM on local hard drives.
+
+tweaks=tweak1[,tweak2,[,...]] => Implemented tweaks:
+  nga - no glamor 2D acceleration, avoids error "EGL_MESA_drm_image required".
+  tpb - enable TrackPoint scrolling while holding down middle mouse button.
+  syn - start the syndaemon for better support of Synaptics touchpads.
+
+nomodeset => Boot without kernel mode setting, needed with 
+  some machines. 
+ 
+rootdelay=10 => Add 10 second delay to give the kernel more 
+  time to initialize USB. Try this if booting fails. Default is 5.
+
+swap => Allow the Live OS to activate all swap partitions on
+  the local hardware. By default, no swap is touched.
+
+=== Media tweaks ===
+
+hostname=your_custom_hostname[,qualifier] =>
+  Specify a custom hostname.  A qualifier 'fixed' can be appended
+  to prohibit hostname modification in  case of network boot.
+
+livemedia=/dev/sdX => Tell the init script which partition
+  contains the Slackware Live OS you want to boot. This can
+  become necessary if you have another copy of Slackware Live
+  installed in another partition.
+
+livemedia=/dev/sdX:/path/to/live.iso => Use this if you want to
+  load the live OS from an ISO file on a local harddisk partition.
+
+livemain=directoryname => Use this if you copied the content
+  of the ISO to a different directory than "liveslak".
+
+luksvol=file1[:/mountpoint1][,file1[:/mountpoint2],...] =>
+  Mount LUKS container "file1" at mount point "/mountpoint1".
+  Multiple files should be separated with comma.
+  Specify "luksvol=" to *prevent* mounting any LUKS container.
+
+nop => No persistence, i.e. boot the virgin installation in 
+  case your "persistence" directory got corrupted. 
+ 
+persistence=directoryname => Use this if you want to use
+  a different directory than "persistence" for storing
+  persistent data.
+
+toram => copy the OS from the media to to RAM before running it.
+  You can remove the boot media after booting.
+
+=== Troubleshooting ===
+
+blacklist=mod1[,mod2[...]]  => Add one or more kernel modules
+  to the kernel blacklist to prevent them from loading, in case
+  they cause issues during operation.
+
+debug => During init, pause at strategic locations while as-
+  sembling the overlay filesystem and show mount information.
+
+rescue => After initialization, you will be dropped in a
+  rescue shell to perform lowlevel maintenance.

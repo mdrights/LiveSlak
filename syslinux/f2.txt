@@ -1,0 +1,31 @@
+==  Tweaks for the boot commandline ==
+
+=== Desktop Environment ===
+
+0|1|2|3|4|5|6|S|s|single => Select a runlevel to start with. 
+  The default is 4 for graphical login. 
+ 
+kbd=fr xkb=ch,fr => Example of custom X keyboard layout.
+ 
+livepw="somestring" => Change the password for user "live".
+
+locale=nl_NL kbd=nl tz=Europe/Amsterdam => Example of language, 
+  keyboard and/or timezone customization. 
+ 
+rootpw="somestring" => Change the password for user "root".
+
+=== Custom software ===
+
+load=nvidia => Load and configure Nvidia drivers if available 
+  in the ISO. 
+ 
+load=mod1[,mod2[...]] => Load one or more squashfs modules
+  from the directory: "/liveslack/optional".
+  By default none of these modules is loaded on boot.
+
+noload=mod1[,mod2[...]] => Prevent loading of one or more
+  squashfs modules from the directory "/liveslack/addons".
+  By default all these modules are loaded on boot.
+
+== [F1]: Home [F3]: Media tweaks [F4]: HW/debug [F5]: Network boot ==
+

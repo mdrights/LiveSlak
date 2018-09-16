@@ -1,0 +1,20 @@
+==  Tweaks for the boot commandline ==
+
+=== Network boot ===
+
+dhcpwait=<numseconds> => Maximum wait time for the DHCP client to
+  configure a network interface (default: 20 seconds).
+
+nfsroot=ip.ad.dr.ess:/path/to/liveslak => defines the IP address
+  of the NFS server, and the path to the extracted content
+  of Slackware Live Edition.
+
+nic=<driver>:<interface>:<dhcp|static>[:ipaddr:netmask[:gateway]]
+  => network device customization, usually this parameter is
+  not needed when your network runs a DHCP server.
+  Specify a driver if UDEV does not detect the device. Specify the
+  interface if Slackware Live can not figure it out. If you specify
+  'static' you need to also specify ipaddr and netmask. The gateway
+  is optional but needed to access the internet for instance.
+
+== [F1]: Home [F2]: Desktop setup [F3]: Media tweaks [F4]: HW/debug ==

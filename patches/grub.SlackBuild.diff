@@ -1,0 +1,85 @@
+--- grub.SlackBuild.orig	2015-12-18 01:29:49.000000000 +0100
++++ grub.SlackBuild	2016-03-18 19:45:31.000000000 +0100
+@@ -20,10 +20,11 @@
+ #  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 
++# Modified 2016 by Eric Hameleers <alien@slackware.com> for Slackware Live Edition.
+ 
+ PKGNAM=grub
+-VERSION=${VERSION:-$(echo $PKGNAM-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
+-BUILD=${BUILD:-3}
++VERSION=${VERSION:-2.00}
++BUILD=${BUILD:-3alien}
+ 
+ # Automatically determine the architecture we're building on:
+ if [ -z "$ARCH" ]; then
+@@ -43,18 +44,22 @@
+   LIBDIRSUFFIX=""
+ elif [ "$ARCH" = "i486" ]; then
+   SLKCFLAGS="-O2 -march=i486 -mtune=i686"
++  EFI32_FLAGS=" --with-platform=efi --target=i386 --program-prefix= "
+   LIBDIRSUFFIX=""
+ elif [ "$ARCH" = "i586" ]; then
+   SLKCFLAGS="-O2 -march=i586 -mtune=i686"
++  EFI32_FLAGS=" --with-platform=efi --target=i386 --program-prefix= "
+   LIBDIRSUFFIX=""
+ elif [ "$ARCH" = "i686" ]; then
+   SLKCFLAGS="-O2 -march=i686"
++  EFI32_FLAGS=" --with-platform=efi --target=i386 --program-prefix= "
+   LIBDIRSUFFIX=""
+ elif [ "$ARCH" = "s390" ]; then
+   SLKCFLAGS="-O2"
+   LIBDIRSUFFIX=""
+ elif [ "$ARCH" = "x86_64" ]; then
+   SLKCFLAGS="-O2"
++  EFI32_FLAGS=" --with-platform=efi --target=i386 --program-prefix= "
+   EFI_FLAGS=" --with-platform=efi --target=x86_64 --program-prefix= "
+   LIBDIRSUFFIX="64"
+ elif [ "$ARCH" = "armv7hl" ]; then
+@@ -99,12 +104,8 @@
+ # Fix security issue when reading username and password:
+ zcat $CWD/0001-Fix-CVE-2015-8370-Grub2-user-pass-vulnerability.patch.gz | patch -p1 --verbose || exit 1
+ 
+-for i in 1 2 ; do
+-  # Skip to regular build if EFI support is not requested:
+-  if [ i = 1 -a -z "$EFI_FLAGS" ]; then
+-    continue;
+-  fi
+-
++build_grub() {
++  EFI_DO="$*"
+   # Configure:
+   CFLAGS="$SLKCFLAGS" \
+   ./configure \
+@@ -115,16 +116,26 @@
+     --infodir=/usr/info \
+     --mandir=/usr/man \
+     --disable-werror \
+-    $EFI_FLAGS
++    $EFI_DO
+ 
+   # Build and install:
+   make clean
+   make $NUMJOBS || make || exit 1
+   make install DESTDIR=$PKG || exit 1
+ 
+-  # Clear $EFI_FLAGS for a regular build:
+-  unset EFI_FLAGS
+-done
++  # Clear $EFI_DO :
++  unset EFI_DO
++}
++
++# Build 32bit and 64bit efi targets if requested:
++if [ -n "$EFI32_FLAGS" ]; then
++  build_grub $EFI32_FLAGS
++fi
++if [ -n "$EFI_FLAGS" ]; then
++  build_grub $EFI_FLAGS
++fi
++# Always end with regular build:
++build_grub
+ 
+ # Preserve the contents of /etc/grub.d/40_custom:
+ mv $PKG/etc/grub.d/40_custom $PKG/etc/grub.d/40_custom.new

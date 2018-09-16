@@ -1,0 +1,18 @@
+#!/bin/sh
+
+if which xmessage >> /dev/null 2>&1; then
+	xmessage -buttons console,reboot,halt "$@" "";
+
+	case "$?" in
+		101)
+			/sbin/telinit 3
+			;;
+		102)
+			/sbin/reboot
+			;;
+		103)
+			/sbin/poweroff
+			;;
+	esac
+fi
+

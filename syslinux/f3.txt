@@ -1,0 +1,32 @@
+==  Tweaks for the boot commandline ==
+
+To boot with default values just press ENTER.
+
+=== Media tweaks ===
+
+hostname=your_custom_hostname[,qualifier] =>
+  Specify a custom hostname.  A qualifier 'fixed' can be appended
+  to prohibit hostname modification in  case of network boot.
+
+livemedia=/dev/sdX => Tell the init script which partition
+  contains the Slackware Live OS you want to boot. This can
+  become necessary if you have another copy of Slackware Live
+  installed in another partition.  Also accepted: UUID or LABEL.
+
+livemedia=/dev/sdX:/path/to/live.iso => Use this if you want to
+  load the live OS from an ISO file on a local harddisk partition.
+
+livemain=directoryname => Use this if you copied the content
+  of the ISO to a different directory than "liveslak".
+
+nop => No persistence, i.e. boot the virgin installation in 
+  case your "persistence" directory got corrupted. 
+ 
+persistence=directoryname => Use this if you want to use
+  a different directory than "persistence" for storing
+  persistent data.
+
+toram => copy the OS from the media to to RAM before running it.
+  You can remove the boot media after booting.
+
+== [F1]: Home [F2]: Desktop setup [F4]: HW/debug [F5]: Network boot ==

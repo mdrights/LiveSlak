@@ -1,0 +1,116 @@
+# kdesdk:
+cervisia
+dolphin-plugins
+kapptemplate
+kcachegrind
+kde-dev-scripts
+kde-dev-utils
+kdesdk-kioslaves
+kdesdk-strigi-analyzers
+kdesdk-thumbnailers
+okteta
+poxml
+umbrello
+
+# kdebindings:
+smokegen
+smokeqt
+qtruby
+perlqt
+smokekde
+korundum
+perlkde
+pykde4
+kross-interpreters
+
+# kdeutils:
+kremotecontrol
+
+# kdemultimedia:
+juk
+
+# kdenetwork:
+krdc
+
+# kdegames:
+klickety
+kpat
+klines
+ksnakeduel
+kollision
+kshisen
+kblocks
+lskat
+bovo
+kajongg
+granatier
+kiriki
+kigo
+bomber
+kolf
+kbounce
+konquest
+kapman
+killbots
+kubrick
+kgoldrunner
+knetwalk
+kbreakout
+ksirk
+kfourinline
+kblackbox
+palapeli
+katomic
+ktuberling
+kjumpingcube
+kspaceduel
+
+# kdetoys:
+amor
+kteatime
+ktux
+
+# kdepim:
+kdepim
+kdepim-runtime
+
+# kdeedu:
+artikulate
+blinken
+cantor
+kalzium
+kanagram
+kgeography
+khangman
+kig
+kiten
+klettres
+kstars
+kqtquickcharts
+ktouch
+kturtle
+kwordquiz
+marble
+parley
+pairs
+rocs
+step
+
+# kdewebdev:
+kdewebdev
+
+# extragear:
+kaudiocreator
+oxygen-gtk2
+kdevplatform
+kdevelop-pg-qt
+kdevelop
+kdev-python
+kdevelop-php
+kdevelop-php-docs
+#wicd-kde
+amarok
+calligra
+partitionmanager
+k3b
+

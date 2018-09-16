@@ -1,0 +1,19 @@
+# The installation order in this list is important. Do not try to change it.
+#
+# pam:
+krb5
+cracklib
+pam
+libpwquality
+shadow
+pam_krb5
+
+# systemd:
+python3
+lxml
+libxkbcommon
+eudev%systemd
+dbus
+util-linux
+openssh
+procps-ng

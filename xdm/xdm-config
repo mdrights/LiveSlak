@@ -1,0 +1,31 @@
+DisplayManager.authDir:	/var/lib/xdm
+DisplayManager.errorLogFile:	/var/log/xdm.log
+DisplayManager.pidFile:		/var/run/xdm.pid
+DisplayManager.keyFile:		/usr/@LIBDIR@/X11/xdm/xdm-keys
+DisplayManager.servers:		/usr/@LIBDIR@/X11/xdm/Xservers
+DisplayManager.accessFile:	/usr/@LIBDIR@/X11/xdm/Xaccess
+DisplayManager*resources:	/etc/X11/xdm/liveslak-xdm/Xresources
+DisplayManager.willing:		su nobody -c /usr/@LIBDIR@/X11/xdm/Xwilling
+! All displays should use authorization, but we cannot be sure
+! X terminals may not be configured that way, so they will require
+! individual resource settings.
+DisplayManager*authorize:	true
+!
+DisplayManager*chooser:		/usr/@LIBDIR@/X11/xdm/chooser
+DisplayManager*startup:		/usr/@LIBDIR@/X11/xdm/Xstartup
+DisplayManager*session:		/usr/@LIBDIR@/X11/xdm/Xsession
+DisplayManager*reset:		/usr/@LIBDIR@/X11/xdm/Xreset
+DisplayManager*authComplain:	true
+! The following three resources set up display :0 as the console.
+DisplayManager._0.setup:	/etc/X11/xdm/liveslak-xdm/Xsetup
+DisplayManager._0.startup:	/etc/X11/xdm/liveslak-xdm/Xstartup
+DisplayManager._0.reset:	/usr/@LIBDIR@/X11/xdm/TakeConsole
+
+DisplayManager*loginmoveInterval:	10
+
+! SECURITY: do not listen for XDMCP or Chooser requests
+! Comment out this line if you want to manage X terminals with xdm
+DisplayManager.requestPort:	0
+
+! Mate and Cinnamon fail without this:
+DisplayManager*authName: MIT-MAGIC-COOKIE-1 

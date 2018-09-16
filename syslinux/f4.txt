@@ -1,0 +1,33 @@
+==  Tweaks for the boot commandline ==
+
+=== Hardware related ===
+
+localhd => initialize RAID/LVM on local hard drives.
+
+tweaks=tweak1[,tweak2,[,...]] => Implemented tweaks:
+  nga - no glamor 2D acceleration, avoids error "EGL_MESA_drm_image required".
+  tpb - enable TrackPoint scrolling while holding down middle mouse button.
+  syn - start the syndaemon for better support of Synaptics touchpads.
+
+nomodeset => Boot without kernel mode setting, needed with
+  some machines.
+
+rootdelay=10 => Add 10 second delay to give the kernel more
+  time to initialize USB. Try this if booting fails. Default is 5.
+
+swap => Allow the Live OS to activate all swap partitions on
+  the local hardware. By default, no swap is touched.
+
+=== Troubleshooting ===
+
+blacklist=mod1[,mod2[...]]  => Add one or more kernel modules
+  to the kernel blacklist to prevent them from loading, in case
+  they cause issues during operation.
+
+debug => During init, pause at strategic locations while
+  assembling the overlay filesystem and show mount information.
+
+rescue => After initialization, you will be dropped in a
+  rescue shell to perform lowlevel maintenance.
+
+== [F1]: Home [F2]: Desktop setup [F3]: Media tweaks [F5]: Network boot ==

@@ -1,0 +1,37 @@
+# deps:
+libstatgrab
+muparser
+obconf
+openbox
+
+# lxqt:
+compton-conf
+libconfig
+libfm
+libfm-extra
+libfm-qt
+liblxqt
+libqtxdg
+libsysstat
+lximage-qt
+lxmenu-data
+lxqt-about
+lxqt-common
+lxqt-config
+lxqt-globalkeys
+lxqt-l10n
+lxqt-notificationd
+lxqt-openssh-askpass
+lxqt-panel
+lxqt-policykit
+lxqt-powermanagement
+lxqt-qtplugin
+lxqt-runner
+lxqt-session
+lxqt-sudo
+menu-cache
+obconf-qt
+pavucontrol-qt
+pcmanfm-qt
+qterminal
+qtermwidget
