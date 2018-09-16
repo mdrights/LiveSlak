@@ -99,3 +99,10 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# tar
+*.txz
+*.tgz
+*.tar
+*.tar.xz
+*.tar.gz
