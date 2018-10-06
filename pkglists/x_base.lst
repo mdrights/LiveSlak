@@ -16,13 +16,13 @@ atk
 babl
 bdftopcf
 bigreqsproto
-bluez
+#bluez
 boost
 cairo
 cdrtools
 compositeproto
-cups
-cups-filters
+#cups
+#cups-filters
 damageproto
 dbus-python
 dejavu-fonts-ttf
@@ -86,7 +86,7 @@ gtkspell
 gvfs
 harfbuzz
 hicolor-icon-theme
-hplip
+#hplip
 hunspell
 iceauth
 ico
@@ -206,7 +206,7 @@ sessreg
 setxkbmap
 shared-mime-info
 showfont
-sinhala_lklug-font-ttf
+#sinhala_lklug-font-ttf
 smproxy
 speex
 startup-notification
@@ -215,7 +215,7 @@ talloc
 tdb
 tevent
 #tibmachuni-font-ttf
-ttf-indic-fonts
+#ttf-indic-fonts
 videoproto
 viewres
 vte

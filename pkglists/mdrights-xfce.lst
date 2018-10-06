@@ -1,0 +1,80 @@
+# Self-added app list. Feel free to add your favourite apps!
+
+## Stick to 4.9 kernel (with security updates patched):
+
+# Supplement some libs:
+gmtk
+libpaper
+qt5
+argon2
+udns
+mbedtls
+#libsodium
+#pcre2
+c-ares
+libev
+nodejs
+nwjs
+rubygem-sass
+c-toxcore
+libfilteraudio
+check
+OpenAL
+
+## 输入法
+libxkbcommon
+extra-cmake-modules
+opencc
+fcitx-libpinyin
+libpinyin
+fcitx
+fcitx-configtool
+
+## 上网和一些工具（你懂的）
+shadowsocks-libev
+v2ray
+firejail
+#firefox-hardened
+#icecat
+#icecat-hardened
+NetworkManager-nonprism
+macchiato
+tor
+tor-hardened
+tor-browser
+#tor-messenger
+torsocks
+privoxy
+proxychains
+jitsi
+signal-desktop
+telegram
+riot-web
+uTox
+
+
+## 写写字
+libreoffice
+#libreoffice-langpack
+docx2txt
+
+## 保护菊花系列 - Protect-Your-Data-Goodies:
+testdisk
+wipe
+secure-delete
+keepassxc 
+veracrypt
+apparmor
+
+## 虚拟机客户端插件
+virtualbox-kernel-addons
+# For Qemu VM:
+#spice-protocol
+#xf86-video-qxl
+
+## RSS 新闻阅读器
+newsboat
+
+
+## 字体（太大了暂不放入）
+#noto-cjk-font-ttf
