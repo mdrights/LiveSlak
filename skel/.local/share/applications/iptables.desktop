@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=开启防火墙
+Comment[En]=Start Iptables Firewall
+Exec=su -c '/etc/rc.d/rc.firewall start'
+Icon=utilities-system-monitor
+Type=Application
+Categories=Network
+Terminal=true

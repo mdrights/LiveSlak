@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Telegram
+Name[zh_CN]=Telegram 电报
+Name[zh_HK]=Telegram 电报
+Name[zh_TW]=Telegram 电报
+Comment=Telegram Desktop Chat Client
+Icon=telegram
+Exec=/usr/bin/Telegram -- %u
+TryExec=/usr/bin/Telegram
+Terminal=false
+Type=Application
+Categories=X-Antigfw

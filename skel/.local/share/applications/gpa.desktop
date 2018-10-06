@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=gpa
+Name[zh_CN]=gpa 密钥管理器
+GenericName=GNU Privacy Assistant
+GenericName[zh_CN]=GNU 隐私助手
+Exec=gpa
+Icon=gpa
+Terminal=false
+Type=Application
+Categories=Utility;X-dataprotect

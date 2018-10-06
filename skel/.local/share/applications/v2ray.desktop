@@ -1,0 +1,17 @@
+[Desktop Entry]
+Name=v2ray
+Name[zh_CN]=v2ray
+Name[zh_HK]=v2ray
+Name[zh_TW]=v2ray
+Comment=A flexible and modular proxy tool
+Comment[zh_CN]=灵活的模块化代理工具
+Comment[zh_HK]=灵活的模块化代理工具
+Comment[zh_TW]=灵活的模块化代理工具
+# Exec=/etc/rc.d/rc.v2ray
+Exec=/usr/local/bin/v2ray -config /home/user/Desktop/v2ray.json
+Icon=v2ray
+StartupNotify=true
+Terminal=true
+Type=Application
+Categories=X-Antigfw
+

@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=1.0
+Name=Signal Desktop
+Name[zh_CN]=Signal 桌面版
+Name[zh_HK]=Signal 桌面版
+Name[zh_TW]=Signal 桌面版
+Comment=Signal Private Messenger for the Desktop
+Comment[zh_CN]=著名的Signal
+Comment[zh_HK]=著名的Signal
+Comment[zh_TW]=著名的Signal
+Exec=/usr/bin/signal-desktop
+StartupWMClass=Signal-Desktop
+Icon=Signal-Desktop
+Terminal=false
+Type=Application
+Categories=X-Antigfw

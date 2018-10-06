@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+TryExec=veracrypt
+Exec=veracrypt
+Icon=veracrypt
+Comment=Disk encryption software
+Terminal=false
+Name=VeraCrypt
+Name[zh_CN]=VeraCrypt 数据加密
+StartupNotify=true
+Categories=System;X-dataprotect

@@ -1,0 +1,12 @@
+[Desktop Entry]
+Exec=tor-browser %u
+Icon=tor-browser
+Type=Application
+Categories=X-Antigfw
+Name=Tor-Browser
+Name[zh_CN]=Tor 洋葱匿名浏览器
+Name[zh_HK]=Tor 洋葱浏览器
+Name[zh_TW]=Tor 洋葱浏览器
+GenericName=Anonymous Web Browser
+MimeType=text/html;text/xml;application/xhtml+xml;application/vnd.mozilla.xul+xml;text/mml;x-scheme-handler/http;x-scheme-handler/https;
+X-KDE-StartupNotify=true

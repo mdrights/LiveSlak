@@ -1,0 +1,18 @@
+[Desktop Entry]
+Version=1.0
+Name=Display
+Name[zh_CN]=调整分辨率
+Name[zh_HK]=调整分辨率
+Name[zh_TW]=调整分辨率
+Comment=Configure screen settings and layout
+Comment[zh_CN]=配置屏幕设置和布局
+Comment[zh_HK]=設定螢幕設定值和配置
+Comment[zh_TW]=調整螢幕設定值與配置
+Exec=xfce4-display-settings
+Icon=video-display
+Terminal=false
+Type=Application
+Categories=XFCE;GTK;Settings;DesktopSettings;X-XFCE-SettingsDialog;X-XFCE-HardwareSettings;
+StartupNotify=true
+X-XfcePluggable=true
+X-XfceHelpPage=display
