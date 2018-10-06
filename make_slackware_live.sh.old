@@ -37,9 +37,6 @@
 # Version of the Live OS generator:
 VERSION="1.3.0"
 
-# Kernel version (useful if there are two versions of kernel installed):
-KVER="4.14.70"
-
 # Directory where our live tools are stored:
 LIVE_TOOLDIR=${LIVE_TOOLDIR:-"$(cd $(dirname $0); pwd)"}
 
@@ -87,18 +84,18 @@ THEDATE=$(date +%Y%m%d)
 LIVEUID=${LIVEUID:-"live"}
 
 # The root and live user passwords of the image:
-ROOTPW=${ROOTPW:-"toor"}
+ROOTPW=${ROOTPW:-"root"}
 LIVEPW=${LIVEPW:-"live"}
 
 # Distribution name:
 DISTRO=${DISTRO:-"slackware"}
 
 # Custom name for the host:
-LIVE_HOSTNAME=${LIVE_HOSTNAME:-"antiS"}
+LIVE_HOSTNAME=${LIVE_HOSTNAME:-"darkstar"}
 
 # What type of Live image?
 # Choices are: SLACKWARE, XFCE, KDE4, PLASMA5, MATE, CINNAMON, DLACK, STUDIOWARE
-LIVEDE=${LIVEDE:-"XFCE"}
+LIVEDE=${LIVEDE:-"SLACKWARE"}
 
 # What runlevel to use if adding a DE like: XFCE, KDE4, PLASMA5 etc...
 RUNLEVEL=${RUNLEVEL:-4}
@@ -121,7 +118,7 @@ WAIT=${WAIT:-"5"}
 #
 
 # Who built the live image:
-BUILDER=${BUILDER:-"MDrights"}
+BUILDER=${BUILDER:-"Alien BOB"}
 
 # Console font to use with syslinux for better language support:
 CONSFONT=${CONSFONT:-"ter-i16v.psf"}
@@ -488,9 +485,7 @@ function install_pkgs() {
     # Also remove man pages:
     rm -rf "$2"/usr/man
   fi
-
-  #if [ "$LIVEDE" = "XFCE"  ]; then
-  if [ ! -z "$LIVEDE" ]; then		#XXX
+  if [ "$LIVEDE" = "XFCE"  ]; then
     # By pruning stuff that no one likely needs anyway,
     # we make room for packages we would otherwise not be able to add.
     # MySQL embedded is only used by Amarok:
@@ -1457,53 +1452,52 @@ EOT
 
 # If we added slackpkg+ for easier system management, let's configure it too.
 # Update the cache for slackpkg:
-#XXX
-# echo "-- Creating slackpkg cache, takes a few seconds..."
-# chroot "${LIVE_ROOTDIR}" /bin/bash <<EOSL 2>${DBGOUT}
-# 
-# if [ -f var/log/packages/slackpkg+-* ] ; then
-#   cat <<EOPL > etc/slackpkg/slackpkgplus.conf
-# SLACKPKGPLUS=on
-# VERBOSE=1
-# ALLOW32BIT=off
-# USEBL=1
-# WGETOPTS="--timeout=20 --tries=2"
-# GREYLIST=on
-# PKGS_PRIORITY=( restricted alienbob ktown mate )
-# REPOPLUS=( slackpkgplus restricted alienbob ktown mate )
-# MIRRORPLUS['slackpkgplus']=http://slakfinder.org/slackpkg+/
-# MIRRORPLUS['restricted']=http://slackware.nl/people/alien/restricted_sbrepos/${SL_VERSION}/${SL_ARCH}/
-# MIRRORPLUS['alienbob']=http://slackware.nl/people/alien/sbrepos/${SL_VERSION}/${SL_ARCH}/
-# MIRRORPLUS['mate']=http://slackware.uk/msb/${SL_VERSION}/latest/${SL_ARCH}/ 
-# #MIRRORPLUS['studioware']=http://slackware.uk/studioware/${SL_VERSION}/ 
-# EOPL
-#   # Use the appropriate ktown variant:
-#   eval $( grep "^ *VARIANT=" ${LIVE_TOOLDIR}/pkglists/plasma5.conf)
-#   if [ "$VARIANT" = "latest" ]; then
-#     cat <<EOPL >> etc/slackpkg/slackpkgplus.conf
-# #MIRRORPLUS['ktown']=http://slackware.nl/alien-kde/${SL_VERSION}/testing/${SL_ARCH}/
-# MIRRORPLUS['ktown']=http://slackware.nl/alien-kde/${SL_VERSION}/latest/${SL_ARCH}/
-# EOPL
-#   else
-#     cat <<EOPL >> etc/slackpkg/slackpkgplus.conf
-# #MIRRORPLUS['ktown']=http://slackware.nl/alien-kde/${SL_VERSION}/latest/${SL_ARCH}/
-# MIRRORPLUS['ktown']=http://slackware.nl/alien-kde/${SL_VERSION}/testing/${SL_ARCH}/
-# EOPL
-#   fi
-# fi
-# 
-# # Slackpkg wants you to opt-in on slackware-current:
-# if [ "${SL_VERSION}" = "current" ]; then
-#   mkdir -p /var/lib/slackpkg
-#   touch /var/lib/slackpkg/current
-# fi
-# 
-# ARCH=${SL_ARCH} /usr/sbin/slackpkg -batch=on update gpg
-# ARCH=${SL_ARCH} /usr/sbin/slackpkg -batch=on update
-# # Let any lingering .new files replace their originals:
-# yes o | ARCH=${SL_ARCH} /usr/sbin/slackpkg new-config
-# 
-# EOSL
+echo "-- Creating slackpkg cache, takes a few seconds..."
+chroot "${LIVE_ROOTDIR}" /bin/bash <<EOSL 2>${DBGOUT}
+
+if [ -f var/log/packages/slackpkg+-* ] ; then
+  cat <<EOPL > etc/slackpkg/slackpkgplus.conf
+SLACKPKGPLUS=on
+VERBOSE=1
+ALLOW32BIT=off
+USEBL=1
+WGETOPTS="--timeout=20 --tries=2"
+GREYLIST=on
+PKGS_PRIORITY=( restricted alienbob ktown mate )
+REPOPLUS=( slackpkgplus restricted alienbob ktown mate )
+MIRRORPLUS['slackpkgplus']=http://slakfinder.org/slackpkg+/
+MIRRORPLUS['restricted']=http://slackware.nl/people/alien/restricted_sbrepos/${SL_VERSION}/${SL_ARCH}/
+MIRRORPLUS['alienbob']=http://slackware.nl/people/alien/sbrepos/${SL_VERSION}/${SL_ARCH}/
+MIRRORPLUS['mate']=http://slackware.uk/msb/${SL_VERSION}/latest/${SL_ARCH}/ 
+#MIRRORPLUS['studioware']=http://slackware.uk/studioware/${SL_VERSION}/ 
+EOPL
+  # Use the appropriate ktown variant:
+  eval $( grep "^ *VARIANT=" ${LIVE_TOOLDIR}/pkglists/plasma5.conf)
+  if [ "$VARIANT" = "latest" ]; then
+    cat <<EOPL >> etc/slackpkg/slackpkgplus.conf
+#MIRRORPLUS['ktown']=http://slackware.nl/alien-kde/${SL_VERSION}/testing/${SL_ARCH}/
+MIRRORPLUS['ktown']=http://slackware.nl/alien-kde/${SL_VERSION}/latest/${SL_ARCH}/
+EOPL
+  else
+    cat <<EOPL >> etc/slackpkg/slackpkgplus.conf
+#MIRRORPLUS['ktown']=http://slackware.nl/alien-kde/${SL_VERSION}/latest/${SL_ARCH}/
+MIRRORPLUS['ktown']=http://slackware.nl/alien-kde/${SL_VERSION}/testing/${SL_ARCH}/
+EOPL
+  fi
+fi
+
+# Slackpkg wants you to opt-in on slackware-current:
+if [ "${SL_VERSION}" = "current" ]; then
+  mkdir -p /var/lib/slackpkg
+  touch /var/lib/slackpkg/current
+fi
+
+ARCH=${SL_ARCH} /usr/sbin/slackpkg -batch=on update gpg
+ARCH=${SL_ARCH} /usr/sbin/slackpkg -batch=on update
+# Let any lingering .new files replace their originals:
+yes o | ARCH=${SL_ARCH} /usr/sbin/slackpkg new-config
+
+EOSL
 
 if [ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.networkmanager ]; then
   # Enable NetworkManager if present:
@@ -1564,8 +1558,8 @@ chmod 755 ${LIVE_ROOTDIR}/usr/local/sbin/pxeserver
 
 # Only when we find a huge kernel, we will add a harddisk installer
 # to the ISO.  The huge kernel does not require an initrd and installation
-# to the hard drive will not be complicated. #XXX add the installer anyway.
-# if ls ${LIVE_ROOTDIR}/boot/vmlinuz-huge-* 1>/dev/null 2>/dev/null; then
+# to the hard drive will not be complicated.
+if ls ${LIVE_ROOTDIR}/boot/vmlinuz-huge-* 1>/dev/null 2>/dev/null; then
  if [ -f ${DEF_SL_PKGROOT}/../isolinux/initrd.img ]; then
   # Extract the 'setup' files we need from the Slackware installer
   # and move them to a single directory in the ISO:
@@ -1663,7 +1657,7 @@ chmod 755 ${LIVE_ROOTDIR}/usr/local/sbin/pxeserver
  else
   echo "-- Could not find ${DEF_SL_PKGROOT}/../isolinux/initrd.img - not adding 'setup2hd'!"
  fi
-# fi
+fi
 
 # Add the documentation:
 mkdir -p  ${LIVE_ROOTDIR}/usr/doc/liveslak-${VERSION}
@@ -1736,7 +1730,257 @@ for SKEL in ${LIVE_TOOLDIR}/skel/skel*.txz ; do
   tar -xf ${SKEL} -C ${LIVE_ROOTDIR}/etc/skel/
 done
 
-#XXX Remove thost LIVEDE I dont use.
+# -------------------------------------------------------------------------- #
+echo "-- Configuring KDE4."
+# -------------------------------------------------------------------------- #
+
+# Adjust some usability issues with the default desktop layout:
+if [ -f ${LIVE_ROOTDIR}/usr/share/apps/plasma/layout-templates/org.kde.plasma-desktop.defaultPanel/contents/layout.js ]; then
+  # Only apply to an unmodified file (Slackware 14.2 already implements it):
+  if grep -q 'tasks.writeConfig' ${LIVE_ROOTDIR}/usr/share/apps/plasma/layout-templates/org.kde.plasma-desktop.defaultPanel/contents/layout.js ; then
+    sed -i \
+      -e '/showActivityManager/a konsole = panel.addWidget("quicklaunch")' \
+      -e '/showActivityManager/a dolphin = panel.addWidget("quicklaunch")' \
+      -e '/showActivityManager/a firefox = panel.addWidget("quicklaunch")' \
+      -e '$a firefox.writeConfig("iconUrls","file:///usr/share/applications/mozilla-firefox.desktop")' \
+      -e '$a dolphin.writeConfig("iconUrls","file:////usr/share/applications/kde4/dolphin.desktop")' \
+      -e '$a konsole.writeConfig("iconUrls","file:///usr/share/applications/kde4/konsole.desktop")' \
+      -e '/tasks.writeConfig/d' \
+      ${LIVE_ROOTDIR}/usr/share/apps/plasma/layout-templates/org.kde.plasma-desktop.defaultPanel/contents/layout.js
+  fi
+fi
+
+# Prepare some KDE4 defaults for the 'live' user and any new users.
+
+# Preselect the user 'live' in KDM:
+mkdir -p ${LIVE_ROOTDIR}/var/lib/kdm
+cat <<EOT > ${LIVE_ROOTDIR}/var/lib/kdm/kdmsts
+[PrevUser]
+:0=${LIVEUID}
+EOT
+chmod 600 ${LIVE_ROOTDIR}/var/lib/kdm/kdmsts
+
+# Set default GTK+ theme for Qt applications:
+mkdir -p  ${LIVE_ROOTDIR}/etc/skel/
+cat << EOF > ${LIVE_ROOTDIR}/etc/skel/.gtkrc-2.0
+include "/usr/share/themes/Adwaita/gtk-2.0/gtkrc"
+include "/usr/share/gtk-2.0/gtkrc"
+include "/etc/gtk-2.0/gtkrc"
+gtk-theme-name="Adwaita"
+EOF
+mkdir -p ${LIVE_ROOTDIR}/etc/skel/.config/gtk-3.0
+cat << EOF > ${LIVE_ROOTDIR}/etc/skel/.config/gtk-3.0/settings.ini
+[Settings]
+gtk-theme-name = Adwaita
+EOF
+
+# Be gentle to low-performance USB media and limit disk I/O:
+mkdir -p  ${LIVE_ROOTDIR}/etc/skel/.kde/share/config
+cat <<EOT > ${LIVE_ROOTDIR}/etc/skel/.kde/share/config/nepomukserverrc
+[Basic Settings]
+Configured repositories=main
+Start Nepomuk=false
+
+[Service-nepomukstrigiservice]
+autostart=false
+
+[main Settings]
+Storage Dir[\$e]=\$HOME/.kde/share/apps/nepomuk/repository/main/
+Used Soprano Backend=virtuosobackend
+rebuilt index for type indexing=true
+EOT
+
+# Disable baloo:
+mkdir -p ${LIVE_ROOTDIR}/etc/skel/.kde4/share/apps/config
+cat <<EOT >${LIVE_ROOTDIR}/etc/skel/.kde4/share/apps/config/baloofilerc
+[Basic Settings]
+Indexing-Enabled=false
+EOT
+
+mkdir -p ${LIVE_ROOTDIR}/etc/skel/.config
+cat <<EOT > ${LIVE_ROOTDIR}/etc/skel/.config/kwalletrc
+[Auto Allow]
+kdewallet=Network Management,KDE Daemon,KDE Control Module
+
+[Wallet]
+Close When Idle=false
+Enabled=true
+First Use=true
+Use One Wallet=true
+EOT
+
+# Start Konsole with a login shell:
+mkdir -p ${LIVE_ROOTDIR}/etc/skel/.kde/share/apps/konsole
+cat <<EOT > ${LIVE_ROOTDIR}/etc/skel/.kde/share/apps/konsole/Shell.profile
+[General]
+Command=/bin/bash -l
+Name=Shell
+Parent=FALLBACK/
+EOT
+mkdir -p ${LIVE_ROOTDIR}/etc/skel/.config
+cat <<EOT >> ${LIVE_ROOTDIR}/etc/skel/.config/konsolerc
+[Desktop Entry]
+DefaultProfile=Shell.profile
+
+EOT
+
+# Configure (default) UTC timezone so we can change it during boot:
+mkdir -p ${LIVE_ROOTDIR}/etc/skel/.kde/share/config
+cat <<EOT > ${LIVE_ROOTDIR}/etc/skel/.kde/share/config/ktimezonedrc
+[TimeZones]
+LocalZone=UTC
+ZoneinfoDir=/usr/share/zoneinfo
+Zonetab=/usr/share/zoneinfo/zone.tab
+ZonetabCache=
+EOT
+
+if [ "$LIVEDE" = "PLASMA5" ]; then
+
+  # -------------------------------------------------------------------------- #
+  echo "-- Configuring PLASMA5."
+  # -------------------------------------------------------------------------- #
+
+  # Remove the confusing openbox session if present:
+  rm -f ${LIVE_ROOTDIR}/usr/share/xsessions/openbox-session.desktop || true
+  # Remove the buggy mediacenter session:
+  rm -f ${LIVE_ROOTDIR}/usr/share/xsessions/plasma-mediacenter.desktop || true
+  # Remove non-functional wayland session:
+  if [ ! -f ${LIVE_ROOTDIR}/usr/lib${DIRSUFFIX}/qt5/bin/qtwaylandscanner ];
+  then
+    rm -f ${LIVE_ROOTDIR}/usr/share/wayland-sessions/plasmawayland.desktop || true
+  fi
+  # Set sane SDDM defaults on first boot (root-owned file):
+  mkdir -p ${LIVE_ROOTDIR}/var/lib/sddm
+  cat <<EOT > ${LIVE_ROOTDIR}/var/lib/sddm/state.conf 
+[Last]
+# Name of the last logged-in user. This username will be preselected/shown when the login screen shows up
+User=${LIVEUID}
+
+# Name of the session file of the last session selected. This session will be preselected when the login screen shows up.
+Session=/usr/share/xsessions/plasma.desktop
+
+EOT
+  chroot ${LIVE_ROOTDIR} chown -R sddm:sddm var/lib/sddm
+
+  # Thanks to Fedora Live: https://git.fedorahosted.org/cgit/spin-kickstarts.git
+  mkdir -p ${LIVE_ROOTDIR}/etc/skel/.config/akonadi
+  mkdir -p ${LIVE_ROOTDIR}/etc/skel/.kde/share/config
+
+  # Set akonadi backend:
+  cat <<AKONADI_EOF >${LIVE_ROOTDIR}/etc/skel/.config/akonadi/akonadiserverrc
+[%General]
+Driver=QSQLITE3
+AKONADI_EOF
+
+  # Disable baloo:
+  cat <<BALOO_EOF >${LIVE_ROOTDIR}/etc/skel/.config/baloofilerc
+[Basic Settings]
+Indexing-Enabled=false
+BALOO_EOF
+
+  # Disable kres-migrator:
+  cat <<KRES_EOF >${LIVE_ROOTDIR}/etc/skel/.kde/share/config/kres-migratorrc
+[Migration]
+Enabled=false
+KRES_EOF
+
+  # Disable kwallet migrator:
+  cat <<KWALLET_EOL >${LIVE_ROOTDIR}/etc/skel/.config/kwalletrc
+[Migration]
+alreadyMigrated=true
+
+KWALLET_EOL
+
+  # Configure (default) UTC timezone so we can change it during boot:
+  mkdir -p ${LIVE_ROOTDIR}/etc/skel/.config
+  cat <<EOTZ > ${LIVE_ROOTDIR}/etc/skel/.config/ktimezonedrc
+[TimeZones]
+LocalZone=UTC
+ZoneinfoDir=/usr/share/zoneinfo
+Zonetab=/usr/share/zoneinfo/zone.tab
+EOTZ
+
+  # Make sure that Plasma and SDDM work on older GPUs,
+  # by forcing Qt5 to use software GL rendering:
+  cat <<"EOGL" >> ${LIVE_ROOTDIR}/usr/share/sddm/scripts/Xsetup
+
+OPENGL_VERSION=$(LANG=C glxinfo |grep '^OpenGL version string: ' |head -n 1 |sed -e 's/^OpenGL version string: \([0-9]\).*$/\1/g')
+if [ "$OPENGL_VERSION" -lt 2 ]; then
+  QT_XCB_FORCE_SOFTWARE_OPENGL=1
+  export QT_XCB_FORCE_SOFTWARE_OPENGL
+fi
+
+EOGL
+
+  # Workaround a bug where SDDM does not always use the configured keymap:
+  echo "setxkbmap" >> ${LIVE_ROOTDIR}/usr/share/sddm/scripts/Xsetup
+
+  # Do not show the blueman applet, Plasma5 has its own BlueTooth widget:
+  echo "NotShowIn=KDE;" >> ${LIVE_ROOTDIR}/etc/xdg/autostart/blueman.desktop
+
+  # Set QtWebkit as the Konqueror rendering engine if available:
+  if [ -f ${LIVE_ROOTDIR}/usr/share/kservices5/kwebkitpart.desktop  ]; then
+    mkdir ${LIVE_ROOTDIR}/home/${LIVEUID}/.config
+    cat <<EOT >> ${LIVE_ROOTDIR}/home/${LIVEUID}/.config/mimeapps.list
+[Added KDE Service Associations]
+application/xhtml+xml=kwebkitpart.desktop;
+application/xml=kwebkitpart.desktop;
+text/html=kwebkitpart.desktop;
+EOT
+  fi
+
+fi # End LIVEDE = PLASMA5
+
+if [ "$LIVEDE" = "DLACK" ]; then
+
+  # -------------------------------------------------------------------------- #
+  echo "-- Configuring DLACK."
+  # -------------------------------------------------------------------------- #
+
+  # Make sure we start in graphical mode with gdm enabled.
+  ln -sf /lib/systemd/system/graphical.target ${LIVE_ROOTDIR}/etc/systemd/system/default.target
+  ln -sf /lib/systemd/system/gdm.service ${LIVE_ROOTDIR}/etc/systemd/system/display-manager.service
+
+  # Do not show the blueman applet, Gnome3 has its own BlueTooth widget:
+  echo "NotShowIn=GNOME;" >> ${LIVE_ROOTDIR}/etc/xdg/autostart/blueman.desktop
+
+  # Do not start gnome-initial-setup:
+  mkdir -p ${LIVE_ROOTDIR}/home/${LIVEUID}/.config
+  touch ${LIVE_ROOTDIR}/home/${LIVEUID}/.config/gnome-initial-setup-done
+
+  # Do not let systemd re-generate dynamic linker cache on boot:
+  echo "File created by ${MARKER}.  See systemd-update-done.service(8)." \
+    |tee ${LIVE_ROOTDIR}/etc/.updated >${LIVE_ROOTDIR}/var/.updated
+
+fi # End LIVEDE = DLACK  
+
+if [ "$LIVEDE" = "STUDIOWARE" ]; then
+
+  # -------------------------------------------------------------------------- #
+  echo "-- Configuring STUDIOWARE."
+  # -------------------------------------------------------------------------- #
+
+  # Create group and user for the Avahi service:
+  chroot ${LIVE_ROOTDIR} /usr/sbin/groupadd -g 214 avahi
+  chroot ${LIVE_ROOTDIR} /usr/sbin/useradd -c "Avahi Service Account" -u 214 -g 214 -d /dev/null -s /bin/false avahi
+  echo "avahi:$(openssl rand -base64 12)" | chroot ${LIVE_ROOTDIR} /usr/sbin/chpasswd
+
+  # RT Scheduling and Locked Memory:
+  cat << "EOT" > ${LIVE_ROOTDIR}/etc/initscript
+# Set umask to safe level:
+umask 022
+# Disable core dumps:
+ulimit -c 0
+# Allow unlimited size to be locked into memory:
+ulimit -l unlimited
+# Address issue of jackd failing to start with realtime scheduling:
+ulimit -r 65
+
+# Execute the program.
+eval exec "$4"
+EOT
+
+fi # End LIVEDE = STUDIOWARE  
 
 # You can define the function 'custom_config()' by uncommenting it in
 # the configuration file 'make_slackware_live.conf'.
@@ -1874,14 +2118,11 @@ sed -i ${LIVE_ROOTDIR}/etc/inittab -e "s/\(id:\).\(:initdefault:\)/\1${RUNLEVEL}
 [ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.pulseaudio ] && chmod -x ${LIVE_ROOTDIR}/etc/rc.d/rc.pulseaudio
 [ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.yp ] && chmod -x ${LIVE_ROOTDIR}/etc/rc.d/rc.yp
 [ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.sshd ] && chmod -x ${LIVE_ROOTDIR}/etc/rc.d/rc.sshd
-#XXX
-[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.rpc ] && chmod -x ${LIVE_ROOTDIR}/etc/rc.d/rc.rpc
-[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.cups ] && chmod -x ${LIVE_ROOTDIR}/etc/rc.d/rc.cups
-[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.cups-browsed ] && chmod -x ${LIVE_ROOTDIR}/etc/rc.d/rc.cups-browsed
-[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.bluetooth ] && chmod -x ${LIVE_ROOTDIR}/etc/rc.d/rc.bluetooth
 
-# But enable my firewall #XXX
-[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.firewall ] && chmod +x ${LIVE_ROOTDIR}/etc/rc.d/rc.firewall
+# But enable NFS client support and CUPS:
+[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.rpc ] && chmod +x ${LIVE_ROOTDIR}/etc/rc.d/rc.rpc
+[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.cups ] && chmod +x ${LIVE_ROOTDIR}/etc/rc.d/rc.cups
+[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.cups-browsed ] && chmod +x ${LIVE_ROOTDIR}/etc/rc.d/rc.cups-browsed
 
 # Add a softvol pre-amp to ALSA - some computers have too low volumes.
 # If etc/asound.conf exists it's configuring ALSA to use Pulse,
@@ -2071,14 +2312,12 @@ mount --bind /sys ${LIVE_ROOTDIR}/sys
 mount --bind /dev ${LIVE_ROOTDIR}/dev
 
 # Determine the installed kernel version:
-if [ -z "$KVER" ]; then  #XXX can be set manually
 if [ "$SL_ARCH" = "x86_64" -o "$SMP32" = "NO" ]; then
   KGEN=$(ls --indicator-style=none ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |grep -v smp |head -1 |rev | cut -d- -f3 |tr _ - |rev)
   KVER=$(ls --indicator-style=none ${LIVE_ROOTDIR}/lib/modules/ |grep -v smp |head -1)
 else
   KGEN=$(ls --indicator-style=none ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |grep smp |head -1 |rev | cut -d- -f3 |tr _ - |rev)
   KVER=$(ls --indicator-style=none ${LIVE_ROOTDIR}/lib/modules/ |grep smp |head -1)
-fi
 fi
 
 # Create an initrd for the generic kernel, using a modified init script:
@@ -2266,8 +2505,7 @@ echo "-- Assemble the ISO image."
 
 # We keep strict size requirements for the XFCE ISO:
 # addons/optional modules will not be added.
-#if [ "$LIVEDE" != "XFCE"  ]; then
-if [ ! -z "$LIVEDE" ]; then
+if [ "$LIVEDE" != "XFCE"  ]; then
   # Copy our stockpile of add-on modules into place:
   if ls ${LIVE_TOOLDIR}/addons/*.sxz 1>/dev/null 2>&1 ; then
     cp ${LIVE_TOOLDIR}/addons/*.sxz ${LIVE_MOD_ADD}/
