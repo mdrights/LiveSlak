@@ -1,0 +1,66 @@
+#!/bin/sh
+# Start/stop/restart Iptables.
+# Made by MDrights. 2017.09.02
+
+IPT="/usr/sbin/iptables"
+
+# Start iptables:
+iptables_start() {
+  if [ -x /usr/sbin/iptables ]; then
+    /usr/sbin/iptables-restore < /etc/iptables/iptables.rules
+    echo "Firewall started:  /usr/sbin/iptables"
+  fi
+}
+
+iptables_stop() {
+	# Make all open:
+	$IPT -P INPUT ACCEPT
+	$IPT -P FORWARD ACCEPT
+	$IPT -P OUTPUT ACCEPT
+	$IPT -t nat -P PREROUTING ACCEPT
+	$IPT -t nat -P POSTROUTING ACCEPT
+	$IPT -t nat -P OUTPUT ACCEPT
+	$IPT -t mangle -P PREROUTING ACCEPT
+	$IPT -t mangle -P OUTPUT ACCEPT
+
+	# Reset default policies:
+	$IPT -F
+	$IPT -t nat -F
+	$IPT -t mangle -F
+
+	# Flush all rules:
+	$IPT -X
+	$IPT -t nat -X
+	$IPT -t mangle -X
+
+	echo "Stopped."
+	/usr/sbin/iptables -vnL
+
+}
+
+iptables_save() {
+    /usr/sbin/iptables-save > /etc/iptables/iptables.rules
+    echo "Saved to: /etc/iptables/iptables.rules"
+}
+iptables_restart() {
+  iptables_stop
+  sleep 1
+  iptables_start
+}
+
+case "$1" in
+'start')
+  iptables_start
+  ;;
+'stop')
+  iptables_stop
+  ;;
+'save')
+  iptables_save
+  ;;
+'restart')
+  iptables_restart
+  ;;
+*)
+  echo "usage $0 start|stop|save|restart"
+esac

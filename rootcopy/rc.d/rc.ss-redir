@@ -1,0 +1,68 @@
+#!/bin/bash
+# Start ss-redir and invoke iptables rules
+# Written by MDrights.
+
+#set -e
+
+if [ "$UID" != 0 ]; then echo "I should be run as root. your are not root. Quit..."; exit 1; fi
+
+CONF="/home/live/Desktop/shadowsocks.json"
+
+# Detect user's config file for ss-libev. They are asked to put it on their Desktop.
+
+if [ -f "$CONF" ]; then
+	/usr/bin/ss-redir -a nobody -u -c $CONF -f /var/run/shadowsocks.pid
+	RES=$?
+	if [ "$RES" = 0 ]; then echo "ss-redir has been started successfully."; fi
+
+else
+	echo "We didn't find your .json file for Shadowsocks! Please put it on Desktop and name it as shadowsocks.json."
+	exit 1
+fi
+
+
+
+# =================================================================
+#   Generate our iptables rules to redirect traffic to ss-redir.
+# =================================================================
+
+echo "Generate our iptables rules to redirect traffic to ss-redir."
+SERVERIP="$(awk -F"\"" '/server"/ { print $4 }' $CONF )"
+
+# Stop existing rules
+/etc/rc.d/rc.firewall stop || exit 1
+
+# Create new chain
+iptables -t nat -N SHADOWSOCKS
+iptables -t mangle -N SHADOWSOCKS
+
+# Ignore your shadowsocks server's addresses
+# It's very IMPORTANT, just be careful.
+iptables -t nat -A SHADOWSOCKS -d $SERVERIP -j RETURN
+
+# Ignore LANs and any other addresses you'd like to bypass the proxy
+# See Wikipedia and RFC5735 for full list of reserved networks.
+# See ashi009/bestroutetb for a highly optimized CHN route list.
+iptables -t nat -A SHADOWSOCKS -d 0.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 10.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 127.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 169.254.0.0/16 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 172.16.0.0/12 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 192.168.0.0/16 -p tcp -dport 22 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 224.0.0.0/4 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 240.0.0.0/4 -j RETURN
+
+# Anything else should be redirected to shadowsocks's local port
+iptables -t nat -A SHADOWSOCKS -p tcp -j REDIRECT --to-ports 1080
+
+# Add any UDP rules
+ip route add local default dev lo table 100
+ip rule add fwmark 1 lookup 100
+iptables -t mangle -A SHADOWSOCKS -p udp --dport 53 -j TPROXY --on-port 1080 --tproxy-mark 0x01/0x01
+
+# Apply the rules
+iptables -t nat -A PREROUTING -p tcp -j SHADOWSOCKS
+iptables -t mangle -A PREROUTING -j SHADOWSOCKS
+
+echo "Done, enjoy !"
+exit
