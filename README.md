@@ -8,9 +8,11 @@
   - 中文化
   - 隐私加强
     - 隐私保护和墙国特色信息/通讯自由相关的应用
-    - 系统加固（包括：防火墙、文件系统加固等……）
+    - 系统加固（包括：防火墙、文件系统挂载限制、内核参数配置等……）
+	- 沙盒（firejail）
+	- 基于角色的访问控制（AppArmor）
 
-最后更新：2018.09.24   
+最后更新：2018.10.07     
 
 發佈頻道：		https://t.me/liveslak    
 
@@ -30,6 +32,7 @@
 - 了解本发行版的具体特性，请阅读：    
 	- [LiveSlak 最终用户介绍](https://mdrights.github.io/os-observe/Liveslak-intro/)
 	- [《LiveSlak 用户手册》](https://github.com/mdrights/LiveSlak/blob/mdrights/LiveSlak-Users-Guide.md)
+	- [预装软件列表](https://github.com/mdrights/LiveSlak/blob/V1.3.0/pkglists/mdrights-xfce.lst)
 
 
 ## Device Requirements
