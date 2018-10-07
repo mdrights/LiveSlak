@@ -38,7 +38,7 @@
 VERSION="1.3.0"
 
 # Kernel version (useful if there are two versions of kernel installed):
-KVER="4.14.70"
+KVER=""
 
 # Directory where our live tools are stored:
 LIVE_TOOLDIR=${LIVE_TOOLDIR:-"$(cd $(dirname $0); pwd)"}
@@ -1225,7 +1225,8 @@ for SPS in ${SL_SERIES} ; do
 
     if [ "$SPS" = "a" -o "$SPS" = "${MINLIST}" ]; then
 
-      # We need to take care of a few things first:
+      # We need to take care of a few things first:  #XXX if kernel not specified.
+	if [ -z "$KVER" ]; then
       if [ "$SL_ARCH" = "x86_64" -o "$SMP32" = "NO" ]; then
         KGEN=$(ls --indicator-style=none ${INSTDIR}/var/log/packages/kernel*modules* |grep -v smp |head -1 |rev | cut -d- -f3 |tr _ - |rev)
         KVER=$(ls --indicator-style=none ${INSTDIR}/lib/modules/ |grep -v smp |head -1)
@@ -1233,8 +1234,10 @@ for SPS in ${SL_SERIES} ; do
         KGEN=$(ls --indicator-style=none ${INSTDIR}/var/log/packages/kernel*modules* |grep smp |head -1 |rev | cut -d- -f3 |tr _ - |rev)
         KVER=$(ls --indicator-style=none ${INSTDIR}/lib/modules/ |grep smp |head -1)
       fi
+	fi
+
       if [ -z "$KVER" ]; then
-        echo "-- Could not find installed kernel in '${INSTDIR}'! Exiting."
+        echo "-- Could not find installed kernel $KVER in '${INSTDIR}'! Exiting."
         cleanup
         exit 1
       else
@@ -1293,13 +1296,15 @@ echo "-- Configuring the base system."
 umount ${LIVE_ROOTDIR} 2>${DBGOUT} || true
 mount -t overlay -o lowerdir=${RODIRS},upperdir=${INSTDIR},workdir=${LIVE_OVLDIR} overlay ${LIVE_ROOTDIR}
 
-# Determine the kernel version in the Live OS:
+# Determine the kernel version in the Live OS:  #XXX
+if [ -z "$KVER" ];then
 if [ "$SL_ARCH" = "x86_64" -o "$SMP32" = "NO" ]; then
   KGEN=$(ls --indicator-style=none ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |grep -v smp |head -1 |rev | cut -d- -f3 |tr _ - |rev)
   KVER=$(ls --indicator-style=none ${LIVE_ROOTDIR}/lib/modules/ |grep -v smp |head -1)
 else
   KGEN=$(ls --indicator-style=none ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |grep smp |head -1 |rev | cut -d- -f3 |tr _ - |rev)
   KVER=$(ls --indicator-style=none ${LIVE_ROOTDIR}/lib/modules/ |grep smp |head -1)
+fi
 fi
 
 # Configure hostname and network:
@@ -2071,7 +2076,7 @@ mount --bind /sys ${LIVE_ROOTDIR}/sys
 mount --bind /dev ${LIVE_ROOTDIR}/dev
 
 # Determine the installed kernel version:
-if [ -z "$KVER" ]; then  #XXX can be set manually
+if [ -z "$KVER" ]; then				#XXX can be set manually
 if [ "$SL_ARCH" = "x86_64" -o "$SMP32" = "NO" ]; then
   KGEN=$(ls --indicator-style=none ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |grep -v smp |head -1 |rev | cut -d- -f3 |tr _ - |rev)
   KVER=$(ls --indicator-style=none ${LIVE_ROOTDIR}/lib/modules/ |grep -v smp |head -1)
@@ -2123,10 +2128,15 @@ if [ "$NFSROOTSUP" = "YES" ]; then
     cleanup
     exit 1
   fi
+
   # We need to extract the full kernel-modules package for deps resolving:
-  tar -C ${KMODS_TEMP} -xf ${KMODS_PKG}
+  echo "KMODS_PKG: $KMODS_PKG"
+  echo "KGEN: $KGEN"
+  #tar -C ${KMODS_TEMP} -xf ${KMODS_PKG}  #XXX use installed kernel modules, not unpacking.
   # Get the kernel modules:
-  cd ${KMODS_TEMP}
+  echo "Get the kernel modules:"
+  #cd ${KMODS_TEMP}
+  cd /
     cp -a --parents lib/modules/${KVER}/${NETMODS} \
       ${LIVE_ROOTDIR}/boot/initrd-tree/
   cd - 1>/dev/null
