@@ -51,7 +51,7 @@ if [ -f ${CONFFILE} ]; then
 fi
 
 # Set to "YES" to send error output to the console:
-DEBUG=${DEBUG:-"NO"}
+DEBUG=${DEBUG:-"YES"}
 
 # Set to "YES" in order to delete everything we have,
 # and rebuild any pre-existing .sxz modules from scratch:
@@ -71,7 +71,7 @@ EFI32=${EFI32:-"NO"}
 SMP32=${SMP32:-"NO"}
 
 # Include support for NFS root (PXE boot), will increase size of the initrd:
-NFSROOTSUP=${NFSROOTSUP:-"YES"}
+NFSROOTSUP=${NFSROOTSUP:-"NO"}
 
 # Use xorriso instead of mkisofs/isohybrid to create the ISO:
 USEXORR=${USEXORR:-"NO"}
@@ -2115,6 +2115,7 @@ tar -C ${LIVE_ROOTDIR}/boot/initrd-tree/ -xf ${DHCPD_PKG} \
   var/lib/dhcpcd lib/dhcpcd sbin/dhcpcd usr/lib${DIRSUFFIX}/dhcpcd \
   etc/dhcpcd.conf.new
 mv ${LIVE_ROOTDIR}/boot/initrd-tree/etc/dhcpcd.conf{.new,}
+
 if [ "$NFSROOTSUP" = "YES" ]; then
   # Add just the right kernel network modules by pruning unneeded stuff:
   if [ "$SL_ARCH" = "x86_64" -o "$SMP32" = "NO" ]; then
@@ -2130,13 +2131,10 @@ if [ "$NFSROOTSUP" = "YES" ]; then
   fi
 
   # We need to extract the full kernel-modules package for deps resolving:
-  echo "KMODS_PKG: $KMODS_PKG"
-  echo "KGEN: $KGEN"
-  #tar -C ${KMODS_TEMP} -xf ${KMODS_PKG}  #XXX use installed kernel modules, not unpacking.
+  tar -C ${KMODS_TEMP} -xf ${KMODS_PKG}
   # Get the kernel modules:
   echo "Get the kernel modules:"
-  #cd ${KMODS_TEMP}
-  cd /
+  cd ${KMODS_TEMP}
     cp -a --parents lib/modules/${KVER}/${NETMODS} \
       ${LIVE_ROOTDIR}/boot/initrd-tree/
   cd - 1>/dev/null
