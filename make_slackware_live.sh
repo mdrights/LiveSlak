@@ -1226,7 +1226,7 @@ for SPS in ${SL_SERIES} ; do
     if [ "$SPS" = "a" -o "$SPS" = "${MINLIST}" ]; then
 
       # We need to take care of a few things first:  #XXX if kernel not specified.
-	if [ -z "$KVER" ]; then
+#if [ -z "$KVER" ]; then
       if [ "$SL_ARCH" = "x86_64" -o "$SMP32" = "NO" ]; then
         KGEN=$(ls --indicator-style=none ${INSTDIR}/var/log/packages/kernel*modules* |grep -v smp |head -1 |rev | cut -d- -f3 |tr _ - |rev)
         KVER=$(ls --indicator-style=none ${INSTDIR}/lib/modules/ |grep -v smp |head -1)
@@ -1234,7 +1234,7 @@ for SPS in ${SL_SERIES} ; do
         KGEN=$(ls --indicator-style=none ${INSTDIR}/var/log/packages/kernel*modules* |grep smp |head -1 |rev | cut -d- -f3 |tr _ - |rev)
         KVER=$(ls --indicator-style=none ${INSTDIR}/lib/modules/ |grep smp |head -1)
       fi
-	fi
+#	fi
 
       if [ -z "$KVER" ]; then
         echo "-- Could not find installed kernel $KVER in '${INSTDIR}'! Exiting."
@@ -1297,7 +1297,7 @@ umount ${LIVE_ROOTDIR} 2>${DBGOUT} || true
 mount -t overlay -o lowerdir=${RODIRS},upperdir=${INSTDIR},workdir=${LIVE_OVLDIR} overlay ${LIVE_ROOTDIR}
 
 # Determine the kernel version in the Live OS:  #XXX
-if [ -z "$KVER" ];then
+#if [ -z "$KVER" ];then
 if [ "$SL_ARCH" = "x86_64" -o "$SMP32" = "NO" ]; then
   KGEN=$(ls --indicator-style=none ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |grep -v smp |head -1 |rev | cut -d- -f3 |tr _ - |rev)
   KVER=$(ls --indicator-style=none ${LIVE_ROOTDIR}/lib/modules/ |grep -v smp |head -1)
@@ -1305,7 +1305,7 @@ else
   KGEN=$(ls --indicator-style=none ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |grep smp |head -1 |rev | cut -d- -f3 |tr _ - |rev)
   KVER=$(ls --indicator-style=none ${LIVE_ROOTDIR}/lib/modules/ |grep smp |head -1)
 fi
-fi
+#fi
 
 # Configure hostname and network:
 echo "${LIVE_HOSTNAME}.example.net" > ${LIVE_ROOTDIR}/etc/HOSTNAME
@@ -2076,7 +2076,7 @@ mount --bind /sys ${LIVE_ROOTDIR}/sys
 mount --bind /dev ${LIVE_ROOTDIR}/dev
 
 # Determine the installed kernel version:
-if [ -z "$KVER" ]; then				#XXX can be set manually
+#if [ -z "$KVER" ]; then				#XXX can be set manually
 if [ "$SL_ARCH" = "x86_64" -o "$SMP32" = "NO" ]; then
   KGEN=$(ls --indicator-style=none ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |grep -v smp |head -1 |rev | cut -d- -f3 |tr _ - |rev)
   KVER=$(ls --indicator-style=none ${LIVE_ROOTDIR}/lib/modules/ |grep -v smp |head -1)
@@ -2084,7 +2084,7 @@ else
   KGEN=$(ls --indicator-style=none ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |grep smp |head -1 |rev | cut -d- -f3 |tr _ - |rev)
   KVER=$(ls --indicator-style=none ${LIVE_ROOTDIR}/lib/modules/ |grep smp |head -1)
 fi
-fi
+#fi
 
 # Create an initrd for the generic kernel, using a modified init script:
 echo "-- Creating initrd for kernel-generic $KVER ..."
