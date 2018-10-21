@@ -71,7 +71,7 @@ EFI32=${EFI32:-"NO"}
 SMP32=${SMP32:-"NO"}
 
 # Include support for NFS root (PXE boot), will increase size of the initrd:
-NFSROOTSUP=${NFSROOTSUP:-"NO"}
+NFSROOTSUP=${NFSROOTSUP:-"YES"}
 
 # Use xorriso instead of mkisofs/isohybrid to create the ISO:
 USEXORR=${USEXORR:-"NO"}

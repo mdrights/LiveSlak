@@ -67,7 +67,7 @@ wipe
 secure-delete
 keepassxc 
 veracrypt
-apparmor
+# apparmor
 
 ## 虚拟机客户端插件
 virtualbox-kernel-addons
