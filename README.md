@@ -1,18 +1,21 @@
 # LiveSlak
+构建我自己的 Live 发行版 （基于 Slackware）。
+
 
 > Forked from Alien Bob's powerful building script for Slackware Live. Credits to Alien !    
 > 本套脚本 forked 自 [Alien Bob 大牛](http://www.slackware.com/%7Ealien/liveslak/), git://bear.alienbase.nl/liveslak.git
 
 
-构建我自己的 Live 发行版 （基于 Slackware）。主要侧重：
-  - 中文化
+
+2018.04 主要集成功能：  
+  - 中文化(约80%)
   - 隐私加强
-    - 隐私保护和墙国特色信息/通讯自由相关的应用
+    - 隐私保护类和信息/通讯自由相关的应用
     - 系统加固（包括：防火墙、文件系统挂载限制、内核参数配置等……）
 	- 沙盒（firejail）
-	- 基于角色的访问控制（AppArmor）
+	- 基于角色的访问控制（AppArmor）(TODO)
 
-最后更新：2018.10.07     
+最后更新：2018.10.21     
 
 發佈頻道：		https://t.me/liveslak    
 
@@ -21,8 +24,8 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: 2018.03
-	- md5sum: fb36d3d8af1c620ee55faccef7bd6cc9
+	- Version: 2018.04.rc3
+	- md5sum: 7041ed3f5781ff1773908363ffcea1e7  
 
 
 <hr>
