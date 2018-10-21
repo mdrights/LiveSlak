@@ -5,9 +5,9 @@
 > Forked from Alien Bob's powerful building script for Slackware Live. Credits to Alien !    
 > 本套脚本 forked 自 [Alien Bob 大牛](http://www.slackware.com/%7Ealien/liveslak/), git://bear.alienbase.nl/liveslak.git
 
+![screenshot](https://github.com/mdrights/LiveSlak/blob/V1.3.0/Liveslak-screenshot.JPG)
 
-
-2018.04 主要集成功能：  
+2018.04 (代号：antiS) 主要集成功能：  
   - 中文化(约80%)
   - 隐私加强
     - 隐私保护类和信息/通讯自由相关的应用
