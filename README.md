@@ -5,9 +5,8 @@
 > Forked from Alien Bob's powerful building script for Slackware Live. Credits to Alien !    
 > 本套脚本 forked 自 [Alien Bob 大牛](http://www.slackware.com/%7Ealien/liveslak/), git://bear.alienbase.nl/liveslak.git
 
-![screenshot](https://github.com/mdrights/LiveSlak/blob/V1.3.0/Liveslak-screenshot.JPG)
 
-2018.04 (代号：antiS) 主要集成功能：  
+2019.01 (代号：antiS) 主要集成功能：  
   - 中文化(约80%)
   - 隐私加强
     - 隐私保护类和信息/通讯自由相关的应用
@@ -15,7 +14,7 @@
 	- 沙盒（firejail）
 	- 基于角色的访问控制（AppArmor）(TODO)
 
-最后更新：2018.10.21     
+最后更新：2019.01.01     
 
 發佈頻道：		https://t.me/liveslak    
 
@@ -24,9 +23,8 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: 2018.04.rc3
-	- md5sum: 7041ed3f5781ff1773908363ffcea1e7  
-
+	- Version: **2019.01.rc2**  
+	- md5sum: 3474c470c0b3d38bb8142e977ec6bfe6
 
 <hr>
 
@@ -36,6 +34,14 @@
 	- [LiveSlak 最终用户介绍](https://mdrights.github.io/os-observe/Liveslak-intro/)
 	- [《LiveSlak 用户手册》](https://github.com/mdrights/LiveSlak/blob/mdrights/LiveSlak-Users-Guide.md)
 	- [预装软件列表](https://github.com/mdrights/LiveSlak/blob/V1.3.0/pkglists/mdrights-xfce.lst)
+
+- 将 iso 文件装入USB盘：
+	1. 方法1：（在 Linux/macOS/×BSD）用dd 命令；
+	2. 使用本 repo 内的 `iso2usb.sh` 脚本安装，可以：
+		1. 系统安装到 USB 盘后所有更改都是永久的；
+		2. 可以选择加密用户家目录。例子（-o: USB盘，-c: 加密 home 目录的大小；-w: 启动时等待USB盘挂载的时间）：
+		
+			bash iso2usb.sh -i /home/Liveslak-antis-2019.01.rc1.iso -o /dev/sdb -c 25G -w 10
 
 
 ## Device Requirements
@@ -86,7 +92,7 @@ All rights reserved
 
 只要本版权声明和许可声明出现在所有版本的本软件中，本软件即可被允许以任何目的（有偿或无偿地）使用、复制、修改和分发。  
 
-    Permission to use, copy, modify, and distribute this software for
+#   Permission to use, copy, modify, and distribute this software for
 #   any purpose with or without fee is hereby granted, provided that
 #   the above copyright notice and this permission notice appear in all
 #   copies.
