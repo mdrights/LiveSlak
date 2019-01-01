@@ -1,8 +1,8 @@
 # Self-added app list. Feel free to add your favourite apps!
 
 ## Stick to my customized kernel:
-#kernel-generic
-#kernel-modules
+kernel-generic
+kernel-modules
 
 # Supplement some libs:
 gmtk
@@ -22,6 +22,10 @@ c-toxcore
 libfilteraudio
 check
 OpenAL
+Markups
+MarkupSafe
+Markdown
+Pygments
 
 ## 输入法
 libxkbcommon
@@ -34,7 +38,7 @@ fcitx-configtool
 
 ## 上网和一些工具（你懂的）
 shadowsocks-libev
-v2ray
+#v2ray
 firejail
 #firefox-hardened
 #icecat
@@ -44,7 +48,6 @@ macchiato
 tor
 tor-hardened
 tor-browser
-#tor-messenger
 torsocks
 privoxy
 proxychains
@@ -54,12 +57,14 @@ telegram
 riot-web
 uTox
 WireGuard
+brave
 
 
 ## 写写字
 libreoffice
 #libreoffice-langpack
 docx2txt
+ReText
 
 ## 保护菊花系列 - Protect-Your-Data-Goodies:
 testdisk
@@ -67,10 +72,10 @@ wipe
 secure-delete
 keepassxc 
 veracrypt
-# apparmor
+apparmor
 
 ## 虚拟机客户端插件
-virtualbox-kernel-addons
+#virtualbox-kernel-addons
 # For Qemu VM:
 #spice-protocol
 #xf86-video-qxl
@@ -78,6 +83,6 @@ virtualbox-kernel-addons
 ## RSS 新闻阅读器
 newsboat
 
-
 ## 字体（太大了暂不放入）
 #noto-cjk-font-ttf
+
