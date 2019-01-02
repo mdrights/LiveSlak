@@ -12,9 +12,9 @@
     - 隐私保护类和信息/通讯自由相关的应用
     - 系统加固（包括：防火墙、文件系统挂载限制、内核参数配置等……）
 	- 沙盒（firejail）
-	- 基于角色的访问控制（AppArmor）(TODO)
+	- 强制访问控制（AppArmor）
 
-最后更新：2019.01.01     
+最后更新：2019.01.02     
 
 發佈頻道：		https://t.me/liveslak    
 
@@ -23,8 +23,8 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2019.01.rc2**  
-	- md5sum: 3474c470c0b3d38bb8142e977ec6bfe6
+	- Version: **2019.01.rc3**  
+	- md5sum: 673649ff148abc3348bb7d5de3dd0f1f
 
 <hr>
 
@@ -40,8 +40,9 @@
 	2. 使用本 repo 内的 `iso2usb.sh` 脚本安装，可以：
 		1. 系统安装到 USB 盘后所有更改都是永久的；
 		2. 可以选择加密用户家目录。例子（-o: USB盘，-c: 加密 home 目录的大小；-w: 启动时等待USB盘挂载的时间）：
-		
-			bash iso2usb.sh -i /home/Liveslak-antis-2019.01.rc1.iso -o /dev/sdb -c 25G -w 10
+		```
+		bash iso2usb.sh -i /home/Liveslak-antis-2019.01.rc1.iso -o /dev/sdb -c 25G -w 10
+		```
 
 
 ## Device Requirements
