@@ -54,29 +54,35 @@
 
 **注：具体更新记录和我的更改见：[Changelog](https://github.com/mdrights/LiveSlak/blob/mdrights/Changelog)**
 
+
 ## Build
 
 **如果你也想自己制作 LiveSlak 系统**   
 
-可以参考这里的打包脚本制作Slackware安装包（打包方法见每个脚本里的README）：
+1. 你需要先下载 Slackware 的官方源（内有构建 Slackware 所有的包）：https://mirrors.slackware.com  
 
-- [Slackbuilds-nonprism](https://github.com/mdrights/Slackbuilds-nonprism) 
+2. 如果你需要用自己定制的内核，可以把重新编译好的内核包和内核模块包覆盖进上述下载的官方内核和模块包即可。通常官方内核和模块包在：`<your/path>/slackware64-current/slackware64/a`   记得 Liveslak 只采用 generic 内核包，因此你的定制内核包的名称要和官方源里的 generic 内核包相同。
 
-- 还有更多： [Slackwarecn-slackbuilds](https://github.com/slackwarecn-slackbuilds)
+3. 如果你有第三方软件需要加进 Liveslak，可以参考下面的打包脚本先制作 Slackware 安装包，然后把制作的包（tgz 或 txz）放置于一个目录下（比如 $HOME/liveslak），LiveSlak 构建时会导入这些软件包：
 
-把用以上打包脚本构建的包（tgz 或 txz）放置于同一个目录下（比如 $HOME/slackwareCN），LiveSlak 构建时会导入这些软件包。
+    - Liveslak 采用：[Slackbuilds-nonprism](https://github.com/mdrights/Slackbuilds-nonprism) 
+    - 还有这里： [Slackwarecn-slackbuilds](https://github.com/slackwarecn-slackbuilds)
+	- 还有 Slackbuilds（半官方脚本源）：[slackbuilds.org](https://slackbuilds.org)
 
     为了达到这个目的，请自行创建（或修改）本repo里的 xxx.conf & xxx.lst 配置文件（也可以用我的：mdrights{.conf, .lst}）   
-    其中 `SL_REPO` 变量要指向放置你的软件包的目录（比如 $HOME/slackwareCN）
+    其中 `SL_REPO` 变量要指向放置你的软件包的目录。
 
-其他修改/自定义的地方就是：`make_slackware_live.conf` 
-  - `SL_REPO` = 你的本地 Slackware （官方）仓库地址
-  - `LIVEDE`  = 给它起个名字吧
+4. 其他修改/自定义的地方就是：`make_slackware_live.conf` 
+        - `SL_REPO` = 你的本地 Slackware （官方）仓库地址
+        - `LIVEDE`  = 给它起个名字吧
+
+5. 运行构建脚本(如我的)：
+	`./make_slackware_live.sh -R 3 -l zh_cn -v`  
 
 
 ## Acknowledgement
 
-- 非常感謝 TG上的 Aaron Nexus 給予的測試;-)  Thanks a million for Aaron Nexus (on Telegram) for tireless testing :)
+- 非常感謝 Aaron Nexus @Telegram 給予的測試;-) 
 
 <hr>
 构建脚本的详细介绍和使用方法请见 Alien的 [README.txt](https://github.com/mdrights/LiveSlak/blob/mdrights/README.txt)   
@@ -86,7 +92,8 @@
 **([姊妹 live 隱私增強操作系統：antiG](https://github.com/mdrights/antiG))**
 
 
-==============================================================================   
+<hr>
+```
 Copyright 2014 - 2017 Eric Hameleers, Eindhoven, NL  
 Copyright 2017 - 2018 MDrights (mdrights at tutanota dot de)  
 All rights reserved  
@@ -110,5 +117,6 @@ All rights reserved
 #   OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
 #   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 #   SUCH DAMAGE.
-# -----------------------------------------------------------------------------
+# 
+```
 
