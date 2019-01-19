@@ -72,9 +72,9 @@
     为了达到这个目的，请自行创建（或修改）本repo里的 xxx.conf & xxx.lst 配置文件（也可以用我的：mdrights{.conf, .lst}）   
     其中 `SL_REPO` 变量要指向放置你的软件包的目录。
 
-4. 其他修改/自定义的地方就是：`make_slackware_live.conf` 
-        - `SL_REPO` = 你的本地 Slackware （官方）仓库地址
-        - `LIVEDE`  = 给它起个名字吧
+4. 其他修改/自定义的地方就是：`make_slackware_live.conf`   
+        - `SL_REPO` = 你的本地 Slackware （官方）仓库地址  
+        - `LIVEDE`  = 给它起个名字吧  
 
 5. 运行构建脚本(如我的)：
 	`./make_slackware_live.sh -R 3 -l zh_cn -v`  
@@ -91,32 +91,31 @@
 
 **([姊妹 live 隱私增強操作系統：antiG](https://github.com/mdrights/antiG))**
 
-
+<br />
 <hr>
-```
+<br />
 Copyright 2014 - 2017 Eric Hameleers, Eindhoven, NL  
 Copyright 2017 - 2018 MDrights (mdrights at tutanota dot de)  
 All rights reserved  
 
 只要本版权声明和许可声明出现在所有版本的本软件中，本软件即可被允许以任何目的（有偿或无偿地）使用、复制、修改和分发。  
 
-#   Permission to use, copy, modify, and distribute this software for
-#   any purpose with or without fee is hereby granted, provided that
-#   the above copyright notice and this permission notice appear in all
-#   copies.
-#
-#   THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-#   WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-#   MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-#   IN NO EVENT SHALL THE AUTHORS AND COPYRIGHT HOLDERS AND THEIR
-#   CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-#   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-#   LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-#   USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-#   ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-#   OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-#   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-#   SUCH DAMAGE.
-# 
-```
+   Permission to use, copy, modify, and distribute this software for
+   any purpose with or without fee is hereby granted, provided that
+   the above copyright notice and this permission notice appear in all
+   copies.
+
+   THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+   WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+   MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+   IN NO EVENT SHALL THE AUTHORS AND COPYRIGHT HOLDERS AND THEIR
+   CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+   LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+   USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+   ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+   OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+   SUCH DAMAGE.
+ 
 
