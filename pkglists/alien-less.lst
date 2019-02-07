@@ -1,7 +1,7 @@
 # Showcases for using with Slackware Live:
 ## Only install on the flavors other than XFCE.
-NetworkManager-openconnect
-NetworkManager-openvpn
+#NetworkManager-openconnect
+#NetworkManager-openvpn
 #calibre
 #chromium
 #chromium-pepperflash-plugin
@@ -12,25 +12,25 @@ NetworkManager-openvpn
 #gcc5
 #gecko-mediaplayer
 #gnome-mplayer  (only available in gtk+ env)
-gst-plugins-ffmpeg0
-gst-plugins-libav
+#gst-plugins-ffmpeg0
+#gst-plugins-libav
 #keepassx  (don't install since I make my own)
 #libreoffice
 #libreoffice-dict-en
-libreoffice-l10n-zh_CN
-libstatgrab
+#libreoffice-l10n-zh_CN
+#libstatgrab
 #libtinfo
 #nodejs
-openconnect
-openjdk
+#openconnect
 #oxygen-gtk2
-p7zip
+#p7zip
 #palemoon
-python-twisted
+#python-twisted
 #sshfs-fuse
-unrar
 #veracrypt	# I had already built it.
+#unrar
 vlc
+openjdk
 
 # LXQT deps:
 # If you are making a standalone LXQT Live ISO, then please note that LXQT
