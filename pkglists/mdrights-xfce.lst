@@ -3,9 +3,20 @@
 ## Stick to my customized kernel:
 
 # Supplement some libs:
+libinput
+libxkbcommon
+graphviz 
+meson
+pyudev
+python-evdev
+libwacom
+extra-cmake-modules
 gmtk
 libpaper
 qt5
+qt5-webkit
+python3-sip
+python3-PyQt5
 argon2
 udns
 mbedtls
@@ -29,14 +40,16 @@ MarkupSafe
 Markdown
 Pygments
 pysha3
+python3-pycrypto
+Flask
+PySocks
+stem
 libdaemon
 avahi
 google-go-lang
 w3m
 
 ## 输入法
-libxkbcommon
-extra-cmake-modules
 opencc
 fcitx-libpinyin
 libpinyin
@@ -51,22 +64,26 @@ firejail
 #icecat
 #icecat-hardened
 NetworkManager-nonprism
-macchiato
+macchanger
 tor
 tor-hardened
 tor-browser
 torsocks
 privoxy
 proxychains
-jitsi
+#jitsi
 signal-desktop
 telegram
 riot-web
 uTox
 WireGuard
-brave
+brave-browser
 onionshare
+go-ipfs
+
+## 这些不是开源的但比较流行，请自主选择
 slack
+zoom-linux
 
 
 ## 写写字
@@ -82,7 +99,7 @@ freerdp
 testdisk
 wipe
 secure-delete
-keepassxc 
+#keepassxc 
 veracrypt
 apparmor
 
