@@ -304,8 +304,8 @@ cleanup() {
 
   rmdir ${LIVE_ROOTDIR} 2>${DBGOUT}
   rmdir ${LIVE_WORK}/*_$$ 2>${DBGOUT}
-  rm ${LIVE_MOD_OPT}/* 2>${DBGOUT} || true
-  rm ${LIVE_MOD_ADD}/* 2>${DBGOUT} || true
+  #rm ${LIVE_MOD_OPT}/* 2>${DBGOUT} || true
+  #rm ${LIVE_MOD_ADD}/* 2>${DBGOUT} || true
 }
 trap 'echo "*** $0 FAILED at line $LINENO ***"; cleanup; exit 1' ERR INT TERM
 
@@ -490,7 +490,7 @@ function install_pkgs() {
   fi
 
   #if [ "$LIVEDE" = "XFCE"  ]; then
-  if [ ! -z "$LIVEDE" ]; then		#XXX
+  if [ ! -z "$LIVEDE" ]; then
     # By pruning stuff that no one likely needs anyway,
     # we make room for packages we would otherwise not be able to add.
     # MySQL embedded is only used by Amarok:
@@ -1225,7 +1225,7 @@ for SPS in ${SL_SERIES} ; do
 
     if [ "$SPS" = "a" -o "$SPS" = "${MINLIST}" ]; then
 
-      # We need to take care of a few things first:  #XXX if kernel not specified.
+      # We need to take care of a few things first: 
 #if [ -z "$KVER" ]; then
       if [ "$SL_ARCH" = "x86_64" -o "$SMP32" = "NO" ]; then
         KGEN=$(ls --indicator-style=none ${INSTDIR}/var/log/packages/kernel*modules* |grep -v smp |head -1 |rev | cut -d- -f3 |tr _ - |rev)
@@ -1296,7 +1296,7 @@ echo "-- Configuring the base system."
 umount ${LIVE_ROOTDIR} 2>${DBGOUT} || true
 mount -t overlay -o lowerdir=${RODIRS},upperdir=${INSTDIR},workdir=${LIVE_OVLDIR} overlay ${LIVE_ROOTDIR}
 
-# Determine the kernel version in the Live OS:  #XXX
+# Determine the kernel version in the Live OS:
 #if [ -z "$KVER" ];then
 if [ "$SL_ARCH" = "x86_64" -o "$SMP32" = "NO" ]; then
   KGEN=$(ls --indicator-style=none ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |grep -v smp |head -1 |rev | cut -d- -f3 |tr _ - |rev)
@@ -1308,17 +1308,17 @@ fi
 #fi
 
 # Configure hostname and network:
-echo "${LIVE_HOSTNAME}.example.net" > ${LIVE_ROOTDIR}/etc/HOSTNAME
+echo "${LIVE_HOSTNAME}" > ${LIVE_ROOTDIR}/etc/HOSTNAME
 if [ -f ${LIVE_ROOTDIR}/etc/NetworkManager/NetworkManager.conf ]; then
   sed -i -e "s/^hostname=.*/hostname=${LIVE_HOSTNAME}/" \
     ${LIVE_ROOTDIR}/etc/NetworkManager/NetworkManager.conf
 fi
-sed -e "s/^\(127.0.0.1\t*\)darkstar.*/\1${LIVE_HOSTNAME}.example.net ${LIVE_HOSTNAME}/" \
+sed -e "s/^\(127.0.0.1\t*\)darkstar.*/\1${LIVE_HOSTNAME} ${LIVE_HOSTNAME}/" \
   -i ${LIVE_ROOTDIR}/etc/hosts
 
 # Make sure we can access DNS straight away:
 cat <<EOT >> ${LIVE_ROOTDIR}/etc/resolv.conf
-nameserver 8.8.4.4
+nameserver 1.1.1.1
 nameserver 8.8.8.8
 
 EOT
@@ -1430,7 +1430,7 @@ EOL
 echo "root:${ROOTPW}" | chroot ${LIVE_ROOTDIR} /usr/sbin/chpasswd
 
 # Create a nonprivileged user account (called "live" by default):
-chroot ${LIVE_ROOTDIR} /usr/sbin/useradd -c "Slackware Live User" -g users -G wheel,audio,cdrom,floppy,plugdev,video,power,netdev,lp,scanner,kmem,dialout,games,disk,input -u 1000 -d /home/${LIVEUID} -m -s /bin/bash ${LIVEUID}
+chroot ${LIVE_ROOTDIR} /usr/sbin/useradd -c "antiS 2019.02" -g users -G wheel,audio,cdrom,floppy,plugdev,video,power,netdev,lp,scanner,kmem,dialout,games,disk,input -u 1000 -d /home/${LIVEUID} -m -s /bin/bash ${LIVEUID}
 echo "${LIVEUID}:${LIVEPW}" | chroot ${LIVE_ROOTDIR} /usr/sbin/chpasswd
 
 # Configure suauth:
@@ -1452,13 +1452,13 @@ http://ftp.osuosl.org/.2/slackware/slackware${DIRSUFFIX}-${SL_VERSION}/
 EOT
 
 ## Blacklist the l10n packages;
-#cat << EOT >> ${LIVE_ROOTDIR}/etc/slackpkg/blacklist
-#
-## Blacklist the l10n packages;
-#calligra-l10n-
-#kde-l10n-
-#
-#EOT
+cat << EOT >> ${LIVE_ROOTDIR}/etc/slackpkg/blacklist
+
+# Blacklist the l10n packages;
+calligra-l10n-
+kde-l10n-
+
+EOT
 
 # If we added slackpkg+ for easier system management, let's configure it too.
 # Update the cache for slackpkg:
@@ -1569,7 +1569,7 @@ chmod 755 ${LIVE_ROOTDIR}/usr/local/sbin/pxeserver
 
 # Only when we find a huge kernel, we will add a harddisk installer
 # to the ISO.  The huge kernel does not require an initrd and installation
-# to the hard drive will not be complicated. #XXX add the installer anyway.
+# to the hard drive will not be complicated.  add the installer anyway.
 # if ls ${LIVE_ROOTDIR}/boot/vmlinuz-huge-* 1>/dev/null 2>/dev/null; then
  if [ -f ${DEF_SL_PKGROOT}/../isolinux/initrd.img ]; then
   # Extract the 'setup' files we need from the Slackware installer
@@ -1671,13 +1671,13 @@ chmod 755 ${LIVE_ROOTDIR}/usr/local/sbin/pxeserver
 # fi
 
 # Add the documentation:
-mkdir -p  ${LIVE_ROOTDIR}/usr/doc/liveslak-${VERSION}
-install -m0644 ${LIVE_TOOLDIR}/README* ${LIVE_ROOTDIR}/usr/doc/liveslak-${VERSION}/
-mkdir -p  ${LIVE_ROOTDIR}/usr/doc/${DISTRO}${DIRSUFFIX}-${SL_VERSION}
-install -m0644 \
-  ${DEF_SL_PKGROOT}/../{CHANGES_AND_HINTS,COPY,README,RELEASE_NOTES,*HOWTO}* \
-  ${DEF_SL_PKGROOT}/../usb-and-pxe-installers/README* \
-  ${LIVE_ROOTDIR}/usr/doc/${DISTRO}${DIRSUFFIX}-${SL_VERSION}/
+#mkdir -p  ${LIVE_ROOTDIR}/usr/doc/liveslak-${VERSION}
+#install -m0644 ${LIVE_TOOLDIR}/README* ${LIVE_ROOTDIR}/usr/doc/liveslak-${VERSION}/
+#mkdir -p  ${LIVE_ROOTDIR}/usr/doc/${DISTRO}${DIRSUFFIX}-${SL_VERSION}
+#install -m0644 \
+#  ${DEF_SL_PKGROOT}/../{CHANGES_AND_HINTS,COPY,README,RELEASE_NOTES,*HOWTO}* \
+#  ${DEF_SL_PKGROOT}/../usb-and-pxe-installers/README* \
+#  ${LIVE_ROOTDIR}/usr/doc/${DISTRO}${DIRSUFFIX}-${SL_VERSION}/
 
 # -------------------------------------------------------------------------- #
 echo "-- Configuring the X base system."
@@ -1741,7 +1741,7 @@ for SKEL in ${LIVE_TOOLDIR}/skel/skel*.txz ; do
   tar -xf ${SKEL} -C ${LIVE_ROOTDIR}/etc/skel/
 done
 
-#XXX Remove thost LIVEDE I dont use.
+# Remove those LIVEDE I dont use.
 
 # You can define the function 'custom_config()' by uncommenting it in
 # the configuration file 'make_slackware_live.conf'.
@@ -1767,6 +1767,7 @@ cd ${LIVE_ROOTDIR}/etc/skel/
   find ${LIVE_ROOTDIR}/home/${LIVEUID}/ -type f -exec sed -i -e "s,/home/live,/home/${LIVEUID}," "{}" \;
 cd - 1>/dev/null
 
+# "-- Importing CACert root certificates into OS and browsers."
 if [ "${ADD_CACERT}" = "YES" -o "${ADD_CACERT}" = "yes" ]; then
   echo "-- Importing CACert root certificates into OS and browsers."
   # Import CACert root certificates into the OS:
@@ -1793,31 +1794,56 @@ Path=${LIVEUID}_profile.default
 Default=1
 EOT
 
-  # Create Mozilla Seamonkey profile:
-  mkdir -p ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/seamonkey/${LIVEUID}_profile.default
-  cat << EOT > ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/seamonkey/profiles.ini
-[General]
-StartWithLastProfile=1
+  # Create user.js for Firefox:
+  cat << EOT > ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/firefox/${LIVEUID}_profile.default/user.js
+user_pref("browser.privatebrowsing.autostart", true);
+user_pref("network.cookie.cookieBahavior", 2);
+user_pref("network.cookie.lifetimePolicy", 2);
+user_pref("network.cookie.prefsMigrated", true);
+user_pref("network.cookie.thirdparty.sessionOnly",true)
+user_pref("network.predictor.cleaned-up", true);
+user_pref("network.proxy.no_proxies_on", "localhost, 127.0.0.1");
+user_pref("network.proxy.socks", "127.0.0.1");
+user_pref("network.proxy.socks_port", 1080);
+user_pref("network.proxy.socks_remote_dns", true);
+user_pref("network.proxy.type", 1);
+user_pref("privacy.donottrackheader.enabled", true);
+user_pref("privacy.history.custom", true);
+user_pref("privacy.sanitize.pending", "[]");
+user_pref("privacy.sanitize.timeSpan", 0);
+user_pref("privacy.trackingprotection.enabled", true);
+user_pref("privacy.trackingprotection.introCount", 20);
 
-[Profile0]
-Name=default
-IsRelative=1
-Path=${LIVEUID}_profile.default
-Default=1
+user_pref("noscript.secureCookies", true);
+user_pref("noscript.secureCookies.perTab", true);
+user_pref("noscript.secureCookies.recycle", true);
 EOT
 
-  # Create Pale Moon profile:
-  mkdir -p ${LIVE_ROOTDIR}/home/${LIVEUID}/.moonchild\ productions/pale\ moon/${LIVEUID}_profile.default
-    cat << EOT > ${LIVE_ROOTDIR}/home/${LIVEUID}/.moonchild\ productions/pale\ moon/profiles.ini
-[General]
-StartWithLastProfile=1
-
-[Profile0]
-Name=default
-IsRelative=1
-Path=${LIVEUID}_profile.default
-Default=1
-EOT
+#  # Create Mozilla Seamonkey profile: #XXX
+#  mkdir -p ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/seamonkey/${LIVEUID}_profile.default
+#  cat << EOT > ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/seamonkey/profiles.ini
+#[General]
+#StartWithLastProfile=1
+#
+#[Profile0]
+#Name=default
+#IsRelative=1
+#Path=${LIVEUID}_profile.default
+#Default=1
+#EOT
+#
+#  # Create Pale Moon profile:
+#  mkdir -p ${LIVE_ROOTDIR}/home/${LIVEUID}/.moonchild\ productions/pale\ moon/${LIVEUID}_profile.default
+#    cat << EOT > ${LIVE_ROOTDIR}/home/${LIVEUID}/.moonchild\ productions/pale\ moon/profiles.ini
+#[General]
+#StartWithLastProfile=1
+#
+#[Profile0]
+#Name=default
+#IsRelative=1
+#Path=${LIVEUID}_profile.default
+#Default=1
+#EOT
 
   # Import CACert root certificates into the browsers:
   (
@@ -1827,23 +1853,23 @@ EOT
       -A -t TC -n "CAcert.org" -i ${LIVE_ROOTDIR}/etc/ssl/certs/cacert-root.crt
     certutil -d ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/firefox/${LIVEUID}_profile.default \
       -A -t TC -n "CAcert.org Class 3" -i ${LIVE_ROOTDIR}/etc/ssl/certs/cacert-class3.crt
-    # Seamonkey and Pale Moon (can just be a copy of the Firefox files):
-    cp -a \
-      ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/firefox/${LIVEUID}_profile.default/* \
-      ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/seamonkey/${LIVEUID}_profile.default/
-    cp -a \
-      ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/firefox/${LIVEUID}_profile.default/* \
-      ${LIVE_ROOTDIR}/home/${LIVEUID}/.moonchild\ productions/pale\ moon/${LIVEUID}_profile.default/
-    # NSS databases for Chrome based browsers have a different format (sql)
-    # than Mozilla based browsers:
-    mkdir -p ${LIVE_ROOTDIR}/home/${LIVEUID}/.pki/nssdb
-    certutil -N --empty-password -d ${LIVE_ROOTDIR}/home/${LIVEUID}/.pki/nssdb
-    certutil -d sql:${LIVE_ROOTDIR}/home/${LIVEUID}/.pki/nssdb \
-      -A -t TC -n "CAcert.org" -i ${LIVE_ROOTDIR}/etc/ssl/certs/cacert-root.crt
-    certutil -d sql:${LIVE_ROOTDIR}/home/${LIVEUID}/.pki/nssdb \
-      -A -t TC -n "CAcert.org Class 3" -i ${LIVE_ROOTDIR}/etc/ssl/certs/cacert-class3.crt
+#    # Seamonkey and Pale Moon (can just be a copy of the Firefox files):
+#    cp -a \
+#      ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/firefox/${LIVEUID}_profile.default/* \
+#      ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/seamonkey/${LIVEUID}_profile.default/
+#    cp -a \
+#      ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/firefox/${LIVEUID}_profile.default/* \
+#      ${LIVE_ROOTDIR}/home/${LIVEUID}/.moonchild\ productions/pale\ moon/${LIVEUID}_profile.default/
+#    # NSS databases for Chrome based browsers have a different format (sql)
+#    # than Mozilla based browsers:
+#    mkdir -p ${LIVE_ROOTDIR}/home/${LIVEUID}/.pki/nssdb
+#    certutil -N --empty-password -d ${LIVE_ROOTDIR}/home/${LIVEUID}/.pki/nssdb
+#    certutil -d sql:${LIVE_ROOTDIR}/home/${LIVEUID}/.pki/nssdb \
+#      -A -t TC -n "CAcert.org" -i ${LIVE_ROOTDIR}/etc/ssl/certs/cacert-root.crt
+#    certutil -d sql:${LIVE_ROOTDIR}/home/${LIVEUID}/.pki/nssdb \
+#      -A -t TC -n "CAcert.org Class 3" -i ${LIVE_ROOTDIR}/etc/ssl/certs/cacert-class3.crt
   )
-  # TODO: find out how to configure KDE with additional Root CA's.
+  #  find out how to configure KDE with additional Root CA's.
 fi # End ADD_CACERT
 
 # Make sure that user 'live' owns her own files:
@@ -1885,7 +1911,7 @@ sed -i ${LIVE_ROOTDIR}/etc/inittab -e "s/\(id:\).\(:initdefault:\)/\1${RUNLEVEL}
 [ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.cups-browsed ] && chmod -x ${LIVE_ROOTDIR}/etc/rc.d/rc.cups-browsed
 [ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.bluetooth ] && chmod -x ${LIVE_ROOTDIR}/etc/rc.d/rc.bluetooth
 
-# But enable my firewall #XXX
+# But enable my firewall 
 [ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.firewall ] && chmod +x ${LIVE_ROOTDIR}/etc/rc.d/rc.firewall
 
 # Add a softvol pre-amp to ALSA - some computers have too low volumes.
@@ -1988,44 +2014,44 @@ if [ -d usr/share/icons ]; then
 fi
 EOCR
 
-# Disable above commands in rc.M and rc.modules:
-sed -e "s% /usr/bin/update.*verbose%#&%" -i ${LIVE_ROOTDIR}/etc/rc.d/rc.M 
+# Disable above commands in rc.M and rc.modules:  #XXX
+#sed -e "s% /usr/bin/update.*verbose%#&%" -i ${LIVE_ROOTDIR}/etc/rc.d/rc.M 
 sed -e '/^ *\/usr\/bin\/glib-c/ s, /usr/bin/glib-c,#&,' -i ${LIVE_ROOTDIR}/etc/rc.d/rc.M
 sed -e "s% /sbin/depmod -%#&%" -i ${LIVE_ROOTDIR}/etc/rc.d/rc.modules 
 
 # If we detect a NVIDIA driver, then run the nvidia install routine:
-cat <<EOT >> ${LIVE_ROOTDIR}/etc/rc.d/rc.local
-
-# Deal with the presence of NVIDIA drivers:
-if [ -x /usr/sbin/nvidia-switch ]; then
-  if [ -f /usr/lib${DIRSUFFIX}/xorg/modules/extensions/libglx.so.*-nvidia -a -f /usr/lib${DIRSUFFIX}/xorg/modules/drivers/nvidia_drv.so ]; then
-    echo "-- Installing binary Nvidia drivers:  /usr/sbin/nvidia-switch --install"
-    /usr/sbin/nvidia-switch --install
-  fi
-  # For CUDA/OpenCL to work after reboot, create missing nvidia device nodes:
-  /usr/bin/nvidia-modprobe -c 0 -u
-else
-  # Take care of a reboot where nvidia drivers disappeared
-  # afer being used earlier, by restoring the original libraries:
-  if ls /usr/lib${DIRSUFFIX}/xorg/modules/extensions/libglx.so-xorg 1>/dev/null 2>/dev/null ; then
-    mv /usr/lib${DIRSUFFIX}/xorg/modules/extensions/libglx.so{-xorg,} 2>/dev/null
-    mv /usr/lib${DIRSUFFIX}/xorg/modules/extensions/libglx.la{-xorg,} 2>/dev/null
-  fi
-  if ls /usr/lib${DIRSUFFIX}/libGL.so.*-xorg 1>/dev/null 2>/dev/null ; then
-    LIBGL=\$(ls -1 /usr/lib${DIRSUFFIX}/libGL.so.*-xorg |rev |cut -d/ -f1 |cut -d- -f2- |rev)
-    mv /usr/lib${DIRSUFFIX}/\${LIBGL}-xorg /usr/lib${DIRSUFFIX}/\${LIBGL} 2>/dev/null
-    ln -sf \${LIBGL} /usr/lib${DIRSUFFIX}/libGL.so.1 2>/dev/null
-    ln -sf \${LIBGL} /usr/lib${DIRSUFFIX}/libGL.so 2>/dev/null
-    mv /usr/lib${DIRSUFFIX}/libGL.la-xorg /usr/lib${DIRSUFFIX}/libGL.la 2>/dev/null
-  fi
-  if ls /usr/lib${DIRSUFFIX}/libEGL.so.*-xorg 1>/dev/null 2>/dev/null   ; then
-    LIBEGL=\$(ls -1 /usr/lib${DIRSUFFIX}/libEGL.so.*-xorg |rev |cut -d/ -f1 |cut -d- -f2- |rev)
-    mv /usr/lib${DIRSUFFIX}/\${LIBEGL}-xorg /usr/lib${DIRSUFFIX}/\${LIBEGL} 2>/dev/null
-    ln -sf \${LIBEGL} /usr/lib${DIRSUFFIX}/libEGL.so.1 2>/dev/null
-    ln -sf \${LIBEGL} /usr/lib${DIRSUFFIX}/libEGL.so 2>/dev/null
-  fi
-fi
-EOT
+#cat <<EOT >> ${LIVE_ROOTDIR}/etc/rc.d/rc.local
+#
+## Deal with the presence of NVIDIA drivers:
+#if [ -x /usr/sbin/nvidia-switch ]; then
+#  if [ -f /usr/lib${DIRSUFFIX}/xorg/modules/extensions/libglx.so.*-nvidia -a -f /usr/lib${DIRSUFFIX}/xorg/modules/drivers/nvidia_drv.so ]; then
+#    echo "-- Installing binary Nvidia drivers:  /usr/sbin/nvidia-switch --install"
+#    /usr/sbin/nvidia-switch --install
+#  fi
+#  # For CUDA/OpenCL to work after reboot, create missing nvidia device nodes:
+#  /usr/bin/nvidia-modprobe -c 0 -u
+#else
+#  # Take care of a reboot where nvidia drivers disappeared
+#  # afer being used earlier, by restoring the original libraries:
+#  if ls /usr/lib${DIRSUFFIX}/xorg/modules/extensions/libglx.so-xorg 1>/dev/null 2>/dev/null ; then
+#    mv /usr/lib${DIRSUFFIX}/xorg/modules/extensions/libglx.so{-xorg,} 2>/dev/null
+#    mv /usr/lib${DIRSUFFIX}/xorg/modules/extensions/libglx.la{-xorg,} 2>/dev/null
+#  fi
+#  if ls /usr/lib${DIRSUFFIX}/libGL.so.*-xorg 1>/dev/null 2>/dev/null ; then
+#    LIBGL=\$(ls -1 /usr/lib${DIRSUFFIX}/libGL.so.*-xorg |rev |cut -d/ -f1 |cut -d- -f2- |rev)
+#    mv /usr/lib${DIRSUFFIX}/\${LIBGL}-xorg /usr/lib${DIRSUFFIX}/\${LIBGL} 2>/dev/null
+#    ln -sf \${LIBGL} /usr/lib${DIRSUFFIX}/libGL.so.1 2>/dev/null
+#    ln -sf \${LIBGL} /usr/lib${DIRSUFFIX}/libGL.so 2>/dev/null
+#    mv /usr/lib${DIRSUFFIX}/libGL.la-xorg /usr/lib${DIRSUFFIX}/libGL.la 2>/dev/null
+#  fi
+#  if ls /usr/lib${DIRSUFFIX}/libEGL.so.*-xorg 1>/dev/null 2>/dev/null   ; then
+#    LIBEGL=\$(ls -1 /usr/lib${DIRSUFFIX}/libEGL.so.*-xorg |rev |cut -d/ -f1 |cut -d- -f2- |rev)
+#    mv /usr/lib${DIRSUFFIX}/\${LIBEGL}-xorg /usr/lib${DIRSUFFIX}/\${LIBEGL} 2>/dev/null
+#    ln -sf \${LIBEGL} /usr/lib${DIRSUFFIX}/libEGL.so.1 2>/dev/null
+#    ln -sf \${LIBEGL} /usr/lib${DIRSUFFIX}/libEGL.so 2>/dev/null
+#  fi
+#fi
+#EOT
 
 # Clean out the unneeded stuff:
 # Note: this will fail when a directory is encountered. This failure points
@@ -2076,7 +2102,7 @@ mount --bind /sys ${LIVE_ROOTDIR}/sys
 mount --bind /dev ${LIVE_ROOTDIR}/dev
 
 # Determine the installed kernel version:
-#if [ -z "$KVER" ]; then				#XXX can be set manually
+#if [ -z "$KVER" ]; then
 if [ "$SL_ARCH" = "x86_64" -o "$SMP32" = "NO" ]; then
   KGEN=$(ls --indicator-style=none ${LIVE_ROOTDIR}/var/log/packages/kernel*modules* |grep -v smp |head -1 |rev | cut -d- -f3 |tr _ - |rev)
   KVER=$(ls --indicator-style=none ${LIVE_ROOTDIR}/lib/modules/ |grep -v smp |head -1)

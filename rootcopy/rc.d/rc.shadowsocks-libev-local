@@ -1,12 +1,12 @@
 #!/bin/sh
 ### BEGIN INIT INFO
-# Provides:          shadowsocks-libev
+# Provides:          shadowsocks-libev-local
 # Required-Start:    $network $local_fs $remote_fs
 # Required-Stop:     $remote_fs
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: lightweight secured socks5 proxy
-# Description:       Shadowsocks-libev is a lightweight secured
+# Description:       Shadowsocks-libev-local is a lightweight secured
 #                    socks5 proxy for embedded devices and low end boxes.
 ### END INIT INFO
 
@@ -17,28 +17,29 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC=shadowsocks-libev-local       # Introduce a short description here
 NAME=shadowsocks-libev-local       # Introduce the short server's name here
 DAEMON=/usr/bin/ss-local    # Introduce the server's location here
-DAEMON_ARGS=""               # Arguments to run the daemon with
-#PIDFILE=/var/run/$NAME/$NAME.pid
-PIDFILE=/var/run/shadowsocks-libev/$NAME.pid
-SCRIPTNAME=/etc/init.d/$NAME
+PIDFILE=/var/run/$NAME/$NAME.pid
+CONFFILE=
+SCRIPTNAME=/etc/rc.d/$NAME
+USER="nobody"
+GROUP="nogroup"
+DAEMON_ARGS="-a $USER"               # Arguments to run the daemon with
 
 # Exit if the package is not installed
 [ -x $DAEMON ] || exit 0
 
 # Read configuration variable file if it is present
 [ -r /etc/default/$NAME ] && . /etc/default/$NAME
+[ -r /home/live/.config/$NAME ] && . /home/live/.config/$NAME
 
-[ "$START" = "yes" ] || exit 0
+#[ "$START" = "yes" ] || exit 0
 
-: ${USER:="nobody"}
-: ${GROUP:="nogroup"}
 
 # Load the VERBOSE setting and other rcS variables
-. /lib/init/vars.sh
+#. /lib/init/vars.sh
 
 # Define LSB log_* functions.
 # Depend on lsb-base (>= 3.0-6) to ensure that this file is present.
-. /lib/lsb/init-functions
+#. /lib/lsb/init-functions
 
 #
 # Function that starts the daemon/service
@@ -61,7 +62,7 @@ do_start()
 #    start-stop-daemon --start --pidfile $PIDFILE --chuid $USER:$GROUP --exec $DAEMON -- \
 #        -c "$CONFFILE" -f $PIDFILE $DAEMON_ARGS \
 #        || return 2
-    $DAEMON -a $USER -c "$CONFFILE" -f $PIDFILE $DAEMON_ARGS || return 2
+    $DAEMON  -c "$CONFFILE" -f $PIDFILE $DAEMON_ARGS || return 2
 }
 
 #
@@ -96,39 +97,48 @@ do_stop()
 
 case "$1" in
     start)
-        [ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC " "$NAME"
+        [ "$VERBOSE" != no ] && echo "Starting " "$NAME"
         do_start
         case "$?" in
-            0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
-        2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
-    esac
+            0|1) [ "$VERBOSE" != no ] && echo 0 ;;
+        2) [ "$VERBOSE" != no ] && echo 1 ;;
+		esac
     ;;
 stop)
-    [ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
+    [ "$VERBOSE" != no ] && echo "Stopping " "$NAME"
     do_stop
     case "$?" in
-        0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
-    2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
-esac
-;;
+        0|1) [ "$VERBOSE" != no ] && echo 0 ;;
+    2) [ "$VERBOSE" != no ] && echo 1 ;;
+	esac
+	;;
   status)
-      status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
+		PID=$(cat $PIDFILE 2>/dev/null)
+		if [ ! -z $PID ]; then
+			if ps -p $PID >/dev/null; then
+				echo "$NAME is running, pid: $PID." && exit 0 
+			else
+				echo "$NAME is not running." && exit 2 
+			fi
+		else
+			echo "$NAME is not running." && exit 2 
+		fi
       ;;
   restart|force-reload)
-      log_daemon_msg "Restarting $DESC" "$NAME"
+      echo "Restarting " "$NAME"
       do_stop
       case "$?" in
           0|1)
               do_start
               case "$?" in
-                  0) log_end_msg 0 ;;
-              1) log_end_msg 1 ;; # Old process is still running
-          *) log_end_msg 1 ;; # Failed to start
-      esac
+                  0) echo 0 ;;
+              1) echo 1 ;; # Old process is still running
+          *) echo 1 ;; # Failed to start
+	  esac
       ;;
   *)
       # Failed to stop
-      log_end_msg 1
+      echo 1
       ;;
     esac
     ;;

@@ -3,13 +3,13 @@
 ## Stick to my customized kernel:
 
 # Supplement some libs:
-libinput
+#libinput
 libxkbcommon
 graphviz 
-meson
+#meson
 pyudev
 python-evdev
-libwacom
+#libwacom
 extra-cmake-modules
 gmtk
 libpaper
@@ -17,7 +17,7 @@ qt5
 qt5-webkit
 python3-sip
 python3-PyQt5
-argon2
+#argon2
 udns
 mbedtls
 #libsodium
@@ -40,10 +40,20 @@ MarkupSafe
 Markdown
 Pygments
 pysha3
+pytest
+PySocks
+pycrypto
 python3-pycrypto
+python-markdown-math
+python-requestbuilder
 Flask
 PySocks
 stem
+click
+werkzeug
+#ninja
+Jinja2
+itsdangerous
 libdaemon
 avahi
 google-go-lang
