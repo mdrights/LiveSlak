@@ -52,7 +52,7 @@ stem
 click
 werkzeug
 #ninja
-Jinja2
+python3-Jinja2
 itsdangerous
 libdaemon
 avahi
