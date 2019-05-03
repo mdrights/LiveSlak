@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=连接网络
-Comment[En]=Connet to wireless network
-Exec=nmtui-connect
-Icon=wpa_gui
-Type=Application
-Categories=Network
-Terminal=true
-
