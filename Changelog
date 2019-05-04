@@ -1,6 +1,12 @@
 
 ## Change Log
 
+- 2019.05.03
+1. 内核、基础包、SBo源的包等更新；
+2. 新增：Onionshare，MatterMost, Docker,Freerdp, Noto- fonts-CJK | Slack, Zoom（注：这两款为非开源软件，由于比较流行才暂时收入）
+3. 移除：Jitsi（官方不再维护），Brave Browser（暂时移出以缩小体积）
+4. 增强：Firefox 添加了 user.js 开启后默认设置了cookie相关选项和自动进入隐私模式。
+
 - 2019.01.02
 1. 官方源和 SBo 源 和自己打包的软件进行了更新；
 2. 重新编译的内核 4.19.13（开启了 AppArmor）；

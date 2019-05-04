@@ -1,20 +1,19 @@
-# LiveSlak
-构建我自己的 Live 发行版 （基于 Slackware）。
+# antiS
+**一款中文、粤语、藏语、维语友好，隐私加强的操作系统（基于 Slackware Live，GNU/Linux 发行版）**
+
+> 曾用名：LiveSlak，现改为 antiS：anti-Surveillance —— 对抗监控、审查，捍卫自己的网络自由。  
 
 
-> Forked from Alien Bob's powerful building script for Slackware Live. Credits to Alien !    
-> 本套脚本 forked 自 [Alien Bob 大牛](http://www.slackware.com/%7Ealien/liveslak/), git://bear.alienbase.nl/liveslak.git
-
-
-2019.01 (代号：antiS) 主要集成功能：  
-  - 中文化(约80%)
+主要集成功能：  
+  - 中文化(约80%) 粤语（80%） 藏语（50%） 维语（60%）
   - 隐私加强
     - 隐私保护类和信息/通讯自由相关的应用
+	- live 性质，重启后系统恢复初始状态（不保存任何修改）
     - 系统加固（包括：防火墙、文件系统挂载限制、内核参数配置等……）
 	- 沙盒（firejail）
 	- 强制访问控制（AppArmor）
 
-最后更新：2019.01.02     
+最后更新：2019.05.03     
 
 發佈頻道：		https://t.me/liveslak    
 
@@ -23,8 +22,8 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2019.01.rc3**  
-	- md5sum: 673649ff148abc3348bb7d5de3dd0f1f
+	- Version: **2019.02.rc1**  
+	- md5sum: 
 
 <hr>
 
@@ -82,6 +81,8 @@
 
 ## Acknowledgement
 
+> Forked from Alien Bob's powerful building script for Slackware Live. Credits to Alien !    
+> 本套脚本 forked 自 [Alien Bob](http://www.slackware.com/%7Ealien/liveslak/), git://bear.alienbase.nl/liveslak.git
 - 非常感謝 Aaron Nexus @Telegram 給予的測試;-) 
 
 <hr>
