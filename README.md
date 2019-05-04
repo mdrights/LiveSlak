@@ -13,7 +13,7 @@
 	- 沙盒（firejail）
 	- 强制访问控制（AppArmor）
 
-最后更新：2019.05.03     
+最后更新：2019.05.04     
 
 發佈頻道：		https://t.me/liveslak    
 
@@ -23,7 +23,7 @@
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
 	- Version: **2019.02.rc1**  
-	- md5sum: 
+	- md5sum: 3bb8d6dd6c663075e8ae6cff463c772d
 
 <hr>
 
@@ -31,7 +31,6 @@
 
 - 了解本发行版的具体特性，请阅读：    
 	- [LiveSlak 最终用户介绍](https://mdrights.github.io/os-observe/Liveslak-intro/)
-	- [《LiveSlak 用户手册》](https://github.com/mdrights/LiveSlak/blob/mdrights/LiveSlak-Users-Guide.md)
 	- [预装软件列表](https://github.com/mdrights/LiveSlak/blob/V1.3.0/pkglists/mdrights-xfce.lst)
 
 - 将 iso 文件装入USB盘：
