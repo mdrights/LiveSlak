@@ -3,13 +3,13 @@
 ## Stick to my customized kernel:
 
 # Supplement some libs:
-#libinput
+libinput
 libxkbcommon
 graphviz 
-#meson
+meson
 pyudev
 python-evdev
-#libwacom
+libwacom
 extra-cmake-modules
 gmtk
 libpaper
@@ -17,11 +17,11 @@ qt5
 qt5-webkit
 python3-sip
 python3-PyQt5
-#argon2
+argon2
 udns
 mbedtls
-#libsodium
-#pcre2
+libsodium
+pcre2
 c-ares
 libev
 nodejs
@@ -51,7 +51,7 @@ PySocks
 stem
 click
 werkzeug
-#ninja
+ninja
 python3-Jinja2
 itsdangerous
 libdaemon
@@ -70,9 +70,6 @@ fcitx-configtool
 shadowsocks-libev
 #v2ray
 firejail
-#firefox-hardened
-#icecat
-#icecat-hardened
 NetworkManager-nonprism
 macchanger
 tor
@@ -81,7 +78,6 @@ tor-browser
 torsocks
 privoxy
 proxychains
-#jitsi
 signal-desktop
 telegram
 riot-web
@@ -98,7 +94,7 @@ zoom-linux
 
 ## 写写字
 libreoffice
-libreoffice-langpack_zh_CN
+libreoffice-langpack
 docx2txt
 ReText
 p7zip
