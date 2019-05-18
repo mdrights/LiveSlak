@@ -47,6 +47,7 @@ python3-pycrypto
 python-markdown-math
 python-requestbuilder
 Flask
+python3-Flask
 PySocks
 stem
 click
@@ -54,9 +55,10 @@ werkzeug
 ninja
 python3-Jinja2
 itsdangerous
+python3-itsdangerous
 libdaemon
 avahi
-google-go-lang
+#google-go-lang
 w3m
 
 ## 输入法
@@ -101,6 +103,7 @@ p7zip
 unrar
 freerdp
 mattermost-desktop
+syncthing
 
 ## 保护菊花系列 - Protect-Your-Data-Goodies:
 testdisk
