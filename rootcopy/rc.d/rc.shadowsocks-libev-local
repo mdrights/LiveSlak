@@ -18,7 +18,7 @@ DESC=shadowsocks-libev-local       # Introduce a short description here
 NAME=shadowsocks-libev-local       # Introduce the short server's name here
 DAEMON=/usr/bin/ss-local    # Introduce the server's location here
 PIDFILE=/var/run/$NAME/$NAME.pid
-CONFFILE=
+CONFFILE=""
 SCRIPTNAME=/etc/rc.d/$NAME
 USER="nobody"
 GROUP="nogroup"
@@ -29,7 +29,7 @@ DAEMON_ARGS="-a $USER"               # Arguments to run the daemon with
 
 # Read configuration variable file if it is present
 [ -r /etc/default/$NAME ] && . /etc/default/$NAME
-[ -r /home/live/.config/$NAME ] && . /home/live/.config/$NAME
+[ -r /home/live/Desktop/config.json ] && CONFFILE="/home/live/Desktop/config.json"
 
 #[ "$START" = "yes" ] || exit 0
 

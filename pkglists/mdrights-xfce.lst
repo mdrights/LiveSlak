@@ -32,7 +32,7 @@ libfilteraudio
 check
 OpenAL
 OpenSceneGraph
-SimGear
+#SimGear
 freealut
 plib
 Markups
@@ -44,8 +44,10 @@ pytest
 PySocks
 pycrypto
 python3-pycrypto
+python-urllib3
 python-markdown-math
 python-requestbuilder
+python-requests
 Flask
 python3-Flask
 PySocks
@@ -70,7 +72,6 @@ fcitx-configtool
 
 ## 上网和一些工具（你懂的）
 shadowsocks-libev
-#v2ray
 firejail
 NetworkManager-nonprism
 macchanger
@@ -84,7 +85,6 @@ signal-desktop
 telegram
 riot-web
 uTox
-WireGuard
 brave-browser
 onionshare
 go-ipfs
@@ -111,7 +111,8 @@ wipe
 secure-delete
 #keepassxc 
 veracrypt
-apparmor
+#apparmor
+#WireGuard
 
 ## 虚拟机客户端插件
 #virtualbox-kernel-addons
@@ -126,8 +127,3 @@ newsboat
 noto-cjk-font-ttf
 
 ## Docker
-docker
-containerd
-tini
-runc
-docker-proxy
