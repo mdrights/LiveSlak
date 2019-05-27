@@ -76,7 +76,7 @@ firejail
 NetworkManager-nonprism
 macchanger
 tor
-tor-hardened
+#tor-hardened
 tor-browser
 torsocks
 privoxy
@@ -96,7 +96,7 @@ zoom-linux
 
 ## 写写字
 libreoffice
-libreoffice-langpack
+libreoffice-langpack_zh_CN
 docx2txt
 ReText
 p7zip

@@ -13,7 +13,7 @@
 	- 沙盒（firejail）
 	- 强制访问控制（AppArmor）
 
-最后更新：2019.05.04     
+最后更新：2019.05.27     
 
 發佈頻道：		https://t.me/liveslak    
 
@@ -22,8 +22,8 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2019.02.rc1**  
-	- md5sum: 3bb8d6dd6c663075e8ae6cff463c772d
+	- Version: **2019.02.rc2**  
+	- md5sum: fd03ba2acd3670426480d466f0a2ff30
 
 <hr>
 
