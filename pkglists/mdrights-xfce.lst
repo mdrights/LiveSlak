@@ -3,13 +3,13 @@
 ## Stick to my customized kernel:
 
 # Supplement some libs:
-libinput
+#libinput
 libxkbcommon
 graphviz 
-meson
+#meson
 pyudev
 python-evdev
-libwacom
+#libwacom
 extra-cmake-modules
 gmtk
 libpaper
@@ -17,11 +17,11 @@ qt5
 qt5-webkit
 python3-sip
 python3-PyQt5
-argon2
+#argon2
 udns
 mbedtls
-libsodium
-pcre2
+#libsodium
+#pcre2
 c-ares
 libev
 nodejs
@@ -44,17 +44,17 @@ pytest
 PySocks
 pycrypto
 python3-pycrypto
-python-urllib3
+#python-urllib3
 python-markdown-math
 python-requestbuilder
-python-requests
+#python-requests
 Flask
 python3-Flask
-PySocks
+#PySocks
 stem
 click
 werkzeug
-ninja
+#ninja
 python3-Jinja2
 itsdangerous
 python3-itsdangerous
@@ -62,6 +62,7 @@ libdaemon
 avahi
 #google-go-lang
 w3m
+libseccomp
 
 ## 输入法
 opencc
@@ -85,7 +86,7 @@ signal-desktop
 telegram
 riot-web
 uTox
-brave-browser
+#brave-browser
 onionshare
 go-ipfs
 
@@ -104,6 +105,9 @@ unrar
 freerdp
 mattermost-desktop
 syncthing
+weechat
+#apparmor
+#WireGuard
 
 ## 保护菊花系列 - Protect-Your-Data-Goodies:
 testdisk
@@ -111,14 +115,9 @@ wipe
 secure-delete
 #keepassxc 
 veracrypt
-#apparmor
-#WireGuard
 
 ## 虚拟机客户端插件
 #virtualbox-kernel-addons
-# For Qemu VM:
-#spice-protocol
-#xf86-video-qxl
 
 ## RSS 新闻阅读器
 newsboat
@@ -127,3 +126,6 @@ newsboat
 noto-cjk-font-ttf
 
 ## Docker
+
+## for sysadmin
+sbopkg
