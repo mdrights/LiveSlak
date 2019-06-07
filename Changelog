@@ -1,6 +1,11 @@
 
 ## Change Log
 
+- 2019.06.07
+1. 改名：antiS，anti-surveillance
+2. 新增一些软件，移除不用的软件（如果您有特别想用的软件，可以发 issue 告诉我）。
+3. 美化了桌面和终端的字体。
+
 - 2019.05.03
 1. 内核、基础包、SBo源的包等更新；
 2. 新增：Onionshare，MatterMost, Docker,Freerdp, Noto- fonts-CJK | Slack, Zoom（注：这两款为非开源软件，由于比较流行才暂时收入）
