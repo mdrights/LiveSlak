@@ -63,6 +63,7 @@ avahi
 #google-go-lang
 w3m
 libseccomp
+stfl
 
 ## 输入法
 opencc
@@ -89,6 +90,7 @@ uTox
 #brave-browser
 onionshare
 go-ipfs
+twitter
 
 ## 这些不是开源的但比较流行，请自主选择
 slack
