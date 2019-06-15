@@ -4,9 +4,9 @@
 
 #set -e
 
-if [ "$UID" != 0 ]; then echo "I should be run as root. your are not root. Quit..."; exit 1; fi
+if [ "$UID" != 0 ]; then echo "I should be run as root. your are not root. Quit..."; sleep 3; exit 1; fi
 
-CONF="/home/live/Desktop/shadowsocks.json"
+CONF="/home/live/Desktop/config.json"
 
 # Detect user's config file for ss-libev. They are asked to put it on their Desktop.
 
@@ -17,6 +17,8 @@ if [ -f "$CONF" ]; then
 
 else
 	echo "We didn't find your .json file for Shadowsocks! Please put it on Desktop and name it as shadowsocks.json."
+	echo "Now it will quit after 5 seconds."
+	sleep 5
 	exit 1
 fi
 
@@ -65,4 +67,6 @@ iptables -t nat -A PREROUTING -p tcp -j SHADOWSOCKS
 iptables -t mangle -A PREROUTING -j SHADOWSOCKS
 
 echo "Done, enjoy !"
+echo "Now it will quit after 5 seconds."
+sleep 5
 exit
