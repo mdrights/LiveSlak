@@ -1,6 +1,10 @@
 
 ## Change Log
 
+- 2019.06.16 (`2019.02`正式版发布！)
+1. 新增 twitter (Twitter 的命令行客户端)
+2. 补充了 newsboat 的依赖：stfl
+
 - 2019.06.07
 1. 改名：antiS，anti-surveillance
 2. 新增一些软件，移除不用的软件（如果您有特别想用的软件，可以发 issue 告诉我）。
