@@ -11,11 +11,13 @@
 	- live 性质，重启后系统恢复初始状态（不保存任何修改）
     - 系统加固（包括：防火墙、文件系统挂载限制、内核参数配置等……）
 	- 沙盒（firejail）
-	- 强制访问控制（AppArmor）
+	- 强制访问控制（AppArmor）（目前为可选）
 
 最后更新：2019.06.22  
 
-發佈頻道：		https://t.me/liveslak    
+發佈頻道：	
+- Telegram: https://t.me/liveslak    
+- Mastodon: @mdrights@liberdon.com
 
 
 ## Download
@@ -33,7 +35,8 @@
 ## Usage
 
 - 了解本发行版的具体特性，请阅读：    
-	- [LiveSlak 最终用户介绍](https://mdrights.github.io/os-observe/Liveslak-intro/)
+	- [最终用户介绍](https://mdrights.github.io/os-observe/Liveslak-intro/)
+	- [使用手册](https://mdrights.github.io/os-observe/docs/LiveSlak-Users-Guide.html)
 	- [预装软件列表](https://github.com/mdrights/LiveSlak/blob/V1.3.0/pkglists/mdrights-xfce.lst)
 
 - 将 iso 文件装入USB盘：
