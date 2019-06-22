@@ -13,7 +13,7 @@
 	- 沙盒（firejail）
 	- 强制访问控制（AppArmor）
 
-最后更新：2019.06.16  
+最后更新：2019.06.22  
 
 發佈頻道：		https://t.me/liveslak    
 
@@ -22,9 +22,12 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2019.02**    
-	- md5sum: df1e26cf3d22b0c109756f9004fb9519
+	- Version: **2019.02.01**    
+	- md5sum: 2d63eecfcf3cc5eef4f2a5c97532098f
 
+- Change Log:
+	- 已更新至 Firefox 67.0.2esr, Tor-browser 8.5.3 (其重大安全漏洞)   
+**注：过往记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/mdrights/Changelog)**
 <hr>
 
 ## Usage
@@ -50,7 +53,6 @@
 - 这意味着如果你在虚拟机里运行，请为其设置足够的内存，而虚拟机的宿主机至少要有 4G 物理内存。
 - 经测试，有的电脑只有 (U)EFI（主板启动固件）, Slackware 的 bootloader (syslinux + grub2) 可能无法广泛地支持所有 UEFI。如果遇到机器无法识别本系统的U盘——这情况请选择传统 BIOS 或带 CSM 的 EFI的电脑使用，或者在虚拟机里使用（并请告诉我 Orz）。
 
-**注：具体更新记录和我的更改见：[Changelog](https://github.com/mdrights/LiveSlak/blob/mdrights/Changelog)**
 
 
 ## Build
