@@ -90,18 +90,19 @@
 <hr>
 构建脚本的详细介绍和使用方法请见 Alien的 [README.txt](https://github.com/mdrights/LiveSlak/blob/mdrights/README.txt)   
 
-**交流反饋**：這裏發issue，或 IRC/Matrix: #DigitalrightsCN; TG頻道：https://t.me/liveslak ; 或 群组:  https://t.me/liveslackware   
+**交流反饋**：這裏發issue，或 IRC: #DigitalrightsCN (Freenode); 或 Matrix：antis:matrix.org ; 或 Telegram:  https://t.me/liveslackware   
 
 **([姊妹 live 隱私增強操作系統：antiG](https://github.com/mdrights/antiG))**
 
-<br />
 <hr>
 <br />
+```
 Copyright 2014 - 2017 Eric Hameleers, Eindhoven, NL  
-Copyright 2017 - 2018 MDrights (mdrights at tutanota dot de)  
+Copyright 2017 - 2019 MDrights (mdrights at tutanota dot de)  
 All rights reserved  
 
-只要本版权声明和许可声明出现在所有版本的本软件中，本软件即可被允许以任何目的（有偿或无偿地）使用、复制、修改和分发。  
+只要本版权声明和许可声明出现在所有版本的本软件中，
+本软件即可被允许以任何目的（有偿或无偿地）使用、复制、修改和分发。  
 
    Permission to use, copy, modify, and distribute this software for
    any purpose with or without fee is hereby granted, provided that
@@ -120,5 +121,5 @@ All rights reserved
    OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
    OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
    SUCH DAMAGE.
- 
+``` 
 
