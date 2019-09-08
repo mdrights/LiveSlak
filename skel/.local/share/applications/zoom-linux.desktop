@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Zoom
+Comment=Zoom Video Conference
+Exec=firejail /usr/bin/zoom-linux %U
+Icon=Zoom.png
+Terminal=false
+Type=Application
+Encoding=UTF-8
+Categories=X-Antigfw;
+StartupWMClass=zoom
+MimeType=x-scheme-handler/zoommtg;application/x-zoom;
+X-KDE-Protocols=zoommtg
