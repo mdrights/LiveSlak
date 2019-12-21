@@ -1,8 +1,8 @@
 #code:name:kbd:tz:locale:xkb
-zh_cn:Chinese simplified:us:Asia/Shanghai:zh_CN.utf8:
-zh_tw:Chinese traditional:us:Asia/Taipei:zh_TW.utf8:
-zh_hk:Chinese cantonese:us:Asia/Hongkong:zh_HK.utf8:
-bo_in:Tibetan India:us:Asia/Kolkata:bo_IN.utf8:
-bo_cn:Tibetan China:us:Asia/Shanghai:bo_CN.utf8:
-ug_cn:Uyghur China:us:Asia/Shanghai:ug_CN.utf8:
-us:us american:us:US/Pacific:en_US.utf8:
+zh_cn:Chinese simplified:us:UTC:zh_CN.utf8:
+zh_tw:Chinese traditional:us:UTC:zh_TW.utf8:
+zh_hk:Chinese cantonese:us:UTC:zh_HK.utf8:
+bo_in:Tibetan India:us:UTC:bo_IN.utf8:
+bo_cn:Tibetan China:us:UTC:bo_CN.utf8:
+ug_cn:Uyghur China:us:UTC:ug_CN.utf8:
+us:us american:us:UTC:en_US.utf8:
