@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Shadowsocks-libev
+Name[zh_CN]=Shadowsocks-libev
+Name[zh_HK]=Shadowsocks-libev
+Name[zh_TW]=Shadowsocks-libev
+Exec=su -c '/etc/rc.d/rc.shadowsocks-libev-local'
+Icon=telegram
+Type=Application
+Categories=X-Antigfw
+Terminal=true
