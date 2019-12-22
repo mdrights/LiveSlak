@@ -2,6 +2,9 @@
 
 alias ls="ls $LS_OPTIONS"
 alias gits='git status'
+alias mv='mv -i'
+alias cp='cp -i'
+alias rm='rm -i'
 
 # make package searching easier on Slackware.
 lsp ()
