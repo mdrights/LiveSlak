@@ -1,0 +1,8 @@
+# Prevent local disk devices from appearing in
+# filemanager panels - Fool the border agents!
+
+# Hidden loops for udisks:
+KERNEL=="sda*", ENV{UDISKS_PRESENTATION_HIDE}="1"
+
+# Hidden loops for udisks2:
+KERNEL=="sda*", ENV{UDISKS_IGNORE}="1"
