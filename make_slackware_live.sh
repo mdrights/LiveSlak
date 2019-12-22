@@ -1372,7 +1372,7 @@ cat <<EOT >${LIVE_ROOTDIR}/etc/rc.d/rc.font
 
 # Use Terminus font to work better with the Unicode-enabled console
 # (configured in /etc/lilo.conf)
-setfont -v ter-120b
+setfont -v Lat2-Terminus16.psfu.gz
 EOT
 chmod +x ${LIVE_ROOTDIR}/etc/rc.d/rc.font
 
