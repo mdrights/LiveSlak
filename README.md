@@ -38,8 +38,8 @@
 ## Usage
 
 - 了解本发行版的具体特性，请阅读：    
-	- [最终用户介绍](https://mdrights.github.io/os-observe/Liveslak-intro/)
-	- [使用手册](https://mdrights.github.io/os-observe/docs/LiveSlak-Users-Guide.html)
+	- [基本介绍](https://mdrights.github.io/os-observe/Liveslak-intro/)
+	- [使用手册](https://github.com/mdrights/LiveSlak/blob/V1.3.0/skel/Desktop/LiveSlak-Users-Guide.md)
 	- [预装软件列表](https://github.com/mdrights/LiveSlak/blob/V1.3.0/pkglists/mdrights-xfce.lst)
 
 - 将 iso 文件装入USB盘：
