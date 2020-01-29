@@ -27,7 +27,7 @@ lsp ()
 }
 
 source $HOME/.git-prompt.sh	
-source $HOME/.git-completion.zsh
+# source $HOME/.git-completion.zsh
 setopt PROMPT_SUBST ; PS1='%? [%m %c$(__git_ps1 " (%s)")]
 %# '
 
@@ -36,7 +36,7 @@ export EDITOR=vim
 export PROXYCHAINS_CONF_FILE=~/.proxychains.conf
 
 # Syntax Highlighting 
-source $HOME/.zsh-syntax-highlighting.zsh
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 alias ls="ls $LS_OPTIONS"
 alias ll="ls -al $LS_OPTIONS"
