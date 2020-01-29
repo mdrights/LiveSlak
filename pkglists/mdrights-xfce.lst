@@ -64,6 +64,8 @@ w3m
 libseccomp
 stfl
 qrencode
+zsh-syntax-highlighting
+zsh-completions
 
 ## 输入法
 opencc
