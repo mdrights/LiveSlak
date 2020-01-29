@@ -27,5 +27,8 @@ MiscSlimTabs=FALSE
 MiscNewTabAdjacent=FALSE
 FontName=Monospace 11
 BackgroundMode=TERMINAL_BACKGROUND_TRANSPARENT
-BackgroundDarkness=0.640000
+BackgroundDarkness=0.800000
+FontUseSystem=TRUE
+MiscSearchDialogOpacity=100
+MiscShowUnsafePasteDialog=TRUE
 
