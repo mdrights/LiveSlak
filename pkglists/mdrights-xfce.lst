@@ -32,7 +32,6 @@ libfilteraudio
 check
 OpenAL
 OpenSceneGraph
-#SimGear
 freealut
 plib
 Markups
@@ -64,6 +63,7 @@ avahi
 w3m
 libseccomp
 stfl
+qrencode
 
 ## 输入法
 opencc
@@ -91,6 +91,7 @@ brave-browser
 onionshare
 go-ipfs
 twitter
+obfs4proxy
 
 ## 这些不是开源的但比较流行，请自主选择
 slack
@@ -115,7 +116,7 @@ weechat
 testdisk
 wipe
 secure-delete
-#keepassxc 
+keepassxc 
 veracrypt
 
 ## 虚拟机客户端插件
