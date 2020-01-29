@@ -53,8 +53,7 @@ python3-Flask
 stem
 click
 werkzeug
-#ninja
-python3-Jinja2
+Jinja2
 itsdangerous
 python3-itsdangerous
 libdaemon
@@ -89,7 +88,7 @@ riot-web
 uTox
 brave-browser
 onionshare
-go-ipfs
+#go-ipfs
 twitter
 obfs4proxy
 
@@ -100,12 +99,12 @@ zoom-linux
 
 ## 写写字
 libreoffice
-libreoffice-langpack_zh_CN
+#libreoffice-langpack_zh_CN
 docx2txt
 ReText
 p7zip
 unrar
-freerdp
+#freerdp
 mattermost-desktop
 syncthing
 weechat
