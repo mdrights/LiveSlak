@@ -1,6 +1,19 @@
 
 ## Change Log
 
+- 2020.01.29 (`2020.01.0`)
+	- Massive packages updating (including Kernel 5.4.14); many others:
+	Keepassxc and obfs4 added; IPFS, FreeRDP removed; AppArmor and WireGuard are
+	still not added; 
+	- Fix locale to UTC so as to start obfs4proxy in Tor; 
+	- More anti-forensics: do not mount every partitions in local HDD; hide local partitions in File Manager.
+	- use zsh for user `live`.
+
+- 2019.09.08 (`2019.03`正式版发布！)
+	- 修复 ssl certificate 缺失的问题；
+	- 增加了几个应用的 desktop 文件，方便套用`firejail`启动这些应用（位于程序菜单里的「翻越长城」里）；
+	- 更新 Tor，Tor-browser，Telegram，Signal-Desktop等。
+
 - 2019.06.16 (`2019.02`正式版发布！)
 1. 新增 twitter (Twitter 的命令行客户端)
 2. 补充了 newsboat 的依赖：stfl

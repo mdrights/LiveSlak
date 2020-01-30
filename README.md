@@ -13,7 +13,7 @@
 	- 沙盒（firejail）
 	- 强制访问控制（AppArmor）（目前为可选）
 
-最后更新：2019.09.08  
+最后更新：2020.01.29  
 
 發佈頻道/群组：	
 - Telegram: 
@@ -25,13 +25,13 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2019.03**    
-	- md5sum: a5723ccc82040b0a886df490bd58d98f
+	- Version: **2020.01.0**    
+	- md5sum: a0b849f751aaccb2e9c4429b5651e7e0
 
-- Change Log:
-	- 修复 ssl certificate 缺失的问题；
-	- 增加了几个应用的 desktop 文件，方便套用`firejail`启动这些应用（位于程序菜单里的「翻越长城」里）；
-	- 更新 Tor，Tor-browser，Telegram，Signal-Desktop等。
+- Main Updates (as of this version):
+	- Massive packages updating (including Kernel 5.4.14); 
+	- Fix locale to UTC so as to start obfs4proxy in Tor; many others.
+	- More anti-forensics: do not mount every partitions in local HDD; hide local partitions in File Manager.
 **注：过往记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/mdrights/Changelog)**
 <hr>
 
