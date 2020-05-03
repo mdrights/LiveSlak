@@ -18,8 +18,8 @@ font-bh-100dpi:REC
 font-bh-75dpi:REC
 font-bh-lucidatypewriter-100dpi:SKP
 font-bh-lucidatypewriter-75dpi:SKP
-font-bh-ttf:REC
-font-bh-type1:REC
+font-bh-ttf:SKP
+font-bh-type1:SKP
 font-bitstream-100dpi:REC
 font-bitstream-75dpi:REC
 font-bitstream-speedo:REC
@@ -263,7 +263,7 @@ xorg-docs:REC
 xorg-server:REC
 xorg-server-xephyr:ADD
 xorg-server-xnest:REC
-xorg-server-xvfb:REC
+xorg-server-xvfb:SKP
 xorg-sgml-doctools:REC
 xorgproto:REC
 xpr:REC
@@ -279,8 +279,8 @@ xsm:REC
 xstdcmap:REC
 xterm:REC
 xtrans:REC
-xvidtune:REC
-xvinfo:REC
+xvidtune:SKP
+xvinfo:SKP
 xwd:REC
 xwininfo:REC
 xwud:REC

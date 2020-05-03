@@ -6,7 +6,7 @@ blueman:SKP
 ddd:SKP
 easytag:SKP
 electricsheep:SKP
-fluxbox:ADD
+fluxbox:SKP
 fvwm:SKP
 geeqie:ADD
 gftp:ADD
@@ -30,7 +30,7 @@ sane:SKP
 seamonkey:SKP
 seyon:SKP
 vim-gvim:ADD
-windowmaker:SKP
+windowmaker:ADD
 x11-ssh-askpass:SKP
 x3270:SKP
 xaos:SKP
