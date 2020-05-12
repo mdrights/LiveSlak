@@ -16,7 +16,6 @@ c-toxcore
 uTox
 onionshare
 libreoffice
-libreoffice-langpack
 docx2txt
 ReText
 p7zip
@@ -27,15 +26,15 @@ secure-delete
 keepassxc 
 zoom-linux
 macchanger
-go-ipfs
 mattermost-desktop
 syncthing
 slack
 newsboat
 w3m
-
-WireGuard
 apparmor
-virtualbox-kernel-addons
-
+obfs4proxy
+v2ray
+weechat
+icewm
+terminator
 

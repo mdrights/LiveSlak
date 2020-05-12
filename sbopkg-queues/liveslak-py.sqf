@@ -17,12 +17,13 @@ python-markdown-math
 python-requestbuilder
 Flask
 python3-Flask
-python3-Flask-httpauth   # local repo 
 stem
 click
 werkzeug
 Jinja2
 itsdangerous
 python3-itsdangerous
+python3-Flask-httpauth
+psutil
 onionshare
 ReText

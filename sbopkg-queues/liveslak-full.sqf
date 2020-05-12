@@ -5,8 +5,6 @@ graphviz
 extra-cmake-modules
 gmtk
 libpaper
-#qt5
-#qt5-webkit
 udns
 mbedtls
 c-ares
@@ -21,20 +19,16 @@ OpenAL
 OpenSceneGraph
 freealut
 plib
-libdaemon
-avahi
-w3m
-libseccomp
-stfl
-qrencode
+#qt5
+#qt5-webkit
 
-#Pythonic
+## Pythonic
 #python3-sip       # locally built, from pip
 #python3-PyQt5       # locally built, from pip
 pyudev
 python-evdev
 Markups
-MarkupSafe
+MarkupSafe 	| PYTHON3=yes
 Markdown
 Pygments
 pysha3
@@ -46,14 +40,22 @@ python-markdown-math
 python-requestbuilder
 Flask
 python3-Flask
-python3-Flask-httpauth   # local repo 
 stem
 click
 werkzeug
 Jinja2
 itsdangerous
 python3-itsdangerous
-
+python3-Flask-httpauth
+psutil
+libdaemon
+avahi
+w3m
+libseccomp
+stfl
+qrencode
+zsh-syntax-highlighting
+zsh-completions
 
 ## 输入法
 #opencc
@@ -81,7 +83,9 @@ brave-browser
 onionshare
 #go-ipfs
 twitter
-obfs4proxy    # local repo
+obfs4proxy
+v2ray
+#WireGuard
 
 ## 这些不是开源的但比较流行，请自主选择
 slack
@@ -90,6 +94,7 @@ zoom-linux
 
 ## 写写字
 libreoffice
+libreoffice-langpack | LOLANG=zh_CN
 docx2txt
 ReText
 p7zip
@@ -98,21 +103,20 @@ unrar
 mattermost-desktop
 syncthing
 weechat
-apparmor
-#WireGuard
+#apparmor
 
 ## 保护菊花系列 - Protect-Your-Data-Goodies:
 testdisk
 wipe
 secure-delete
-#keepassxc 
-#veracrypt
+keepassxc 
+veracrypt
 
 ## 虚拟机客户端插件
 #virtualbox-kernel-addons
 
 ## RSS 新闻阅读器
-#newsboat
+newsboat
 
 ## 字体
 #noto-cjk-font-ttf
@@ -121,3 +125,7 @@ secure-delete
 
 ## for sysadmin
 #sbopkg
+
+## for Desktop
+icewm
+terminator

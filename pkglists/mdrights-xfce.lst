@@ -7,16 +7,10 @@
 libxkbcommon
 graphviz 
 #meson
-pyudev
-python-evdev
 #libwacom
 extra-cmake-modules
 gmtk
 libpaper
-qt5
-qt5-webkit
-python3-sip
-python3-PyQt5
 #argon2
 udns
 mbedtls
@@ -34,6 +28,12 @@ OpenAL
 OpenSceneGraph
 freealut
 plib
+qt5
+qt5-webkit
+python3-sip
+python3-PyQt5
+pyudev
+python-evdev
 Markups
 MarkupSafe
 Markdown
@@ -57,6 +57,7 @@ Jinja2
 itsdangerous
 python3-itsdangerous
 python3-Flask-httpauth
+psutil
 libdaemon
 avahi
 #google-go-lang
@@ -94,6 +95,8 @@ onionshare
 #go-ipfs
 twitter
 obfs4proxy
+v2ray
+#WireGuard
 
 ## 这些不是开源的但比较流行，请自主选择
 slack
@@ -112,7 +115,6 @@ mattermost-desktop
 syncthing
 weechat
 #apparmor
-#WireGuard
 
 ## 保护菊花系列 - Protect-Your-Data-Goodies:
 testdisk
@@ -128,9 +130,13 @@ veracrypt
 newsboat
 
 ## 字体
-noto-cjk-font-ttf
+#noto-cjk-font-ttf
 
 ## Docker
 
 ## for sysadmin
 sbopkg
+
+## for Desktop
+icewm
+terminator
