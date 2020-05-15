@@ -1,6 +1,6 @@
 
-# Supplement some libs:
-libxkbcommon
+## Supplement some libs:
+#libxkbcommon
 graphviz 
 extra-cmake-modules
 gmtk
@@ -14,7 +14,7 @@ nwjs
 rubygem-sass
 c-toxcore
 libfilteraudio
-check
+#check
 OpenAL
 OpenSceneGraph
 freealut
@@ -23,8 +23,8 @@ plib
 #qt5-webkit
 
 ## Pythonic
-#python3-sip       # locally built, from pip
-#python3-PyQt5       # locally built, from pip
+python3-sip
+python3-PyQt5
 pyudev
 python-evdev
 Markups

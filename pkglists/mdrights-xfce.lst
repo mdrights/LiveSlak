@@ -4,7 +4,7 @@
 
 # Supplement some libs:
 #libinput
-libxkbcommon
+#libxkbcommon
 graphviz 
 #meson
 #libwacom
@@ -23,13 +23,13 @@ nwjs
 rubygem-sass
 c-toxcore
 libfilteraudio
-check
+#check
 OpenAL
 OpenSceneGraph
 freealut
 plib
-qt5
-qt5-webkit
+#qt5
+#qt5-webkit
 python3-sip
 python3-PyQt5
 pyudev
