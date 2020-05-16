@@ -1,8 +1,8 @@
 [Desktop Entry]
-Name=Telegram
-Name[zh_CN]=Telegram 电报
-Name[zh_HK]=Telegram 电报
-Name[zh_TW]=Telegram 电报
+Name=Telegram (in jail)
+Name[zh_CN]=Telegram 电报 (in jail)
+Name[zh_HK]=Telegram 电报 (in jail)
+Name[zh_TW]=Telegram 电报 (in jail)
 Comment=Telegram Desktop Chat Client
 Icon=telegram
 Exec=firejail /usr/bin/Telegram -- %u
