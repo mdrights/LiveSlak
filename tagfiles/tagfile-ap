@@ -50,6 +50,7 @@ most:OPT
 mpg123:OPT
 nano:REC
 normalize:OPT
+nvme-cli:OPT
 opus-tools:REC
 pamixer:REC
 pm-utils:OPT
@@ -58,6 +59,7 @@ qpdf:REC
 radeontool:REC
 rpm:OPT
 rzip:OPT
+sc:OPT
 sc-im:OPT
 screen:OPT
 seejpeg:REC

@@ -119,7 +119,6 @@ m17n-lib:REC
 makedepend:REC
 mesa:REC
 mkcomposecache:REC
-mkfontdir:REC
 mkfontscale:REC
 motif:REC
 mtdev:REC
@@ -151,6 +150,8 @@ urw-core35-fonts-otf:REC
 util-macros:REC
 viewres:REC
 vulkan-sdk:REC
+wayland:REC
+wayland-protocols:REC
 wqy-zenhei-font-ttf:REC
 x11-skel:REC
 x11perf:REC
@@ -264,6 +265,7 @@ xorg-server:REC
 xorg-server-xephyr:ADD
 xorg-server-xnest:REC
 xorg-server-xvfb:SKP
+xorg-server-xwayland:ADD
 xorg-sgml-doctools:REC
 xorgproto:REC
 xpr:REC

@@ -1,4 +1,5 @@
 MPlayer:ADD
+NetworkManager-openvpn:REC
 audacious:ADD
 audacious-plugins:ADD
 blackbox:SKP
@@ -6,10 +7,11 @@ blueman:SKP
 ddd:SKP
 easytag:SKP
 electricsheep:SKP
+ffmpegthumbnailer:REC
 fluxbox:SKP
 fvwm:SKP
 geeqie:ADD
-gftp:ADD
+gftp:SKP
 gimp:ADD
 gkrellm:SKP
 gnuchess:SKP
@@ -18,6 +20,7 @@ gparted:ADD
 gucharmap:SKP
 gv:SKP
 hexchat:ADD
+libnma:REC
 mozilla-firefox:ADD
 mozilla-thunderbird:ADD
 network-manager-applet:ADD
@@ -34,7 +37,6 @@ windowmaker:ADD
 x11-ssh-askpass:SKP
 x3270:SKP
 xaos:SKP
-xfractint:SKP
 xgames:SKP
 xine-lib:SKP
 xine-ui:SKP
@@ -44,4 +46,3 @@ xpaint:SKP
 xpdf:SKP
 xsane:SKP
 xscreensaver:ADD
-xv:SKP
