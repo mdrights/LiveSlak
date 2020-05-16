@@ -97,6 +97,7 @@ twitter
 obfs4proxy
 v2ray
 #WireGuard
+#apparmor
 
 ## 这些不是开源的但比较流行，请自主选择
 slack
@@ -105,16 +106,14 @@ zoom-linux
 
 ## 写写字
 libreoffice
-#libreoffice-langpack_zh_CN
+libreoffice-langpack_zh_CN
 docx2txt
 ReText
 p7zip
 unrar
-#freerdp
 mattermost-desktop
 syncthing
 weechat
-#apparmor
 
 ## 保护菊花系列 - Protect-Your-Data-Goodies:
 testdisk

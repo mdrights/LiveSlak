@@ -94,7 +94,7 @@ zoom-linux
 
 ## 写写字
 libreoffice
-libreoffice-langpack | LOLANG=zh_CN
+libreoffice-langpack | LOLANG=zh-CN
 docx2txt
 ReText
 p7zip
