@@ -1,10 +1,12 @@
 
 ## Change Log
 
+- 2020.05.17 (`2020.02.0`)  
+	- Massive packages updating; added Outline, V2ray, Terminator; noto-font removed.  
+	- Add `iceWM` which can enable a desktop micmicking Win95 style, thus better anonymity.  
 - 2020.01.29 (`2020.01.0`)
 	- Massive packages updating (including Kernel 5.4.14); many others:
-	Keepassxc and obfs4 added; IPFS, FreeRDP removed; AppArmor and WireGuard are
-	still not added; 
+	Keepassxc and obfs4 added; IPFS, FreeRDP removed; AppArmor and WireGuard are still not added; 
 	- Fix locale to UTC so as to start obfs4proxy in Tor; 
 	- More anti-forensics: do not mount every partitions in local HDD; hide local partitions in File Manager.
 	- use zsh for user `live`.

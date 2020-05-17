@@ -13,39 +13,40 @@
 	- 沙盒（firejail）
 	- 强制访问控制（AppArmor）（目前为可选）
 
-最后更新：2020.01.29  
+最后更新：2020.05.17  
 
-發佈頻道/群组：	
+發佈頻道：	
 - Telegram: 
 	- https://t.me/liveslak    
-	- https://t.me/liveslackware      
+- Mastodon:
+	- https://fosstodon.org/mdrights
 
 
 ## Download
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2020.01.0**    
-	- md5sum: a0b849f751aaccb2e9c4429b5651e7e0
+	- Version: **2020.02.0**    
+	- md5sum: 78f71fddc2ab35024ec5481532870a1c
 
-- Main Updates (as of this version):
-	- Massive packages updating (including Kernel 5.4.14); 
-	- Fix locale to UTC so as to start obfs4proxy in Tor; many others.
-	- More anti-forensics: do not mount every partitions in local HDD; hide local partitions in File Manager.
-**注：过往记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/mdrights/Changelog)**
+- Main Updates:   
+	- Massive packages updating; added Outline, V2ray.  
+	- Add `iceWM` which can enable a desktop micmicking Win95 style, thus better anonymity.  
+**注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/mdrights/Changelog)**
 <hr>
+
 
 ## Usage
 
 - 了解本发行版的具体特性，请阅读：    
 	- [基本介绍](https://mdrights.github.io/os-observe/Liveslak-intro/)  
-	- [使用手册](https://github.com/mdrights/LiveSlak/blob/V1.3.0/skel/Desktop/LiveSlak-Users-Guide.md)  
+	- [使用手册](https://github.com/mdrights/LiveSlak/blob/V1.3.0/skel/Desktop/Antis-Users-Guide.md)  
 	- [预装软件列表](https://github.com/mdrights/LiveSlak/blob/V1.3.0/pkglists/mdrights-xfce.lst)  
 	- 溫馨提示：本系統雖然有一定匿名特性，但不主打匿名，請有高匿名需求的朋友使用：[Tails](https://tails.boum.org/about/index.en.html)  
 
 ## Installation
 
-- 将 iso 文件装入USB盘：   
+- 将 iso 文件烧录到 USB 盘：   
 0. 插入 USB 盤後，找出你的 U 盤是什麼編號：   
 	- 在 Linux：   
 	```
@@ -57,6 +58,8 @@
 		$ diskutil list   (查看)    
 		$ diskutil unmountDisk /dev/diskX   (系統會默認掛載，我們卸載它)
 	```  
+	- 在 Windows：
+		- 下载烧录工具并根据软件的提示即可（比如开源的 [rufus](https://rufus.ie)）  
 
 1. 方法1：（在 Linux 和 macOS）用 `dd` 命令；
 	```
