@@ -85,7 +85,9 @@ onionshare
 twitter
 obfs4proxy
 v2ray
+dnscrypt-proxy
 #WireGuard
+#apparmor
 
 ## 这些不是开源的但比较流行，请自主选择
 slack
@@ -103,7 +105,6 @@ unrar
 mattermost-desktop
 syncthing
 weechat
-#apparmor
 
 ## 保护菊花系列 - Protect-Your-Data-Goodies:
 testdisk
