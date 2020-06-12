@@ -1,5 +1,5 @@
 [Desktop Entry]
-Exec=firejail firefox %u
+Exec=firejail firefox --no-remote -p "default"
 Icon=firefox
 Type=Application
 Categories=WebBrowser;X-Antigfw
