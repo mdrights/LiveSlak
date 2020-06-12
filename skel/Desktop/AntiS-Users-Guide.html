@@ -172,7 +172,18 @@
     （XMPP 协议的客户端）</li>
 <li>Riot-web <br>
     （新型“邦联化”(基于Matrix) 聊天/协作工具(可加密)，可以完美桥接 IRC，slack 等平台） <br>
-    （它需要通过浏览器来使用。默认是<code>firefox</code>，也可以从别的浏览器里访问：<code>http://localhost:8000</code> 即可使用；也可修改<code>/usr//bin/riot-web</code> 脚本；如你的 Matrix 帐号注册地不是官方的服务器，需要在<code>/etc/riot-web/config.json</code>里设置。）</li>
+    （啓動 Riot 之前需要有個配置文件，可以拷貝一份模板來使用：</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="err">    sudo cp /opt/riot-web/config.sample.json /opt/riot-web/config.json  </span>
+</pre></div>
+
+
+<div class="codehilite"><pre><span></span><span class="err">記得配置文件必須是`config.json`；如你的 Matrix 帐号不是注册官方的服务器，需要在`/etc/riot-web/config.json`里设置你帳號所在服務器（在文件開頭就能看到）。  </span>
+<span class="err">記得 Riot 是可以進行端到端加密的，因此私鑰需要妥善（離線）保存好，在 Riot 內可以導出。</span>
+</pre></div>
+
+
+<ul>
 <li>uTox <br>
     （p2p架构的（去中心化）通讯工具）   </li>
 <li>MatterMost

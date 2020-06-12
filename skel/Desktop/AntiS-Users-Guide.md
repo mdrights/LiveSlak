@@ -133,7 +133,12 @@ date: 2020-05-17
 	（XMPP 协议的客户端）
 - Riot-web   
 	（新型“邦联化”(基于Matrix) 聊天/协作工具(可加密)，可以完美桥接 IRC，slack 等平台）   
-	（它需要通过浏览器来使用。默认是`firefox`，也可以从别的浏览器里访问：`http://localhost:8000` 即可使用；也可修改`/usr//bin/riot-web` 脚本；如你的 Matrix 帐号注册地不是官方的服务器，需要在`/etc/riot-web/config.json`里设置。）
+	（啓動 Riot 之前需要有個配置文件，可以拷貝一份模板來使用：
+```
+	sudo cp /opt/riot-web/config.sample.json /opt/riot-web/config.json  
+```
+	記得配置文件必須是`config.json`；如你的 Matrix 帐号不是注册官方的服务器，需要在`/etc/riot-web/config.json`里设置你帳號所在服務器（在文件開頭就能看到）。  
+	記得 Riot 是可以進行端到端加密的，因此私鑰需要妥善（離線）保存好，在 Riot 內可以導出。  
 - uTox   
 	（p2p架构的（去中心化）通讯工具）   
 - MatterMost
