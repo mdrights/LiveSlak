@@ -1795,55 +1795,8 @@ Default=1
 EOT
 
   # Create user.js for Firefox:
-  cat << EOT > ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/firefox/${LIVEUID}_profile.default/user.js
-user_pref("browser.privatebrowsing.autostart", true);
-user_pref("network.cookie.cookieBahavior", 2);
-user_pref("network.cookie.lifetimePolicy", 2);
-user_pref("network.cookie.prefsMigrated", true);
-user_pref("network.cookie.thirdparty.sessionOnly",true)
-user_pref("network.predictor.cleaned-up", true);
-user_pref("network.proxy.no_proxies_on", "localhost, 127.0.0.1");
-user_pref("network.proxy.socks", "127.0.0.1");
-user_pref("network.proxy.socks_port", 1080);
-user_pref("network.proxy.socks_remote_dns", true);
-user_pref("network.proxy.type", 1);
-user_pref("privacy.donottrackheader.enabled", true);
-user_pref("privacy.history.custom", true);
-user_pref("privacy.sanitize.pending", "[]");
-user_pref("privacy.sanitize.timeSpan", 0);
-user_pref("privacy.trackingprotection.enabled", true);
-user_pref("privacy.trackingprotection.introCount", 20);
 
-user_pref("noscript.secureCookies", true);
-user_pref("noscript.secureCookies.perTab", true);
-user_pref("noscript.secureCookies.recycle", true);
-EOT
-
-#  # Create Mozilla Seamonkey profile: #XXX
-#  mkdir -p ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/seamonkey/${LIVEUID}_profile.default
-#  cat << EOT > ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/seamonkey/profiles.ini
-#[General]
-#StartWithLastProfile=1
-#
-#[Profile0]
-#Name=default
-#IsRelative=1
-#Path=${LIVEUID}_profile.default
-#Default=1
-#EOT
-#
-#  # Create Pale Moon profile:
-#  mkdir -p ${LIVE_ROOTDIR}/home/${LIVEUID}/.moonchild\ productions/pale\ moon/${LIVEUID}_profile.default
-#    cat << EOT > ${LIVE_ROOTDIR}/home/${LIVEUID}/.moonchild\ productions/pale\ moon/profiles.ini
-#[General]
-#StartWithLastProfile=1
-#
-#[Profile0]
-#Name=default
-#IsRelative=1
-#Path=${LIVEUID}_profile.default
-#Default=1
-#EOT
+  # Create Mozilla Seamonkey profile: 
 
   # Import CACert root certificates into the browsers:
   (
