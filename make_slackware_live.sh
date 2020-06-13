@@ -1794,7 +1794,8 @@ Path=${LIVEUID}_profile.default
 Default=1
 EOT
 
-  # Create user.js for Firefox:
+  # Create hardened user.js for Firefox:
+  cat /home/user/repo/LiveSlak/skel/user.js > ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/firefox/${LIVEUID}_profile.default/user.js
 
   # Create Mozilla Seamonkey profile: 
 
