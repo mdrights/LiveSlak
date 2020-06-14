@@ -425,6 +425,10 @@ user_pref("network.http.altsvc.oe", false);
  * as a remote Tor node will handle the DNS request
  * [1] https://trac.torproject.org/projects/tor/wiki/doc/TorifyHOWTO/WebBrowsers ***/
 user_pref("network.proxy.socks_remote_dns", true);
+user_pref("network.proxy.no_proxies_on", "127.0.0.1/8");
+user_pref("network.proxy.socks", "127.0.0.1");
+user_pref("network.proxy.socks_port", 1080);
+user_pref("network.proxy.type", 1);
 /* 0708: disable FTP [FF60+]
  * [1] https://www.ghacks.net/2018/02/20/firefox-60-with-new-preference-to-disable-ftp/ ***/
    // user_pref("network.ftp.enabled", false);
@@ -586,12 +590,12 @@ user_pref("_user.js.parrot", "1000 syntax error: the parrot's gone to meet 'is m
 user_pref("browser.cache.disk.enable", false);
 /* 1003: disable memory cache
 /* capacity: -1=determine dynamically (default), 0=none, n=memory capacity in kilobytes ***/
-   // user_pref("browser.cache.memory.enable", false);
-   // user_pref("browser.cache.memory.capacity", 0); // [HIDDEN PREF ESR]
+user_pref("browser.cache.memory.enable", true);
+user_pref("browser.cache.memory.capacity", -1); // [HIDDEN PREF ESR]
 /* 1006: disable permissions manager from writing to disk [RESTART]
  * [NOTE] This means any permission changes are session only
  * [1] https://bugzilla.mozilla.org/967812 ***/
-   // user_pref("permissions.memory_only", true); // [HIDDEN PREF]
+user_pref("permissions.memory_only", true); // [HIDDEN PREF]
 /* 1007: disable media cache from writing to disk in Private Browsing
  * [NOTE] MSE (Media Source Extensions) are already stored in-memory in PB */
 user_pref("browser.privatebrowsing.forceMediaMemoryCache", true); // [FF75+]
@@ -1277,7 +1281,7 @@ user_pref("network.cookie.thirdparty.nonsecureSessionOnly", true); // [FF58+]
  * 0=keep until they expire (default), 2=keep until you close Firefox
  * [NOTE] The setting below is disabled (but not changed) if you block all cookies (2701 = 2)
  * [SETTING] Privacy & Security>Cookies and Site Data>Delete cookies and site data when Firefox is closed ***/
-   // user_pref("network.cookie.lifetimePolicy", 2);
+user_pref("network.cookie.lifetimePolicy", 2);
 /* 2710: disable DOM (Document Object Model) Storage
  * [WARNING] This will break a LOT of sites' functionality AND extensions!
  * You are better off using an extension for more granular control ***/
@@ -1352,6 +1356,10 @@ user_pref("privacy.cpd.siteSettings", false); // Site Preferences
  * [NOTE] The values 5 + 6 are not listed in the dropdown, which will display a
  * blank value if they are used, but they do work as advertised ***/
 user_pref("privacy.sanitize.timeSpan", 0);
+user_pref("privacy.sanitize.pending", "[]");
+user_pref("privacy.trackingprotection.cryptomining.enabled", true);
+user_pref("privacy.trackingprotection.enabled", true);
+user_pref("privacy.trackingprotection.fingerprinting.enabled", true);
 
 /*** [SECTION 4000]: FPI (FIRST PARTY ISOLATION)
  ** 1278037 - isolate indexedDB (FF51+)
