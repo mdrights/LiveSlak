@@ -41,7 +41,7 @@
 
 - 了解本发行版的具体特性，请阅读：    
 	- [基本介绍](https://mdrights.github.io/os-observe/Liveslak-intro/)  
-	- [使用手册](https://github.com/mdrights/LiveSlak/blob/V1.3.0/skel/Desktop/Antis-Users-Guide.md)  
+	- [使用手册](https://github.com/mdrights/LiveSlak/blob/V1.3.0/skel/Desktop/AntiS-Users-Guide.md)  
 	- [预装软件列表](https://github.com/mdrights/LiveSlak/blob/V1.3.0/pkglists/mdrights-xfce.lst)  
 	- 溫馨提示：本系統雖然有一定匿名特性，但不主打匿名，請有高匿名需求的朋友使用：[Tails](https://tails.boum.org/about/index.en.html)  
 
