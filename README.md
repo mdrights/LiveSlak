@@ -33,7 +33,7 @@
 	- A hardened Firefox configuration (user.js forked from [here](https://github.com/ghacksuserjs/ghacks-user.js)) has been added, thus: proxy over port 1080, clear-on-close cookies, anti-fingerprinting and more configs become the default.  
 	- Dnscrypt-proxy is added, used for better DNS privacy when user is not using proxy/VPN.  
 
-**注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/mdrights/Changelog)**
+**注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/V1.3.0/Changelog)**
 <hr>
 
 
