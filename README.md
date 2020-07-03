@@ -1,5 +1,5 @@
 # antiS
-**一款中文、粤语、藏语、维语友好，隐私加强的操作系统（基于 Slackware Live，GNU/Linux 发行版）**
+**一款中文、粤语、藏语、维语友好，隐私加强的电脑操作系统（基于 Slackware Live，GNU/Linux 发行版）**
 
 > 曾用名：LiveSlak，现改为 antiS：anti-Surveillance —— 对抗监控、审查，捍卫自己的网络自由。  
 
@@ -30,8 +30,8 @@
 	- md5sum: 4f4de5eca4512f9fcbc39f53413bc848
 
 ## Main Updates   
-	- A hardened Firefox configuration (user.js forked from [here](https://github.com/ghacksuserjs/ghacks-user.js)) has been added, thus: proxy over port 1080, clear-on-close cookies, anti-fingerprinting and more configs become the default.  
-	- Dnscrypt-proxy is added, used for better DNS privacy when user is not using proxy/VPN.  
+- A hardened Firefox configuration (user.js forked from [here](https://github.com/ghacksuserjs/ghacks-user.js)) has been added, thus: proxy over port 1080, clear-on-close cookies, anti-fingerprinting and more configs become the default.  
+- Dnscrypt-proxy is added, used for better DNS privacy when user is not using proxy/VPN.  
 
 **注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/V1.3.0/Changelog)**
 <hr>
@@ -62,13 +62,11 @@
 	- 在 Windows：
 		- 下载烧录工具并根据软件的提示即可（比如开源的 [rufus](https://rufus.ie)）  
 
-1. 方法1：（在 Linux 和 macOS）用 `dd` 命令；
+1. （在 Linux 和 macOS）用 `dd` 命令；
 	```
 	sudo dd bs=4M if=/path/to/antis-xxxx.xx.iso of=/dev/XXX    (注意請看清你的 USB 盤是什麼編號喲)
-	```
-2. 方法2：使用本 repo 内的 `iso2usb.sh` 脚本安装（暫時只能在大部分 Linux 發行版運行）：
-	1. 這種方法讓系统安装到 USB 盘后所有更改都是永久的；
-	2. 可以选择加密用户家目录。例子（-o: USB盘，-c: 加密 home 目录的大小；-w: 启动时等待USB盘挂载的时间）：
+	```  
+~~（暂废弃）方法2：使用本 repo 内的 `iso2usb.sh` 脚本安装~~  
 	```
 	bash iso2usb.sh -i /home/antis-xxxx.xx.iso -o /dev/sdb -c 25G -w 10
 	```
@@ -90,7 +88,9 @@
 	| Toshiba      | F12                |
 	| others…      | F12, Esc           |
 
-- 找到`Boot Order` 這樣的選項，讓類似 `USB` 或你的 U 盤品牌的名字排到最前。
+- 找到`Boot Order` 這樣的選項，讓類似 `USB` 或你的 U 盤品牌的名字排到最前。然后按 F10 保存并退出就可进入 antiS 了。 
+
+- 如果想利用好 USB 盘上的多余空间，可以创建一个分区，保存一些文件等等。方法见[这里](https://mdrights.github.io/os-observe/posts/2020/07/make-use-of-space-antis-live-usb.html)。  
 
 
 ## Device Requirements
