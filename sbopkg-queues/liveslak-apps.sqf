@@ -9,7 +9,6 @@ torsocks
 privoxy
 proxychains
 signal-desktop
-brave-browser
 telegram
 riot-web
 c-toxcore
@@ -37,4 +36,7 @@ v2ray
 weechat
 icewm
 terminator
+wireguard-linux-compat
+wireguard-tools
+openconnect
 

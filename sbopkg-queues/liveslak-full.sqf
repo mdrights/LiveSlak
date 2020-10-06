@@ -1,5 +1,5 @@
 
-## Supplement some libs:
+## Supplement some libraries:
 #libxkbcommon
 graphviz 
 extra-cmake-modules
@@ -77,20 +77,20 @@ privoxy
 proxychains
 signal-desktop
 telegram
-riot-web
+#riot-web		# build locally
 uTox
-brave-browser
 onionshare
-#go-ipfs
 twitter
-obfs4proxy
-v2ray
+#obfs4proxy            ## build locally
+#v2ray			# build locally
 dnscrypt-proxy
-#WireGuard
 #apparmor
+wireguard-linux-compat
+wireguard-tools
+openconnect
 
 ## 这些不是开源的但比较流行，请自主选择
-slack
+#slack
 zoom-linux
 
 
@@ -101,7 +101,6 @@ docx2txt
 ReText
 p7zip
 unrar
-#freerdp
 mattermost-desktop
 syncthing
 weechat
@@ -111,7 +110,7 @@ testdisk
 wipe
 secure-delete
 keepassxc 
-veracrypt
+#veracrypt     # build from Alien.
 
 ## 虚拟机客户端插件
 #virtualbox-kernel-addons

@@ -92,16 +92,17 @@ riot-web
 uTox
 #brave-browser
 onionshare
-#go-ipfs
 twitter
 obfs4proxy
 v2ray
 dnscrypt-proxy
-#WireGuard
 #apparmor
+wireguard-linux-compat
+wireguard-tools
+openconnect
 
 ## 这些不是开源的但比较流行，请自主选择
-slack
+#slack
 zoom-linux
 
 
