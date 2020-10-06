@@ -1,15 +1,18 @@
 
 ## Change Log
 
+- 2020.10.06 (`2020.03`)  
+	- Routine updates. New: Internet Radio, Wireguard (not working yet), Openconnect (VPN client for Cisco SSL VPN; will be added in next point release).  
+
 - 2020.06.14 (`2020.02.01`)  
-	- A hardened Firefox configuration (user.js forked from [here]()) has been added, thus: proxy through port 1080, close-on-close cookies, anti-fingerprinting and more configs become the default.  
+	- A hardened Firefox configuration (user.js forked from [here](https://github.com/ghacksuserjs/ghacks-user.js)) has been added, thus: proxy over port 1080, clear-on-close cookies, anti-fingerprinting and more configs become the default.  
 	- Dnscrypt-proxy is added, used for better DNS privacy when user is not using proxy/VPN.  
 
-- 2020.05.17 (`2020.02.0`)  
+- 2020.05.17 (`2020.02`)  
 	- Massive packages updating; added Outline, V2ray, Terminator; noto-font removed.  
 	- Add `iceWM` which can enable a desktop micmicking Win95 style, thus better anonymity.  
 
-- 2020.01.29 (`2020.01.0`)
+- 2020.01.29 (`2020.01`)
 	- Massive packages updating (including Kernel 5.4.14); many others:
 	Keepassxc and obfs4 added; IPFS, FreeRDP removed; AppArmor and WireGuard are still not added; 
 	- Fix locale to UTC so as to start obfs4proxy in Tor; 

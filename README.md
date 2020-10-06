@@ -1,7 +1,7 @@
 # antiS
 **一款中文、粤语、藏语、维语友好，隐私加强的电脑操作系统（基于 Slackware Live，GNU/Linux 发行版）**
 
-> 曾用名：LiveSlak，现改为 antiS：anti-Surveillance —— 对抗监控、审查，捍卫自己的网络自由。  
+> 曾用名：LiveSlak，现改为 **antiS**：anti-Surveillance —— 对抗监控、审查，捍卫自己的网络自由。  
 
 
 主要集成功能：  
@@ -13,7 +13,7 @@
 	- 应用加固（firejail 沙盒、火狐浏览器加固等）
 	- 强制访问控制（AppArmor）  
 
-最后更新：2020.06.14  
+最后更新：2020.10.06  
 
 發佈頻道：	
 - Telegram: 
@@ -26,12 +26,11 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2020.02.01**    
-	- md5sum: 4f4de5eca4512f9fcbc39f53413bc848
+	- Version: **2020.03**    
+	- md5sum: 77d0f07435db2bdb71f5eb6e89ba83ba  
 
 ## Main Updates   
-- A hardened Firefox configuration (user.js forked from [here](https://github.com/ghacksuserjs/ghacks-user.js)) has been added, thus: proxy over port 1080, clear-on-close cookies, anti-fingerprinting and more configs become the default.  
-- Dnscrypt-proxy is added, used for better DNS privacy when user is not using proxy/VPN.  
+	- Routine updates. New: Internet Radio, Wireguard (not working yet), Openconnect (VPN client for Cisco SSL VPN; will be added in next point release).  
 
 **注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/V1.3.0/Changelog)**
 <hr>
