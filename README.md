@@ -15,9 +15,7 @@
 
 最后更新：2020.10.06  
 
-發佈頻道：	
-- Telegram: 
-	- https://t.me/liveslak    
+發佈頻道：	 
 - Mastodon:
 	- https://fosstodon.org/mdrights
 
@@ -26,11 +24,13 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2020.03**    
-	- md5sum: 77d0f07435db2bdb71f5eb6e89ba83ba  
+	- Version: **2020.03.01**    
+	- md5sum: 4a93b53e7220efde10d19175cde2d89c
+
 
 ## Main Updates   
-	- Routine updates. New: Internet Radio, Wireguard (not working yet), Openconnect (VPN client for Cisco SSL VPN; will be added in next point release).  
+	- Added: openconnect (an open source alternative to CISCO's VPN client); Updated: Signal-desktop.  
+	- Routine updates; Added: Internet Radio, Wireguard (not working yet). 
 
 **注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/V1.3.0/Changelog)**
 <hr>

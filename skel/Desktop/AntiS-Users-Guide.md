@@ -1,6 +1,6 @@
 ---
 layout: post
-date: 2020-06-14
+date: 2020-10-26
 ---
 
 # LiveSlak 用户手册   
@@ -92,17 +92,25 @@ date: 2020-06-14
 	（把 ss 配置文件放在桌面，**文件名必须**是：`config.json`）
 	  然后在应用程序菜单的「翻越长城」点击`shadowsocks-libev 透明代理`；
 	  它随后会启动 ss-redir 和防火墙。它会打开一个终端窗口，要求输入用户的密码，输入完后会告知启动成功与否，5秒后会关闭窗口但不影响程序运行。）   
+
 - v2ray  
 	（启动方法：在终端执行：）  
 ```
 	/usr/bin/v2ray/v2ray -c <你的 v2ray 配置文件>  
 ```
+
 - Outline 客户端
 	（又一款 Jigsaw 制作的基于 Shadowsocks 服务，其客户端兼容 ss server）  
 	（启动方法，在终端输入：）   
 ```
 	/opt/Outline-Client.AppImage
 ```
+
+- Wireguard (新型轻量高安全性 VPN)  
+	（还有bug未解决）  
+
+- Openconnect (- Cisco VPN 的开源客户端)
+	(使用方法请 `man openconnect`)
 
 
 ### 隐匿/隐身
@@ -145,7 +153,7 @@ date: 2020-06-14
 	（类似 Slack 的开源替代）
 - 邮件客户端：Thunderbird 和 mutt （均可配合 GPG 使用加密邮件）
 
-- 另外临时附带 `Slack` 和 `Zoom` 两个**不开源**的通讯工具，警告：仅为使用方便，请自行评估其安全性。
+- 另外临时附带 `Zoom` ，**不开源**的通讯工具，警告：仅为使用方便，请自行评估其安全性。
 
 
 ### 文件分享
