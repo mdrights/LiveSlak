@@ -1,6 +1,6 @@
 ---
 layout: post
-date: 2020-10-26
+date: 2020-11-15
 ---
 
 # LiveSlak 用户手册   
@@ -99,18 +99,21 @@ date: 2020-10-26
 	/usr/bin/v2ray/v2ray -c <你的 v2ray 配置文件>  
 ```
 
-- Outline 客户端
-	（又一款 Jigsaw 制作的基于 Shadowsocks 服务，其客户端兼容 ss server）  
-	（启动方法，在终端输入：）   
+- Protonmail Bridge (Protonmail Bridge 客户端后台 -- 从应用程序菜单进入)
+
+- ProtonVPN CLI (ProtonVPN 命令行客户端，具体用法参见它的帮助信息)
 ```
-	/opt/Outline-Client.AppImage
+	protonvpn examples
+```
+
+- Openconnect (- Cisco VPN 的开源客户端)
+	(使用方法请阅读 `man openconnect`)
+```
+	openconnect <your vpn server>
 ```
 
 - Wireguard (新型轻量高安全性 VPN)  
-	（还有bug未解决）  
-
-- Openconnect (- Cisco VPN 的开源客户端)
-	(使用方法请 `man openconnect`)
+	（还有bug未解决暂不可用）  
 
 
 ### 隐匿/隐身
@@ -132,25 +135,30 @@ date: 2020-10-26
 ### 安全地聯繫 
 - Telegram 
 	(可在設置裏設置 socks（1080）代理（翻牆），或 Tor（9050））
-- Signal-Desktop 桌面版
-	（加密通讯软件；须先在移动设备安装Signal客户端并用帐号登录；注意它自身无法设置代理。）
-- Hexchat, weechat    
+
+- Hexchat, Weechat    
 	( IRC 客戶端，無需註冊帳戶；記得本軟件最好要 **走代理（包括翻牆或Tor）再用** ！！！否則會直接暴露你的 IP 地址）
+
 - Pidgin
 	（XMPP 协议的客户端；可以在设置里设置代理）
-- Riot-web   
+
+- Riot.im --> 已改名：Element  
 	（新型“邦联化”(基于Matrix) 聊天/协作工具(可加密)，可以完美桥接 IRC，slack 等平台）   
-	（啓動 Riot 之前需要有個配置文件，可以拷貝一份模板來使用：
-```
-	sudo cp /opt/riot-web/config.sample.json /opt/riot-web/config.json  
-```
-	記得配置文件必須是`config.json`；如你的 Matrix 帐号不是注册官方的服务器，需要在`/etc/riot-web/config.json`里设置你帳號所在服務器（在文件開頭就能看到）。  
-	記得 Riot 是可以進行端到端加密的，因此私鑰需要妥善（離線）保存好，在 Riot 內可以導出。
-	它在浏览器里运行（默认是 Firefox，使用代理时配置浏览器的代理即可）。    
+	（为了简化，本地应用已舍去，可以使用 web 网页版：https://app.element.io ）  
+
 - uTox   
 	（p2p架构的（去中心化）通讯工具）   
+
 - MatterMost
 	（类似 Slack 的开源替代）
+
+- Signal-Desktop 桌面版
+	（加密通讯软件；须先在移动设备安装Signal客户端并用帐号登录；注意它自身无法设置代理。）
+	（**注：目前遇到一些上游的问题，应用必须在每次启动后安装一次才能成功运行**。安装方法如下：）
+```
+	sudo installpkg /opt/signal-desktop-x.xx.x-x86_64-1_SBo.tgz
+```
+
 - 邮件客户端：Thunderbird 和 mutt （均可配合 GPG 使用加密邮件）
 
 - 另外临时附带 `Zoom` ，**不开源**的通讯工具，警告：仅为使用方便，请自行评估其安全性。
@@ -215,13 +223,13 @@ date: 2020-10-26
 ### 其他日常：
 - Libreoffice 
 	（文檔編輯套件；已加入中文包，即界面是中文的了）
-- XPDF （看PDF）
 - GVim, Retext (文字编辑器）
 - docx2txt  （docx格式转换 txt）
 - Audacious (音频编辑）
 - GIMP （图像编辑）
 - Mplayer （视频播放）
 - xsane （扫描）
+- 注：看PDF 文件可使用 Firefox 或 Libreoffice。
 
 
 

@@ -27,3 +27,6 @@ python3-Flask-httpauth
 psutil
 onionshare
 ReText
+docopt 
+python3-pythondialog 
+protonvpn-cli

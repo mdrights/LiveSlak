@@ -2,7 +2,7 @@
 
 ## Stick to my customized kernel:
 
-# Supplement some libs:
+# Some Libraries:
 #libinput
 #libxkbcommon
 graphviz 
@@ -61,12 +61,13 @@ psutil
 libdaemon
 avahi
 #google-go-lang
-w3m
 libseccomp
 stfl
 qrencode
 zsh-syntax-highlighting
 zsh-completions
+docopt 
+python3-pythondialog 
 
 ## 输入法
 opencc
@@ -76,6 +77,7 @@ fcitx
 fcitx-configtool
 
 ## 上网和一些工具（你懂的）
+w3m
 shadowsocks-libev
 firejail
 NetworkManager-nonprism
@@ -86,9 +88,9 @@ tor-browser
 torsocks
 privoxy
 proxychains
-signal-desktop
+#signal-desktop  #doesnt work on live (?)
 telegram
-riot-web
+#riot-web		 #deprecated
 uTox
 #brave-browser
 onionshare
@@ -100,6 +102,8 @@ dnscrypt-proxy
 wireguard-linux-compat
 wireguard-tools
 openconnect
+protonvpn-cli
+protonmail-bridge
 
 ## 这些不是开源的但比较流行，请自主选择
 #slack

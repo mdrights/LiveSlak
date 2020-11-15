@@ -1,5 +1,5 @@
 
-## Supplement some libraries:
+## Some Libraries:
 #libxkbcommon
 graphviz 
 extra-cmake-modules
@@ -48,6 +48,9 @@ itsdangerous
 python3-itsdangerous
 python3-Flask-httpauth
 psutil
+docopt 
+python3-pythondialog 
+
 libdaemon
 avahi
 w3m
@@ -88,6 +91,8 @@ dnscrypt-proxy
 wireguard-linux-compat
 wireguard-tools
 openconnect
+protonvpn-cli
+protonmail-bridge
 
 ## 这些不是开源的但比较流行，请自主选择
 #slack
