@@ -24,13 +24,12 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2020.03.01**    
-	- md5sum: 4a93b53e7220efde10d19175cde2d89c
+	- Version: **2020.03.02**    
+	- md5sum: e2055eb19a99fab8a97e03b62356a7c1
 
 
 ## Main Updates   
-	- Added: openconnect (an open source alternative to CISCO's VPN client); Updated: Signal-desktop.  
-	- Routine updates; Added: Internet Radio, Wireguard (not working yet). 
+- Added: protonmail-bridge, protonvpn-cli; ship Signal-desktop as uninstalled package.
 
 **注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/V1.3.0/Changelog)**
 <hr>

@@ -1,7 +1,10 @@
 
 ## Change Log
 
+- 2020.11.15 (`2020.03.02`)  
+	- Added: protonmail-bridge, protonvpn-cli; ship Signal-desktop as uninstalled package.
 - 2020.10.25 (`2020.03.01`)  
+	- Rebuilt: Signal-desktop  
 - 2020.10.06 (`2020.03`)  
 	- Added: openconnect (an open source alternative to CISCO's VPN client); Updated: Signal-desktop.  
 	- Routine updates. New: Internet Radio, Wireguard (not working yet).  
