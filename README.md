@@ -25,7 +25,7 @@
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
 	- Version: **2021.01**    
-	- md5sum: 
+	- md5sum: f80478c50dd60f900ea5a7ca4f6b6dc2 
 
 
 ## Main Updates   
