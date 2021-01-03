@@ -60,7 +60,6 @@ python3-Flask-httpauth
 psutil
 libdaemon
 avahi
-#google-go-lang
 libseccomp
 stfl
 qrencode
@@ -68,6 +67,11 @@ zsh-syntax-highlighting
 zsh-completions
 docopt 
 python3-pythondialog 
+
+## Yubikey
+pcsc-lite
+ccid
+#opensc   # cannot compile on current
 
 ## 输入法
 opencc
@@ -78,6 +82,7 @@ fcitx-configtool
 
 ## 上网和一些工具（你懂的）
 w3m
+chromium
 shadowsocks-libev
 firejail
 NetworkManager-nonprism
@@ -92,21 +97,19 @@ proxychains
 telegram
 #riot-web		 #deprecated
 uTox
-#brave-browser
 onionshare
 twitter
 obfs4proxy
 v2ray
 dnscrypt-proxy
 #apparmor
-wireguard-linux-compat
+#wireguard-linux-compat
 wireguard-tools
 openconnect
 protonvpn-cli
 protonmail-bridge
 
 ## 这些不是开源的但比较流行，请自主选择
-#slack
 zoom-linux
 
 

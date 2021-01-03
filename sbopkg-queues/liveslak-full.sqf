@@ -88,8 +88,8 @@ twitter
 #v2ray			# build locally
 dnscrypt-proxy
 #apparmor
-wireguard-linux-compat
-wireguard-tools
+#wireguard-linux-compat
+wireguard-tools  | NEW_NFT=yes
 openconnect
 protonvpn-cli
 protonmail-bridge
@@ -98,6 +98,10 @@ protonmail-bridge
 #slack
 zoom-linux
 
+## Yubikey
+pcsc-lite
+ccid
+opensc
 
 ## 写写字
 libreoffice
