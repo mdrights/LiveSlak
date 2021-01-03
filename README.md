@@ -13,25 +13,25 @@
 	- 应用加固（firejail 沙盒、火狐浏览器加固等）
 	- 强制访问控制（AppArmor）  
 
-最后更新：2020.10.06  
+最后更新：2021.01.03  
 
 發佈頻道：	 
 - Mastodon:
-	- https://fosstodon.org/mdrights
+	- https://fosstodon.org/@mdrights
 
 
 ## Download
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2020.03.02**    
-	- md5sum: e2055eb19a99fab8a97e03b62356a7c1
+	- Version: **2021.01**    
+	- md5sum: 
 
 
 ## Main Updates   
-- Added: protonmail-bridge, protonvpn-cli; ship Signal-desktop as uninstalled package.
+- Added: Wireguard, Chromium, tools used for Yubikey (part 1).
 
-**注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/V1.3.0/Changelog)**
+**注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/V1.3.0/Changelog.md)**
 <hr>
 
 
@@ -42,6 +42,9 @@
 	- [使用手册](https://github.com/mdrights/LiveSlak/blob/V1.3.0/skel/Desktop/AntiS-Users-Guide.md)  
 	- [预装软件列表](https://github.com/mdrights/LiveSlak/blob/V1.3.0/pkglists/mdrights-xfce.lst)  
 	- 溫馨提示：本系統雖然有一定匿名特性，但不主打匿名，請有高匿名需求的朋友使用：[Tails](https://tails.boum.org/about/index.en.html)  
+
+- 版本命名规则：`<year>.<x>.<y>`  以当年年份为大版本，x 更新表示全系统的包都有更新，y 表示只有部分包更新 和/或 bug 修复，y 为空时表示为预发行版。  
+
 
 ## Installation
 

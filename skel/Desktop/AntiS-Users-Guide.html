@@ -6,14 +6,10 @@
 <title>AntiS-Users-Guide</title>
 </head>
 <body>
-<hr>
-<p>layout: post
-date: 2020-11-15</p>
-<hr>
-<h1>LiveSlak 用户手册</h1>
+<h1 id="liveslak">LiveSlak 用户手册</h1>
 <p><strong>默认系统帐号/密码：live/live</strong>  <br>
 <strong>默认root密码：toor</strong>     </p>
-<h3>LiveSlak 能防御什么 &amp; 不能防御什么</h3>
+<h3 id="liveslak_1">LiveSlak 能防御什么 &amp; 不能防御什么</h3>
 <p><strong>请一定阅读这一部分</strong>   </p>
 <ul>
 <li>
@@ -34,7 +30,7 @@ date: 2020-11-15</p>
 </blockquote>
 </li>
 </ul>
-<h3>【再强调一次：使用策略】</h3>
+<h3 id="_1">【再强调一次：使用策略】</h3>
 <ol>
 <li>当前系统不要保留重要敏感文件（反正也不會保存），文件需要保存的话请转存到其他盘上；</li>
 <li><strong>注意区分使用场景</strong>：  <ul>
@@ -61,7 +57,7 @@ date: 2020-11-15</p>
 <ol>
 <li>（在虚拟机里使用时）下载下来的文件就不要再在宿主环境里打开了（就是安装了 Virtualbox 的那个系统））</li>
 </ol>
-<h2>启动方法</h2>
+<h2 id="_2">启动方法</h2>
 <ol>
 <li>USB 盤插入电脑，启动电脑；<ul>
 <li>如果你的电脑还没设置 USB 设备优先启动，请先设置（方法请自行搜索）；  </li>
@@ -75,27 +71,39 @@ date: 2020-11-15</p>
 <li>修改用户和/或root的密码（只对本次启动有效） <br>
 在系统开机画面（显示蓝色的<code>Slackware</code>及一些菜单）时，按大写<code>E</code>进入一个编辑页面，在<code>linux</code>那行紧随句尾输入以下参数:</li>
 </ol>
-<pre><code>    livepw=&quot;xxxx&quot;
-    和/或
-    rootpw=&quot;xxxx&quot;
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="err">    livepw=&quot;xxxx&quot;</span>
+<span class="err">    和/或</span>
+<span class="err">    rootpw=&quot;xxxx&quot;</span>
+</pre></div>
+
 
 <p>按 F10 保存并启动系统。<br>
 3. 出现<code>login:</code> 表示可以登录了，输入<code>live</code>然后回车；输入密码时是不回显任何东西的——Linux 特色;-)<br>
 4. 登录系统后，是命令行界面，<strong>需要执行</strong><code>startx</code>进入桌面。</p>
-<h2>软件使用方法</h2>
-<h3>基本需求</h3>
+<h2 id="_3">软件使用方法</h2>
+<h3 id="_4">基本需求</h3>
 <ul>
-<li>fcitx 輸入法   <br>
-    （按 <code>Ctrl + 空格</code> 激活；目前有拼音/双拼/五笔/注音等）</li>
-<li>NetworkManager
+<li>
+<p>fcitx 輸入法   <br>
+    （按 <code>Ctrl + 空格</code> 激活；目前有拼音/双拼/五笔/注音等）</p>
+</li>
+<li>
+<p>NetworkManager
     网络连接工具，如果你是用 USB 盤啓動本系統，請点击右上角图标连接WiFi（如果点出的菜单没有见到任何热点，很可能是本系统没有该机器无线网卡的驱动）；用虛擬機方式則不必特意设置。  <br>
-    （另，已MAC地址随机化处理可更好保護你的網上身份） </li>
+    （另，已MAC地址随机化处理可更好保護你的網上身份） </p>
+</li>
 <li>
 <p>Firefox 火狐浏览器   </p>
 <ul>
 <li>在开始菜单有两处可以启动火狐浏览器：「互联网」和 「翻越长城」。  </li>
 <li>通过「翻越长城」启动的话，已经套用了安全沙盒（firejail）并默认配置了经过安全/隐私加固的配置，包括： Socks 代理（很多翻墙软件需要这个设置才能让浏览器翻墙）、不加载第三方 cookie 并关闭 Firefox 时清除 cookie、防指纹跟踪（fingerprint），以及其他配置。这些配置可能会让某些网页显示有问题。用户可以随时改回默认的配置（只对本次开机有效）。  </li>
+</ul>
+</li>
+<li>
+<p>Chromium 浏览器（Chrome 的开源版）   </p>
+<ul>
+<li>注：需要走代理时只能从命令行启动：<br>
+<code>chromium --proxy-server="socks5://localhost:1080"   (例子：你的本地 1080 端口的 ss / v2ray 代理)</code>     </li>
 </ul>
 </li>
 <li>
@@ -113,7 +121,7 @@ date: 2020-11-15</p>
 </ul>
 </li>
 </ul>
-<h3>穿墙</h3>
+<h3 id="_5">穿墙</h3>
 <ul>
 <li>
 <p>Shadowsocks-libev<br>
@@ -121,12 +129,13 @@ date: 2020-11-15</p>
 <p>（方法二：在终端，进入 ss 配置文件的路径，执行：   </p>
 </li>
 </ul>
-<pre><code>    ss-local -c &lt;你的 ss 配置文件&gt;
+<div class="codehilite"><pre><span></span>    <span class="n">ss</span><span class="o">-</span><span class="k">local</span> <span class="o">-</span><span class="k">c</span> <span class="o">&lt;</span><span class="err">你的</span> <span class="n">ss</span> <span class="err">配置文件</span><span class="o">&gt;</span>
 
-    &gt; 比如，你的 ss 配置文件在桌面的话：  
+    <span class="o">&gt;</span> <span class="err">比如，你的</span> <span class="n">ss</span> <span class="err">配置文件在桌面的话：</span>  
 
-    ss-local -c ~/Desktop/config.json  
-</code></pre>
+    <span class="n">ss</span><span class="o">-</span><span class="k">local</span> <span class="o">-</span><span class="k">c</span> <span class="o">~/</span><span class="n">Desktop</span><span class="o">/</span><span class="n">config</span><span class="p">.</span><span class="n">json</span>  
+</pre></div>
+
 
 <ul>
 <li>
@@ -140,8 +149,9 @@ date: 2020-11-15</p>
     （启动方法：在终端执行：）  </p>
 </li>
 </ul>
-<pre><code>    /usr/bin/v2ray/v2ray -c &lt;你的 v2ray 配置文件&gt;  
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="err">    /usr/bin/v2ray/v2ray -c &lt;你的 v2ray 配置文件&gt;  </span>
+</pre></div>
+
 
 <ul>
 <li>
@@ -151,21 +161,28 @@ date: 2020-11-15</p>
 <p>ProtonVPN CLI (ProtonVPN 命令行客户端，具体用法参见它的帮助信息)</p>
 </li>
 </ul>
-<pre><code>    protonvpn examples
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="err">    protonvpn examples</span>
+</pre></div>
+
 
 <ul>
 <li>Openconnect (- Cisco VPN 的开源客户端)
     (使用方法请阅读 <code>man openconnect</code>)</li>
 </ul>
-<pre><code>    openconnect &lt;your vpn server&gt;
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="err">    openconnect &lt;your vpn server&gt;</span>
+</pre></div>
+
 
 <ul>
-<li>Wireguard (新型轻量高安全性 VPN)<br>
-    （还有bug未解决暂不可用）  </li>
+<li>Wireguard (新型轻量高安全性 VPN)  </li>
 </ul>
-<h3>隐匿/隐身</h3>
+<div class="codehilite"><pre><span></span>    <span class="err">（先把</span> <span class="err">配置文件如</span> <span class="n">wg0</span><span class="p">.</span><span class="n">conf</span> <span class="err">放到</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">wireguard</span><span class="o">/</span> <span class="p">(</span><span class="err">如没有就创建一个</span><span class="p">)</span><span class="err">）</span>
+
+    <span class="n">sudo</span> <span class="n">wg</span><span class="o">-</span><span class="n">quick</span> <span class="n">up</span> <span class="n">wg0</span>
+</pre></div>
+
+
+<h3 id="_6">隐匿/隐身</h3>
 <ul>
 <li>Tor Browser 洋葱浏览器 ( &amp; Tor 命令行版 )  <br>
     （如果选择用自己的代理，第一個問題選否，第二個選是，在Socks5處選擇 127.0.0.1 端口 1080 ） <br>
@@ -174,14 +191,15 @@ date: 2020-11-15</p>
 <li>iceWM 
     （可以模仿 Win95 的桌面主题，让你在公共场所不被周围的人发现你在用 Linux 系统，更好地物理隐匿。）</li>
 </ul>
-<pre><code>    在开机登录（login）后，输入 startx 时改为：
+<div class="codehilite"><pre><span></span>    <span class="err">在开机登录（</span><span class="n">login</span><span class="err">）后，输入</span> <span class="n">startx</span> <span class="err">时改为：</span>
 
-    startx /usr/bin/icewm
+    <span class="n">startx</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">icewm</span>
 
-    进入桌面后在开始菜单选择 「themes」即可选择 Win95 主题。
-</code></pre>
+    <span class="err">进入桌面后在开始菜单选择</span> <span class="err">「</span><span class="n">themes</span><span class="err">」即可选择</span> <span class="n">Win95</span> <span class="err">主题。</span>
+</pre></div>
 
-<h3>安全地聯繫</h3>
+
+<h3 id="_7">安全地聯繫</h3>
 <ul>
 <li>
 <p>Telegram 
@@ -214,8 +232,9 @@ date: 2020-11-15</p>
     （<strong>注：目前遇到一些上游的问题，应用必须在每次启动后安装一次才能成功运行</strong>。安装方法如下：）</p>
 </li>
 </ul>
-<pre><code>    sudo installpkg /opt/signal-desktop-x.xx.x-x86_64-1_SBo.tgz
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="err">    sudo installpkg /opt/signal-desktop-x.xx.x-x86_64-1_SBo.tgz</span>
+</pre></div>
+
 
 <ul>
 <li>
@@ -225,14 +244,14 @@ date: 2020-11-15</p>
 <p>另外临时附带 <code>Zoom</code> ，<strong>不开源</strong>的通讯工具，警告：仅为使用方便，请自行评估其安全性。</p>
 </li>
 </ul>
-<h3>文件分享</h3>
+<h3 id="_8">文件分享</h3>
 <ul>
 <li>onionshare
     （通过 Tor 网络分享文件）</li>
 <li>Syncthing
     （分布式地分享文件）</li>
 </ul>
-<h3>加密大法</h3>
+<h3 id="_9">加密大法</h3>
 <ul>
 <li>Keepassxc
     （密码管理器）     </li>
@@ -243,7 +262,7 @@ date: 2020-11-15</p>
 <li>gpa <br>
     (PGP密钥管理器)</li>
 </ul>
-<h3>数据清除 vs 反数据清除</h3>
+<h3 id="vs">数据清除 vs 反数据清除</h3>
 <ul>
 <li>wipe, secure-delete   <br>
     （磁盘擦除工具 -注：一般仅对 <strong>传统磁盘</strong> 有效） <br>
@@ -255,7 +274,7 @@ date: 2020-11-15</p>
 <li>testdisk  <br>
     （数据恢复工具，在終端裏輸入 <code>testdisk</code> 即可按提示操作）</li>
 </ul>
-<h3>一些高級用法</h3>
+<h3 id="_10">一些高級用法</h3>
 <ul>
 <li>防火牆 iptables  <br>
     （在桌面菜单「网络」里，會要求輸入用戶密碼 <code>live</code>；配有一些簡單的規則。默认已经开启）</li>
@@ -271,18 +290,19 @@ date: 2020-11-15</p>
     (使用 DoH / DNSSEC 方法的 DNS 请求客户端，让你的 DNS 请求更加隐蔽，不被本地网管/ISP 记录。不使用 代理/VPN 时可用。)<br>
     使用方法：在终端执行  </li>
 </ul>
-<pre><code>    /etc/rc.d/rc.dnscrypt-proxy start
+<div class="codehilite"><pre><span></span>    <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">rc</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">rc</span><span class="p">.</span><span class="n">dnscrypt</span><span class="o">-</span><span class="n">proxy</span> <span class="k">start</span>
 
-    然后修改你的 DNS 解析 IP：
+    <span class="err">然后修改你的</span> <span class="n">DNS</span> <span class="err">解析</span> <span class="n">IP</span><span class="err">：</span>
 
-    vi /etc/resolv.conf
+    <span class="n">vi</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">resolv</span><span class="p">.</span><span class="n">conf</span>
 
-    把所有 nameserver 删去，改为：
+    <span class="err">把所有</span> <span class="n">nameserver</span> <span class="err">删去，改为：</span>
 
-    nameserver 127.0.0.1
-</code></pre>
+    <span class="n">nameserver</span> <span class="mi">127</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">1</span>
+</pre></div>
 
-<h3>其他日常：</h3>
+
+<h3 id="_11">其他日常：</h3>
 <ul>
 <li>Libreoffice 
     （文檔編輯套件；已加入中文包，即界面是中文的了）</li>

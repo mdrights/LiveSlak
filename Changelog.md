@@ -1,6 +1,9 @@
 
 ## Change Log
 
+- 2021.01.03 (`2021.01`)  
+    - Added: Wireguard, Chromium, tools for Yubikey :).
+
 - 2020.11.15 (`2020.03.02`)  
 	- Added: protonmail-bridge, protonvpn-cli; ship Signal-desktop as uninstalled package.
 - 2020.10.25 (`2020.03.01`)  
