@@ -21,6 +21,7 @@ freealut
 plib
 #qt5
 #qt5-webkit
+docbook-xml
 
 ## Pythonic
 python3-sip
@@ -121,14 +122,10 @@ secure-delete
 keepassxc 
 #veracrypt     # build from Alien.
 
-## 虚拟机客户端插件
-#virtualbox-kernel-addons
 
 ## RSS 新闻阅读器
 newsboat
 
-## 字体
-#noto-cjk-font-ttf
 
 ## Docker
 
@@ -137,4 +134,3 @@ newsboat
 
 ## for Desktop
 icewm
-terminator

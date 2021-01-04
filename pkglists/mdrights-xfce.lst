@@ -67,11 +67,12 @@ zsh-syntax-highlighting
 zsh-completions
 docopt 
 python3-pythondialog 
+docbook-xml
 
 ## Yubikey
 pcsc-lite
 ccid
-#opensc   # cannot compile on current
+opensc
 
 ## 输入法
 opencc
@@ -147,4 +148,4 @@ sbopkg
 
 ## for Desktop
 icewm
-terminator
+#terminator
