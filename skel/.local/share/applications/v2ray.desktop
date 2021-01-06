@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=v2ray (Socks5 proxy)
+Name[zh_CN]=v2ray
+Name[zh_HK]=v2ray
+Name[zh_TW]=v2ray
+Exec=su -c '/usr/bin/v2ray/v2ray -c /home/live/Desktop/v2ray.json'
+Icon=telegram
+Type=Application
+Categories=X-Antigfw
+Terminal=true

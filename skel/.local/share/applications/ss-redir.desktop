@@ -1,11 +1,11 @@
 [Desktop Entry]
 Name=Shadowsocks-libev Transparent Tunnel
-Name[zh_CN]=Shadowsocks-libev透明代理
-Name[zh_HK]=Shadowsocks-libev透明代理
-Name[zh_TW]=Shadowsocks-libev透明代理
+Name[zh_CN]=ss 透明代理
+Name[zh_HK]=ss 透明代理
+Name[zh_TW]=ss 透明代理
 Comment[En]=Start ss as transparent proxy to let all apps go throught GFW!
 Exec=su -c '/etc/rc.d/rc.ss-redir start'
-Icon=telegram
+Icon=xterm-color_48x48
 Type=Application
 Categories=X-Antigfw
 Terminal=true
