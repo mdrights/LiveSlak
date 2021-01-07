@@ -25,11 +25,11 @@
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
 	- Version: **2021.01**    
-	- md5sum: f80478c50dd60f900ea5a7ca4f6b6dc2 
+	- md5sum: 1b33895813bf2a1248fb468e378fdc35
 
 
 ## Main Updates   
-- Added: Wireguard, Chromium, tools used for Yubikey (part 1).
+- Added: Wireguard, Chromium, tools used for Yubikey.
 
 **注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/V1.3.0/Changelog.md)**
 <hr>
