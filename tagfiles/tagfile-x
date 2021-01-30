@@ -228,7 +228,7 @@ xf86-video-tga:REC
 xf86-video-trident:REC
 xf86-video-tseng:REC
 xf86-video-v4l:REC
-xf86-video-vboxvideo:REC
+xf86-video-vboxvideo:SKP
 xf86-video-vesa:REC
 xf86-video-vmware:REC
 xf86-video-voodoo:REC
