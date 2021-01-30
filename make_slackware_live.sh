@@ -1432,6 +1432,7 @@ echo "root:${ROOTPW}" | chroot ${LIVE_ROOTDIR} /usr/sbin/chpasswd
 # Create a nonprivileged user account (called "live" by default):
 chroot ${LIVE_ROOTDIR} /usr/sbin/useradd -c "antiS 2021.01" -g users -G wheel,audio,cdrom,floppy,plugdev,video,power,netdev,lp,scanner,kmem,dialout,games,disk,input -u 1000 -d /home/${LIVEUID} -m -s /bin/zsh ${LIVEUID}
 echo "${LIVEUID}:${LIVEPW}" | chroot ${LIVE_ROOTDIR} /usr/sbin/chpasswd
+chroot ${LIVE_ROOTDIR} /usr/bin/chmod -R 700 /home/${LIVEUID}
 
 # Configure suauth:
 cat <<EOT >${LIVE_ROOTDIR}/etc/suauth
@@ -1708,6 +1709,8 @@ alias tarview="tar -tvf"
 alias grep="grep --color=auto"
 alias fgrep="fgrep --color=auto"
 alias egrep="egrep --color=auto"
+
+umask 027
 
 # Ctrl-D should not log us off immediately; now it needs 10 times:
 set -o ignoreeof
