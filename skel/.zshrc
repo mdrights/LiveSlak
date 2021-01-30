@@ -2,8 +2,7 @@
 HISTFILE=~/.histfile
 HISTSIZE=2000
 SAVEHIST=1000
-setopt autocd
-setopt appendhistory share_history autocd extendedglob nomatch notify
+setopt appendhistory share_history autocd extendedglob nomatch notify ignoreeof
 unsetopt beep
 
 bindkey -e
@@ -44,3 +43,6 @@ alias gits='git status'
 alias mv='mv -i'
 alias cp='cp -i'
 alias rm='rm -i'
+
+# Set safer file/dir permission
+umask 027
