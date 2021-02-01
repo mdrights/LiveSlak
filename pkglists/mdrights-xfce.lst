@@ -94,7 +94,7 @@ tor-browser
 torsocks
 privoxy
 proxychains
-#signal-desktop  #doesnt work on live (?)
+signal-desktop
 telegram
 #riot-web		 #deprecated
 uTox
