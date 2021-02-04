@@ -9,11 +9,11 @@
   - 隐私加强
     - 预装隐私保护类和信息/通讯自由相关的应用
 	- live 性质，重启后系统恢复初始状态（不保存任何修改，不留下任何痕跡）
-    - 系统加固（包括：防火墙、文件系统挂载限制、内核参数配置调优等……）
+    - 系统加固（包括：防火墙、用户和进程权限控制、文件系统权限和挂载限制、内核参数配置调优等……）
 	- 应用加固（firejail 沙盒、火狐浏览器加固等）
 	- 强制访问控制（AppArmor）  
 
-最后更新：2021.01.03  
+最后更新：2021.02.04  
 
 發佈頻道：	 
 - Mastodon:
@@ -24,12 +24,17 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2021.01**    
-	- md5sum: 1b33895813bf2a1248fb468e378fdc35
+	- Version: **2021.01.01**    
+	- md5sum: cf9ada0a09c6032cdcbfc42b127dc235
 
 
 ## Main Updates   
-- Added: Wireguard, Chromium, tools used for Yubikey.
+
+- Signal-desktop 已经可以直接使用～；  
+- 安全更新：sudo, firefox, etc.  
+- 对默认用户的账号（live）的家目录进行权限梳理，非 `live` 用户不能查看、添加、修改、删除 `live` 家目录（`/home/live`）下的文件/目录了。  
+- `live` 用户自己创建的文件将是 `rw-r-----`，目录将是 `rwxr-x---`。  
+- 去掉一些闭源的系统工具（系统自带的）。  
 
 **注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/V1.3.0/Changelog.md)**
 <hr>
@@ -43,7 +48,7 @@
 	- [预装软件列表](https://github.com/mdrights/LiveSlak/blob/V1.3.0/pkglists/mdrights-xfce.lst)  
 	- 溫馨提示：本系統雖然有一定匿名特性，但不主打匿名，請有高匿名需求的朋友使用：[Tails](https://tails.boum.org/about/index.en.html)  
 
-- 版本命名规则：`<year>.<x>.<y>`  以当年年份为大版本，x 更新表示全系统的包都有更新，y 表示只有部分包更新 和/或 bug 修复，y 为空时表示为预发行版。  
+- 版本命名规则：`<year>.<x>.<y>`  以当年年份为大版本，x 更新表示全系统的包都有更新，y 表示只有部分包更新 和/或 bug 修复，y 为空时或`=rc`时表示为预发行版。  
 
 
 ## Installation

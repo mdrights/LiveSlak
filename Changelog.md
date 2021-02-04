@@ -1,6 +1,13 @@
 
 ## Change Log
 
+- 2021.02.04 (`2021.01.01`)  
+    - Signal-desktop 已经可以直接使用～；  
+    - 安全更新：sudo, firefox, etc.  
+    - 对默认用户的账号（live）的家目录进行权限梳理，非 `live` 用户不能添加、修改、删除 `live` 家目录（`/home/live`）下的文件/目录了 (但能看到文件/目录名)。  
+    - `live` 用户自己创建的文件将是 `rw-r-----`，目录将是 `rwxr-x---`。  
+    - 去掉一些闭源的系统工具（系统自带的）。  
+
 - 2021.01.03 (`2021.01`)  
     - Added: Wireguard, Chromium, tools for Yubikey :).
 
