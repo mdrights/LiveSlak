@@ -1432,7 +1432,6 @@ echo "root:${ROOTPW}" | chroot ${LIVE_ROOTDIR} /usr/sbin/chpasswd
 # Create a nonprivileged user account (called "live" by default):
 chroot ${LIVE_ROOTDIR} /usr/sbin/useradd -c "antiS 2021.01" -g users -G wheel,audio,cdrom,floppy,plugdev,video,power,netdev,lp,scanner,kmem,dialout,games,disk,input -u 1000 -d /home/${LIVEUID} -m -s /bin/zsh ${LIVEUID}
 echo "${LIVEUID}:${LIVEPW}" | chroot ${LIVE_ROOTDIR} /usr/sbin/chpasswd
-chroot ${LIVE_ROOTDIR} /usr/bin/chmod 700 /home/${LIVEUID}
 
 # Configure suauth:
 cat <<EOT >${LIVE_ROOTDIR}/etc/suauth
@@ -1831,6 +1830,7 @@ fi # End ADD_CACERT
 
 # Make sure that user 'live' owns her own files:
 chroot ${LIVE_ROOTDIR} chown -R ${LIVEUID}:users home/${LIVEUID}
+chroot ${LIVE_ROOTDIR} chmod 700  home/${LIVEUID}
 
 # -------------------------------------------------------------------------- #
 echo "-- Tweaking system startup."
@@ -1868,7 +1868,7 @@ sed -i ${LIVE_ROOTDIR}/etc/inittab -e "s/\(id:\).\(:initdefault:\)/\1${RUNLEVEL}
 [ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.bluetooth ] && chmod a-x ${LIVE_ROOTDIR}/etc/rc.d/rc.bluetooth
 
 # But enable my firewall 
-[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.firewall ] && chmod +x ${LIVE_ROOTDIR}/etc/rc.d/rc.firewall
+[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.firewall ] && chmod a+x ${LIVE_ROOTDIR}/etc/rc.d/rc.firewall
 
 # Add a softvol pre-amp to ALSA - some computers have too low volumes.
 # If etc/asound.conf exists it's configuring ALSA to use Pulse,
