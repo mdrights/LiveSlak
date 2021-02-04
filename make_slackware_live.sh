@@ -1374,7 +1374,7 @@ cat <<EOT >${LIVE_ROOTDIR}/etc/rc.d/rc.font
 # (configured in /etc/lilo.conf)
 setfont -v Lat2-Terminus16.psfu.gz
 EOT
-chmod +x ${LIVE_ROOTDIR}/etc/rc.d/rc.font
+chmod a+x ${LIVE_ROOTDIR}/etc/rc.d/rc.font
 
 # Enable mouse support in runlevel 3:
 cat <<"EOM" > ${LIVE_ROOTDIR}/etc/rc.d/rc.gpm
@@ -1395,7 +1395,7 @@ else # assume $1 = start:
   /usr/sbin/gpm -m /dev/mouse -t ${MTYPE}
 fi
 EOM
-chmod +x ${LIVE_ROOTDIR}/etc/rc.d/rc.gpm
+chmod a+x ${LIVE_ROOTDIR}/etc/rc.d/rc.gpm
 
 # Remove ssh server keys - new unique keys will be generated
 # at first boot of the live system: 
@@ -1432,7 +1432,7 @@ echo "root:${ROOTPW}" | chroot ${LIVE_ROOTDIR} /usr/sbin/chpasswd
 # Create a nonprivileged user account (called "live" by default):
 chroot ${LIVE_ROOTDIR} /usr/sbin/useradd -c "antiS 2021.01" -g users -G wheel,audio,cdrom,floppy,plugdev,video,power,netdev,lp,scanner,kmem,dialout,games,disk,input -u 1000 -d /home/${LIVEUID} -m -s /bin/zsh ${LIVEUID}
 echo "${LIVEUID}:${LIVEPW}" | chroot ${LIVE_ROOTDIR} /usr/sbin/chpasswd
-chroot ${LIVE_ROOTDIR} /usr/bin/chmod -R 700 /home/${LIVEUID}
+chroot ${LIVE_ROOTDIR} /usr/bin/chmod 700 /home/${LIVEUID}
 
 # Configure suauth:
 cat <<EOT >${LIVE_ROOTDIR}/etc/suauth
@@ -1513,7 +1513,7 @@ EOT
 
 if [ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.networkmanager ]; then
   # Enable NetworkManager if present:
-  chmod +x ${LIVE_ROOTDIR}/etc/rc.d/rc.networkmanager
+  chmod a+x ${LIVE_ROOTDIR}/etc/rc.d/rc.networkmanager
   # And disable Slackware's own way of configuring eth0:
   cat <<EOT > ${LIVE_ROOTDIR}/etc/rc.d/rc.inet1.conf
 IFNAME[0]="eth0"
@@ -1857,16 +1857,15 @@ fi
 sed -i ${LIVE_ROOTDIR}/etc/inittab -e "s/\(id:\).\(:initdefault:\)/\1${RUNLEVEL}\2/"
 
 # Disable unneeded/unwanted services:
-[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.acpid ] && chmod -x ${LIVE_ROOTDIR}/etc/rc.d/rc.acpid
-[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.pcmcia ] && chmod -x ${LIVE_ROOTDIR}/etc/rc.d/rc.pcmcia
-[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.pulseaudio ] && chmod -x ${LIVE_ROOTDIR}/etc/rc.d/rc.pulseaudio
-[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.yp ] && chmod -x ${LIVE_ROOTDIR}/etc/rc.d/rc.yp
-[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.sshd ] && chmod -x ${LIVE_ROOTDIR}/etc/rc.d/rc.sshd
-#XXX
-[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.rpc ] && chmod -x ${LIVE_ROOTDIR}/etc/rc.d/rc.rpc
-[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.cups ] && chmod -x ${LIVE_ROOTDIR}/etc/rc.d/rc.cups
-[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.cups-browsed ] && chmod -x ${LIVE_ROOTDIR}/etc/rc.d/rc.cups-browsed
-[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.bluetooth ] && chmod -x ${LIVE_ROOTDIR}/etc/rc.d/rc.bluetooth
+[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.acpid ] && chmod a-x ${LIVE_ROOTDIR}/etc/rc.d/rc.acpid
+[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.pcmcia ] && chmod a-x ${LIVE_ROOTDIR}/etc/rc.d/rc.pcmcia
+[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.pulseaudio ] && chmod a-x ${LIVE_ROOTDIR}/etc/rc.d/rc.pulseaudio
+[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.yp ] && chmod a-x ${LIVE_ROOTDIR}/etc/rc.d/rc.yp
+[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.sshd ] && chmod a-x ${LIVE_ROOTDIR}/etc/rc.d/rc.sshd
+[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.rpc ] && chmod a-x ${LIVE_ROOTDIR}/etc/rc.d/rc.rpc
+[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.cups ] && chmod a-x ${LIVE_ROOTDIR}/etc/rc.d/rc.cups
+[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.cups-browsed ] && chmod a-x ${LIVE_ROOTDIR}/etc/rc.d/rc.cups-browsed
+[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.bluetooth ] && chmod a-x ${LIVE_ROOTDIR}/etc/rc.d/rc.bluetooth
 
 # But enable my firewall 
 [ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.firewall ] && chmod +x ${LIVE_ROOTDIR}/etc/rc.d/rc.firewall
