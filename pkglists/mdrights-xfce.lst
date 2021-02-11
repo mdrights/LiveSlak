@@ -96,7 +96,6 @@ privoxy
 proxychains
 signal-desktop
 telegram
-#riot-web		 #deprecated
 uTox
 onionshare
 twitter
@@ -148,4 +147,3 @@ sbopkg
 
 ## for Desktop
 icewm
-#terminator

@@ -81,7 +81,6 @@ privoxy
 proxychains
 signal-desktop
 telegram
-#riot-web		# build locally
 uTox
 onionshare
 twitter
@@ -96,7 +95,6 @@ protonvpn-cli
 protonmail-bridge
 
 ## 这些不是开源的但比较流行，请自主选择
-#slack
 zoom-linux
 
 ## Yubikey
