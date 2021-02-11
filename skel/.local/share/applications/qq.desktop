@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=2.0.0-b2
+Encoding=UTF-8
+Name=腾讯QQ
+Comment=腾讯QQ
+Exec=firejail /usr/local/bin/qq
+Icon=/usr/local/share/tencent-qq/qq.png
+Terminal=false
+Type=Application
+Categories=Application;Network;Tencent Software;
+StartupNotify=true
+Name[zh_CN]=腾讯QQ
+GenericName[zh_CN]=
+Comment[zh_CN]=腾讯QQ
