@@ -2,7 +2,7 @@
 Exec=firejail firefox --no-remote -p "default"
 Icon=firefox
 Type=Application
-Categories=WebBrowser;X-Antigfw
+Categories=WebBrowser;Network
 Name=Firefox in jail
 Name[bn]=ফায়ারফক্স
 Name[eo]=Mozilo Fajrovulpo

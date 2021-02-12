@@ -105,7 +105,7 @@ Comment[vi]=Truy cập Internet
 Comment[zh_CN]=访问互联网
 Comment[zh_HK]=連線到網際網路
 Comment[zh_TW]=連線到網際網路
-Exec=firejail /usr/bin/chromium %U
+Exec=firejail /usr/bin/chromium --proxy-server="socks5://localhost:1080" %U
 StartupNotify=true
 Terminal=false
 Icon=chromium

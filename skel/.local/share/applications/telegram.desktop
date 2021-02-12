@@ -9,4 +9,4 @@ Exec=firejail /usr/bin/Telegram -- %u
 TryExec=/usr/bin/Telegram
 Terminal=false
 Type=Application
-Categories=X-Antigfw
+Categories=Network
