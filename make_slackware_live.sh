@@ -1430,7 +1430,7 @@ EOL
 echo "root:${ROOTPW}" | chroot ${LIVE_ROOTDIR} /usr/sbin/chpasswd
 
 # Create a nonprivileged user account (called "live" by default):
-chroot ${LIVE_ROOTDIR} /usr/sbin/useradd -c "antiS 2021.01" -g users -G wheel,audio,cdrom,floppy,plugdev,video,power,netdev,lp,scanner,kmem,dialout,games,disk,input -u 1000 -d /home/${LIVEUID} -m -s /bin/zsh ${LIVEUID}
+chroot ${LIVE_ROOTDIR} /usr/sbin/useradd -c "${LIVEVER}" -g users -G wheel,audio,cdrom,floppy,plugdev,video,power,netdev,lp,scanner,kmem,dialout,games,disk,input -u 1000 -d /home/${LIVEUID} -m -s /bin/zsh ${LIVEUID}
 echo "${LIVEUID}:${LIVEPW}" | chroot ${LIVE_ROOTDIR} /usr/sbin/chpasswd
 
 # Configure suauth:
