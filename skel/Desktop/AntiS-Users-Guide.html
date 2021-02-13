@@ -7,7 +7,7 @@
 </head>
 <body>
 <h1 id="liveslak">LiveSlak 用户手册</h1>
-<p><strong>默认系统帐号/密码：live/live</strong>  <br>
+<p><strong>默认帐号/密码：live/live</strong>  <br>
 <strong>默认root密码：toor</strong>     </p>
 <h3 id="liveslak_1">LiveSlak 能防御什么 &amp; 不能防御什么</h3>
 <p><strong>请一定阅读这一部分</strong>   </p>
@@ -95,14 +95,13 @@
 <li>
 <p>Firefox 火狐浏览器   </p>
 <ul>
-<li>在开始菜单有两处可以启动火狐浏览器：「互联网」和 「翻越长城」。  </li>
-<li>通过「翻越长城」启动的话，已经套用了安全沙盒（firejail）并默认配置了经过安全/隐私加固的配置，包括： Socks 代理（很多翻墙软件需要这个设置才能让浏览器翻墙）、不加载第三方 cookie 并关闭 Firefox 时清除 cookie、防指纹跟踪（fingerprint），以及其他配置。这些配置可能会让某些网页显示有问题。用户可以随时改回默认的配置（只对本次开机有效）。  </li>
+<li>现在已经套用了安全沙盒（firejail）并默认配置了经过安全/隐私加固的配置，包括： Socks 代理（很多翻墙软件需要这个设置才能让浏览器翻墙）、不加载第三方 cookie 并关闭 Firefox 时清除 cookie、防指纹跟踪（fingerprint），以及其他配置。这些配置可能会让某些网页显示有问题。用户可以随时改回默认的配置（只对本次开机有效）。  </li>
 </ul>
 </li>
 <li>
 <p>Chromium 浏览器（Chrome 的开源版）   </p>
 <ul>
-<li>注：需要走代理时只能从命令行启动：<br>
+<li>注：需要走代理时只能从命令行启动（在程序菜单已默认如此，并默认使用安全沙盒 firejail 启动）：<br>
 <code>chromium --proxy-server="socks5://localhost:1080"   (例子：你的本地 1080 端口的 ss / v2ray 代理)</code>     </li>
 </ul>
 </li>
@@ -111,13 +110,6 @@
 <ul>
 <li>自2020年版本开始默认设置了不能直接在文件管理器左侧就能看到你机器本地的磁盘（分区）了（为了对非技术人员做适当隐藏）。但仍然可以通过命令行挂载。  </li>
 <li>外接的U盘、移动硬盘一般都能识别。磁盘挂载时会弹出提示要求密码，请输入 root（超级管理员）的密码：<code>toor</code>    </li>
-</ul>
-</li>
-<li>
-<p>关于开始菜单里的「翻越长城」：</p>
-<ul>
-<li>罗列了一些常用的安全通讯工具；  </li>
-<li>带（in jail）的应用会通过沙盒 firejail 来启动，具有更高的安全性。  </li>
 </ul>
 </li>
 </ul>
@@ -149,7 +141,7 @@
     （启动方法：在终端执行：）  </p>
 </li>
 </ul>
-<div class="codehilite"><pre><span></span><span class="err">    /usr/bin/v2ray/v2ray -c &lt;你的 v2ray 配置文件&gt;  </span>
+<div class="codehilite"><pre><span></span><span class="err">    v2ray -c &lt;你的 v2ray 配置文件&gt;  </span>
 </pre></div>
 
 
@@ -203,7 +195,8 @@
 <ul>
 <li>
 <p>Telegram 
-    (可在設置裏設置 socks（1080）代理（翻牆），或 Tor（9050））</p>
+    (可在設置裏設置 socks（1080）代理（翻牆），或 Tor（9050））
+    （已默认由安全沙盒 firejail 启动）  </p>
 </li>
 <li>
 <p>Hexchat, Weechat  <br>
@@ -229,19 +222,15 @@
 <li>
 <p>Signal-Desktop 桌面版
     （加密通讯软件；须先在移动设备安装Signal客户端并用帐号登录；注意它自身无法设置代理。）
-    （<strong>注：目前遇到一些上游的问题，应用必须在每次启动后安装一次才能成功运行</strong>。安装方法如下：）</p>
-</li>
-</ul>
-<div class="codehilite"><pre><span></span><span class="err">    sudo installpkg /opt/signal-desktop-x.xx.x-x86_64-1_SBo.tgz</span>
-</pre></div>
-
-
-<ul>
-<li>
-<p>邮件客户端：Thunderbird 和 mutt （均可配合 GPG 使用加密邮件）</p>
+    （已默认由安全沙盒 firejail 启动）  </p>
 </li>
 <li>
-<p>另外临时附带 <code>Zoom</code> ，<strong>不开源</strong>的通讯工具，警告：仅为使用方便，请自行评估其安全性。</p>
+<p>邮件客户端：Thunderbird 和 mutt （均可配合 GPG 使用加密邮件）
+    （Thunderbird 已默认由安全沙盒 firejail 启动）  </p>
+</li>
+<li>
+<p>另外临时附带 <code>Zoom</code> 和 <code>QQ</code>，<strong>不开源</strong>的通讯工具，警告：仅为使用方便，请自行评估其安全性。
+    （已默认由安全沙盒 firejail 启动）  </p>
 </li>
 </ul>
 <h3 id="_8">文件分享</h3>
