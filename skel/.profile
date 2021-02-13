@@ -6,6 +6,8 @@ alias mv='mv -i'
 alias cp='cp -i'
 alias rm='rm -i'
 
+export PAGER='less -R'
+
 # make package searching easier on Slackware.
 lsp ()
 {

@@ -33,6 +33,7 @@ setopt PROMPT_SUBST ; PS1='%? [%m %c$(__git_ps1 " (%s)")]
 export PATH=$HOME/bin:$PATH:/sbin:/usr/sbin
 export EDITOR=vim
 export PROXYCHAINS_CONF_FILE=~/.proxychains.conf
+export PAGER='less -R'
 
 # Syntax Highlighting 
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
