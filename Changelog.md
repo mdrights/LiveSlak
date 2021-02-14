@@ -1,6 +1,10 @@
 
 ## Change Log
 
+- 2021.02.13 (`2021.02-rc`)  
+    - 对几款常用软件（chromium, firefox, signal-desktop, Telegram, thunderbird, Zoom）都将**默认**由 firejail 启动，在沙盒中运行（已在程序菜单设置好）。  
+    - 实验性加入 QQ —— 这个流氓间谍软件 —— 但相信在本系统上其流氓行为可得到限制。在程序菜单将由 firejail 启动。   
+
 - 2021.02.04 (`2021.01.01`)  
     - Signal-desktop 已经可以直接使用～；  
     - 安全更新：sudo, firefox, etc.  

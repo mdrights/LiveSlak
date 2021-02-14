@@ -111,6 +111,7 @@ protonmail-bridge
 
 ## 这些不是开源的但比较流行，请自主选择
 zoom-linux
+qq
 
 
 ## 写写字
@@ -123,6 +124,8 @@ unrar
 mattermost-desktop
 syncthing
 weechat
+xclip
+pandoc-bin
 
 ## 保护菊花系列 - Protect-Your-Data-Goodies:
 testdisk
@@ -130,12 +133,13 @@ wipe
 secure-delete
 keepassxc 
 veracrypt
+password-store
 
 ## 虚拟机客户端插件
 #virtualbox-kernel-addons
 
 ## RSS 新闻阅读器
-newsboat
+#newsboat
 
 ## 字体
 #noto-cjk-font-ttf

@@ -13,7 +13,7 @@
 	- 应用加固（firejail 沙盒、火狐浏览器加固等）
 	- 强制访问控制（AppArmor）  
 
-最后更新：2021.02.04  
+最后更新：2021.02.13  
 
 發佈頻道：	 
 - Mastodon:
@@ -24,12 +24,14 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2021.01.01**    
-	- md5sum: cf9ada0a09c6032cdcbfc42b127dc235
+	- Version: **2021.02-rc**    
+	- md5sum: 
 
 
 ## Main Updates   
 
+- 对几款常用软件（chromium, firefox, signal-desktop, Telegram, thunderbird, Zoom）都将**默认**由 firejail 启动，在沙盒中运行（已在程序菜单设置好）。  
+- 实验性加入 QQ —— 这个流氓间谍软件 —— 但相信在本系统上其流氓行为可得到限制。在程序菜单将由 firejail 启动。   
 - Signal-desktop 已经可以直接使用～；  
 - 安全更新：sudo, firefox, etc.  
 - 对默认用户的账号（live）的家目录进行权限梳理，非 `live` 用户不能查看、添加、修改、删除 `live` 家目录（`/home/live`）下的文件/目录了。  

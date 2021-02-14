@@ -9,7 +9,7 @@ udns
 mbedtls
 c-ares
 libev
-nodejs
+#nodejs		# keep it at 12.16.3
 nwjs
 rubygem-sass
 c-toxcore
@@ -85,8 +85,8 @@ uTox
 onionshare
 twitter
 #obfs4proxy            ## build locally
-#v2ray			# build locally
-dnscrypt-proxy
+#v2ray					# build locally
+#dnscrypt-proxy         # not built
 #apparmor
 #wireguard-linux-compat
 wireguard-tools  | NEW_NFT=yes
@@ -96,6 +96,7 @@ protonmail-bridge
 
 ## 这些不是开源的但比较流行，请自主选择
 zoom-linux
+qq					# build locally
 
 ## Yubikey
 pcsc-lite
@@ -104,7 +105,7 @@ opensc
 
 ## 写写字
 libreoffice
-libreoffice-langpack | LOLANG=zh-CN
+#libreoffice-langpack | LOLANG=zh-CN
 docx2txt
 ReText
 p7zip
@@ -112,6 +113,8 @@ unrar
 mattermost-desktop
 syncthing
 weechat
+xclip
+pandoc-bin
 
 ## 保护菊花系列 - Protect-Your-Data-Goodies:
 testdisk
@@ -119,10 +122,11 @@ wipe
 secure-delete
 keepassxc 
 #veracrypt     # build from Alien.
+password-store
 
 
 ## RSS 新闻阅读器
-newsboat
+#newsboat      # not built
 
 
 ## Docker
