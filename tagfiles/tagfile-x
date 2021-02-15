@@ -143,13 +143,13 @@ sinhala_lklug-font-ttf:SKP
 smproxy:REC
 tibmachuni-font-ttf:SKP
 transset:REC
-ttf-indic-fonts:REC
-ttf-tlwg:REC
+ttf-indic-fonts:SKP
+ttf-tlwg:SKP
 twm:REC
 urw-core35-fonts-otf:REC
 util-macros:REC
 viewres:REC
-vulkan-sdk:REC
+vulkan-sdk:SKP
 wayland:REC
 wayland-protocols:REC
 wqy-zenhei-font-ttf:REC
