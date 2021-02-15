@@ -13,7 +13,7 @@
 	- 应用加固（firejail 沙盒、火狐浏览器加固等）
 	- 强制访问控制（AppArmor）  
 
-最后更新：2021.02.13  
+最后更新：2021.02.14  
 
 發佈頻道：	 
 - Mastodon:
@@ -25,7 +25,7 @@
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
 	- Version: **2021.02-rc**    
-	- md5sum: 
+	- md5sum: 404ea60b3446a16b8080202404d589ca
 
 
 ## Main Updates   
