@@ -57,7 +57,7 @@ avahi
 w3m
 libseccomp
 stfl
-qrencode
+#qrencode               # included in base
 zsh-syntax-highlighting
 zsh-completions
 
