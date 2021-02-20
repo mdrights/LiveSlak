@@ -28,14 +28,20 @@
 	- md5sum: 404ea60b3446a16b8080202404d589ca
 
 
-## Main Updates   
+## Important Updates   
 
 - 对几款常用软件（chromium, firefox, signal-desktop, Telegram, thunderbird, Zoom）都将**默认**由 firejail 启动，在沙盒中运行（已在程序菜单设置好）。  
+> 這就意味著：這些軟件只能讀取和創建/修改 live 用戶的 `Desktop`和`下載` 目錄下的文件了。 部分軟件也不允許使用輸入法。  
+
 - 实验性加入 QQ —— 这个流氓间谍软件 —— 但相信在本系统上其流氓行为可得到限制。在程序菜单将由 firejail 启动。   
+> 這就意味著：它看不見 live 用戶的**家目錄**（`/home/live`）下的所有文件和目錄。要上傳文件請把文件放到`/tmp`，也只能把文件下載到那裡。  
+
 - Signal-desktop 已经可以直接使用～；  
 - 安全更新：sudo, firefox, etc.  
-- 对默认用户的账号（live）的家目录进行权限梳理，非 `live` 用户不能查看、添加、修改、删除 `live` 家目录（`/home/live`）下的文件/目录了。  
-- `live` 用户自己创建的文件将是 `rw-r-----`，目录将是 `rwxr-x---`。  
+- 对默认用户的账号（live）的家目录进行权限梳理，  
+    - `live` 用户自己创建的文件将是 `rw-r-----`，目录将是 `rwxr-x---`。這意味著：  
+> 非 `live` 用户不能查看、添加、修改、删除 `live` 家目录（`/home/live`）下的文件/目录了。  
+
 - 去掉一些闭源的系统工具（系统自带的）。  
 
 **注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/V1.3.0/Changelog.md)**
