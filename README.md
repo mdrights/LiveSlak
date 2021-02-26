@@ -27,6 +27,8 @@
 	- Version: **2021.02-rc**    
 	- md5sum: 404ea60b3446a16b8080202404d589ca
 
+[![Download antiS](https://img.shields.io/sourceforge/dt/liveslak-atgfw.svg)](https://sourceforge.net/projects/liveslak-atgfw/files/latest/download)
+
 
 ## Important Updates   
 
