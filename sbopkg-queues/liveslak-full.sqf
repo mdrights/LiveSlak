@@ -2,7 +2,7 @@
 ## Some Libraries:
 #libxkbcommon
 graphviz 
-extra-cmake-modules
+#extra-cmake-modules
 gmtk
 libpaper
 udns
@@ -15,7 +15,7 @@ rubygem-sass
 c-toxcore
 libfilteraudio
 #check
-OpenAL
+#OpenAL
 OpenSceneGraph
 freealut
 plib
@@ -24,14 +24,14 @@ plib
 docbook-xml
 
 ## Pythonic
-python3-sip
-python3-PyQt5
+#python3-sip
+#python3-PyQt5
 pyudev
 python-evdev
 Markups
 MarkupSafe 	| PYTHON3=yes
 Markdown
-Pygments
+#Pygments
 pysha3
 pytest
 PySocks
@@ -53,7 +53,7 @@ docopt
 python3-pythondialog 
 
 PyYAML 
-enum34 
+#enum34 
 jsonschema 
 python-cached-property 
 python-docker 
@@ -127,7 +127,7 @@ pandoc-bin
 
 ## 保护菊花系列 - Protect-Your-Data-Goodies:
 testdisk
-wipe
+#wipe
 secure-delete
 keepassxc 
 #veracrypt     # build from Alien.
