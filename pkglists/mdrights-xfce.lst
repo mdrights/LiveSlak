@@ -85,11 +85,11 @@ ccid
 opensc
 
 ## 输入法
-opencc
-fcitx-libpinyin
-libpinyin
-fcitx
-fcitx-configtool
+#opencc
+#fcitx-libpinyin
+#libpinyin
+#fcitx
+#fcitx-configtool
 
 ## 上网和一些工具（你懂的）
 w3m
