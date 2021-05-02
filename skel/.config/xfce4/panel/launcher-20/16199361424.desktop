@@ -1,0 +1,15 @@
+[Desktop Entry]
+Version=1.0
+Exec=xfce4-appfinder
+Icon=org.xfce.appfinder
+StartupNotify=true
+Terminal=false
+Type=Application
+Categories=Utility;X-XFCE;
+Name=Application Finder
+Name[zh_CN]=应用程序查找器
+Comment=Find and launch applications installed on your system
+Comment[zh_CN]=查找和启动在您系统上安装的应用程序
+Keywords=program;applications;bookmarks;
+Keywords[zh_CN]=program;applications;bookmarks;程序;应用;书签;
+X-XFCE-Source=file:///usr/share/applications/xfce4-appfinder.desktop
