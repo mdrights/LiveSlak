@@ -16,7 +16,7 @@ udns
 mbedtls
 #libsodium
 #pcre2
-c-ares
+#c-ares
 libev
 nodejs
 nwjs
@@ -114,7 +114,7 @@ v2ray
 dnscrypt-proxy
 #apparmor
 #wireguard-linux-compat
-wireguard-tools
+#wireguard-tools
 openconnect
 protonvpn-cli
 protonmail-bridge

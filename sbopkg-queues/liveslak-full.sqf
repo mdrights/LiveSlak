@@ -7,7 +7,7 @@ gmtk
 libpaper
 udns
 mbedtls
-c-ares
+#c-ares     # in base
 libev
 #nodejs		# keep it at 12.16.3
 nwjs
@@ -98,7 +98,7 @@ twitter
 #dnscrypt-proxy         # not built
 #apparmor
 #wireguard-linux-compat
-wireguard-tools  | NEW_NFT=yes
+#wireguard-tools  | NEW_NFT=yes  # in base
 openconnect
 protonvpn-cli
 protonmail-bridge
