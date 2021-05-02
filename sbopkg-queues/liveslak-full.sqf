@@ -52,6 +52,15 @@ psutil
 docopt 
 python3-pythondialog 
 
+PyYAML 
+enum34 
+jsonschema 
+python-cached-property 
+python-docker 
+python-dockerpty 
+python-texttable
+docker-compose
+
 libdaemon
 avahi
 w3m
@@ -79,13 +88,13 @@ tor-browser
 torsocks
 privoxy
 proxychains
-signal-desktop
+signal-desktop         # build locally
 telegram
 uTox
 onionshare
 twitter
-#obfs4proxy            ## build locally
-#v2ray					# build locally
+#obfs4proxy             # build locally
+#v2ray			# build locally
 #dnscrypt-proxy         # not built
 #apparmor
 #wireguard-linux-compat
@@ -130,6 +139,13 @@ password-store
 
 
 ## Docker
+google-go-lang
+tini
+docker-proxy
+runc
+containerd
+docker
+
 
 ## for sysadmin
 #sbopkg

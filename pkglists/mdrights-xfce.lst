@@ -69,6 +69,16 @@ docopt
 python3-pythondialog 
 docbook-xml
 
+# Docker-compose
+PyYAML 
+enum34 
+jsonschema 
+python-cached-property 
+python-docker 
+python-dockerpty 
+python-texttable
+docker-compose
+
 ## Yubikey
 pcsc-lite
 ccid
@@ -145,6 +155,12 @@ password-store
 #noto-cjk-font-ttf
 
 ## Docker
+tini
+docker-proxy
+runc
+containerd
+docker
+
 
 ## for sysadmin
 sbopkg
