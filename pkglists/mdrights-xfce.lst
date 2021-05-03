@@ -8,7 +8,7 @@
 graphviz 
 #meson
 #libwacom
-#extra-cmake-modules
+extra-cmake-modules
 gmtk
 libpaper
 #argon2
@@ -24,20 +24,20 @@ rubygem-sass
 c-toxcore
 libfilteraudio
 #check
-#OpenAL
+OpenAL
 OpenSceneGraph
 freealut
 plib
 #qt5
 #qt5-webkit
-#python3-sip
-#python3-PyQt5
+python3-sip
+python3-PyQt5
 pyudev
 python-evdev
 Markups
 MarkupSafe
 Markdown
-#Pygments
+Pygments
 pysha3
 pytest
 PySocks
@@ -71,7 +71,7 @@ docbook-xml
 
 # Docker-compose
 PyYAML 
-#enum34 
+enum34 
 jsonschema 
 python-cached-property 
 python-docker 
@@ -139,7 +139,7 @@ pandoc-bin
 
 ## 保护菊花系列 - Protect-Your-Data-Goodies:
 testdisk
-#wipe
+wipe
 secure-delete
 keepassxc 
 veracrypt
