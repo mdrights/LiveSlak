@@ -13,7 +13,7 @@
 	- 应用加固（firejail 沙盒、火狐浏览器加固等）
 	- 强制访问控制（AppArmor）  
 
-最后更新：2021.02.14  
+最后更新：2021.05.12  
 
 發佈頻道：	 
 - Mastodon:
@@ -24,19 +24,16 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2021.02-rc**    
+	- Version: **2021.03-rc** (2.9G)   
 	- md5sum: 404ea60b3446a16b8080202404d589ca
 
 
 ## Main Updates   
 
-- 对几款常用软件（chromium, firefox, signal-desktop, Telegram, thunderbird, Zoom）都将**默认**由 firejail 启动，在沙盒中运行（已在程序菜单设置好）。  
-- 实验性加入 QQ —— 这个流氓间谍软件 —— 但相信在本系统上其流氓行为可得到限制。在程序菜单将由 firejail 启动。   
-- Signal-desktop 已经可以直接使用～；  
-- 安全更新：sudo, firefox, etc.  
-- 对默认用户的账号（live）的家目录进行权限梳理，非 `live` 用户不能查看、添加、修改、删除 `live` 家目录（`/home/live`）下的文件/目录了。  
-- `live` 用户自己创建的文件将是 `rw-r-----`，目录将是 `rwxr-x---`。  
-- 去掉一些闭源的系统工具（系统自带的）。  
+- 除了软件日常更新外，本版本是 Slackware 升到 15.0beta 后的第一个版本！大量基础库/软件更新（开心） 
+- 中文输入法 fcitx 被收入到 Slackware 的基础软件仓库（意味着由官方维护，不需我来安装了）且得到了更新，包括增加了拼音、五笔、粤语、吴语、仓颉、速成、注音等十数种输入法！  
+- 同时官方还收入了录屏软件 SSR。  
+- 本版本移除了 Thunderbird 和 GIMP（太大了）。  
 
 **注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/V1.3.0/Changelog.md)**
 <hr>
