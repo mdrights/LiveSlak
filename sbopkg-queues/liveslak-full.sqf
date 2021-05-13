@@ -88,7 +88,7 @@ tor-browser
 torsocks
 privoxy
 proxychains
-signal-desktop         # build locally
+#signal-desktop         # build locally
 telegram
 uTox
 onionshare
@@ -105,7 +105,7 @@ protonmail-bridge
 
 ## 这些不是开源的但比较流行，请自主选择
 zoom-linux
-qq					# build locally
+#qq					# build locally
 
 ## Yubikey
 pcsc-lite
