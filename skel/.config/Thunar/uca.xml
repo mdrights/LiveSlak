@@ -1,11 +1,11 @@
-<?xml encoding="UTF-8" version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <actions>
 <action>
 	<icon>utilities-terminal</icon>
-	<name>Open Terminal Here</name>
-	<unique-id>1446041501157455-1</unique-id>
+	<name>在此打开终端</name>
+	<unique-id>1619936144282404-1</unique-id>
 	<command>exo-open --working-directory %f --launch TerminalEmulator</command>
-	<description>Example for a custom action</description>
+	<description>自定义动作示例</description>
 	<patterns>*</patterns>
 	<startup-notify/>
 	<directories/>

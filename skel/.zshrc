@@ -35,6 +35,12 @@ export EDITOR=vim
 export PROXYCHAINS_CONF_FILE=~/.proxychains.conf
 export PAGER='less -R'
 
+export GTK_IM_MODULE=fcitx
+export XIM=fcitx
+export QT_IM_MODULE=fcitx
+export XIM_PROGRAM=fcitx
+export XMODIFIERS=@im=fcitx
+
 # Syntax Highlighting 
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
