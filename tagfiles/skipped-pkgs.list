@@ -89,5 +89,5 @@ xap xpaint
 xap xpdf 
 xap xsane 
 #xap mozilla-firefox
-xap mozilla-thunderbird
-xap gimp
+#xap mozilla-thunderbird
+#xap gimp

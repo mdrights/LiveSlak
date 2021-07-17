@@ -68,6 +68,8 @@ zsh-completions
 docopt 
 python3-pythondialog 
 docbook-xml
+mutagen
+perl-Test-Harness
 
 # Docker-compose
 PyYAML 
@@ -144,6 +146,8 @@ secure-delete
 keepassxc 
 veracrypt
 password-store
+exiftool
+mat2
 
 ## 虚拟机客户端插件
 #virtualbox-kernel-addons
@@ -160,6 +164,7 @@ docker-proxy
 runc
 containerd
 docker
+docker-cli
 
 
 ## for sysadmin

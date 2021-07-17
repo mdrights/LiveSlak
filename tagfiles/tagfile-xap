@@ -22,7 +22,7 @@ gv:SKP
 hexchat:ADD
 libnma:REC
 mozilla-firefox:ADD
-mozilla-thunderbird:ADD
+mozilla-thunderbird:SKP
 network-manager-applet:ADD
 pan:SKP
 pavucontrol:SKP

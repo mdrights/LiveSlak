@@ -9,7 +9,7 @@ udns
 mbedtls
 #c-ares     # in base
 libev
-#nodejs		# keep it at 12.16.3
+nodejs
 nwjs
 rubygem-sass
 c-toxcore
@@ -51,6 +51,8 @@ python3-Flask-httpauth
 psutil
 docopt 
 python3-pythondialog 
+mutagen
+perl-Test-Harness
 
 PyYAML 
 enum34 
@@ -60,6 +62,7 @@ python-docker
 python-dockerpty 
 python-texttable
 docker-compose
+docker-cli
 
 libdaemon
 avahi
@@ -132,6 +135,8 @@ secure-delete
 keepassxc 
 #veracrypt     # build from Alien.
 password-store
+exiftool
+mat2
 
 
 ## RSS 新闻阅读器
