@@ -14,6 +14,7 @@ n bluez
 n bluez-firmware 
 n ipw2100-fw 
 n ipw2200-fw 
+n postfix
 n zd1211-firmware 
 x anthy 
 x font-adobe-100dpi 
@@ -77,7 +78,6 @@ xap rdesktop
 xap sane 
 xap seamonkey 
 xap seyon 
-xap x11-ssh-askpass 
 xap x3270 
 xap xaos 
 xap xgames 

@@ -114,7 +114,7 @@ php:OPT
 pidentd:REC
 pinentry:REC
 popa3d:REC
-postfix:REC
+postfix:SKP
 ppp:OPT
 procmail:REC
 proftpd:OPT
@@ -142,7 +142,7 @@ vlan:OPT
 vsftpd:REC
 wget:OPT
 whois:OPT
-wireless_tools:OPT
+wireless_tools:ADD
 wpa_supplicant:REC
 yptools:OPT
 ytalk:OPT
