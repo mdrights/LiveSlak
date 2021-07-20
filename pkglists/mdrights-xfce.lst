@@ -70,6 +70,7 @@ python3-pythondialog
 docbook-xml
 mutagen
 perl-Test-Harness
+redshift
 
 # Docker-compose
 PyYAML 
@@ -171,4 +172,5 @@ docker-cli
 sbopkg
 
 ## for Desktop
+imlib2
 icewm

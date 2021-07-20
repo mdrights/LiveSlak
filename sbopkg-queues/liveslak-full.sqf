@@ -156,4 +156,5 @@ mat2
 #sbopkg
 
 ## for Desktop
+imlib2
 icewm
