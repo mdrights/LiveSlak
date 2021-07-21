@@ -8,7 +8,7 @@
 graphviz 
 #meson
 #libwacom
-extra-cmake-modules
+extra-cmake-modules		#TODO
 gmtk
 libpaper
 #argon2
@@ -24,20 +24,20 @@ rubygem-sass
 c-toxcore
 libfilteraudio
 #check
-OpenAL
+OpenAL			#TODO
 OpenSceneGraph
 freealut
 plib
 #qt5
 #qt5-webkit
-python3-sip
-python3-PyQt5
+python3-sip		#TODO
+python3-PyQt5  #TODO
 pyudev
 python-evdev
 Markups
 MarkupSafe
 Markdown
-Pygments
+Pygments   #TODO
 pysha3
 pytest
 PySocks
@@ -45,10 +45,10 @@ pycrypto
 python3-pycrypto
 #python-urllib3
 python-markdown-math
-python-requestbuilder
+python-requestbuilder   #TODO
 #python-requests
 Flask
-python3-Flask
+python3-Flask  #TODO
 #PySocks
 stem
 click
@@ -74,13 +74,13 @@ redshift
 
 # Docker-compose
 PyYAML 
-enum34 
+#enum34 
 jsonschema 
-python-cached-property 
-python-docker 
-python-dockerpty 
-python-texttable
-docker-compose
+#python-cached-property 
+#python-docker 
+#python-dockerpty 
+#python-texttable
+#docker-compose
 
 ## Yubikey
 pcsc-lite
@@ -96,10 +96,10 @@ opensc
 
 ## 上网和一些工具（你懂的）
 w3m
-chromium
+#chromium
 shadowsocks-libev
 firejail
-NetworkManager-nonprism
+#NetworkManager-nonprism
 macchanger
 tor
 #tor-hardened
