@@ -24,23 +24,23 @@ plib
 docbook-xml
 
 ## Pythonic
-python3-sip
-python3-PyQt5
+#python3-sip
+#python3-PyQt5
 pyudev
 python-evdev
 Markups
 MarkupSafe 	| PYTHON3=yes
 Markdown
-Pygments
+#Pygments
 pysha3
 pytest
 PySocks
 pycrypto
 python3-pycrypto
 python-markdown-math
-python-requestbuilder
+#python-requestbuilder
 Flask
-python3-Flask
+#python3-Flask
 stem
 click
 werkzeug

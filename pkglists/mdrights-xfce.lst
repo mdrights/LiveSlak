@@ -30,14 +30,14 @@ freealut
 plib
 #qt5
 #qt5-webkit
-python3-sip		#TODO
-python3-PyQt5  #TODO
+#python3-sip
+#python3-PyQt5
 pyudev
 python-evdev
 Markups
 MarkupSafe
 Markdown
-Pygments   #TODO
+#Pygments   
 pysha3
 pytest
 PySocks
@@ -45,10 +45,10 @@ pycrypto
 python3-pycrypto
 #python-urllib3
 python-markdown-math
-python-requestbuilder   #TODO
+#python-requestbuilder   
 #python-requests
 Flask
-python3-Flask  #TODO
+#python3-Flask
 #PySocks
 stem
 click

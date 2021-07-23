@@ -30,7 +30,8 @@ source $HOME/.git-prompt.sh
 setopt PROMPT_SUBST ; PS1='%? [%m %c$(__git_ps1 " (%s)")]
 %# '
 
-export PATH=$HOME/bin:$PATH:/sbin:/usr/sbin
+export PATH=$HOME/bin:$PATH:/sbin:/usr/sbin:$HOME/.local/bin
+export PYTHONPATH=$HOME/.local/lib/python3.9/site-packages
 export EDITOR=vim
 export PROXYCHAINS_CONF_FILE=~/.proxychains.conf
 export PAGER='less -R'
