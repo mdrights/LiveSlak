@@ -214,6 +214,19 @@ date: 2020-11-15
 - testdisk    
 	（数据恢复工具，在終端裏輸入 `testdisk` 即可按提示操作）
 
+### Metadata  
+- Exiftool
+- MAT2
+
+### Malware Analysis  
+- peepdf  
+- pdftool  
+- pdf-parser.py  
+- pdfid.py  
+- oledump  
+- oletools  
+
+
 ### 一些高級用法  
 - 防火牆 iptables    
 	（在桌面菜单「网络」里，會要求輸入用戶密碼 `live`；配有一些簡單的規則。默认已经开启）
@@ -242,14 +255,13 @@ date: 2020-11-15
 	
 
 ### 其他日常：
-- Libreoffice 
-	（文檔編輯套件；已加入中文包，即界面是中文的了）
-- GVim, Retext (文字编辑器）
-- docx2txt  （docx格式转换 txt）
+- Libreoffice （文檔編輯套件）  
+- Retext (Markdown 文字编辑器） 
+- docx2txt  （docx格式转换 txt）  
 - Audacious (音频编辑）
 - GIMP （图像编辑）
 - Mplayer （视频播放）
-- xsane （扫描）
+- xsane （扫描）  
 - 注：看PDF 文件可使用 Firefox 或 Libreoffice。
 
 

@@ -72,6 +72,13 @@ mutagen
 perl-Test-Harness
 redshift
 
+## These are installed via pip3
+# msoffcrypto olefile oletools pcodedmp
+# pyside2 appdirs pyxdg colorama
+
+#######################
+
+
 # Docker-compose
 PyYAML 
 #enum34 

@@ -53,7 +53,6 @@ docopt
 python3-pythondialog 
 mutagen
 perl-Test-Harness
-
 PyYAML 
 enum34 
 jsonschema 
@@ -63,6 +62,12 @@ python-dockerpty
 python-texttable
 docker-compose
 docker-cli
+
+## These are installed via pip3
+# msoffcrypto olefile oletools pcodedmp
+# pyside2 appdirs pyxdg colorama
+
+#######################
 
 libdaemon
 avahi

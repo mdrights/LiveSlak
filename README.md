@@ -13,7 +13,7 @@
 	- 应用加固（firejail 沙盒、火狐浏览器加固等）
 	- 强制访问控制（AppArmor）  
 
-最后更新：2021.05.12  
+最后更新：2021.07.25  
 
 發佈頻道：	 
 - Mastodon:
@@ -24,20 +24,22 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2021.03-rc** (2.9G)   
-	- md5sum: 404ea60b3446a16b8080202404d589ca
+	- Version: **2021.04.rc2** (2.8G)   
+	- md5sum: 06348904aab8dec34b9a3ee275b94586  
 
 [![Download antiS](https://img.shields.io/sourceforge/dt/liveslak-atgfw.svg)](https://sourceforge.net/projects/liveslak-atgfw/files/latest/download)
 
 
 ## Important Updates   
 
-- 除了软件日常更新外，本版本是 Slackware 升到 15.0beta 后的第一个版本！大量基础库/软件更新（开心） 
-- 中文输入法 fcitx 被收入到 Slackware 的基础软件仓库（意味着由官方维护，不需我来安装了）且得到了更新，包括增加了拼音、五笔、粤语、吴语、仓颉、速成、注音等十数种输入法！  
-- 同时官方还收入了录屏软件 SSR。  
-- 本版本移除了 Thunderbird 和 GIMP（太大了）。  
+- Add quite a lot tools for:  
+    - metadata removing: Exiftool, MAT2;  
+    - Malware anaysis: peepdf, pdf-tools, pdf-parser, oledump, oletools, etc. (Find them out at `/opt`.)  
+- Add Docker back.  
+- 本版本移除了 Chromium （太大了）。  
+    - Pls download from [here: Chromium-ungoogled](http://www.slackware.com/~alien/slackbuilds/chromium-ungoogled/pkg64/current/chromium-ungoogled-91.0.4472.114-x86_64-1alien.txz), if you want :)   
 
-**注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/V1.3.0/Changelog.md)**
+**注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/mdrights/Changelog.md)**
 <hr>
 
 

@@ -1,2 +1,3 @@
-*.txz
-*.tgz
+**/*.txz
+**/*.tgz
+**/*.tar.gz
