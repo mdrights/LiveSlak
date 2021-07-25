@@ -24,20 +24,20 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2021.04.rc2** (2.8G)   
-	- md5sum: 06348904aab8dec34b9a3ee275b94586  
+	- Version: **2021.04.rc3** (2.9G)   
+	- md5sum: 3cd12d7e5bc197cad063679a88b2bf5d  
 
 [![Download antiS](https://img.shields.io/sourceforge/dt/liveslak-atgfw.svg)](https://sourceforge.net/projects/liveslak-atgfw/files/latest/download)
 
 
 ## Important Updates   
 
-- Add quite a lot tools for:  
-    - metadata removing: Exiftool, MAT2;  
-    - Malware anaysis: peepdf, pdf-tools, pdf-parser, oledump, oletools, etc. (Find them out at `/opt`.)  
+- 新增了一些工具： 
+    - metadata 元数据移除: Exiftool, MAT2;  
+    - 文档中的恶意代码分析: peepdf, pdf-tools, pdf-parser, oledump, oletools, etc. (Find them out at `/opt`.)  
 - Add Docker back.  
 - 本版本移除了 Chromium （太大了）。  
-    - Pls download from [here: Chromium-ungoogled](http://www.slackware.com/~alien/slackbuilds/chromium-ungoogled/pkg64/current/chromium-ungoogled-91.0.4472.114-x86_64-1alien.txz), if you want :)   
+    - 请自行下载安装包 [here: Chromium-ungoogled](http://www.slackware.com/~alien/slackbuilds/chromium-ungoogled/pkg64/current/chromium-ungoogled-91.0.4472.114-x86_64-1alien.txz), if you want :)   
 
 **注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/mdrights/Changelog.md)**
 <hr>
@@ -51,7 +51,7 @@
 	- [预装软件列表](https://github.com/mdrights/LiveSlak/blob/mdrights/pkglists/mdrights-xfce.lst)  
 	- 溫馨提示：本系統雖然有一定匿名特性，但不主打匿名，請有高匿名需求的朋友使用：[Tails](https://tails.boum.org/about/index.en.html)  
 
-- 版本命名规则：`<year>.<x>.<y>`  以当年年份为大版本，x 更新表示全系统的包都有更新，y 表示只有部分包更新 和/或 bug 修复，y 为空时或`=rc`时表示为预发行版。  
+- 版本命名规则：`<year>.<x>.<y>`  以当年年份为大版本，x 更新表示全系统的包都有更新，y 表示只有部分包更新 和/或 bug 修复，y 为 `rc` 时表示为预发行版。  
 
 
 ## Installation
