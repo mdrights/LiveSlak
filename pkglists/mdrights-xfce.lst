@@ -72,6 +72,15 @@ mutagen
 perl-Test-Harness
 redshift
 
+## Podman
+slirp4netns
+go-md2man
+conmon
+cni-plugins
+podman
+
+#######################
+
 ## These are installed via pip3
 # msoffcrypto olefile oletools pcodedmp
 # pyside2 appdirs pyxdg colorama

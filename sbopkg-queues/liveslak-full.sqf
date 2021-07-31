@@ -53,15 +53,24 @@ docopt
 python3-pythondialog 
 mutagen
 perl-Test-Harness
-PyYAML 
-enum34 
-jsonschema 
-python-cached-property 
-python-docker 
-python-dockerpty 
-python-texttable
-docker-compose
 docker-cli
+PyYAML 
+#enum34 
+jsonschema 
+#python-cached-property 
+#python-docker 
+#python-dockerpty 
+#python-texttable
+#docker-compose
+
+## Podman
+slirp4netns
+go-md2man
+conmon
+cni-plugins
+podman
+
+#######################
 
 ## These are installed via pip3
 # msoffcrypto olefile oletools pcodedmp
