@@ -13,7 +13,7 @@
 	- 应用加固（firejail 沙盒、火狐浏览器加固等）
 	- 强制访问控制（AppArmor）  
 
-最后更新：2021.07.25  
+最后更新：2021.08.01  
 
 發佈頻道：	 
 - Mastodon:
@@ -24,8 +24,8 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2021.04.rc3** (2.9G)   
-	- md5sum: 3cd12d7e5bc197cad063679a88b2bf5d  
+	- Version: **2021.04.rc4** (2963275776 Bytes)   
+	- md5sum: 218921557ced9d646b0ea65a2bf17136  
 
 [![Download antiS](https://img.shields.io/sourceforge/dt/liveslak-atgfw.svg)](https://sourceforge.net/projects/liveslak-atgfw/files/latest/download)
 
@@ -34,8 +34,11 @@
 
 - 新增了一些工具： 
     - metadata 元数据移除: Exiftool, MAT2;  
-    - 文档中的恶意代码分析: peepdf, pdf-tools, pdf-parser, oledump, oletools, etc. (Find them out at `/opt`.)  
-- Add Docker back.  
+    - pdf, office 文档中的恶意代码分析: peepdf, pdf-tools, pdf-parser, oledump, oletools, etc. (Find them out at `/opt`.)  
+	- 恶意代码移除工具：Dangerzone (以及它的依赖: Podman)(实验性)  
+		- 执行：`/opt/dangerzone/dev_scripts/dangerzone`  
+		- 该工具需要在使用时下载一个约 666MB 的镜像文件；因为是 live 系统，鉴于 U 盘都比较小，建议将文件下载到另一个磁盘。修改这个配置文件可以指定其下载到哪里：（需要先挂载该磁盘并知道其挂载的路径）    
+			- sudo vi `/etc/containers/storage.conf`  
 - 本版本移除了 Chromium （太大了）。  
     - 请自行下载安装包 [here: Chromium-ungoogled](http://www.slackware.com/~alien/slackbuilds/chromium-ungoogled/pkg64/current/chromium-ungoogled-91.0.4472.114-x86_64-1alien.txz), if you want :)   
 

@@ -6,6 +6,10 @@
         - metadata removing: Exiftool, MAT2;  
         - Malware anaysis: peepdf, pdf-tools, pdf-parser, oledump, oletools, etc. (Find them out at `/opt`.)  
     - Add Docker back.  
+	- 恶意代码移除工具：Dangerzone (以及它的依赖: Podman)(实验性)  
+		- 执行：`/opt/dangerzone/dev_scripts/dangerzone`  
+		- 该工具需要在使用时下载一个约 666MB 的镜像文件；因为是 live 系统，鉴于 U 盘都比较小，建议将文件下载到另一个磁盘。修改这个配置文件可以指定其下载到哪里：（需要先挂载该磁盘并知道其挂载的路径）    
+			- sudo vi `/etc/containers/storage.conf`  
     - 本版本移除了 Chromium （太大了）。  
         - Pls download from [here: Chromium-ungoogled](http://www.slackware.com/~alien/slackbuilds/chromium-ungoogled/pkg64/current/chromium-ungoogled-91.0.4472.114-x86_64-1alien.txz), if you want :)   
 
