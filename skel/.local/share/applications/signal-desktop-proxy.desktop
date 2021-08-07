@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Signal (proxy)
+Exec=proxychains4 /opt/Signal/signal-desktop %U
+Terminal=false
+Type=Application
+Icon=signal-desktop
+StartupWMClass=Signal
+Comment=Private messaging from your desktop
+MimeType=x-scheme-handler/sgnl;
+Categories=Network;InstantMessaging;Chat;

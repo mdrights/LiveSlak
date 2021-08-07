@@ -88,7 +88,7 @@ podman
 #######################
 
 
-# Docker-compose
+# Docker-compose -- not in use
 PyYAML 
 #enum34 
 jsonschema 
@@ -112,7 +112,7 @@ opensc
 
 ## 上网和一些工具（你懂的）
 w3m
-#chromium
+chromium-ungoogled
 shadowsocks-libev
 firejail
 #NetworkManager-nonprism
@@ -175,13 +175,13 @@ mat2
 ## 字体
 #noto-cjk-font-ttf
 
-## Docker
-tini
-docker-proxy
-runc
-containerd
-docker
-docker-cli
+## Docker -- not in use
+#tini
+#docker-proxy
+#runc
+#containerd
+#docker
+#docker-cli
 
 
 ## for sysadmin

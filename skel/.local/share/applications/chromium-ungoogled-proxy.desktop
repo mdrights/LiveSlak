@@ -1,6 +1,6 @@
 [Desktop Entry]
 Version=1.0
-Name=Chromium Web Browser
+Name=Chromium-ungoogled Web Browser (in proxy)
 # Only KDE 4 seems to use GenericName, so we reuse the KDE strings.
 # From Ubuntu's language-pack-kde-XX-base packages, version 9.04-20090413.
 GenericName=Web Browser
@@ -216,6 +216,11 @@ Name[th]=หน้าต่างใหม่ที่ไม่ระบุต�
 Name[tr]=Yeni Gizli pencere
 Name[uk]=Нове вікно в режимі анонімного перегляду
 Name[vi]=Cửa sổ ẩn danh mới
-Name[zh_CN]=新建隐身窗口
-Name[zh_TW]=新增無痕式視窗
-Exec=/usr/bin/chromium --incognito
+Name[zh_CN]=新建隐身窗口(proxy)
+Name[zh_TW]=新增無痕式視窗(proxy)
+Name[zh_HK]=新增無痕式視窗(proxy)
+
+# Exec=/usr/bin/chromium --incognito
+# Exec=firejail /usr/bin/chromium --proxy-server="socks5://localhost:1080" %U
+Exec=/usr/bin/chromium-ungoogled --proxy-server="socks5://localhost:1080" --incognito %U
+
