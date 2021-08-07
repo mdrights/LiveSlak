@@ -1,7 +1,20 @@
 
 ## Change Log
 
-- 2021.07.25 (`2021.04.rc2`)  
+- 2021.08.07 (`2021.04.rc5`)  
+    - 在之前的 rc 版本基础上做了些小修缮：
+        - 使用了 firejail 沙盒的应用，都会在开始菜单用单独的条目标明出来，方便选择（`in jail`）  
+        - 修复 Signal 下载了文件找不到的情况，现在请下载到 `Desktop` （桌面）才能从外面看到。 
+        - Signal 自身没有走代理的功能，所以只能以这两种方式科学上网：  
+            - 使用 VPN 类软件（如 WireGuard, OpenConnect）—— 它们是全局的，所有软件都不需要任何设置；  
+            - 若使用的是代理类软件（如 ss, v2ray），则需要选择点击 `Signal (in proxy)` —— 它启动时需要使用 https proxy，因此在启动前需要启动 `privoxy`：  
+            ```  
+            sudo privoxy /etc/privoxy/config （需要输入登录密码；启动后不会有任何显示）  
+            ```  
+        - 加回 Chromium，但这回是半官方编译的 `Chromium-ungoogled` 去除谷歌版。同样，有“走代理”和“不走代理”两个条目可以选择。  
+        - 其他小改动，如标题栏字体等。  
+
+- 2021.08.01 (`2021.04.rc4`)  
     - Add quite a lot tools for:  
         - metadata removing: Exiftool, MAT2;  
         - Malware anaysis: peepdf, pdf-tools, pdf-parser, oledump, oletools, etc. (Find them out at `/opt`.)  

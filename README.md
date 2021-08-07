@@ -11,9 +11,8 @@
 	- live 性质，重启后系统恢复初始状态（不保存任何修改，不留下任何痕跡）
     - 系统加固（包括：防火墙、用户和进程权限控制、文件系统权限和挂载限制、内核参数配置调优等……）
 	- 应用加固（firejail 沙盒、火狐浏览器加固等）
-	- 强制访问控制（AppArmor）  
 
-最后更新：2021.08.01  
+最近更新：2021.08.07  
 
 發佈頻道：	 
 - Mastodon:
@@ -24,7 +23,7 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2021.04.rc4** (2963275776 Bytes)   
+	- Version: **2021.04.rc5** (~= 3GB)   
 	- md5sum: 218921557ced9d646b0ea65a2bf17136  
 
 [![Download antiS](https://img.shields.io/sourceforge/dt/liveslak-atgfw.svg)](https://sourceforge.net/projects/liveslak-atgfw/files/latest/download)
@@ -32,15 +31,17 @@
 
 ## Important Updates   
 
-- 新增了一些工具： 
-    - metadata 元数据移除: Exiftool, MAT2;  
-    - pdf, office 文档中的恶意代码分析: peepdf, pdf-tools, pdf-parser, oledump, oletools, etc. (Find them out at `/opt`.)  
-	- 恶意代码移除工具：Dangerzone (以及它的依赖: Podman)(实验性)  
-		- 执行：`/opt/dangerzone/dev_scripts/dangerzone`  
-		- 该工具需要在使用时下载一个约 666MB 的镜像文件；因为是 live 系统，鉴于 U 盘都比较小，建议将文件下载到另一个磁盘。修改这个配置文件可以指定其下载到哪里：（需要先挂载该磁盘并知道其挂载的路径）    
-			- sudo vi `/etc/containers/storage.conf`  
-- 本版本移除了 Chromium （太大了）。  
-    - 请自行下载安装包 [here: Chromium-ungoogled](http://www.slackware.com/~alien/slackbuilds/chromium-ungoogled/pkg64/current/chromium-ungoogled-91.0.4472.114-x86_64-1alien.txz), if you want :)   
+- 在之前的 rc 版本基础上做了些小修缮：
+    - 使用了 firejail 沙盒的应用，都会在开始菜单用单独的条目标明出来，方便选择（`in jail`）  
+    - 修复 Signal 下载了文件找不到的情况，现在请下载到 `Desktop` （桌面）才能从外面看到。 
+    - Signal 自身没有走代理的功能，所以只能以这两种方式科学上网：  
+        - 使用 VPN 类软件（如 WireGuard, OpenConnect）—— 它们是全局的，所有软件都不需要任何设置；  
+        - 若使用的是代理类软件（如 ss, v2ray），则需要选择点击 `Signal (in proxy)` —— 它启动时需要使用 https proxy，因此在启动前需要启动 `privoxy`：  
+        ```  
+        sudo privoxy /etc/privoxy/config （需要输入登录密码；启动后不会有任何显示）  
+        ```  
+    - 加回 Chromium，但这回是半官方编译的 `Chromium-ungoogled` 去除谷歌版。同样，有“走代理”和“不走代理”两个条目可以选择。  
+    - 其他小改动，如标题栏字体等。  
 
 **注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/mdrights/Changelog.md)**
 <hr>
