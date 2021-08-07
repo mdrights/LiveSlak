@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Signal
+Name=Signal (in jail)
 Exec=firejail /opt/Signal/signal-desktop --no-sandbox %U
 Terminal=false
 Type=Application

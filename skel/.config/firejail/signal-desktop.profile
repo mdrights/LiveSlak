@@ -10,6 +10,7 @@ ignore novideo
 ignore noexec /tmp
 
 noblacklist ${HOME}/.config/Signal
+noblacklist ${HOME}/Desktop
 
 # These lines are needed to allow Firefox to open links
 noblacklist ${HOME}/.mozilla
@@ -18,6 +19,9 @@ read-only ${HOME}/.mozilla/firefox/profiles.ini
 
 mkdir ${HOME}/.config/Signal
 whitelist ${HOME}/.config/Signal
+
+mkdir ${HOME}/Desktop
+whitelist ${HOME}/Desktop
 
 private-etc alternatives,ca-certificates,crypto-policies,fonts,ld.so.cache,ld.so.conf,ld.so.conf.d,ld.so.preload,localtime,machine-id,nsswitch.conf,pki,resolv.conf,ssl
 

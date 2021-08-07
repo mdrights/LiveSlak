@@ -145,7 +145,7 @@ zoom-linux
 
 ## 写写字
 libreoffice
-libreoffice-langpack_zh_CN
+#libreoffice-langpack_zh_CN
 docx2txt
 ReText
 p7zip
@@ -158,10 +158,10 @@ pandoc-bin
 
 ## 保护菊花系列 - Protect-Your-Data-Goodies:
 testdisk
-wipe
+#wipe
 secure-delete
 keepassxc 
-veracrypt
+#veracrypt
 password-store
 exiftool
 mat2

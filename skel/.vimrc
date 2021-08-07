@@ -1,7 +1,7 @@
 " My customizations
 "set nu
 set go=
-colorscheme darkblue
+colorscheme slate
 set guifont=Courier_New
 " set guifont=Go\ Mono\ for\ Powerline\ 11
 syntax on
