@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Zoom
+Name=Zoom (in jail)
 Comment=Zoom Video Conference
 Exec=firejail /usr/bin/zoom-linux %U
 Icon=zoom-linux

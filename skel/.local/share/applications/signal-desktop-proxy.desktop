@@ -1,6 +1,6 @@
 [Desktop Entry]
-Name=Signal (proxy)
-Exec=proxychains4 /opt/Signal/signal-desktop %U
+Name=Signal (in proxy)
+Exec=env https_proxy=http://localhost:8118; firejail /opt/Signal/signal-desktop --no-sandbox %U
 Terminal=false
 Type=Application
 Icon=signal-desktop
