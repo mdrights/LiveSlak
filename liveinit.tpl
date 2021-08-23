@@ -567,7 +567,7 @@ if [ "$RESCUE" = "" ]; then
   if [ $TORAM -eq 1 ]; then
     RAMSIZE=90%  # need to be able to load the entire OS in RAM
   else
-    RAMSIZE=50%  # the default value.
+    RAMSIZE=80%  # the default value.
   fi
   mount -t tmpfs -o defaults,size=${RAMSIZE} none /mnt
 
