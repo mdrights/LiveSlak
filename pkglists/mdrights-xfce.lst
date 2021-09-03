@@ -161,7 +161,7 @@ testdisk
 #wipe
 secure-delete
 keepassxc 
-#veracrypt
+veracrypt
 password-store
 exiftool
 mat2
