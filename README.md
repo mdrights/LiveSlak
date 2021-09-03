@@ -32,6 +32,8 @@
 ## Important Updates   
 
 - 在之前的 rc 版本基础上做了些小修缮：
+    - （试验性）加入 MacBook 的无线网卡驱动 Broadcom-sta （但未安装，如需安装请前往 `/opt/Driver/`）  
+    - 加大了系统运行时的「磁盘」（伪）空间，至物理内存的 80%；  
     - 使用了 firejail 沙盒的应用，都会在开始菜单用单独的条目标明出来，方便选择（`in jail`）  
     - 修复 Signal 下载了文件找不到的情况，现在请下载到 `Desktop` （桌面）才能从外面看到。 
     - Signal 自身没有走代理的功能，所以只能以这两种方式科学上网：  
@@ -75,9 +77,13 @@
 	- 在 Windows：
 		- 下载烧录工具并根据软件的提示即可（比如开源的 [rufus](https://rufus.ie)）  
 
-1. （在 Linux 和 macOS）用 `dd` 命令；
+1. 用 `dd` 命令烧录；
 	```
+    （在 Linux ）
 	sudo dd bs=4M if=/path/to/antis-xxxx.xx.iso of=/dev/XXX    (注意請看清你的 USB 盤是什麼編號喲)
+
+    （在 macOS ）
+	sudo dd bs=4m if=/path/to/antis-xxxx.xx.iso of=/dev/XXX    (注意請看清你的 USB 盤是什麼編號喲)
 	```  
 ~~（暂废弃）方法2：使用本 repo 内的 `iso2usb.sh` 脚本安装~~  
 	```
@@ -108,9 +114,10 @@
 
 ## Device Requirements
 
-- 您的机器必须是 `x86_64` 位的 **PC** 啦 (macOS 不太支持) ；
+- 您的机器必须是 `x86_64` 位的 **Intel 或 AMD** 处理器啦~  
+    (macBook 不太支持，目前已知对 2015 年后的 MacBook 的无线网卡无法支持，但系统可以运行) ；
 - 需要至少 2G 内存；
-- 这意味着如果你在虚拟机里运行，请为其设置足够的内存，而虚拟机的宿主机至少要有 4G 物理内存。
+- 如果你在虚拟机里运行，请为其设置足够的内存，而虚拟机的宿主机至少要有 4G 物理内存。
 - 经测试，有的电脑只有 (U)EFI（主板启动固件）, Slackware 的 bootloader (syslinux + grub2) 可能无法广泛地支持所有 UEFI。如果遇到机器无法识别本系统的U盘——这情况请选择传统 BIOS 或带 CSM 的 EFI的电脑使用，或者在虚拟机里使用（并请告诉我 Orz）。
 
 
