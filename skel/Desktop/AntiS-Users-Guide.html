@@ -69,6 +69,28 @@
 <li><code>live</code> 用户自己创建的文件将是 <code>rw-r-----</code>，目录将是 <code>rwxr-x---</code>。這意味著：<br />
 &gt; 非 <code>live</code> 用户不能查看、添加、修改、删除 <code>live</code> 家目录（<code>/home/live</code>）下的文件/目录了。</li>
 </ul></li>
+<li><p>其他：</p>
+<ul>
+<li><p>使用了 firejail 沙盒的应用，都会在开始菜单用单独的条目标明出来，方便选择（<code>in jail</code>）<br />
+</p></li>
+<li><p>修复 Signal 下载了文件找不到的情况，现在请下载到 <code>Desktop</code> （桌面）才能从外面看到。</p></li>
+<li><p>Signal 自身没有走代理的功能，所以只能以这两种方式科学上网：</p>
+<ul>
+<li>使用 VPN 类软件（如 WireGuard, OpenConnect）—— 它们是全局的，所有软件都不需要任何设置；<br />
+</li>
+<li>若使用的是代理类软件（如 ss, v2ray），则需要选择点击 <code>Signal (in proxy)</code> —— 它启动时需要使用 https proxy，因此在启动前需要启动 <code>privoxy</code>：<br />
+</li>
+</ul>
+<pre><code>sudo privoxy /etc/privoxy/config （需要输入登录密码；启动后不会有任何显示）  </code></pre></li>
+<li><p>Chromium，是半官方编译的 <code>Chromium-ungoogled</code> 去除谷歌版。同样，有“走代理”和“不走代理”两个条目可以选择。</p></li>
+<li><p>恶意代码移除工具：Dangerzone (以及它的依赖: Podman)(实验性)</p>
+<ul>
+<li>执行：<code>/opt/dangerzone/dev_scripts/dangerzone</code><br />
+</li>
+<li>该工具需要在使用时下载一个约 666MB 的镜像文件；因为是 live 系统，鉴于 U 盘都比较小，建议将文件下载到另一个磁盘。修改这个配置文件可以指定其下载到哪里：（需要先挂载该磁盘并知道其挂载的路径）<br />
+<code>sudo vi /etc/containers/storage.conf</code></li>
+</ul></li>
+</ul></li>
 </ul>
 <h3 id="基本需求">基本需求</h3>
 <ul>
