@@ -12,7 +12,7 @@
     - 系统加固（包括：防火墙、用户和进程权限控制、文件系统权限和挂载限制、内核参数配置调优等……）
 	- 应用加固（firejail 沙盒、火狐浏览器加固等）
 
-最近更新：2021.08.07  
+最近更新：2021.09.04  
 
 發佈頻道：	 
 - Mastodon:
@@ -23,8 +23,8 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2021.04.rc5** (~= 3GB)   
-	- md5sum: 218921557ced9d646b0ea65a2bf17136  
+	- Version: **2021.04.rc6** (= 2990538752 Bytes)   
+	- md5sum: d06f6c02dfa97e07be69d8d95f658689  
 
 [![Download antiS](https://img.shields.io/sourceforge/dt/liveslak-atgfw.svg)](https://sourceforge.net/projects/liveslak-atgfw/files/latest/download)
 
