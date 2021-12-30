@@ -1782,6 +1782,7 @@ if [ "${ADD_CACERT}" = "YES" -o "${ADD_CACERT}" = "yes" ]; then
     ln -s cacert-class3.crt \
       $(openssl x509 -noout -hash -in cacert-class3.crt).0
   )
+fi # End ADD_CACERT
 
   # Create Mozilla Firefox profile:
   mkdir -p ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/firefox/${LIVEUID}_profile.default
@@ -1826,7 +1827,7 @@ EOT
 #      -A -t TC -n "CAcert.org Class 3" -i ${LIVE_ROOTDIR}/etc/ssl/certs/cacert-class3.crt
   )
   #  find out how to configure KDE with additional Root CA's.
-fi # End ADD_CACERT
+#fi # End ADD_CACERT
 
 # Make sure that user 'live' owns her own files:
 chroot ${LIVE_ROOTDIR} chown -R ${LIVEUID}:users home/${LIVEUID}
