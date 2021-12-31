@@ -1,22 +1,21 @@
-
-#### Pythonic
-#python3-sip        # locally built, from pip
-#python3-PyQt5       # locally built, from pip
+## Pythonic
+#python3-sip
+#python3-PyQt5
 pyudev
 python-evdev
 Markups
 MarkupSafe 	| PYTHON3=yes
 Markdown
-Pygments
+#Pygments
 pysha3
 pytest
 PySocks
 pycrypto
 python3-pycrypto
 python-markdown-math
-python-requestbuilder
+#python-requestbuilder
 Flask
-python3-Flask
+#python3-Flask
 stem
 click
 werkzeug
@@ -25,8 +24,18 @@ itsdangerous
 python3-itsdangerous
 python3-Flask-httpauth
 psutil
-onionshare
-ReText
 docopt 
 python3-pythondialog 
+mutagen
+perl-Test-Harness
+PyYAML 
+#enum34 
+jsonschema 
+#python-cached-property 
+#python-docker 
+#python-dockerpty 
+#python-texttable
+#docker-compose
+
+onionshare
 protonvpn-cli

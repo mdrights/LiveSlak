@@ -104,7 +104,7 @@ tor-browser
 torsocks
 privoxy
 proxychains
-#signal-desktop         # build locally
+signal-desktop
 telegram
 uTox
 onionshare
