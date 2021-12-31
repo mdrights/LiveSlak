@@ -9,7 +9,7 @@ udns
 mbedtls
 #c-ares     # in base
 libev
-nodejs
+#nodejs     # takes too long
 nwjs
 rubygem-sass
 c-toxcore
@@ -100,18 +100,15 @@ firejail
 macchanger
 tor
 #tor-hardened
-tor-browser
 torsocks
 privoxy
 proxychains
-signal-desktop
-telegram
 uTox
 onionshare
 twitter
 #obfs4proxy             # build locally
-#v2ray			# build locally
-#dnscrypt-proxy         # not built
+#v2ray			        # build locally
+dnscrypt-proxy         # not built
 #apparmor
 #wireguard-linux-compat
 #wireguard-tools  | NEW_NFT=yes  # in base
@@ -119,8 +116,14 @@ openconnect
 protonvpn-cli
 protonmail-bridge
 
+# These are prebuilt packages which may be done separately.
+#mattermost-desktop
+#signal-desktop
+#tor-browser
+#telegram
+
 ## 这些不是开源的但比较流行，请自主选择
-zoom-linux
+#zoom-linux
 #qq					# build locally
 
 ## Yubikey
@@ -135,7 +138,6 @@ docx2txt
 ReText
 p7zip
 unrar
-mattermost-desktop
 syncthing
 weechat
 xclip
@@ -150,6 +152,7 @@ keepassxc
 password-store
 exiftool
 mat2
+bleachbit
 
 
 ## Docker
@@ -161,6 +164,8 @@ containerd
 docker
 docker-cli
 
+## Driver for Macbook wireless card
+broadcom-sta        # Not existed in SBo
 
 ## for sysadmin
 #sbopkg

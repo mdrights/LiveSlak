@@ -160,6 +160,7 @@ veracrypt
 password-store
 exiftool
 mat2
+bleachbit
 
 #######################
 ## More metadata/anti-malware tools (packaged in rootcopy & skel dirs)
@@ -184,6 +185,8 @@ containerd
 docker
 docker-cli
 
+## Driver for Macbook wireless card
+broadcom-sta
 
 ## for sysadmin
 sbopkg
