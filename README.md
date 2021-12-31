@@ -12,7 +12,7 @@
     - 系统加固（包括：防火墙、用户和进程权限控制、文件系统权限和挂载限制、内核参数配置调优等……）
 	- 应用加固（firejail 沙盒、火狐浏览器加固等）
 
-最近更新：2021.09.04  
+最近更新：2021.12.31  
 
 發佈頻道：	 
 - Mastodon:
@@ -23,8 +23,8 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2021.04.rc6** (= 2990538752 Bytes)   
-	- md5sum: d06f6c02dfa97e07be69d8d95f658689  
+	- Version: **2021.04** (= 2990538752 Bytes)   
+	- md5sum: 266a5e208960d610c8af30f3ae4d471c
 
 [![Download antiS](https://img.shields.io/sourceforge/dt/liveslak-atgfw.svg)](https://sourceforge.net/projects/liveslak-atgfw/files/latest/download)
 
@@ -32,6 +32,7 @@
 ## Important Updates   
 
 - 在之前的 rc 版本基础上做了些小修缮：
+    - 一个稳定版而已；修复 Firefox 在 firejail 下 profile 目录丢失的问题。  
     - （试验性）加入 MacBook 的无线网卡驱动 Broadcom-sta （但未安装，如需安装请前往 `/opt/Driver/`）  
     - 加大了系统运行时的「磁盘」（伪）空间，至物理内存的 80%；  
     - 使用了 firejail 沙盒的应用，都会在开始菜单用单独的条目标明出来，方便选择（`in jail`）  

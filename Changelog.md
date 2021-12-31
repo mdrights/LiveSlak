@@ -1,6 +1,8 @@
 
 ## Change Log
 
+- 2021.12.31 (`2021.04`)  
+    - 一个稳定版而已；修复 Firefox 在 firejail 下 profile 目录丢失的问题。  
 - 2021.09.04 (`2021.04.rc6`)  
 - 2021.08.07 (`2021.04.rc5`)  
     - （试验性）加入 MacBook 的无线网卡驱动 Broadcom-sta （但未安装，如需安装请前往 `/opt/Driver/`）  
