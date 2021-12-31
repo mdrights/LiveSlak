@@ -1803,13 +1803,14 @@ EOT
   # Create Mozilla Seamonkey profile: 
 
   # Import CACert root certificates into the browsers:
-  (
-    # Mozilla Firefox:
-    certutil -N --empty-password -d ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/firefox/${LIVEUID}_profile.default
-    certutil -d ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/firefox/${LIVEUID}_profile.default \
-      -A -t TC -n "CAcert.org" -i ${LIVE_ROOTDIR}/etc/ssl/certs/cacert-root.crt
-    certutil -d ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/firefox/${LIVEUID}_profile.default \
-      -A -t TC -n "CAcert.org Class 3" -i ${LIVE_ROOTDIR}/etc/ssl/certs/cacert-class3.crt
+#  (
+#    # Mozilla Firefox:
+#    certutil -N --empty-password -d ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/firefox/${LIVEUID}_profile.default
+#    certutil -d ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/firefox/${LIVEUID}_profile.default \
+#      -A -t TC -n "CAcert.org" -i ${LIVE_ROOTDIR}/etc/ssl/certs/cacert-root.crt
+#    certutil -d ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/firefox/${LIVEUID}_profile.default \
+#      -A -t TC -n "CAcert.org Class 3" -i ${LIVE_ROOTDIR}/etc/ssl/certs/cacert-class3.crt
+
 #    # Seamonkey and Pale Moon (can just be a copy of the Firefox files):
 #    cp -a \
 #      ${LIVE_ROOTDIR}/home/${LIVEUID}/.mozilla/firefox/${LIVEUID}_profile.default/* \
@@ -1825,7 +1826,7 @@ EOT
 #      -A -t TC -n "CAcert.org" -i ${LIVE_ROOTDIR}/etc/ssl/certs/cacert-root.crt
 #    certutil -d sql:${LIVE_ROOTDIR}/home/${LIVEUID}/.pki/nssdb \
 #      -A -t TC -n "CAcert.org Class 3" -i ${LIVE_ROOTDIR}/etc/ssl/certs/cacert-class3.crt
-  )
+#  )
   #  find out how to configure KDE with additional Root CA's.
 #fi # End ADD_CACERT
 
