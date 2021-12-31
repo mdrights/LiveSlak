@@ -53,7 +53,6 @@ docopt
 python3-pythondialog 
 mutagen
 perl-Test-Harness
-docker-cli
 PyYAML 
 #enum34 
 jsonschema 
@@ -64,17 +63,17 @@ jsonschema
 #docker-compose
 
 ## Podman
-slirp4netns
-go-md2man
-conmon
-cni-plugins
-podman
+#slirp4netns
+#go-md2man
+#conmon
+#cni-plugins
+#podman
 
 #######################
 
 ## These are installed via pip3
 # msoffcrypto olefile oletools pcodedmp
-# pyside2 appdirs pyxdg colorama
+# appdirs pyxdg colorama
 
 #######################
 
@@ -153,17 +152,14 @@ exiftool
 mat2
 
 
-## RSS 新闻阅读器
-#newsboat      # not built
-
-
 ## Docker
 #google-go-lang
-#tini
-#docker-proxy
-#runc
-#containerd
-#docker
+tini
+docker-proxy
+runc
+containerd
+docker
+docker-cli
 
 
 ## for sysadmin

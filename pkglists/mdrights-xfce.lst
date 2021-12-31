@@ -73,17 +73,12 @@ perl-Test-Harness
 redshift
 
 ## Podman
-slirp4netns
-go-md2man
-conmon
-cni-plugins
-podman
+#slirp4netns
+#go-md2man
+#conmon
+#cni-plugins
+#podman
 
-#######################
-
-## These are installed via pip3
-# msoffcrypto olefile oletools pcodedmp
-# pyside2 appdirs pyxdg colorama
 
 #######################
 
@@ -166,22 +161,28 @@ password-store
 exiftool
 mat2
 
+#######################
+## More metadata/anti-malware tools (packaged in rootcopy & skel dirs)
+# peepdf
+# pdf-tools
+# oletools
+# oledump
+
+## These are installed via pip3
+# msoffcrypto olefile oletools pcodedmp
+# appdirs pyxdg colorama
+#######################
+
 ## 虚拟机客户端插件
 #virtualbox-kernel-addons
 
-## RSS 新闻阅读器
-#newsboat
-
-## 字体
-#noto-cjk-font-ttf
-
-## Docker -- not in use
-#tini
-#docker-proxy
-#runc
-#containerd
-#docker
-#docker-cli
+## Docker
+tini
+docker-proxy
+runc
+containerd
+docker
+docker-cli
 
 
 ## for sysadmin
