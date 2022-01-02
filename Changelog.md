@@ -1,6 +1,12 @@
 
 ## Change Log
 
+- 2022.01.02 (`2022.01.rc1`)  
+    - 拿掉 Dangerzone 和 podman （换回 Docker），因为 Dangerzone 并不适合 live 系统；
+    - 加入 Bleachbit；
+    - 一些日常更新：Tor, exiftool, Dnscrypt-proxy, etc.
+    - Reorganise the sqf files.  
+
 - 2021.12.31 (`2021.04`)  
     - 一个稳定版而已；修复 Firefox 在 firejail 下 profile 目录丢失的问题。  
 - 2021.09.04 (`2021.04.rc6`)  

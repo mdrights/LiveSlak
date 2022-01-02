@@ -126,6 +126,13 @@ jsonschema
 #python-texttable
 #docker-compose
 
+
+#### These are installed as git repo directly ####
+# peepdf
+# pdf-tools
+# oletools
+# oledump
+
 #### These are installed via pip3 ####
 # msoffcrypto olefile oletools pcodedmp
 # appdirs pyxdg colorama

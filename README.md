@@ -23,28 +23,17 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2021.04** (= 2990538752 Bytes)   
-	- md5sum: 266a5e208960d610c8af30f3ae4d471c
+	- Version: **2022.01.rc1** (= 3035627520 Bytes)   
+	- md5sum: 2af99150f2ab1e107e3da5f755a74b40
 
 [![Download antiS](https://img.shields.io/sourceforge/dt/liveslak-atgfw.svg)](https://sourceforge.net/projects/liveslak-atgfw/files/latest/download)
 
 
 ## Important Updates   
 
-- 在之前的 rc 版本基础上做了些小修缮：
-    - 一个稳定版而已；修复 Firefox 在 firejail 下 profile 目录丢失的问题。  
-    - （试验性）加入 MacBook 的无线网卡驱动 Broadcom-sta （但未安装，如需安装请前往 `/opt/Driver/`）  
-    - 加大了系统运行时的「磁盘」（伪）空间，至物理内存的 80%；  
-    - 使用了 firejail 沙盒的应用，都会在开始菜单用单独的条目标明出来，方便选择（`in jail`）  
-    - 修复 Signal 下载了文件找不到的情况，现在请下载到 `Desktop` （桌面）才能从外面看到。 
-    - Signal 自身没有走代理的功能，所以只能以这两种方式科学上网：  
-        - 使用 VPN 类软件（如 WireGuard, OpenConnect）—— 它们是全局的，所有软件都不需要任何设置；  
-        - 若使用的是代理类软件（如 ss, v2ray），则需要选择点击 `Signal (in proxy)` —— 它启动时需要使用 https proxy，因此在启动前需要启动 `privoxy`：  
-        ```  
-        sudo privoxy /etc/privoxy/config （需要输入登录密码；启动后不会有任何显示）  
-        ```  
-    - 加回 Chromium，但这回是半官方编译的 `Chromium-ungoogled` 去除谷歌版。同样，有“走代理”和“不走代理”两个条目可以选择。  
-    - 其他小改动，如标题栏字体等。  
+- 拿掉 Dangerzone 和 podman （换回 Docker），因为 Dangerzone 并不适合 live 系统；
+- 加入 Bleachbit；
+- 一些日常更新：Tor, exiftool, Dnscrypt-proxy, etc.
 
 **注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/mdrights/Changelog.md)**
 <hr>
