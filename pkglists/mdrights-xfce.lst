@@ -1,6 +1,6 @@
 # Self-added app list. Feel free to add your favourite apps!
 
-## Stick to my customized kernel:
+## Stick to my customized kernel
 
 # Some Libraries:
 #libinput
@@ -69,6 +69,7 @@ mutagen
 perl-Test-Harness
 redshift
 
+#######################
 ## Podman
 #slirp4netns
 #go-md2man
@@ -76,8 +77,13 @@ redshift
 #cni-plugins
 #podman
 
-
-#######################
+## Docker
+tini
+docker-proxy
+runc
+containerd
+docker
+docker-cli
 
 # Docker-compose -- not in use
 python2-PyYAML 
@@ -88,6 +94,7 @@ jsonschema
 #python-dockerpty 
 #python-texttable
 #docker-compose
+#######################
 
 ## Yubikey
 pcsc-lite
@@ -172,14 +179,6 @@ bleachbit
 
 ## 虚拟机客户端插件
 #virtualbox-kernel-addons
-
-## Docker
-tini
-docker-proxy
-runc
-containerd
-docker
-docker-cli
 
 ## Driver for Macbook wireless card
 #broadcom-sta

@@ -1,5 +1,6 @@
 
-## Some Libraries:
+###### START: These should be compiled in target system ######
+
 #libxkbcommon
 graphviz 
 extra-cmake-modules
@@ -22,8 +23,65 @@ plib
 #qt5
 #qt5-webkit
 docbook-xml
+redshift
 
-## Pythonic
+libdaemon
+avahi
+w3m
+stfl
+zsh-syntax-highlighting
+
+#opencc
+#fcitx-libpinyin
+#libpinyin
+#fcitx
+#fcitx-configtool
+
+#apparmor
+shadowsocks-libev
+firejail
+macchanger
+tor
+torsocks
+privoxy
+proxychains
+uTox
+openconnect
+
+pcsc-lite
+ccid
+opensc
+
+p7zip
+unrar
+weechat
+xclip
+bleachbit
+password-store
+keepassxc 
+secure-delete
+testdisk
+
+imlib2
+icewm
+
+###### END: These should be compiled in target system ######
+
+###### START: These can be compiled/built in local system ######
+
+## GO Lang ##
+#google-go-lang
+tini
+docker-proxy
+runc
+containerd
+docker
+docker-cli
+dnscrypt-proxy
+obfs4proxy
+v2ray
+
+## PYTHONIC ##
 #python3-sip
 #python3-PyQt5
 pyudev
@@ -52,11 +110,13 @@ docopt
 python3-pythondialog 
 mutagen
 perl-Test-Harness
-redshift
+onionshare
+twitter
+protonvpn-cli
+ReText
+mat2
 
-#######################
-
-# Docker-compose -- not in use
+## Docker-compose -- not in use
 python2-PyYAML 
 #enum34 
 jsonschema 
@@ -66,112 +126,40 @@ jsonschema
 #python-texttable
 #docker-compose
 
-## Podman
-#slirp4netns
-#go-md2man
-#conmon
-#cni-plugins
-#podman
-
-#######################
-
-## These are installed via pip3
+#### These are installed via pip3 ####
 # msoffcrypto olefile oletools pcodedmp
 # appdirs pyxdg colorama
 
-#######################
+##>>>> END PYTHONIC <<<<##
 
-libdaemon
-avahi
-w3m
-stfl
-zsh-syntax-highlighting
-zsh-completions
+## PERL ##
+exiftool
 
-## 输入法
-#opencc
-#fcitx-libpinyin
-#libpinyin
-#fcitx
-#fcitx-configtool
-
-## 上网和一些工具（你懂的）
-shadowsocks-libev
-firejail
-#NetworkManager-nonprism
-macchanger
-tor
-#tor-hardened
-torsocks
-privoxy
-proxychains
-uTox
-onionshare
-twitter
-#obfs4proxy             # build locally
-#v2ray			        # build locally
-dnscrypt-proxy         # not built
-#apparmor
-#wireguard-linux-compat
-#wireguard-tools  | NEW_NFT=yes  # in base
-openconnect
-protonvpn-cli
+## These are locally packaged but are prebuilt BINARY packages 
+mattermost-desktop
+signal-desktop
+tor-browser
+telegram
+zoom-linux
 protonmail-bridge
-
-# These are prebuilt packages which may be done separately.
-#mattermost-desktop
-#signal-desktop
-#tor-browser
-#telegram
-
-## 这些不是开源的但比较流行，请自主选择
-#zoom-linux
-#qq					# build locally
-
-## Yubikey
-pcsc-lite
-ccid
-opensc
-
-## 写写字
+pandoc-bin
+syncthing
+zsh-completions
 libreoffice
 #libreoffice-langpack | LOLANG=zh-CN
-docx2txt
-ReText
-p7zip
-unrar
-syncthing
-weechat
-xclip
-pandoc-bin
+#qq
 
-## 保护菊花系列 - Protect-Your-Data-Goodies:
-testdisk
-wipe
-secure-delete
-keepassxc 
-#veracrypt     # build from Alien.
-password-store
-exiftool
-mat2
-bleachbit
+## Need same kernel and its source/headers
+#broadcom-sta        # Need same kernel and its source/headers
+#virtualbox-kernel-addons
+
+###### END: These can be compiled/built in local system ######
+
+###### MISC: Fetch from Other sources ######
+#sbopkg             # from its website
+#veracrypt          # from Alien.
+#chromium-ungoogled    # from Alien.
 
 
-## Docker
-#google-go-lang
-tini
-docker-proxy
-runc
-containerd
-docker
-docker-cli
 
-## Driver for Macbook wireless card
-#broadcom-sta        # Not existed in SBo
 
-## for sysadmin
-#sbopkg
-
-## for Desktop
-imlib2
-icewm
