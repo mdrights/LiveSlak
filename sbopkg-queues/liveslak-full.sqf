@@ -29,13 +29,13 @@ docbook-xml
 pyudev
 python-evdev
 Markups
-MarkupSafe 	| PYTHON3=yes
+python2-MarkupSafe
 Markdown
 #Pygments
 pysha3
 pytest
 PySocks
-pycrypto
+python2-pycrypto
 python3-pycrypto
 python-markdown-math
 #python-requestbuilder
@@ -44,7 +44,6 @@ Flask
 stem
 click
 werkzeug
-Jinja2
 itsdangerous
 python3-itsdangerous
 python3-Flask-httpauth
@@ -53,7 +52,12 @@ docopt
 python3-pythondialog 
 mutagen
 perl-Test-Harness
-PyYAML 
+redshift
+
+#######################
+
+# Docker-compose -- not in use
+python2-PyYAML 
 #enum34 
 jsonschema 
 #python-cached-property 
@@ -80,9 +84,7 @@ jsonschema
 libdaemon
 avahi
 w3m
-libseccomp
 stfl
-#qrencode               # included in base
 zsh-syntax-highlighting
 zsh-completions
 
@@ -165,7 +167,7 @@ docker
 docker-cli
 
 ## Driver for Macbook wireless card
-broadcom-sta        # Not existed in SBo
+#broadcom-sta        # Not existed in SBo
 
 ## for sysadmin
 #sbopkg

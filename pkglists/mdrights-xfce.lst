@@ -8,7 +8,7 @@
 graphviz 
 #meson
 #libwacom
-extra-cmake-modules		#TODO
+#extra-cmake-modules
 gmtk
 libpaper
 #argon2
@@ -24,7 +24,7 @@ rubygem-sass
 c-toxcore
 libfilteraudio
 #check
-OpenAL			#TODO
+#OpenAL
 OpenSceneGraph
 freealut
 plib
@@ -35,13 +35,13 @@ plib
 pyudev
 python-evdev
 Markups
-MarkupSafe
+python2-MarkupSafe
 Markdown
 #Pygments   
 pysha3
 pytest
 PySocks
-pycrypto
+python2-pycrypto
 python3-pycrypto
 #python-urllib3
 python-markdown-math
@@ -53,16 +53,13 @@ Flask
 stem
 click
 werkzeug
-Jinja2
 itsdangerous
 python3-itsdangerous
 python3-Flask-httpauth
 psutil
 libdaemon
 avahi
-libseccomp
 stfl
-#qrencode  # included in base
 zsh-syntax-highlighting
 zsh-completions
 docopt 
@@ -82,9 +79,8 @@ redshift
 
 #######################
 
-
 # Docker-compose -- not in use
-PyYAML 
+python2-PyYAML 
 #enum34 
 jsonschema 
 #python-cached-property 
@@ -186,7 +182,7 @@ docker
 docker-cli
 
 ## Driver for Macbook wireless card
-broadcom-sta
+#broadcom-sta
 
 ## for sysadmin
 sbopkg
