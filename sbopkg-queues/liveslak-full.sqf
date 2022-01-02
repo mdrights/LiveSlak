@@ -150,7 +150,7 @@ libreoffice
 #qq
 
 ## Need same kernel and its source/headers
-#broadcom-sta        # Need same kernel and its source/headers
+#broadcom-sta
 #virtualbox-kernel-addons
 
 ###### END: These can be compiled/built in local system ######
@@ -159,6 +159,7 @@ libreoffice
 #sbopkg             # from its website
 #veracrypt          # from Alien.
 #chromium-ungoogled    # from Alien.
+#nodejs             # use the built one
 
 
 
