@@ -115,6 +115,9 @@ twitter
 protonvpn-cli
 ReText
 mat2
+peepdf
+oletools
+pdf-tools
 
 ## Docker-compose -- not in use
 python2-PyYAML 
@@ -126,21 +129,12 @@ jsonschema
 #python-texttable
 #docker-compose
 
-
-#### These are installed as git repo directly ####
-# peepdf
-# pdf-tools
-# oletools
-# oledump
-
-#### These are installed via pip3 ####
-# msoffcrypto olefile oletools pcodedmp
-# appdirs pyxdg colorama
-
 ##>>>> END PYTHONIC <<<<##
+
 
 ## PERL ##
 exiftool
+
 
 ## These are locally packaged but are prebuilt BINARY packages 
 mattermost-desktop

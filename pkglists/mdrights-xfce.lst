@@ -165,13 +165,13 @@ bleachbit
 
 #######################
 ## More metadata/anti-malware tools (packaged in rootcopy & skel dirs)
-# peepdf
-# pdf-tools
-# oletools
+peepdf
+pdf-tools
+oletools
 # oledump
 
-## These are installed via pip3
-# msoffcrypto olefile oletools pcodedmp
+## Deprecated
+# msoffcrypto olefile pcodedmp
 # appdirs pyxdg colorama
 #######################
 
