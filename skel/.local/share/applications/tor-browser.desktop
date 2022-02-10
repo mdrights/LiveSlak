@@ -2,7 +2,7 @@
 Exec=tor-browser %u
 Icon=tor-browser
 Type=Application
-Categories=X-Antigfw
+Categories=Network;
 Name=Tor-Browser
 Name[zh_CN]=Tor 洋葱匿名浏览器
 Name[zh_HK]=Tor 洋葱浏览器

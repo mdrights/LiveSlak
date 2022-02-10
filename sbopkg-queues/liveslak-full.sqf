@@ -8,20 +8,16 @@ gmtk
 libpaper
 udns
 mbedtls
-#c-ares     # in base
 libev
 #nodejs     # takes too long
 nwjs
 rubygem-sass
 c-toxcore
 libfilteraudio
-#check
 OpenAL
 OpenSceneGraph
 freealut
 plib
-#qt5
-#qt5-webkit
 docbook-xml
 redshift
 
@@ -37,7 +33,6 @@ zsh-syntax-highlighting
 #fcitx
 #fcitx-configtool
 
-#apparmor
 shadowsocks-libev
 firejail
 macchanger
@@ -80,6 +75,7 @@ docker-cli
 dnscrypt-proxy
 obfs4proxy
 v2ray
+go-shadowsocks2
 
 ## PYTHONIC ##
 #python3-sip
@@ -149,8 +145,9 @@ zsh-completions
 libreoffice
 #libreoffice-langpack | LOLANG=zh-CN
 #qq
+outline-client
 
-## Need same kernel and its source/headers
+## Need same kernels and its source/headers
 #broadcom-sta
 #virtualbox-kernel-addons
 

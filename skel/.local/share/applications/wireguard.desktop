@@ -1,8 +1,0 @@
-[Desktop Entry]
-Name=Wireguard
-Comment[zh_CN]=VPN
-Exec=su -c 'wg-quick up ./Desktop/wg0.conf'
-Icon=utilities-system-monitor
-Type=Application
-Categories=X-Antigfw
-Terminal=true

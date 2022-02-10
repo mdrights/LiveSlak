@@ -113,10 +113,8 @@ w3m
 chromium-ungoogled
 shadowsocks-libev
 firejail
-#NetworkManager-nonprism
 macchanger
 tor
-#tor-hardened
 tor-browser
 torsocks
 privoxy
@@ -129,12 +127,11 @@ twitter
 obfs4proxy
 v2ray
 dnscrypt-proxy
-#apparmor
-#wireguard-linux-compat
-#wireguard-tools
 openconnect
 #protonvpn-cli
 #protonmail-bridge
+outline-client
+go-shadowsocks2
 
 ## 这些不是开源的但比较流行，请自主选择
 zoom-linux
