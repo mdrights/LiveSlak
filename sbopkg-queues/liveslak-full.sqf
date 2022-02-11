@@ -108,7 +108,7 @@ mutagen
 perl-Test-Harness
 onionshare
 twitter
-protonvpn-cli
+#protonvpn-cli
 ReText
 mat2
 peepdf
@@ -138,7 +138,7 @@ signal-desktop
 tor-browser
 telegram
 zoom-linux
-protonmail-bridge
+#protonmail-bridge
 pandoc-bin
 syncthing
 zsh-completions
