@@ -1869,8 +1869,9 @@ sed -i ${LIVE_ROOTDIR}/etc/inittab -e "s/\(id:\).\(:initdefault:\)/\1${RUNLEVEL}
 [ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.cups-browsed ] && chmod a-x ${LIVE_ROOTDIR}/etc/rc.d/rc.cups-browsed
 [ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.bluetooth ] && chmod a-x ${LIVE_ROOTDIR}/etc/rc.d/rc.bluetooth
 
-# But enable my firewall 
+# Enable my stuff (but not autostarted):
 [ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.firewall ] && chmod a+x ${LIVE_ROOTDIR}/etc/rc.d/rc.firewall
+[ -f ${LIVE_ROOTDIR}/etc/rc.d/rc.docker ] && chmod a+x ${LIVE_ROOTDIR}/etc/rc.d/rc.docker
 
 # Add a softvol pre-amp to ALSA - some computers have too low volumes.
 # If etc/asound.conf exists it's configuring ALSA to use Pulse,
