@@ -3,6 +3,8 @@
 # Try to start Docker daemon first whatever is it running
 sudo /etc/rc.d/rc.docker start || true
 
+sleep 3
+
 docker run -d \
   -p 2017:2017 \
   -p 20170-20172:20170-20172 \
@@ -14,4 +16,5 @@ docker run -d \
 xdg-open "http://127.0.0.1:2017"
 
 # Keep this terminal open for a while otherwise Firefox will not open.
+# If no browser is opened, please type `localhost:2017` in any browser.
 sleep 2

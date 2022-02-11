@@ -2,7 +2,7 @@
 Name=Zoom (in jail)
 Comment=Zoom Video Conference
 Exec=firejail /usr/bin/zoom-linux %U
-Icon=zoom-linux
+Icon=/home/live/.local/share/pixmaps/zoom-linux.png
 Terminal=false
 Type=Application
 Encoding=UTF-8

@@ -1,6 +1,6 @@
 [Desktop Entry]
 Exec=/home/live/.local/bin/start-v2rayA.sh %u
-Icon=v2raya
+Icon=/home/live/.local/share/pixmaps/v2raya.png
 Type=Application
 Categories=Network;
 Name=v2rayA

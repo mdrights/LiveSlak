@@ -1,6 +1,7 @@
 [Desktop Entry]
 Exec=tor-browser %u
 Icon=tor-browser
+Icon=/home/live/.local/share/pixmaps/tor-browser.png
 Type=Application
 Categories=Network;
 Name=Tor-Browser

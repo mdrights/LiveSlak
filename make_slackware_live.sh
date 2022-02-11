@@ -1440,10 +1440,11 @@ root:ALL EXCEPT GROUP wheel:DENY
 EOT
 chmod 600 ${LIVE_ROOTDIR}/etc/suauth
 
-# Configure sudoers:
+# Configure sudoers (but not modifying it):
 chmod 640 ${LIVE_ROOTDIR}/etc/sudoers
-sed -i ${LIVE_ROOTDIR}/etc/sudoers -e 's/# *\(%wheel\sALL=(ALL)\sALL\)/\1/'
-chmod 440 ${LIVE_ROOTDIR}/etc/sudoers
+#sed -i ${LIVE_ROOTDIR}/etc/sudoers -e 's/# *\(%wheel\sALL=(ALL)\sALL\)/\1/'
+chmod 440 ${LIVE_ROOTDIR}/etc/sudoers{,.dist}
+chown -R root:root ${LIVE_ROOTDIR}/etc/sudoers.d/
 
 # Enable a Slackware mirror for slackpkg:
 cat <<EOT >> ${LIVE_ROOTDIR}/etc/slackpkg/mirrors
