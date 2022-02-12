@@ -1,6 +1,12 @@
 
 ## Change Log
 
+- 2022.02.11 (`2022.01.rc2`)  
+- 基于 Slackware 15.0 了～hooray！  
+- 加入翻墙神器们： Outline, v2rayA (图形界面客户端), Shadowsocks (Go 版本), v2ray (命令行内核，重新编译到 5.0.3)；  
+    - 具体运行方法见：[科学上网指南](https://github.com/mdrights/LiveSlak/blob/mdrights/skel/Desktop/go-over-GFW.md)
+- 一些日常更新：Tor-browser, Signal-desktop, etc.
+
 - 2022.01.02 (`2022.01.rc1`)  
     - 拿掉 Dangerzone 和 podman （换回 Docker），因为 Dangerzone 并不适合 live 系统；
     - 加入 Bleachbit；

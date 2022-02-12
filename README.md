@@ -1,8 +1,9 @@
 # antiS
 **一款中文、粤语、藏语、维语友好，隐私加强的电脑操作系统（基于 Slackware Live，GNU/Linux 发行版）**
 
-> 曾用名：LiveSlak，现改为 **antiS**：anti-Surveillance —— 对抗监控、审查，捍卫自己的网络自由。  
+> 曾用名：LiveSlak，现改为 **antiS**：anti-Surveillance —— 对抗监控、审查、取证，捍卫自己的网络自由。  
 
+![antiS screenshot](./antiS-2022.01.png)
 
 主要集成功能：  
   - 中文化(约80%) 粤语（80%） 藏语（50%） 维语（60%）
@@ -12,7 +13,7 @@
     - 系统加固（包括：防火墙、用户和进程权限控制、文件系统权限和挂载限制、内核参数配置调优等……）
 	- 应用加固（firejail 沙盒、火狐浏览器加固等）
 
-最近更新：2021.12.31  
+最近更新：2022.02.11
 
 發佈頻道：	 
 - Mastodon:
@@ -23,17 +24,18 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2022.01.rc1** (= 3035627520 Bytes)   
-	- md5sum: 2af99150f2ab1e107e3da5f755a74b40
+	- Version: **2022.01.rc2** (= 3133145088 Bytes)   
+	- md5sum: 3c34016a23983676467671e26b2e8783
 
 [![Download antiS](https://img.shields.io/sourceforge/dt/liveslak-atgfw.svg)](https://sourceforge.net/projects/liveslak-atgfw/files/latest/download)
 
 
 ## Important Updates   
 
-- 拿掉 Dangerzone 和 podman （换回 Docker），因为 Dangerzone 并不适合 live 系统；
-- 加入 Bleachbit；
-- 一些日常更新：Tor, exiftool, Dnscrypt-proxy, etc.
+- 基于 Slackware Linux 15.0 了～hooray！  
+- 加入翻墙神器们： Outline, v2rayA (图形界面客户端), Shadowsocks (Go 版本), v2ray (命令行内核，重新编译到 5.0.3)；  
+    - 具体运行方法见：[科学上网指南](https://github.com/mdrights/LiveSlak/blob/mdrights/skel/Desktop/go-over-GFW.md)
+- 一些日常更新：Tor-browser, Signal-desktop, etc.
 
 **注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/mdrights/Changelog.md)**
 <hr>
@@ -44,6 +46,7 @@
 - 了解本发行版的具体特性，请阅读：    
 	- [基本介绍](https://mdrights.github.io/os-observe/Liveslak-intro/)  
 	- [使用手册](https://github.com/mdrights/LiveSlak/blob/mdrights/skel/Desktop/AntiS-Users-Guide.md)  
+    - [科学上网指南](https://github.com/mdrights/LiveSlak/blob/mdrights/skel/Desktop/go-over-GFW.md)
 	- [预装软件列表](https://github.com/mdrights/LiveSlak/blob/mdrights/pkglists/mdrights-xfce.lst)  
 	- 溫馨提示：本系統雖然有一定匿名特性，但不主打匿名，請有高匿名需求的朋友使用：[Tails](https://tails.boum.org/about/index.en.html)  
 
