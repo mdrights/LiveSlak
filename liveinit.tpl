@@ -255,8 +255,8 @@ debugit () {
   if [ $DEBUG -eq 0 -o $DEBUG -gt 3 ]; then
     return
   elif [ $DEBUG -le 2 ]; then
-    echo "DEBUG>> -- blkid info -- :"
-    blkid | while read LINE ; do echo "DEBUG>> $LINE" ; done
+    echo "DEBUG>> -- busybox blkid info -- :"
+    busybox blkid | while read LINE ; do echo "DEBUG>> $LINE" ; done
     echo "DEBUG>> -- mount info -- :"
     mount | while read LINE ; do echo "DEBUG>> $LINE" ; done
   fi
@@ -321,8 +321,8 @@ fi
 # Sometimes the devices need extra time to be available.
 # A root filesystem on USB is a good example of that.
 sleep $WAIT
-# Fire at least one blkid:
-blkid 1>/dev/null 2>/dev/null
+# Fire at least one busybox blkid:
+busybox blkid 1>/dev/null 2>/dev/null
 
 if [ "$RESCUE" = "" ]; then 
   if [ $LOCALHD -eq 1 ]; then
@@ -586,32 +586,32 @@ if [ "$RESCUE" = "" ]; then
   elif [ -z "$LIVEMEDIA" ]; then
     # LIVEMEDIA not specified on the boot commandline using "livemedia="
     # Filter out the block devices, only look at partitions at first:
-    LIVEALL=$(blkid |grep LABEL="\"$MEDIALABEL\"" |cut -d: -f1 |grep "[0-9]$")
-    LIVEMEDIA=$(blkid |grep LABEL="\"$MEDIALABEL\"" |cut -d: -f1 |grep "[0-9]$" |head -1)
+    LIVEALL=$(busybox blkid |grep LABEL="\"$MEDIALABEL\"" |cut -d: -f1 |grep "[0-9]$")
+    LIVEMEDIA=$(busybox blkid |grep LABEL="\"$MEDIALABEL\"" |cut -d: -f1 |grep "[0-9]$" |head -1)
     if [ ! -z "$LIVEMEDIA" ]; then
       # That was easy... we found the media straight away.
       # Determine filesystem type ('iso9660' means we found a CDROM/DVD)
-      LIVEFS=$(blkid $LIVEMEDIA |rev |cut -d'"' -f2 |rev)
+      LIVEFS=$(busybox blkid $LIVEMEDIA |rev |cut -d'"' -f2 |rev)
       mount -t $LIVEFS -o ro $LIVEMEDIA /mnt/media
     else
-      LIVEALL=$(blkid |grep LABEL="\"$MEDIALABEL\"" |cut -d: -f1 |grep -v "[0-9]$")
-      LIVEMEDIA=$(blkid |grep LABEL="\"$MEDIALABEL\"" |cut -d: -f1 |grep -v "[0-9]$" |head -1)
+      LIVEALL=$(busybox blkid |grep LABEL="\"$MEDIALABEL\"" |cut -d: -f1 |grep -v "[0-9]$")
+      LIVEMEDIA=$(busybox blkid |grep LABEL="\"$MEDIALABEL\"" |cut -d: -f1 |grep -v "[0-9]$" |head -1)
       if [ ! -z "$LIVEMEDIA" ]; then
         # We found a block device with the correct label (non-UEFI media).
         # Determine filesystem type ('iso9660' means we found a CDROM/DVD)
-        LIVEFS=$(blkid $LIVEMEDIA |rev |cut -d'"' -f2 |rev)
+        LIVEFS=$(busybox blkid $LIVEMEDIA |rev |cut -d'"' -f2 |rev)
         mount -t $LIVEFS -o ro $LIVEMEDIA /mnt/media
       else
         # Bummer... label not found; the ISO was extracted to a different device.
         # Separate partitions from block devices, look at partitions first:
-        for SLDEVICE in $(blkid |cut -d: -f1 |grep "[0-9]$") $(blkid |cut -d: -f1 |grep -v "[0-9]$") ; do
-          SLFS=$(blkid $SLDEVICE |rev |cut -d'"' -f2 |rev)
+        for SLDEVICE in $(busybox blkid |cut -d: -f1 |grep "[0-9]$") $(busybox blkid |cut -d: -f1 |grep -v "[0-9]$") ; do
+          SLFS=$(busybox blkid $SLDEVICE |rev |cut -d'"' -f2 |rev)
           mount -t $SLFS -o ro $SLDEVICE /mnt/media
           if [ -d /mnt/media/${LIVEMAIN} ]; then
             # Found our media!
             LIVEALL=$SLDEVICE
             LIVEMEDIA=$SLDEVICE
-            LIVEFS=$(blkid $LIVEMEDIA |rev |cut -d'"' -f2 |rev)
+            LIVEFS=$(busybox blkid $LIVEMEDIA |rev |cut -d'"' -f2 |rev)
             break
           else
             umount $SLDEVICE
@@ -649,8 +649,8 @@ if [ "$RESCUE" = "" ]; then
         if [ "$LIVEMEDIA" = "scandev" ]; then
           # Scan partitions to find the one with the ISO and set LIVEMEDIA:
           echo "${MARKER}:  Scanning for '$LIVEPATH'..."
-          for ISOPART in $(blkid |cut -d: -f1 |grep "[0-9]$") $(blkid |cut -d: -f1 |grep -v "[0-9]$") ; do
-            PARTFS=$(blkid $ISOPART |rev |cut -d'"' -f2 |rev)
+          for ISOPART in $(busybox blkid |cut -d: -f1 |grep "[0-9]$") $(busybox blkid |cut -d: -f1 |grep -v "[0-9]$") ; do
+            PARTFS=$(busybox blkid $ISOPART |rev |cut -d'"' -f2 |rev)
             # Abuse the $SUPERMNT a bit, we will actually use it later:
             mount -t $PARTFS -o ro $ISOPART ${SUPERMNT}
             if [ -f ${SUPERMNT}/${LIVEPATH} ]; then
@@ -669,16 +669,16 @@ if [ "$RESCUE" = "" ]; then
         fi
         # At this point we know $LIVEMEDIA - either because the bootparameter
         # specified it or else because the 'scandev' found it for us:
-        SUPERFS=$(blkid $LIVEMEDIA |rev |cut -d'"' -f2 |rev)
+        SUPERFS=$(busybox blkid $LIVEMEDIA |rev |cut -d'"' -f2 |rev)
         mount -t $SUPERFS -o ro $LIVEMEDIA ${SUPERMNT}
         if [ -f "${SUPERMNT}/$LIVEPATH" ]; then
-          LIVEFS=$(blkid "${SUPERMNT}/$LIVEPATH" |rev |cut -d'"' -f2 |rev)
+          LIVEFS=$(busybox blkid "${SUPERMNT}/$LIVEPATH" |rev |cut -d'"' -f2 |rev)
           LIVEALL="${SUPERMNT}/$LIVEPATH"
           LIVEMEDIA="$LIVEALL"
           MOUNTOPTS="loop"
         fi
       fi
-      LIVEFS=$(blkid $LIVEMEDIA |rev |cut -d'"' -f2 |rev)
+      LIVEFS=$(busybox blkid $LIVEMEDIA |rev |cut -d'"' -f2 |rev)
       mount -t $LIVEFS -o ${MOUNTOPTS:-ro} $LIVEMEDIA /mnt/media
     fi
   fi
@@ -843,7 +843,7 @@ if [ "$RESCUE" = "" ]; then
           prdev=/dev/mapper/$(basename ${PERSISTENCE})
         fi
       fi
-      prfs=$(blkid $prdev |rev |cut -d'"' -f2 |rev)
+      prfs=$(busybox blkid $prdev |rev |cut -d'"' -f2 |rev)
       mount -t $prfs $prdev /mnt/live/${prdir} 2>/dev/null
       if [ $? -ne 0 ]; then
         echo "${MARKER}:  Failed to mount persistence file '/${PERSISTENCE}.img'."
@@ -928,7 +928,7 @@ if [ "$RESCUE" = "" ]; then
 
   if [ ! -z "$USE_SWAP" ]; then
     # Use any available swap device:
-    for SWAPD in $(blkid |grep TYPE="\"swap\"" |cut -d: -f1) ; do
+    for SWAPD in $(busybox blkid |grep TYPE="\"swap\"" |cut -d: -f1) ; do
       echo "${MARKER}:  Enabling swapping to '$SWAPD'"
       echo "$SWAPD  swap  swap defaults  0  0" >> /mnt/overlay/etc/fstab
     done
@@ -1291,7 +1291,7 @@ EOT
         mkdir -p /mnt/overlay/$luksmnt
 
         # Let Slackware mount the unlocked container:
-        luksfs=$(blkid /dev/mapper/$luksnam |rev |cut -d'"' -f2 |rev)
+        luksfs=$(busybox blkid /dev/mapper/$luksnam |rev |cut -d'"' -f2 |rev)
         if ! grep -q /dev/mapper/$luksnam /mnt/overlay/etc/fstab ; then
           echo "/dev/mapper/$luksnam  $luksmnt  $luksfs  defaults  1  1" >> /mnt/overlay/etc/fstab
         fi

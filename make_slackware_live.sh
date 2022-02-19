@@ -71,7 +71,7 @@ EFI32=${EFI32:-"NO"}
 SMP32=${SMP32:-"NO"}
 
 # Include support for NFS root (PXE boot), will increase size of the initrd:
-NFSROOTSUP=${NFSROOTSUP:-"YES"}
+NFSROOTSUP=${NFSROOTSUP:-"NO"}
 
 # Use xorriso instead of mkisofs/isohybrid to create the ISO:
 USEXORR=${USEXORR:-"NO"}
@@ -2155,7 +2155,7 @@ fi
 ( cd ${LIVE_ROOTDIR}/boot/initrd-tree
   find . | cpio -o -H newc | $COMPR >${LIVE_ROOTDIR}/boot/initrd_${KVER}.img 2>${DBGOUT}
 )
-rm -rf ${LIVE_ROOTDIR}/boot/initrd-tree
+#rm -rf ${LIVE_ROOTDIR}/boot/initrd-tree
 
 # ... and cleanup these mounts again:
 umount ${LIVE_ROOTDIR}/{proc,sys,dev} || true
