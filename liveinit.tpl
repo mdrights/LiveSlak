@@ -604,25 +604,20 @@ if [ "$RESCUE" = "" ]; then
       else
         # Bummer... label not found; the ISO was extracted to a different device.
         # Separate partitions from block devices, look at partitions first:
-				### CRITICAL!!! We shall not mount every partition for forensics reason. ###
-				### Let's assume it's /dev/sdb1 ###
-# for SLDEVICE in $(blkid |cut -d: -f1 |grep "[0-9]$") $(blkid |cut -d: -f1 |grep -v "[0-9]$") ; do
-		  SLDEVICE='/dev/sdb1'
+        for SLDEVICE in $(blkid |cut -d: -f1 |grep "[0-9]$") $(blkid |cut -d: -f1 |grep -v "[0-9]$") ; do
           SLFS=$(blkid $SLDEVICE |rev |cut -d'"' -f2 |rev)
           mount -t $SLFS -o ro $SLDEVICE /mnt/media
           if [ -d /mnt/media/${LIVEMAIN} ]; then
             # Found our media!
-			echo "${MARKER}: Found our media. But media label is not found..."
             LIVEALL=$SLDEVICE
             LIVEMEDIA=$SLDEVICE
             LIVEFS=$(blkid $LIVEMEDIA |rev |cut -d'"' -f2 |rev)
-# break
+            break
           else
-# umount $SLDEVICE
-# unset SLDEVICE
-			echo "${MARKER}:  Live media is not '$LIVEMEDIA' AND media label is not found... trouble ahead."
+            umount $SLDEVICE
+            unset SLDEVICE
           fi
-# done
+        done
       fi
     fi
     if [ -n "$LIVEMEDIA" ]; then
