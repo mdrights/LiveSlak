@@ -623,6 +623,21 @@ if [ "$RESCUE" = "" ]; then
     if [ -n "$LIVEMEDIA" ]; then
       # Gotcha!
       break
+    else 
+      echo "${MARKER} -- Try /dev/sdb1 as last sort."
+      SLDEVICE="/dev/sdb1"
+      SLFS="iso9660"
+      mount -t $SLFS -o ro $SLDEVICE /mnt/media
+      if [ -d /mnt/media/${LIVEMAIN} ]; then
+        # Found our media!
+        LIVEALL=$SLDEVICE
+        LIVEMEDIA=$SLDEVICE
+        LIVEFS="$SLFS"
+      else
+        umount $SLDEVICE
+        unset SLDEVICE
+      fi
+
     fi
     sleep 1
   else

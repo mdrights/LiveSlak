@@ -2155,7 +2155,7 @@ fi
 ( cd ${LIVE_ROOTDIR}/boot/initrd-tree
   find . | cpio -o -H newc | $COMPR >${LIVE_ROOTDIR}/boot/initrd_${KVER}.img 2>${DBGOUT}
 )
-#rm -rf ${LIVE_ROOTDIR}/boot/initrd-tree
+rm -rf ${LIVE_ROOTDIR}/boot/initrd-tree
 
 # ... and cleanup these mounts again:
 umount ${LIVE_ROOTDIR}/{proc,sys,dev} || true
