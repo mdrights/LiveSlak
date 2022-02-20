@@ -2,7 +2,7 @@
 ## Change Log
 
 - 2022.02.20 (`2022.01.rc3`)  
-- 经过一番折腾 init 脚本，现在 antiS 通过 dd 命令烧录到 U盘后，可以在该U盘再创建一个分区了～而且可以是 LUKS 全盘加密分区。详见文档：INSTALL.md 
+- 经过一番折腾 init 脚本，现在通过 dd 命令烧录到 U盘后，可以在该U盘再创建一个分区了～而且可以是 LUKS 全盘加密分区。详见文档教程：[在 live USB 创建分区](https://mdrights.github.io/os-observe/posts/2022/02/make-use-of-space-antis-live-usb.html)
 
 - 2022.02.11 (`2022.01.rc2`)  
 - 基于 Slackware 15.0 了～hooray！  

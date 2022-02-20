@@ -32,7 +32,7 @@
 
 ## Important Updates   
 
-- 经过一番折腾 init 脚本，现在 antiS 通过 dd 命令烧录到 U盘后，可以在该U盘再创建一个分区了～而且可以是 LUKS 全盘加密分区。详见文档：INSTALL.md 
+- 经过一番折腾 init 脚本，现在通过 dd 命令烧录到 U盘后，可以在该U盘再创建一个分区了～而且可以是 LUKS 全盘加密分区。详见文档教程：[在 live USB 创建分区](https://mdrights.github.io/os-observe/posts/2022/02/make-use-of-space-antis-live-usb.html)
 
 **注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/mdrights/Changelog.md)**
 <hr>
@@ -99,13 +99,13 @@
 
 - 找到`Boot Order` 這樣的選項，讓類似 `USB` 或你的 U 盤品牌的名字排到最前。然后按 F10 保存并退出就可进入 antiS 了。 
 
-- 如果想利用好 USB 盘上的多余空间，可以创建一个分区，保存一些文件等等。方法见[这里](https://mdrights.github.io/os-observe/posts/2020/07/make-use-of-space-antis-live-usb.html)。  
+- 如果想利用好 USB 盘上的多余空间，可以创建一个分区，保存一些文件等等。方法见[我的博客](https://mdrights.github.io/os-observe/posts/2022/02/make-use-of-space-antis-live-usb.html)。  
 
 
 ## Device Requirements
 
 - 您的机器必须是 `x86_64` 位的 **Intel 或 AMD** 处理器啦~  
-    (macBook 不太支持，目前已知对 2015 年后的 MacBook 的无线网卡无法支持，但系统可以运行) ；
+    (Apple mac 不太支持，目前已知对 2015 年后的 MacBook 的无线网卡无法支持，但系统可以运行；且对于 Mac M1 处理器的也暂未支持) ；
 - 需要至少 2G 内存；
 - 如果你在虚拟机里运行，请为其设置足够的内存，而虚拟机的宿主机至少要有 4G 物理内存。
 - 经测试，有的电脑只有 (U)EFI（主板启动固件）, Slackware 的 bootloader (syslinux + grub2) 可能无法广泛地支持所有 UEFI。如果遇到机器无法识别本系统的U盘——这情况请选择传统 BIOS 或带 CSM 的 EFI的电脑使用，或者在虚拟机里使用（并请告诉我 Orz）。
@@ -116,25 +116,7 @@
 
 **如果你也想自己制作 LiveSlak 系统**   
 
-1. 你需要先下载 Slackware 的官方源（内有构建 Slackware 所有的包）：https://mirrors.slackware.com  
-
-2. 如果你需要用自己定制的内核，可以把重新编译好的内核包和内核模块包覆盖进上述下载的官方内核和模块包即可。通常官方内核和模块包在：`<your/path>/slackware64-current/slackware64/a`   记得 Liveslak 只采用 generic 内核包，因此你的定制内核包的名称要和官方源里的 generic 内核包相同。
-
-3. 如果你有第三方软件需要加进 Liveslak，可以参考下面的打包脚本先制作 Slackware 安装包，然后把制作的包（tgz 或 txz）放置于一个目录下（比如 $HOME/liveslak），LiveSlak 构建时会导入这些软件包：
-
-    - Liveslak 采用：[Slackbuilds-nonprism](https://github.com/mdrights/Slackbuilds-nonprism) 
-    - 还有这里： [Slackwarecn-slackbuilds](https://github.com/slackwarecn-slackbuilds)
-	- 还有 Slackbuilds（半官方脚本源）：[slackbuilds.org](https://slackbuilds.org)
-
-    为了达到这个目的，请自行创建（或修改）本repo里的 xxx.conf & xxx.lst 配置文件（也可以用我的：mdrights{.conf, .lst}）   
-    其中 `SL_REPO` 变量要指向放置你的软件包的目录。
-
-4. 其他修改/自定义的地方就是：`make_slackware_live.conf`   
-        - `SL_REPO` = 你的本地 Slackware （官方）仓库地址  
-        - `LIVEDE`  = 给它起个名字吧  
-
-5. 运行构建脚本(如我的)：
-	`./make_slackware_live.sh -R 3 -l zh_cn -v`  
+> 本部分已移至我的博客：[os-observe](https://mdrights.github.io/os-observe/posts/2022/02/how-to-build-antis.html)  
 
 
 ## Acknowledgement
@@ -144,17 +126,17 @@
 - 非常感謝 Aaron Nexus @Telegram 給予的測試;-) 
 
 <hr>
-构建脚本的详细介绍和使用方法请见 Alien的 [README.txt](https://github.com/mdrights/LiveSlak/blob/mdrights/README.txt)   
+构建脚本的详细介绍和使用方法请见 Alien的 [README.txt](https://github.com/mdrights/LiveSlak/blob/mdrights/README_alien.txt)   
 
-**交流反饋**：這裏發issue，或 IRC: #DigitalrightsCN (Freenode); 或 Matrix：antis:matrix.org ; 或 Telegram:  https://t.me/liveslackware   
+**交流反饋**：這裏發issue，或 IRC: #aqi-data-share (OFTC); 或 Matrix：#antis:matrix.org   
 
-**([姊妹 live 隱私增強操作系統：antiG](https://github.com/mdrights/antiG))**
 
 <hr>
 <br />
+## LICENSE
 
 > Copyright 2014 - 2017 Eric Hameleers, Eindhoven, NL 
-> Copyright 2017 - 2019 MDrights (mdrights at tutanota dot de)  
+> Copyright 2017 - 2022 MDrights (mdrights at tutanota dot de)  
 > All rights reserved  
 
 > 只要本版权声明和许可声明出现在所有版本的本软件中， 本软件即可被允许以任何目的（有偿或无偿地）使用、复制、修改和分发。  
