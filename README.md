@@ -13,29 +13,26 @@
     - 系统加固（包括：防火墙、用户和进程权限控制、文件系统权限和挂载限制、内核参数配置调优等……）
 	- 应用加固（firejail 沙盒、火狐浏览器加固等）
 
-最近更新：2022.02.11
+最近更新：2022.02.20
 
 發佈頻道：	 
 - Mastodon:
-	- https://fosstodon.org/@mdrights
+	- https://fosstodon.org/@mdrights (英文)
 
 
 ## Download
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2022.01.rc2** (= 3133145088 Bytes)   
-	- md5sum: 3c34016a23983676467671e26b2e8783
+	- Version: **2022.01.rc3** (=3128147968 Bytes)   
+	- md5sum: 8ce6c12cb786dd55030a9a512c501859  
 
 [![Download antiS](https://img.shields.io/sourceforge/dt/liveslak-atgfw.svg)](https://sourceforge.net/projects/liveslak-atgfw/files/latest/download)
 
 
 ## Important Updates   
 
-- 基于 Slackware Linux 15.0 了～hooray！  
-- 加入翻墙神器们： Outline, v2rayA (图形界面客户端), Shadowsocks (Go 版本), v2ray (命令行内核，重新编译到 5.0.3)；  
-    - 具体运行方法见：[科学上网指南](https://github.com/mdrights/LiveSlak/blob/mdrights/skel/Desktop/go-over-GFW.md)
-- 一些日常更新：Tor-browser, Signal-desktop, etc.
+- 经过一番折腾 init 脚本，现在 antiS 通过 dd 命令烧录到 U盘后，可以在该U盘再创建一个分区了～而且可以是 LUKS 全盘加密分区。详见文档：INSTALL.md 
 
 **注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/mdrights/Changelog.md)**
 <hr>

@@ -1,6 +1,9 @@
 
 ## Change Log
 
+- 2022.02.20 (`2022.01.rc3`)  
+- 经过一番折腾 init 脚本，现在 antiS 通过 dd 命令烧录到 U盘后，可以在该U盘再创建一个分区了～而且可以是 LUKS 全盘加密分区。详见文档：INSTALL.md 
+
 - 2022.02.11 (`2022.01.rc2`)  
 - 基于 Slackware 15.0 了～hooray！  
 - 加入翻墙神器们： Outline, v2rayA (图形界面客户端), Shadowsocks (Go 版本), v2ray (命令行内核，重新编译到 5.0.3)；  
