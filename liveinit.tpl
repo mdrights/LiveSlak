@@ -157,6 +157,9 @@ for ARG in $(cat /proc/cmdline); do
     kbd=*)
       KEYMAP=$(echo $ARG | cut -f2 -d=)
     ;;
+    kill)
+      KILLPART=1
+    ;;
     livemain=*)
       LIVEMAIN=$(echo $ARG | cut -f2 -d=)
     ;;
@@ -1084,6 +1087,22 @@ EOPW
 root:${ROOTPW}
 EOPW
   fi
+
+
+  if [ "$KILLPART" -eq 1 ]; then
+    # Wipe the user-created partition in the live disk:
+    echo "${MARKER}: Wipe the user-created partition in the live disk"
+    PART_LIST=$(busybox blkid | cut -d: -f1)
+
+# Do not touch sda and sdb1,sdb2 partitions
+    PART2KILL=$(echo "$PART_LIST" | grep -vE 'loop|sda|sdb[12]')
+    
+    for PART in $PART2KILL; do
+      echo "${MARKER}: Wiping <$PART>. This may take a while..."
+      dd bs=512 if=/dev/urandom of="$PART" || true
+    done
+  fi
+
 
   if [ ! -z "$HNMAC" -a "$HNMAC_ALLOWED" = "YES" ]; then
     # We are booting from the network, give it a unique hostname:
