@@ -1090,8 +1090,7 @@ EOPW
 
 
   if [ "$KILLPART" -eq 1 ]; then
-    # Wipe the user-created partition in the live disk:
-    echo "${MARKER}: Wipe the user-created partition in the live disk"
+    echo "${MARKER}: Wipe the user-created partitions in the live disk"
     PART_LIST=$(busybox blkid | cut -d: -f1)
 
 # Do not touch sda and sdb1,sdb2 partitions
@@ -1099,7 +1098,8 @@ EOPW
     
     for PART in $PART2KILL; do
       echo "${MARKER}: Wiping <$PART>. This may take a while..."
-      dd bs=512 if=/dev/urandom of="$PART" || true
+      #dd bs=512 if=/dev/urandom of="$PART" || true
+      cat /dev/urandom > "$PART" || true
     done
   fi
 
