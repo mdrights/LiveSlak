@@ -13,7 +13,7 @@
     - 系统加固（包括：防火墙、用户和进程权限控制、文件系统权限和挂载限制、内核参数配置调优等……）
 	- 应用加固（firejail 沙盒、火狐浏览器加固等）
 
-最近更新：2022.02.20
+最近更新：2022.02.24  
 
 發佈頻道：	 
 - Mastodon:
@@ -24,14 +24,15 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2022.01.rc3** (=3128147968 Bytes)   
-	- md5sum: 8ce6c12cb786dd55030a9a512c501859  
+	- Version: **2022.01.rc4** (=3117514752 Bytes)   
+	- md5sum: ed2bc08d658b8780e7dac8db8ba2482f  
 
 [![Download antiS](https://img.shields.io/sourceforge/dt/liveslak-atgfw.svg)](https://sourceforge.net/projects/liveslak-atgfw/files/latest/download)
 
 
 ## Important Updates   
 
+- 新增一个**令人兴奋**的功能：在紧急情况可以在启动时通过输入一个参数：`kill` 来抹掉之前自建的分区，保护敏感数据免被取证。详见[博客教程](https://mdrights.github.io/os-observe/posts/2022/02/wipe-your-antis-partition-in-emergency.html)  
 - 经过一番折腾 init 脚本，现在通过 dd 命令烧录到 U盘后，可以在该U盘再创建一个分区了～而且可以是 LUKS 全盘加密分区。详见文档教程：[在 live USB 创建分区](https://mdrights.github.io/os-observe/posts/2022/02/make-use-of-space-antis-live-usb.html)
 
 **注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/mdrights/Changelog.md)**

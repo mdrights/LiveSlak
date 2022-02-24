@@ -1,14 +1,18 @@
 
 ## Change Log
 
+
+- 2022.02.24 (`2022.01.rc4`)  
+    - 新增一个**令人兴奋**的功能：在紧急情况可以在启动时通过输入一个参数：`kill` 来抹掉之前自建的分区，保护敏感数据免被取证。详见[博客教程](https://mdrights.github.io/os-observe/posts/2022/02/wipe-your-antis-partition-in-emergency.html)  
+
 - 2022.02.20 (`2022.01.rc3`)  
-- 经过一番折腾 init 脚本，现在通过 dd 命令烧录到 U盘后，可以在该U盘再创建一个分区了～而且可以是 LUKS 全盘加密分区。详见文档教程：[在 live USB 创建分区](https://mdrights.github.io/os-observe/posts/2022/02/make-use-of-space-antis-live-usb.html)
+    - 经过一番折腾 init 脚本，现在通过 dd 命令烧录到 U盘后，可以在该U盘再创建一个分区了～而且可以是 LUKS 全盘加密分区。详见文档教程：[在 live USB 创建分区](https://mdrights.github.io/os-observe/posts/2022/02/make-use-of-space-antis-live-usb.html)
 
 - 2022.02.11 (`2022.01.rc2`)  
-- 基于 Slackware 15.0 了～hooray！  
-- 加入翻墙神器们： Outline, v2rayA (图形界面客户端), Shadowsocks (Go 版本), v2ray (命令行内核，重新编译到 5.0.3)；  
+    - 基于 Slackware 15.0 了～hooray！  
+    - 加入翻墙神器们： Outline, v2rayA (图形界面客户端), Shadowsocks (Go 版本), v2ray (命令行内核，重新编译到 5.0.3)；  
     - 具体运行方法见：[科学上网指南](https://github.com/mdrights/LiveSlak/blob/mdrights/skel/Desktop/go-over-GFW.md)
-- 一些日常更新：Tor-browser, Signal-desktop, etc.
+    - 一些日常更新：Tor-browser, Signal-desktop, etc.
 
 - 2022.01.02 (`2022.01.rc1`)  
     - 拿掉 Dangerzone 和 podman （换回 Docker），因为 Dangerzone 并不适合 live 系统；
