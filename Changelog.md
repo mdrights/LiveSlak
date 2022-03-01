@@ -1,7 +1,8 @@
 
 ## Change Log
 
-
+- 2022.03.01 (`2022.01.rc5`)  
+    - （正式）加入 Broadcom bcm43xx 无线网卡的驱动，可以使用无线网络了！antiS 目前在 2017 版 MacBook air （Intel CPU）具备完整的支持。  
 - 2022.02.24 (`2022.01.rc4`)  
     - 新增一个**令人兴奋**的功能：在紧急情况可以在启动时通过输入一个参数：`kill` 来抹掉之前自建的分区，保护敏感数据免被取证。详见[博客教程](https://mdrights.github.io/os-observe/posts/2022/02/wipe-your-antis-partition-in-emergency.html)  
 

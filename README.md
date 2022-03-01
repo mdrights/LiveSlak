@@ -13,7 +13,7 @@
     - 系统加固（包括：防火墙、用户和进程权限控制、文件系统权限和挂载限制、内核参数配置调优等……）
 	- 应用加固（firejail 沙盒、火狐浏览器加固等）
 
-最近更新：2022.02.24  
+最近更新：2022.03.01  
 
 發佈頻道：	 
 - Mastodon:
@@ -24,14 +24,15 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2022.01.rc4** (=3117514752 Bytes)   
-	- md5sum: ed2bc08d658b8780e7dac8db8ba2482f  
+	- Version: **2022.01.rc5** (=3117514752 Bytes)   
+	- md5sum: 66db26ef418cd48e39f1e6c588cb76b7  
 
 [![Download antiS](https://img.shields.io/sourceforge/dt/liveslak-atgfw.svg)](https://sourceforge.net/projects/liveslak-atgfw/files/latest/download)
 
 
 ## Important Updates   
 
+- （正式）加入 macbook 使用的 Broadcom bcm43xx 无线网卡的驱动，可以使用无线网络了！antiS 目前在 2017 版 MacBook air （Intel CPU）具备完整的支持。  
 - 新增一个**令人兴奋**的功能：在紧急情况可以在启动时通过输入一个参数：`kill` 来抹掉之前自建的分区，保护敏感数据免被取证。详见[博客教程](https://mdrights.github.io/os-observe/posts/2022/02/wipe-your-antis-partition-in-emergency.html)  
 - 经过一番折腾 init 脚本，现在通过 dd 命令烧录到 U盘后，可以在该U盘再创建一个分区了～而且可以是 LUKS 全盘加密分区。详见文档教程：[在 live USB 创建分区](https://mdrights.github.io/os-observe/posts/2022/02/make-use-of-space-antis-live-usb.html)
 
@@ -105,8 +106,11 @@
 
 ## Device Requirements
 
-- 您的机器必须是 `x86_64` 位的 **Intel 或 AMD** 处理器啦~  
-    (Apple mac 不太支持，目前已知对 2015 年后的 MacBook 的无线网卡无法支持，但系统可以运行；且对于 Mac M1 处理器的也暂未支持) ；
+- 您的机器必须是 `x86_64` 位的 **Intel 或 AMD** CPU 处理器啦~  
+    - **对 Apple mac 机器**： 自 2022.01.rc5 版本起会有限的支持：  
+        - 完整支持 MacBook Air （2017款及以前，Intel CPU 和显卡，Broadcom 无线网卡）；  
+        - 部分支持 Intel CPU 的 MacBook Pro（不支持键盘/触控板/无线网卡——需自备外置的；不可调节屏幕亮度等）
+        - 对所有 M1 CPU 的设备都未能支持。  
 - 需要至少 2G 内存；
 - 如果你在虚拟机里运行，请为其设置足够的内存，而虚拟机的宿主机至少要有 4G 物理内存。
 - 经测试，有的电脑只有 (U)EFI（主板启动固件）, Slackware 的 bootloader (syslinux + grub2) 可能无法广泛地支持所有 UEFI。如果遇到机器无法识别本系统的U盘——这情况请选择传统 BIOS 或带 CSM 的 EFI的电脑使用，或者在虚拟机里使用（并请告诉我 Orz）。
