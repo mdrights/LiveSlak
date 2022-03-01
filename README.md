@@ -108,7 +108,7 @@
 
 - 您的机器必须是 `x86_64` 位的 **Intel 或 AMD** CPU 处理器啦~  
     - **对 Apple mac 机器**： 自 2022.01.rc5 版本起会有限的支持：  
-        - 完整支持 MacBook Air （2017款及以前，Intel CPU 和显卡，Broadcom 无线网卡）；  
+        - 完整支持 MacBook Air （2020年及以前发售的，Intel CPU 和显卡，Broadcom 无线网卡）；  
         - 部分支持 Intel CPU 的 MacBook Pro（不支持键盘/触控板/无线网卡——需自备外置的；不可调节屏幕亮度等）
         - 对所有 M1 CPU 的设备都未能支持。  
 - 需要至少 2G 内存；
