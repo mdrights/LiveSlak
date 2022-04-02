@@ -3,22 +3,19 @@
 
 #libxkbcommon
 graphviz 
-extra-cmake-modules
+#extra-cmake-modules
 gmtk
 libpaper
 udns
 mbedtls
 libev
 #nodejs     # takes too long
-nwjs
-rubygem-sass
 c-toxcore
 libfilteraudio
-OpenAL
+#OpenAL
 OpenSceneGraph
 freealut
 plib
-docbook-xml
 redshift
 
 libdaemon
@@ -131,8 +128,12 @@ jsonschema
 ## PERL ##
 exiftool
 
+## Ruby ##
+rubygem-sass
 
-## These are locally packaged but are prebuilt BINARY packages 
+## These can be locally packaged but are prebuilt BINARY packages 
+nwjs
+docbook-xml
 mattermost-desktop
 signal-desktop
 tor-browser
@@ -152,6 +153,9 @@ outline-client
 #virtualbox-kernel-addons
 
 ###### END: These can be compiled/built in local system ######
+
+
+
 
 ###### MISC: Fetch from Other sources ######
 #sbopkg             # from its website

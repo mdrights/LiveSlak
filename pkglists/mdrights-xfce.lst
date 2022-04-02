@@ -55,7 +55,7 @@ click
 werkzeug
 itsdangerous
 python3-itsdangerous
-python3-Flask-httpauth
+#python3-Flask-httpauth  # required by Onionshare
 psutil
 libdaemon
 avahi
@@ -122,7 +122,7 @@ proxychains
 signal-desktop
 telegram
 uTox
-onionshare
+#onionshare
 twitter
 obfs4proxy
 v2ray
