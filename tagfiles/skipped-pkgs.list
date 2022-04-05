@@ -10,6 +10,7 @@ ap hplip
 ap jed 
 ap joe 
 ap mariadb 
+n bind
 n bluez 
 n bluez-firmware 
 n ipw2100-fw 
