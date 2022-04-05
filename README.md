@@ -13,7 +13,7 @@
     - 系统加固（包括：防火墙、用户和进程权限控制、文件系统权限和挂载限制、内核参数配置调优等……）
 	- 应用加固（firejail 沙盒、火狐浏览器加固等）
 
-最近更新：2022.03.01  
+最近更新：2022.04.05  
 
 發佈頻道：	 
 - Mastodon:
@@ -24,14 +24,16 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2022.01.rc5** (=3117514752 Bytes)   
-	- md5sum: 66db26ef418cd48e39f1e6c588cb76b7  
+	- Version: **2022.02** (= 3242065920 Bytes)   
+	- md5sum: 946ade889eee498020f12182714bc990  
 
 [![Download antiS](https://img.shields.io/sourceforge/dt/liveslak-atgfw.svg)](https://sourceforge.net/projects/liveslak-atgfw/files/latest/download)
 
 
 ## Important Updates   
 
+- 2022.02 在 2022.01 的更新基础上对内核、Python 等进行了安全更新。  
+- Remove Onionshare 因为很少使用。  
 - （正式）加入 macbook 使用的 Broadcom bcm43xx 无线网卡的驱动，可以使用无线网络了！antiS 目前在 2017 版 MacBook air （Intel CPU）具备完整的支持。  
 - 新增一个**令人兴奋**的功能：在紧急情况可以在启动时通过输入一个参数：`kill` 来抹掉之前自建的分区，保护敏感数据免被取证。详见[博客教程](https://mdrights.github.io/os-observe/posts/2022/02/wipe-your-antis-partition-in-emergency.html)  
 - 经过一番折腾 init 脚本，现在通过 dd 命令烧录到 U盘后，可以在该U盘再创建一个分区了～而且可以是 LUKS 全盘加密分区。详见文档教程：[在 live USB 创建分区](https://mdrights.github.io/os-observe/posts/2022/02/make-use-of-space-antis-live-usb.html)
