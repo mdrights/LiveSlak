@@ -68,6 +68,24 @@ docbook-xml
 mutagen
 perl-Test-Harness
 redshift
+pycparser
+cffi
+easygui
+colorclass
+olefile
+pcodedmp
+#msoffcrypto-tool   # cant build yet
+oletools
+
+#######################
+#cryptography
+#pyasn1
+#asn1crypto
+#wheel
+#python3-setuptools-rust
+#python3-semantic-version
+#python-toml
+
 
 #######################
 ## Podman
@@ -164,12 +182,7 @@ bleachbit
 ## More metadata/anti-malware tools (packaged in rootcopy & skel dirs)
 peepdf
 pdf-tools
-oletools
-# oledump
 
-## Deprecated
-# msoffcrypto olefile pcodedmp
-# appdirs pyxdg colorama
 #######################
 
 ## 虚拟机客户端插件
