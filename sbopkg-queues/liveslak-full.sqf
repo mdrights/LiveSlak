@@ -54,8 +54,10 @@ keepassxc
 secure-delete
 testdisk
 
-imlib2
-icewm
+#imlib2
+#icewm
+dmenu
+dwm
 
 ###### END: These should be compiled in target system ######
 
@@ -111,8 +113,23 @@ mat2
 peepdf
 oletools
 pdf-tools
+pycparser
+cffi
+easygui
+colorclass
+olefile
+pcodedmp
+#msoffcrypto-tool   # cant build yet
+oletools
 
-## Docker-compose -- not in use
+#cryptography
+#pyasn1
+#asn1crypto
+#wheel
+#python3-setuptools-rust
+#python3-semantic-version
+#python-toml
+
 python2-PyYAML 
 #enum34 
 jsonschema 
@@ -122,7 +139,7 @@ jsonschema
 #python-texttable
 #docker-compose
 
-##>>>> END PYTHONIC <<<<##
+######>>>> END PYTHONIC <<<<######
 
 
 ## PERL ##
@@ -131,7 +148,7 @@ exiftool
 ## Ruby ##
 rubygem-sass
 
-## These can be locally packaged but are prebuilt BINARY packages 
+## START: These can be locally packaged but are prebuilt BINARY packages 
 nwjs
 docbook-xml
 mattermost-desktop

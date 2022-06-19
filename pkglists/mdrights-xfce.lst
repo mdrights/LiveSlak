@@ -195,5 +195,7 @@ pdf-tools
 sbopkg
 
 ## for Desktop
-imlib2
-icewm
+#imlib2
+#icewm
+dmenu
+dwm

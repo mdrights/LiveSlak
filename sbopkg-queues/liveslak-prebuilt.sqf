@@ -6,6 +6,7 @@ signal-desktop
 tor-browser
 telegram
 zoom-linux
+outline-client
 
 #chromium-ungoogled  ## from Alien's
 #Veracrypt  ## from Alien's
