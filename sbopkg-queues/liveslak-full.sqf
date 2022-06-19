@@ -59,6 +59,11 @@ testdisk
 dmenu
 dwm
 
+aom
+x265
+libde265
+libheif
+
 ###### END: These should be compiled in target system ######
 
 ###### START: These can be compiled/built in local system ######
@@ -151,7 +156,7 @@ rubygem-sass
 ## START: These can be locally packaged but are prebuilt BINARY packages 
 nwjs
 docbook-xml
-mattermost-desktop
+#mattermost-desktop
 signal-desktop
 tor-browser
 telegram

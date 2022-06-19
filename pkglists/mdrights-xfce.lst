@@ -162,7 +162,7 @@ libreoffice
 ReText
 p7zip
 unrar
-mattermost-desktop
+#mattermost-desktop
 syncthing
 weechat
 xclip
@@ -182,6 +182,13 @@ bleachbit
 ## More metadata/anti-malware tools (packaged in rootcopy & skel dirs)
 peepdf
 pdf-tools
+
+#######################
+# Convert Apple HEIC images to JPG/PNG
+aom
+x265
+libde265
+libheif
 
 #######################
 
