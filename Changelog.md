@@ -1,6 +1,15 @@
 
 ## Change Log
 
+- 2022.06.21 (`2022.03.rc2`)  
+    - 內核及基礎組件的更新；
+    - 重新 enable 了網卡的mac地址的隨機化（每次啓動後網卡mac地址都不同，防止被追蹤）
+    - 新增：
+      - oletools：可查找 Office 文檔中的 VBA/macro 等（惡意）代碼；
+      - heif-convertor：蘋果系統圖片 HEIC 格式轉換器；
+      - dwm+dmenu+st 窗口管理器（取代 icewm）；
+    - 注：新的內核似乎對 Macbook Air 的無線網卡不再支持（且對其他 USB 無線網卡也不能支持），因此暫時去掉 broadcom-sta 驅動。  
+
 - 2022.04.05 (`2022.02`)  
     - 2022.02 在 2022.01 的更新基础上对内核、Python 等进行了安全更新。  
     - Remove Onionshare 因为很少使用。
