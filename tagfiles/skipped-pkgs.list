@@ -10,6 +10,8 @@ ap hplip
 ap jed 
 ap joe 
 ap mariadb 
+d llvm
+d rust
 n bind
 n bluez 
 n bluez-firmware 
