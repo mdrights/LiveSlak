@@ -33,12 +33,12 @@
 ## Important Updates   
 
 - 內核及基礎組件的更新；
-- 重新 enable 了網卡的mac地址的隨機化（每次啓動後網卡mac地址都不同，防止被追蹤）
+- 重新 enable 了網卡的mac地址的隨機化（每次啓動後、建立連接後，網卡mac地址都不同，防止被追蹤）
 - 新增：
   - oletools：可查找 Office 文檔中的 VBA/macro 等（惡意）代碼；
   - heif-convertor：蘋果系統圖片 HEIC 格式轉換器；
   - dwm+dmenu+st 窗口管理器（取代 icewm）；
-- 注：新的內核似乎對 Macbook Air 的無線網卡不再支持（且對其他 USB 無線網卡也不能支持），因此暫時去掉 broadcom-sta 驅動。  
+- 注：新的內核似乎對 Macbook Air 的無線網卡不再支持（即使是閉源驅動也已逐漸難以支持最新的內核），因此暫時去掉 broadcom-sta 驅動。建議 Macbook 用戶自帶USB無線網卡，親測 TP-LINK、RALINK 等多個型號可以免驅動直接使用）  
 
 **注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/mdrights/Changelog.md)**
 <hr>
