@@ -18,7 +18,7 @@
 發佈頻道：	 
 - Mastodon:
 	- https://fosstodon.org/@mdrights (英文)
-- Matrix：#antis:matrix.org   
+- Matrix：#antis:envs.net  
 - IRC: #aqi-data-share (@OFTC)  
 
 
