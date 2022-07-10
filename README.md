@@ -13,18 +13,20 @@
     - 系统加固（包括：防火墙、用户和进程权限控制、文件系统权限和挂载限制、内核参数配置调优等……）
 	- 应用加固（firejail 沙盒、火狐浏览器加固等）
 
-更新日期：2022.06.21  
+更新日期：2022.07.10  
 
 發佈頻道：	 
 - Mastodon:
 	- https://fosstodon.org/@mdrights (英文)
+- Matrix：#antis:matrix.org   
+- IRC: #aqi-data-share (@OFTC)  
 
 
 ## Download
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2022.03.rc2** (= 3047489536 Bytes)   
+	- Version: **2022.03** (= 3047489536 Bytes)   
 	- md5sum: 6da298d3ef68152138e33daa062e3e80  
 
 [![Download antiS](https://img.shields.io/sourceforge/dt/liveslak-atgfw.svg)](https://sourceforge.net/projects/liveslak-atgfw/files/latest/download)
@@ -38,7 +40,7 @@
   - oletools：可查找 Office 文檔中的 VBA/macro 等（惡意）代碼；
   - heif-convertor：蘋果系統圖片 HEIC 格式轉換器；
   - dwm+dmenu+st 窗口管理器（取代 icewm）；
-- 注：新的內核似乎對 Macbook Air 的無線網卡不再支持（即使是閉源驅動也已逐漸難以支持最新的內核），因此暫時去掉 broadcom-sta 驅動。建議 Macbook 用戶自帶USB無線網卡，親測 TP-LINK、RALINK 等多個型號可以免驅動直接使用）  
+- 注：新的內核似乎對 Macbook Air 的無線網卡不再支持（即使是閉源驅動也已逐漸難以支持最新的內核），因此暫時去掉 broadcom-sta 驅動。建議 Macbook 用戶自帶USB無線網卡，親測 EDUP, TP-LINK, RALINK 等多個型號可以免驅動直接使用）  
 
 **注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/mdrights/Changelog.md)**
 <hr>
