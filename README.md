@@ -13,7 +13,7 @@
     - 系统加固（包括：防火墙、用户和进程权限控制、文件系统权限和挂载限制、内核参数配置调优等……）
 	- 应用加固（firejail 沙盒、火狐浏览器加固等）
 
-更新日期：2022.07.10  
+更新日期：2022.10.30  
 
 發佈頻道：	 
 - Mastodon:
@@ -26,21 +26,16 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2022.03** (= 3047489536 Bytes)   
-	- md5sum: 6da298d3ef68152138e33daa062e3e80  
+	- Version: **2022.04.rc1** (= 3064233984 Bytes)   
+	- md5sum: 358d11f4a96607e3fbc518292893351b 
 
 [![Download antiS](https://img.shields.io/sourceforge/dt/liveslak-atgfw.svg)](https://sourceforge.net/projects/liveslak-atgfw/files/latest/download)
 
 
 ## Important Updates   
 
-- 內核及基礎組件的更新；
-- 重新 enable 了網卡的mac地址的隨機化（每次啓動後、建立連接後，網卡mac地址都不同，防止被追蹤）
-- 新增：
-  - oletools：可查找 Office 文檔中的 VBA/macro 等（惡意）代碼；
-  - heif-convertor：蘋果系統圖片 HEIC 格式轉換器；
-  - dwm+dmenu+st 窗口管理器（取代 icewm）；
-- 注：新的內核似乎對 Macbook Air 的無線網卡不再支持（即使是閉源驅動也已逐漸難以支持最新的內核），因此暫時去掉 broadcom-sta 驅動。建議 Macbook 用戶自帶USB無線網卡，親測 EDUP, TP-LINK, RALINK 等多個型號可以免驅動直接使用）  
+- 系統及常用軟件（Signal, Telegram, Tor-browser, etc）更新
+- 更新了桌面牆紙
 
 **注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/mdrights/Changelog.md)**
 <hr>
