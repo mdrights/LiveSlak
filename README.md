@@ -35,7 +35,7 @@
 ## Important Updates   
 
 - 系統及常用軟件（Signal, Telegram, Tor-browser, etc）更新
-- 更新了桌面牆紙
+- 更新了桌面牆紙（來自長毛象網友們的[作品](https://bgme.me/@pinata/109166773989846281%)）
 
 **注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/mdrights/Changelog.md)**
 <hr>
