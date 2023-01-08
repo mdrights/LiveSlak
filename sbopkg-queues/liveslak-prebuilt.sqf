@@ -6,7 +6,7 @@ signal-desktop
 tor-browser
 telegram
 zoom-linux
-#libreoffice
+libreoffice
 #outline-client
 
 #chromium-ungoogled  ## from Alien's
