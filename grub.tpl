@@ -48,6 +48,11 @@ menuentry "Start @CDISTRO@@DIRSUFFIX@ @SL_VERSION@ @LIVEDE@ Live @VERSION@ ($sl_
   initrd ($root)/boot/initrd.img
 }
 
+menuentry "Start @CDISTRO@@DIRSUFFIX@ @SL_VERSION@ @LIVEDE@ Live @VERSION@ ($sl_lang)" --hotkey b {
+  linux ($root)/boot/generic @KAPPEND@ load_ramdisk=1 prompt_ramdisk=0 rw printk.time=0 kbd=$sl_kbd tz=$sl_tz locale=$sl_locale xkb=$sl_xkb toram
+  initrd ($root)/boot/initrd.img
+}
+
 submenu "Non-@ULANG@ Keyboard selection" --hotkey k {
   configfile $grubdir/kbd.cfg
 }

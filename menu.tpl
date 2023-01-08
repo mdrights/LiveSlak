@@ -50,6 +50,12 @@ label live
     if you have a recent NVIDIA card.
   endtext
 
+label toram
+  menu label Start @LIVEDE@ Live
+  menu default
+  kernel /boot/generic
+  append initrd=/boot/initrd.img @KAPPEND@ load_ramdisk=1 prompt_ramdisk=0 rw printk.time=0 kbd=@KBD@ toram
+
 menu begin kbd
   menu title Non-@ULANG@ Keyboard selection
   label Previous
