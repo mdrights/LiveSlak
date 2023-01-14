@@ -51,7 +51,7 @@ label live
   endtext
 
 label toram
-  menu label Start @LIVEDE@ Live
+  menu label Start @LIVEDE@ Live Diskless
   menu default
   kernel /boot/generic
   append initrd=/boot/initrd.img @KAPPEND@ load_ramdisk=1 prompt_ramdisk=0 rw printk.time=0 kbd=@KBD@ toram
