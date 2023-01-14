@@ -1,6 +1,10 @@
 
 ## Change Log
 
+- 2023.01.14 ( 2023.01.rc1 )
+    - 系統及常用軟件（Signal, Telegram, Tor-browser, etc）更新；  
+    - 在開機畫面裏的選項中添加了：`Diskless` 模式，啓動後可以拔出U盤了，系統完全運行在內存（RAM）中，會更快，但也需要電腦有 >=6GB 內存（系統本身會佔 4G 左右）。
+
 - 2022.10.30 ( 2022.04.rc1 )
     - 系統及常用軟件（Signal, Telegram, Tor-browser, etc）更新
     - 更新了桌面牆紙（來自長毛象網友們的[作品](https://bgme.me/@pinata/109166773989846281)）

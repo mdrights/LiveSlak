@@ -13,7 +13,7 @@
     - 系统加固（包括：防火墙、用户和进程权限控制、文件系统权限和挂载限制、内核参数配置调优等……）
 	- 应用加固（firejail 沙盒、火狐浏览器加固等）
 
-更新日期：2022.10.30  
+更新日期：2023.01.14 
 
 發佈頻道：	 
 - Mastodon:
@@ -26,16 +26,16 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2022.04.rc1** (= 3064233984 Bytes)   
-	- md5sum: 358d11f4a96607e3fbc518292893351b 
+	- Version: **2023.01.rc1** (= 3041525760 Bytes)   
+	- md5sum: bea43c365d1810fdbd352e6a84c24c9b  
 
 [![Download antiS](https://img.shields.io/sourceforge/dt/liveslak-atgfw.svg)](https://sourceforge.net/projects/liveslak-atgfw/files/latest/download)
 
 
 ## Important Updates   
 
-- 系統及常用軟件（Signal, Telegram, Tor-browser, etc）更新
-- 更新了桌面牆紙（來自長毛象網友們的[作品](https://bgme.me/@pinata/109166773989846281)）
+- 系統及常用軟件（Signal, Telegram, Tor-browser, etc）更新；  
+- 在開機畫面裏的選項中添加了：`Diskless` 模式，啓動後可以拔出U盤了，系統完全運行在內存（RAM）中，會更快，但也需要電腦有 >=6GB 內存（系統本身會佔 4G 左右）。
 
 **注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/mdrights/Changelog.md)**
 <hr>
