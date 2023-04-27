@@ -29,3 +29,5 @@ zoom-linux
 syncthing
 libreoffice
 outline-client
+
+#chromium-ungoogled    # from Alien.
