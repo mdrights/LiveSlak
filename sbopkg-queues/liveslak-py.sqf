@@ -1,16 +1,16 @@
-## Pythonic
+## PYTHONIC ##
 #python3-sip
 #python3-PyQt5
 pyudev
 python-evdev
 Markups
-MarkupSafe 	| PYTHON3=yes
+python2-MarkupSafe
 Markdown
 #Pygments
 pysha3
 pytest
 PySocks
-pycrypto
+python2-pycrypto
 python3-pycrypto
 python-markdown-math
 #python-requestbuilder
@@ -19,7 +19,6 @@ Flask
 stem
 click
 werkzeug
-Jinja2
 itsdangerous
 python3-itsdangerous
 python3-Flask-httpauth
@@ -28,7 +27,32 @@ docopt
 python3-pythondialog 
 mutagen
 perl-Test-Harness
-PyYAML 
+onionshare
+twitter
+#protonvpn-cli
+ReText
+mat2
+peepdf
+oletools
+pdf-tools
+pycparser
+cffi
+easygui
+colorclass
+olefile
+pcodedmp
+#msoffcrypto-tool   # cant build yet
+oletools
+
+#cryptography
+#pyasn1
+#asn1crypto
+#wheel
+#python3-setuptools-rust
+#python3-semantic-version
+#python-toml
+
+python2-PyYAML 
 #enum34 
 jsonschema 
 #python-cached-property 
@@ -37,5 +61,5 @@ jsonschema
 #python-texttable
 #docker-compose
 
-onionshare
-protonvpn-cli
+######>>>> END PYTHONIC <<<<######
+

@@ -81,7 +81,7 @@ obfs4proxy
 v2ray
 go-shadowsocks2
 
-## PYTHONIC ##
+######>>>> START PYTHONIC <<<<######
 #python3-sip
 #python3-PyQt5
 pyudev
