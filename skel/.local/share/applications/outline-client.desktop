@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Outline-client
+Exec=/home/live/.local/bin/start-outline-client.sh
+Terminal=true
+Type=Application
+Icon=/home/live/.local/share/pixmaps/outline-client.png
+Comment=Start the Outline Client (VPN)
+StartupWMClass=Outline
+MimeType=x-scheme-handler/sgnl;
+Categories=Network;

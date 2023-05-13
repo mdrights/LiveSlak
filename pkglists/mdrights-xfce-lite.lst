@@ -1,5 +1,11 @@
 # This is for antiS/Liveslak Lite version
 
+# Libraries
+mutagen 
+zsh-syntax-highlighting
+zsh-completions
+
+# Applications
 shadowsocks-libev
 firejail
 macchanger
@@ -14,6 +20,7 @@ unrar
 bleachbit
 keepassxc 
 secure-delete
+testdisk
 
 obfs4proxy
 v2ray
@@ -21,6 +28,8 @@ go-shadowsocks2
 
 mat2
 exiftool
+peepdf
+pdf-tools
 
 signal-desktop
 tor-browser
@@ -29,6 +38,11 @@ zoom-linux
 syncthing
 libreoffice
 outline-client
+deltachat
+
+dwm
+st
+sbopkg
 
 chromium-ungoogled    # from Alien.
 
