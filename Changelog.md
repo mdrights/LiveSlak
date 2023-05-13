@@ -1,6 +1,12 @@
 
 ## Change Log
 
+- 2023.05.13 ( 2023.02.rc2 )
+    - 系統及常用軟件（Signal (6.15.0), Telegram, Tor-browser, etc）更新；  
+    - 新增 DeltaChat；
+    - 可以從程序菜單點擊啓動 Outline client 了；
+    - 從現在起對自帶的軟件進行了刪減，只保留大家常用的軟件了—— 命名爲 lite 版（有特別需要的話再進行全量發佈）。  
+
 - 2023.01.31 ( 2023.01 )
 - 2023.01.14 ( 2023.01.rc1 )
     - 系統及常用軟件（Signal (6.3.0), Telegram, Tor-browser, etc）更新；  

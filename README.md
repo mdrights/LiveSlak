@@ -26,16 +26,18 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2023.01** (= 3044507648 Bytes)   
-	- md5sum: 40681f8d8ea6d2cca2369d75268e7a5a  
+	- Version: **2023.02.rc2** (= 2924544000 Bytes)   
+	- md5sum: c87e6865f494f195969aa86f854fb7eb  
 
 [![Download antiS](https://img.shields.io/sourceforge/dt/liveslak-atgfw.svg)](https://sourceforge.net/projects/liveslak-atgfw/files/latest/download)
 
 
 ## Important Updates   
 
-- 系統及常用軟件（Signal (6.3.0), Telegram, Tor-browser, etc）更新；  
-- 在開機畫面裏的選項中添加了：`Diskless` 模式，啓動後可以拔出U盤了，系統完全運行在內存（RAM）中，會更快，但也需要電腦有 >=6GB 內存（系統本身會佔 4G 左右）。
+  - 系統及常用軟件（Signal (6.15.0), Telegram, Tor-browser, etc）更新；  
+  - 新增 DeltaChat；
+  - 可以從程序菜單點擊啓動 Outline client 了；
+  - 從現在起對自帶的軟件進行了刪減，只保留大家常用的軟件了—— 命名爲 **lite 版**（有特別需要的話再進行全量發佈）。  
 
 **注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/mdrights/Changelog.md)**
 <hr>
