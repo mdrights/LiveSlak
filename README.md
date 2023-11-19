@@ -26,18 +26,15 @@
 
 - 下载地址 
 	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2023.02.rc2** (= 2930278400 Bytes)   
-	- md5sum: c3367bef2ebe020bfc863858d4d69448  
+	- Version: **2023.03.rc1** (= Bytes)   
+	- md5sum: 
 
 [![Download antiS](https://img.shields.io/sourceforge/dt/liveslak-atgfw.svg)](https://sourceforge.net/projects/liveslak-atgfw/files/latest/download)
 
 
 ## Important Updates   
 
-  - 系統及常用軟件（Signal (6.15.0), Telegram, Tor-browser, etc）更新；  
-  - 新增 DeltaChat；
-  - 可以從程序菜單點擊啓動 Outline client 了；
-  - 從現在起對自帶的軟件進行了刪減，只保留大家常用的軟件了—— 命名爲 **lite 版**（有特別需要的話再進行全量發佈）。  
+  - 系統及常用軟件（Signal (6.38.0), Tor-browser, etc）更新；  
 
 **注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/mdrights/Changelog.md)**
 <hr>

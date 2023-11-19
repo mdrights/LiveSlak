@@ -1,6 +1,8 @@
 
 ## Change Log
 
+- 2023.11.18 ( 2023.03.rc1 )
+    - 系統及常用軟件（Signal (6.38.0), Tor-browser, etc）更新；  
 - 2023.05.13 ( 2023.02.rc2 )
     - 系統及常用軟件（Signal (6.15.0), Telegram, Tor-browser, etc）更新；  
     - 新增 DeltaChat；
