@@ -1,6 +1,11 @@
 
 ## Change Log
 
+- 2023.02.23 ( 2023.04 )
+    - 系統及常用軟件更新:  
+        - Signal -> 6.47.1,  
+        - Tor-browser -> 13.0.9,  
+        - Chromium-ungoogled -> 121.0.xxxx
 - 2023.11.19 ( 2023.03.rc1 )
     - 系統及常用軟件（Signal (6.38.0), Tor-browser, etc）更新；  
 - 2023.05.13 ( 2023.02.rc2 )
