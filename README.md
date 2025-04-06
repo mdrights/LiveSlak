@@ -13,31 +13,23 @@
     - 系统加固（包括：防火墙、用户和进程权限控制、文件系统权限和挂载限制、内核参数配置调优等……）
 	- 应用加固（firejail 沙盒、火狐浏览器加固等）
 
-更新日期：2024.02.23
+更新日期：2025.04.06
 
-發佈頻道：	 
-- Mastodon:
-	- https://fosstodon.org/@mdrights (英文)
-- Matrix：#antis:envs.net  
-- IRC: #aqi-data-share (@OFTC)  
 
 
 ## Download
 
-- 下载地址 
-	- https://sourceforge.net/projects/liveslak-atgfw/files/iso/
-	- Version: **2024.01** (= 3097722880 Bytes)   
-	- md5sum: 810d846f8e1dc01b918e07f921ebe7d1  
+~下载地址~ 
 
-[![Download antiS](https://img.shields.io/sourceforge/dt/liveslak-atgfw.svg)](https://sourceforge.net/projects/liveslak-atgfw/files/latest/download)
-
+(Not published yet.)
 
 ## Important Updates   
 
 - 系統及常用軟件更新:  
-    - Signal -> 6.47.1,  
-    - Tor-browser -> 13.0.9,  
-    - Chromium-ungoogled -> 121.0.xxxx
+    - Signal -> 6.49.0  
+    - Tor    -> 0.4.8.13  
+    - Tor-browser -> 14.0.9    
+    - Chromium-ungoogled -> 134.0.xxxx
 
 **注：过往更新记录见：[Changelog](https://github.com/mdrights/LiveSlak/blob/mdrights/Changelog.md)**
 <hr>
